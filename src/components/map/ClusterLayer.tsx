@@ -8,7 +8,7 @@ import type { GeoJSONSource, MapLayerMouseEvent } from "maplibre-gl";
 import type { Experience, GeoPoint, Plan } from "@/contracts";
 
 import { cn } from "../cn";
-import { dedupeFeatures } from "./MapCanvas";
+import { dedupeFeatures, resolveMap } from "./MapCanvas";
 
 /**
  * ClusterLayer — two SEPARATE sources, which is the whole point.
@@ -70,7 +70,7 @@ export function ClusterLayer({
   onSelectRef.current = onSelect;
 
   useEffect(() => {
-    const map = mapRef?.getMap();
+    const map = resolveMap(mapRef);
     if (!map) return;
     const maplibre = map;
 
@@ -195,7 +195,7 @@ export function ClusterLayer({
   // the other's write and the marker would flicker between the two colours.
   const selectedKey = selectedIds.join(",");
   useEffect(() => {
-    const map = mapRef?.getMap();
+    const map = resolveMap(mapRef);
     if (!map) return;
     const selected = new Set(selectedIds);
     const data = toFeatureCollection(experiences);
@@ -243,7 +243,7 @@ export const ROUTE_SOURCE = "plan-route";
 
 export function RouteLine({ plan, mapRef, resolvePoint, className }: RouteLineProps) {
   useEffect(() => {
-    const map = mapRef?.getMap();
+    const map = resolveMap(mapRef);
     if (!map) return;
 
     // A stop whose experience we cannot locate breaks the polyline, so
@@ -346,7 +346,7 @@ export function CardMapCoupling({
   onRevealedRef.current = onRevealed;
 
   const reveal = useCallback(async () => {
-    const map = mapRef?.getMap();
+    const map = resolveMap(mapRef);
     if (!map || !revealedId) return;
     const point = resolvePoint(revealedId);
     if (!point) return;
