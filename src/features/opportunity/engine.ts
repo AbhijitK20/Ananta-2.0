@@ -35,7 +35,20 @@ import type {
   RejectionCode,
   UnmetDemand,
 } from "../../contracts";
+import { minToLabel } from "../provider/time";
 import { RADIUS_KM, distanceKm, hardChecks, inr, mins, plural, type SearchShape } from "./demand";
+import { measureGap, type Measurement } from "./measure";
+import {
+  bucketOf,
+  type Calendar,
+  localDate,
+  localMinutesOfDay,
+  MUMBAI_TZ_OFFSET_MIN,
+  type SlotSuggestion,
+  type TimeBucket,
+  verdictFor,
+  type Window,
+} from "./slots";
 
 /** Searches behind an opportunity. Below this, we do not extrapolate. */
 export const MIN_SEARCHES = 5;
@@ -79,6 +92,23 @@ export interface DemandGap {
   interests: string[];
   firstSeenAt: string;
   lastSeenAt: string;
+  /**
+   * Modal local quarter-hour the searches happened at, or null when no half of
+   * the cell agrees on one. This is the raw material for the spec's own
+   * headline — "add a 17:00 slot" — and it is the only time signal a logged row
+   * carries, so it is either a real pattern or nothing.
+   */
+  hourMin: number | null;
+  hourBucket: TimeBucket | null;
+  /** Searches for this same cell in the window immediately before this one. */
+  previousSearches: number;
+  trend: "rising" | "falling" | "flat";
+  /**
+   * `coarse` when the cell is small enough that the exact hour and dates could
+   * re-identify one of the people in it, per FEATURES §10. The record is still
+   * shown; the fingerprint is what gets rounded off.
+   */
+  detail: "exact" | "coarse";
   /** true when the cell clears both bars. Nothing is built from a cell that does not. */
   reliable: boolean;
 }
@@ -150,6 +180,8 @@ export interface AggregateOptions {
   windowDays?: number;
   minSearches?: number;
   minTravellers?: number;
+  /** For turning a logged UTC timestamp into a local hour. Defaults to Mumbai. */
+  tzOffsetMin?: number;
 }
 
 export function median(values: readonly number[]): number {
@@ -197,33 +229,76 @@ function unionOfNeeds(members: readonly UnmetDemand[]): AccessNeed[] {
 }
 
 /**
+ * Below this many distinct travellers, the exact hour and dates stop being
+ * evidence and start being a fingerprint: "one account, Bandra West, 17:03 on
+ * the 12th" is a person, not a market. The record is still shown — the demand is
+ * real — with the identifying detail rounded off.
+ */
+export const SUPPRESS_BELOW = 5;
+
+/**
+ * The quarter-hour most of the cell agrees on, or null when no half of it does.
+ * A modal time a single search invented is worse than no time at all, because
+ * the engine would then tell a provider to open at an hour nobody came for.
+ * Ties break on the earlier hour.
+ */
+function modalQuarterHour(minutes: readonly number[]): number | null {
+  const counts = new Map<number, number>();
+  for (const minute of minutes) {
+    const slot = Math.floor(minute / 15) * 15;
+    counts.set(slot, (counts.get(slot) ?? 0) + 1);
+  }
+  let best: number | null = null;
+  let top = 0;
+  for (const [slot, count] of [...counts].sort((a, b) => a[0] - b[0])) {
+    if (count > top) {
+      best = slot;
+      top = count;
+    }
+  }
+  return top * 2 >= minutes.length ? best : null;
+}
+
+/**
  * Group logged unmet searches into the unit an opportunity is built from: same
  * neighbourhood, same binding constraint, same category intent.
  *
+ * Two windows are read, not one. The current window is what the gap is; the
+ * window immediately before it is the same gap last week, which is the only
+ * honest way to say whether a provider should act now or next month. A gap that
+ * is shrinking and a gap that is tripling both read as "5 searches" otherwise.
+ *
  * A cell below either bar is still returned — it is real demand and hiding it
- * would be its own kind of lie — but `reliable: false`, and nothing
- * actionable is built from it.
+ * would be its own kind of lie — but `reliable: false`, and nothing actionable
+ * is built from it.
  */
 export function aggregateGaps(rows: readonly UnmetDemand[], opts: AggregateOptions): DemandGap[] {
   const minSearches = opts.minSearches ?? MIN_SEARCHES;
   const minTravellers = opts.minTravellers ?? MIN_TRAVELLERS;
   const windowDays = opts.windowDays ?? WINDOW_DAYS;
+  const tz = opts.tzOffsetMin ?? MUMBAI_TZ_OFFSET_MIN;
   const end = Date.parse(opts.asOf);
   const start = end - windowDays * 86_400_000;
+  const previousStart = start - windowDays * 86_400_000;
 
-  const groups = new Map<string, UnmetDemand[]>();
+  const current = new Map<string, UnmetDemand[]>();
+  const previous = new Map<string, number>();
   for (const row of rows) {
     const at = Date.parse(row.at);
-    if (Number.isNaN(at) || at > end || at < start) continue;
-    const intent = categoryIntent(row.constraints.interests);
-    const key = `${row.neighbourhood?.trim() || "Unknown"}|${row.topBlockingCode}|${intent.category ?? "any"}`;
-    const bucket = groups.get(key);
+    if (Number.isNaN(at) || at > end) continue;
+    const key = gapKeyOf(row);
+    if (at < previousStart) continue;
+    if (at < start) {
+      previous.set(key, (previous.get(key) ?? 0) + 1);
+      continue;
+    }
+    const bucket = current.get(key);
     if (bucket) bucket.push(row);
-    else groups.set(key, [row]);
+    else current.set(key, [row]);
   }
 
   const gaps: DemandGap[] = [];
-  for (const [key, members] of groups) {
+  for (const [key, members] of current) {
     const first = members[0]!;
     const intent = categoryIntent(first.constraints.interests);
     const budgets = members
@@ -231,6 +306,9 @@ export function aggregateGaps(rows: readonly UnmetDemand[], opts: AggregateOptio
       .filter((value): value is number => value !== null)
       .sort((a, b) => a - b);
     const weather = modal(members.map((member) => member.constraints.weather.trim().toLowerCase()).filter(Boolean));
+    const hourMin = modalQuarterHour(members.map((member) => localMinutesOfDay(member.at, tz)));
+    const before = previous.get(key) ?? 0;
+    const travellers = new Set(members.map((member) => member.travellerId)).size;
 
     gaps.push({
       key,
@@ -243,7 +321,7 @@ export function aggregateGaps(rows: readonly UnmetDemand[], opts: AggregateOptio
       category: intent.category,
       categoryTier: intent.tier,
       searches: members.length,
-      travellers: new Set(members.map((member) => member.travellerId)).size,
+      travellers,
       blockedCandidates: members.reduce((sum, member) => sum + member.topBlockingCount, 0),
       budgetMinor: median(budgets),
       availableMin: median(members.map((member) => member.constraints.availableMin)),
@@ -253,7 +331,12 @@ export function aggregateGaps(rows: readonly UnmetDemand[], opts: AggregateOptio
       interests: unique(members.flatMap((member) => member.constraints.interests)),
       firstSeenAt: members.reduce((a, member) => (member.at < a ? member.at : a), first.at),
       lastSeenAt: members.reduce((a, member) => (member.at > a ? member.at : a), first.at),
-      reliable: members.length >= minSearches && new Set(members.map((member) => member.travellerId)).size >= minTravellers,
+      hourMin,
+      hourBucket: hourMin === null ? null : bucketOf(hourMin),
+      previousSearches: before,
+      trend: members.length > before ? "rising" : members.length < before ? "falling" : "flat",
+      detail: travellers < SUPPRESS_BELOW ? "coarse" : "exact",
+      reliable: members.length >= minSearches && travellers >= minTravellers,
     });
   }
 
@@ -412,6 +495,13 @@ export interface ProviderOpportunityRecord {
   targetListingName: string | null;
   /** Codes the target still fails. Shrinks as the provider edits the listing. */
   targetBlockers: RejectionCode[];
+  /** The concrete window to publish, when the fix is a slot rather than a field. */
+  suggestedSlot: SlotSuggestion | null;
+  /**
+   * The gap's logged searches re-run against today's supply. Null when the
+   * caller passed no rows, and the contract field stays null with it.
+   */
+  measurement: Measurement | null;
   /** Listings already serving this demand. Grows as supply arrives. */
   servedBy: string[];
   /** Listings in range that still fail. The remaining addressable work. */
@@ -424,6 +514,19 @@ export interface DetectOptions extends AggregateOptions {
   radiusKm?: number;
   /** Named in the evidence, so a number is always traceable to a source. */
   datasetLabel?: string;
+  /**
+   * The providers' bookable calendars. Supplying this turns on slot-awareness:
+   * a listing that passes every field check but has nothing bookable is then
+   * reported as unmet supply, with a concrete window to publish. Omit it and the
+   * engine stays field-only, which is weaker but not wrong.
+   */
+  supply?: Calendar;
+  /**
+   * The logged rows behind the gaps. Supplying them lets the engine MEASURE by
+   * replaying each search against today's supply, instead of leaving
+   * `estimatedImpact` null forever.
+   */
+  unmetDemand?: readonly UnmetDemand[];
 }
 
 /** The traveller shape a gap stands for: its medians, and nothing invented. */
@@ -440,6 +543,29 @@ function gapShape(gap: DemandGap, radiusKm: number): SearchShape {
 }
 
 const byId = (a: Experience, b: Experience): number => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+
+/**
+ * The fix for a gap whose fields all pass and whose calendar is empty. Not a
+ * listing field at all, which is the point: the path a provider panel can
+ * deep-link to is `slots`, and that is where the work actually is.
+ */
+const SLOT_FIX: SupplyFix = { field: "slots", label: "a bookable slot", capacity: true };
+
+function fieldFailures(shape: SearchShape, listing: Experience): number {
+  return hardChecks(shape, listing).length;
+}
+
+/** The cell key a logged row belongs to. One definition, used by both windows. */
+function gapKeyOf(row: UnmetDemand): string {
+  const intent = categoryIntent(row.constraints.interests);
+  return `${row.neighbourhood?.trim() || "Unknown"}|${row.topBlockingCode}|${intent.category ?? "any"}`;
+}
+
+/** The logged rows behind one gap, or null when the caller supplied none. */
+function rowsFor(gap: DemandGap, rows: readonly UnmetDemand[] | undefined): UnmetDemand[] | null {
+  if (rows === undefined) return null;
+  return rows.filter((row) => gapKeyOf(row) === gap.key);
+}
 
 /** A listing is in the trade when it is in range and in the right category. */
 function inTrade(listing: Experience, gap: DemandGap, radiusKm: number): boolean {
@@ -469,7 +595,12 @@ interface Change {
   action: string;
 }
 
-function changeFor(gap: DemandGap, fix: SupplyFix, target: Experience | null): Change {
+function changeFor(
+  gap: DemandGap,
+  fix: SupplyFix,
+  target: Experience | null,
+  suggestion: SlotSuggestion | null = null,
+): Change {
   const name = target?.name ?? "the listing";
   switch (fix.field) {
     case "pricePerPerson": {
@@ -493,6 +624,15 @@ function changeFor(gap: DemandGap, fix: SupplyFix, target: Experience | null): C
       };
     case "indoorOutdoor":
       return { headline: `Add an indoor option to ${name}`, action: "add an indoor option" };
+    case "slots": {
+      // The spec's own headline. A concrete date and a concrete window, because
+      // "be open more in the evening" is not a task anyone completes.
+      if (suggestion === null) return { headline: `Publish a bookable slot for ${name}`, action: "publish a bookable slot" };
+      return {
+        headline: `Add a ${suggestion.label} slot on ${suggestion.date} at ${name}`,
+        action: `add a ${suggestion.label} slot on ${suggestion.date}`,
+      };
+    }
     case "accessibility.stepFree":
     case "accessibility.strollerOk":
     case "accessibility.lowStairs":
@@ -512,6 +652,19 @@ function changeFor(gap: DemandGap, fix: SupplyFix, target: Experience | null): C
   }
 }
 
+interface EvidenceExtra {
+  status: OpportunityStatus;
+  /** The calendar verdict for the target, when a calendar was supplied. */
+  calendar: { published: number; served: boolean; unusable: number; mismatch: number; suggestion: SlotSuggestion | null } | null;
+  /** Replayed against today's supply. Absent when the caller passed no rows. */
+  measurement: Measurement | null;
+}
+
+/**
+ * Every claim a provider will read, each with its count. Two rules run through
+ * all of it: nothing is printed without a number attached, and nothing is
+ * printed that the data cannot support.
+ */
 function evidenceFor(
   gap: DemandGap,
   fix: SupplyFix,
@@ -520,8 +673,9 @@ function evidenceFor(
   radiusKm: number,
   windowDays: number,
   datasetLabel: string,
-  status: OpportunityStatus,
+  extra: EvidenceExtra,
 ): { label: string; value: string }[] {
+  const { status, calendar, measurement } = extra;
   const rows: { label: string; value: string }[] = [
     { label: "searches", value: `${gap.searches} in the last ${windowDays} days` },
     { label: "travellers", value: `${gap.travellers} different ${plural(gap.travellers, "account", "accounts")}` },
@@ -534,24 +688,70 @@ function evidenceFor(
     { label: "budget", value: gap.budgetMinor === null ? "none stated" : `${inr(gap.budgetMinor)} total, ${inr(Math.round(gap.budgetMinor / Math.max(1, gap.partySize)))} a head (median)` },
     { label: "window", value: `${mins(gap.availableMin)} (median)` },
     { label: "party", value: `${partyPhrase(gap.partySize)} (median)` },
-    {
-      label: "constraints",
-      value: constraintPhrase(gap),
-    },
+    { label: "constraints", value: constraintPhrase(gap) },
     { label: "blocked on", value: gap.blockingCode.replace(/_/g, " ") },
     { label: "candidates blocked on it", value: `${gap.blockedCandidates}` },
-    { label: "first seen", value: gap.firstSeenAt.slice(0, 10) },
-    { label: "last seen", value: gap.lastSeenAt.slice(0, 10) },
-    { label: `listings within ${radiusKm} km`, value: `${counts.trade} in this category, ${counts.served} already ${counts.served === 1 ? "serves" : "serve"} it, ${counts.failing} ${counts.failing === 1 ? "does" : "do"} not` },
+    { label: gap.detail === "coarse" ? "time of day" : "time of day they searched", value: timeValue(gap) },
+    { label: `versus the previous ${windowDays} days`, value: trendValue(gap) },
   ];
+
+  // A cell small enough to fingerprint a person gets the window, not the dates.
+  // The demand is still counted — coarsening the fingerprint is not hiding it.
+  if (gap.detail === "coarse") {
+    rows.push({
+      label: "exact dates and times",
+      value: `withheld: ${gap.travellers} ${plural(gap.travellers, "account", "accounts")} is few enough to identify someone`,
+    });
+  } else {
+    rows.push({ label: "first seen", value: gap.firstSeenAt.slice(0, 10) });
+    rows.push({ label: "last seen", value: gap.lastSeenAt.slice(0, 10) });
+  }
+
+  rows.push({
+    label: `listings within ${radiusKm} km`,
+    value: `${counts.trade} in this category, ${counts.served} already ${counts.served === 1 ? "serves" : "serve"} it, ${counts.failing} ${counts.failing === 1 ? "does" : "do"} not`,
+  });
+
+  if (calendar !== null && target !== null) {
+    rows.push({ label: `your bookable calendar for ${target.name}`, value: calendarLine(calendar) });
+  }
+
   // Only meaningful while there is work to do. On a `met` record the target has
   // changed, so printing the old verdict next to "now serves this" would be
   // two contradictory claims about the same field in one panel.
-  if (target !== null && status === "open") {
+  if (target !== null && status === "open" && fix.field !== "slots") {
     rows.push({ label: `${target.name} — ${fix.field}`, value: targetState(target, fix) });
+  }
+  if (measurement !== null) {
+    rows.push({
+      label: "replayed against today's supply",
+      value: measurement.estimatedImpact ?? `none of the ${measurement.total} would be served yet`,
+    });
   }
   rows.push({ label: "source", value: datasetLabel });
   return rows;
+}
+
+/** The calendar, said the way a provider needs it: what exists, and what is wrong. */
+function calendarLine(calendar: NonNullable<EvidenceExtra["calendar"]>): string {
+  if (calendar.served) return `a slot they can book (${calendar.published} published)`;
+  if (calendar.published === 0) return "nothing published at all";
+  return `${calendar.published} published, none bookable at that hour: ${calendar.mismatch} at another hour, ${calendar.unusable} full, blocked or out of horizon`;
+}
+
+/** The time signal, or an honest "no pattern" — never a guess from one search. */
+function timeValue(gap: DemandGap): string {
+  if (gap.hourMin === null) return `no clear pattern across ${gap.searches} searches`;
+  const bucket = gap.hourBucket?.replace(/_/g, " ") ?? "unknown";
+  // Under the privacy bar the exact quarter-hour is the identifying part.
+  return gap.detail === "coarse" ? `${bucket}, roughly` : `${minToLabel(gap.hourMin)} (${bucket})`;
+}
+
+function trendValue(gap: DemandGap): string {
+  if (gap.previousSearches === 0) return `${gap.searches}, up from none recorded`;
+  const delta = gap.searches - gap.previousSearches;
+  if (delta === 0) return `unchanged at ${gap.searches}`;
+  return `${gap.searches}, ${delta > 0 ? "up" : "down"} from ${gap.previousSearches} (${gap.trend})`;
 }
 
 function constraintPhrase(gap: DemandGap): string {
@@ -585,12 +785,13 @@ function buildRecord(args: {
   windowDays: number;
   datasetLabel: string;
   asOf: string;
+  extra: EvidenceExtra;
 }): ProviderOpportunityRecord {
-  const { gap, status, kind, provider, fix, target, servedBy, failingListingIds, counts, radiusKm, windowDays, datasetLabel, asOf } = args;
+  const { gap, status, kind, provider, fix, target, servedBy, failingListingIds, counts, radiusKm, windowDays, datasetLabel, asOf, extra } = args;
   const searches = `${gap.searches} ${plural(gap.searches, "search", "searches")}`;
   const scope = `${searches} near ${gap.neighbourhood} wanted ${wantPhrase(gap)}`;
 
-  const change = changeFor(gap, fix, target);
+  const change = changeFor(gap, fix, target, extra.calendar?.suggestion ?? null);
   const supply =
     counts.trade === 0
       ? `there is no ${categoryPlural(gap)} within ${radiusKm} km at all`
@@ -600,19 +801,28 @@ function buildRecord(args: {
           ? `it is the only ${categoryWord(gap)} within ${radiusKm} km`
           : `none of the ${counts.trade} ${categoryPlural(gap)} within ${radiusKm} km met it`;
 
+  // A slot fix is a different sentence: the fields already pass, so the reason is
+  // the calendar, and the hour is the whole content of the recommendation.
+  const slotClause =
+    fix.field === "slots" && gap.hourMin !== null
+      ? `, and you publish nothing they can book around ${minToLabel(gap.hourMin)}`
+      : "";
+
   const headline =
     status === "met"
       ? `${target?.name ?? "A new listing"} now serves this: ${scope}.`
       : provider === null
         ? `No provider can serve this yet: ${scope}, and ${supply}.`
-        : `${change.headline} — ${scope}, and ${supply}.`;
+        : `${change.headline} — ${scope}, and ${supply}${slotClause}.`;
 
   const cta =
     status === "met"
       ? `Nothing to do. ${target?.name ?? "The listing"} already covers this demand.`
       : provider === null
         ? `List ${withArticle(categoryWord(gap))} in ${gap.neighbourhood} — ${searches} in the last ${windowDays} days found nothing.`
-        : `Open ${target?.name ?? "the listing"} at ${fix.field} and ${change.action}.`;
+        : fix.field === "slots"
+          ? `Add a slot to ${target?.name ?? "the listing"}: ${change.action}.`
+          : `Open ${target?.name ?? "the listing"} at ${fix.field} and ${change.action}.`;
 
   return {
     id: `opp-${status}-${gap.key}-${provider?.id ?? "acquisition"}`,
@@ -624,8 +834,11 @@ function buildRecord(args: {
       providerId: provider?.id ?? "",
       kind,
       headline,
-      evidence: evidenceFor(gap, fix, target, counts, radiusKm, windowDays, datasetLabel, status),
-      estimatedImpact: null,
+      evidence: evidenceFor(gap, fix, target, counts, radiusKm, windowDays, datasetLabel, extra),
+      // Only ever a measured number: `measurement` is a replay of real logged
+      // searches, and it stays null when nothing has been acted on yet, because
+      // estimating the effect of a fix nobody has made is a prediction.
+      estimatedImpact: extra.measurement?.estimatedImpact ?? null,
       cta,
     },
     demand: gap,
@@ -633,6 +846,8 @@ function buildRecord(args: {
     targetListingId: target?.id ?? null,
     targetListingName: target?.name ?? null,
     targetBlockers: args.targetBlockers,
+    suggestedSlot: extra.calendar?.suggestion ?? null,
+    measurement: extra.measurement,
     servedBy,
     failingListingIds,
     asOf,
@@ -661,6 +876,8 @@ export function detectOpportunities(
   const radiusKm = opts.radiusKm ?? RADIUS_KM;
   const windowDays = opts.windowDays ?? WINDOW_DAYS;
   const datasetLabel = opts.datasetLabel ?? "Unmet-demand log";
+  const tz = opts.tzOffsetMin ?? MUMBAI_TZ_OFFSET_MIN;
+  const today = localDate(opts.asOf, tz);
   const out: ProviderOpportunityRecord[] = [];
 
   for (const gap of gaps) {
@@ -670,12 +887,28 @@ export function detectOpportunities(
     if (fix === null) continue;
 
     const shape = gapShape(gap, radiusKm);
+    // The traveller's free time, from the gap's medians. Null when no calendar
+    // was supplied, or when the cell has no time pattern — and with no pattern
+    // there is no honest slot advice to give.
+    const window: Window | null =
+      opts.supply !== undefined && gap.hourMin !== null
+        ? { arriveMin: gap.hourMin, availableMin: gap.availableMin, partySize: gap.partySize }
+        : null;
+
     // Sorted by id before anything counts it: the catalogue arrives in whatever
     // order a repository hands it over, and `servedBy` / `failingListingIds` are
     // part of a provider's record, so input order must not reach the output.
     const trade = catalogue.filter((listing) => inTrade(listing, gap, radiusKm)).sort(byId);
-    const served = trade.filter((listing) => hardChecks(shape, listing).length === 0);
-    const failing = trade.filter((listing) => hardChecks(shape, listing).length > 0);
+    const rows = rowsFor(gap, opts.unmetDemand);
+
+    // `bookable` is the gate a calendar adds. Without one, a field-clean listing
+    // is bookable in principle — the old behaviour, kept as a fallback rather
+    // than promoted to a claim.
+    const bookable = (listing: Experience): boolean =>
+      window === null || verdictFor(listing, opts.supply!, today, window).served;
+
+    const served = trade.filter((listing) => hardChecks(shape, listing).length === 0 && bookable(listing));
+    const failing = trade.filter((listing) => !(hardChecks(shape, listing).length === 0 && bookable(listing)));
     const counts = { served: served.length, failing: failing.length, trade: trade.length };
     const kind: ProviderOpportunity["kind"] =
       trade.length === 0 ? "must_see_gap" : fix.capacity ? "capacity_window" : "listing_quality";
@@ -692,25 +925,52 @@ export function detectOpportunities(
       asOf: opts.asOf,
     };
 
+    /** The calendar verdict for one listing, or null when no calendar was given. */
+    const calendarFor = (listing: Experience | null): EvidenceExtra["calendar"] =>
+      window === null || listing === null ? null : verdictFor(listing, opts.supply!, today, window);
+
+    const measureFor = (listingId: string | null): Measurement | null =>
+      rows === null
+        ? null
+        : measureGap(rows, catalogue, {
+            asOf: opts.asOf,
+            radiusKm,
+            category: gap.category,
+            ...(opts.supply === undefined ? {} : { calendar: opts.supply }),
+            tzOffsetMin: tz,
+            targetListingId: listingId,
+          });
+
     let anyoneCanAct = false;
     for (const provider of opts.providers) {
       const mine = failing.filter((listing) => listing.providerId === provider.id);
-      // Cheapest to fix first, id as the tie-break: a provider with one listing
-      // failing on one field sees that one, not the other.
+      // Cheapest to fix first, id as the tie-break: a provider with two failing
+      // listings is shown the one a single field change would close.
       const target = [...mine].sort((a, b) => {
-        const failures = hardChecks(shape, a).length - hardChecks(shape, b).length;
+        const failures = fieldFailures(shape, a) - fieldFailures(shape, b);
         return failures !== 0 ? failures : a.id < b.id ? -1 : 1;
       })[0];
       if (target === undefined) continue;
       anyoneCanAct = true;
+
+      // A listing whose fields all pass and which has nothing bookable is a
+      // calendar problem, not a field problem, and the fix is a window. One
+      // opportunity per listing either way: two records for one listing is a
+      // to-do list, and to-do lists get ignored.
+      const fieldBlockers = hardChecks(shape, target);
+      const calendarOnly = window !== null && fieldBlockers.length === 0;
+      const effectiveFix = calendarOnly ? SLOT_FIX : fix;
+
       out.push(
         buildRecord({
           ...shared,
+          fix: effectiveFix,
           status: "open",
-          kind,
+          kind: calendarOnly ? "capacity_window" : kind,
           provider,
           target,
-          targetBlockers: hardChecks(shape, target).map((rejection) => rejection.code),
+          targetBlockers: calendarOnly ? [] : fieldBlockers.map((rejection) => rejection.code),
+          extra: { status: "open", calendar: calendarFor(target), measurement: measureFor(target.id) },
         }),
       );
     }
@@ -726,6 +986,11 @@ export function detectOpportunities(
           provider,
           target: servedByProvider[0]!,
           targetBlockers: [],
+          extra: {
+            status: "met",
+            calendar: calendarFor(servedByProvider[0]!),
+            measurement: measureFor(servedByProvider[0]!.id),
+          },
         }),
       );
     }
@@ -737,7 +1002,15 @@ export function detectOpportunities(
     // "no provider can serve this yet" next to a `met` record is a lie.
     if (!anyoneCanAct && served.length === 0) {
       out.push(
-        buildRecord({ ...shared, status: "open", kind: "must_see_gap", provider: null, target: null, targetBlockers: [] }),
+        buildRecord({
+          ...shared,
+          status: "open",
+          kind: "must_see_gap",
+          provider: null,
+          target: null,
+          targetBlockers: [],
+          extra: { status: "open", calendar: null, measurement: measureFor(null) },
+        }),
       );
     }
   }

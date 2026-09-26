@@ -10,16 +10,19 @@
  *   UnmetDemand[]      the contract row, parsed by the contract schema
  *        |
  *        v
- *   aggregateGaps()    logged searches -> gaps, with counts
+ *   aggregateGaps()    logged searches -> gaps, with counts, trend, the hour
+ *                      they happened at, and a privacy detail level
  *        |
  *        v
- *   detectOpportunities()  gaps + current supply -> opportunity records
+ *   detectOpportunities()  gaps + today's supply (+ the provider's calendar)
+ *                          -> opportunity records, measured by replay
  *        |
  *        v
- *   queryOpportunities()   the provider-facing read
+ *   toActions()           one to-do per provider/listing/field
+ *   queryOpportunities()  the provider-facing read
  *
- * Steps 1 and 4 are pure functions of their inputs. Re-run 4 after a provider
- * edits a listing and the feed answers for itself.
+ * Steps 1, 2 and 4 are pure functions of their inputs. Re-run 4 after a provider
+ * edits a listing or publishes a slot, and the feed answers for itself.
  */
 export {
   distanceKm,
@@ -49,6 +52,7 @@ export {
   NEVER_AN_OPPORTUNITY,
   opportunitiesForProvider,
   queryOpportunities,
+  SUPPRESS_BELOW,
   type AggregateOptions,
   type CategoryIntent,
   type DemandGap,
@@ -60,5 +64,26 @@ export {
   type SupplyFix,
   WINDOW_DAYS,
 } from "./engine";
+
+export {
+  bookableDates,
+  bucketOf,
+  type Calendar,
+  type CalendarVerdict,
+  localDate,
+  localMinutesOfDay,
+  MUMBAI_TZ_OFFSET_MIN,
+  type Seats,
+  type SlotSuggestion,
+  suggestSlot,
+  type TimeBucket,
+  usableSlots,
+  verdictFor,
+  type Window,
+} from "./slots";
+
+export { measureGap, type MeasureOptions, type Measurement } from "./measure";
+
+export { type ActionEvidence, type ProviderAction, toActions } from "./actions";
 
 export { catalogueNeighbourhoods, loadCatalogue } from "./catalogue";
