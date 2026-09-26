@@ -90,14 +90,38 @@ const BARE_Z_RE = /(?:^|[\s;{])z-index\s*:\s*(-?\d+)/gi;
 const NAMED_Z = new Set([0, 10, 20, 30, 40, 50, 60, 70]);
 
 /**
- * `rounded-full` is banned on containers — pills and icon buttons only. The
- * heuristic: a full radius is fine when the element is small and round, and
- * wrong the moment it wraps a block of content. We flag it on the classes that
- * take content and ignore it on buttons/badges/dots.
+ * `rounded-full` is for pills and icon buttons; a container that wraps content
+ * must use --radius-sm/md/lg (DESIGN_SYSTEM §2).
+ *
+ * Deciding that from source text alone is a heuristic, and a linter that fires
+ * on every legitimate pill gets muted within a day. So the rule keys on signals
+ * that actually distinguish a pill from a container:
+ *
+ *   legitimate  bounded dimensions (`size-*`, or both `h-*` and `w-*`), small
+ *               text (`text-meta*`), or a known pill component
+ *   suspicious  full width, body-or-larger text, or a large min-height —
+ *               i.e. something that can grow to wrap a block of content
+ *
+ * A false negative here is a slightly round card. A false positive is noise on
+ * every Badge in the app. The bias is deliberate.
  */
-const FULL_RADIUS_OK_RE =
-  /(rounded-full[^\n]*$)|(^\s*(?:rounded-full)\b)/; // bare usage, flagged below
-const FULL_RADIUS_CONTAINER_RE = /\brounded-full\b(?![^\n]*\b(?:rounded-full\s+group|group\b))/gi;
+const PILL_COMPONENT_RE =
+  /\b(?:Button|button|Badge|badge|Dot|dot|Pill|pill|Chip|chip|IconButton|Toggle|Avatar)\b/;
+const BOUNDED_DIMS_RE = /\bsize-\d|\b(?:w|h)-\d[^\n]*\b(?:w|h)-full\b/;
+const SMALL_TEXT_RE = /\btext-(?:meta|meta-sm|caption)\b/;
+// `max-w-full` is a truncation constraint, not a width, so it must not read as
+// a full-width container. Same for `min-w-full`.
+const CONTAINER_SIGNAL_RE =
+  /(?<!max-)(?<!min-)\bw-full\b|\btext-(?:body|body-lg|title|display|display-lg)\b|\bmin-h-\[(?!44px)/;
+
+function isFullRadiusLegitimate(line: string): boolean {
+  if (PILL_COMPONENT_RE.test(line)) return true;
+  if (BOUNDED_DIMS_RE.test(line)) return true;
+  if (SMALL_TEXT_RE.test(line)) return true;
+  return !CONTAINER_SIGNAL_RE.test(line);
+}
+
+const FULL_RADIUS_RE = /\brounded-full\b/gi;
 
 /** Tokens the app is allowed to reference. Typos in here are the failure mode
  *  this list exists to catch: `--colour-accent` compiles to nothing. */
@@ -253,18 +277,15 @@ function lintFile(path: string): Violation[] {
 
   // 4. full radius on a container
   if (!isTokens) {
-    for (const m of source.matchAll(FULL_RADIUS_CONTAINER_RE)) {
+    for (const m of source.matchAll(FULL_RADIUS_RE)) {
       const line = excerptAt(source, m.index ?? 0);
-      const isButtonOrPill =
-        /\b(?:Button|button|Badge|badge|Dot|dot|Pill|pill|Chip|chip|IconButton|Toggle)\b/.test(line) ||
-        /\brounded-full\b[^\n]*\b(?:w|h)-full\b/.test(line) ||
-        /\baspect-square\b/.test(line);
-      if (isButtonOrPill) continue;
+      if (isFullRadiusLegitimate(line)) continue;
       push(
         m.index ?? 0,
         "rounded-full-on-container",
-        "`rounded-full` is for pills and icon buttons only (DESIGN_SYSTEM §2). " +
-          "A container wrapping content must use --radius-sm/md/lg.",
+        "`rounded-full` on something that wraps content. DESIGN_SYSTEM §2 allows a " +
+          "full radius for pills and icon buttons only; this element should use " +
+          "--radius-sm, --radius-md or --radius-lg.",
       );
     }
   }
@@ -292,18 +313,31 @@ function lintFile(path: string): Violation[] {
   }
 
   // 7. unknown token names
+  //
+  // A component may define its own custom property — the Slider's `--pct` is
+  // one — so anything DECLARED in this file counts as known. The failure mode
+  // this rule exists for is a typo that references a property nobody declares
+  // anywhere, which resolves to nothing and is invisible in review.
+  const locallyDeclared = new Set<string>();
+  for (const m of source.matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)) {
+    const name = (m[1] ?? "").slice(2);
+    if (name.length > 0) locallyDeclared.add(name);
+  }
+
   for (const m of source.matchAll(TOKEN_REF_RE)) {
     const name = (m[1] ?? "").slice(2);
     if (name.length === 0) continue;
     if (KNOWN_TOKENS.has(name)) continue;
+    if (locallyDeclared.has(name)) continue;
     // Tailwind and MapLibre define their own custom properties. Anything namespaced
     // by another library is out of our token layer and not our business.
     if (name.startsWith("maplibre-") || name.startsWith("tw-")) continue;
     push(
       m.index ?? 0,
       "unknown-token",
-      `\`--${name}\` is not a token in ${TOKENS_FILE}. An undefined custom property ` +
-        `silently resolves to nothing, so this would be an invisible bug.`,
+      `\`--${name}\` is not a token in ${TOKENS_FILE}, and nothing in this file ` +
+        `declares it. An undefined custom property silently resolves to nothing, ` +
+        `so this would be an invisible bug.`,
     );
   }
 
