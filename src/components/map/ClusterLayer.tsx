@@ -29,6 +29,74 @@ import { dedupeFeatures, resolveMap } from "./MapCanvas";
 export const CLUSTERED_SOURCE = "experiences";
 export const HIT_SOURCE = "experience-hits";
 
+/* ========================================================================== *
+ * Palette resolution
+ *
+ * MapLibre parses paint values with its own style parser. It has no concept
+ * of CSS custom properties, so a literal `var(--accent)` reaches it verbatim
+ * and it rejects the layer with "Could not parse color from value". The colour
+ * must be a concrete string by the time addLayer sees it.
+ *
+ * Resolving off the document (rather than hardcoding hexes here) keeps
+ * tokens.css the single source of truth for the palette and picks up the
+ * light/dark blocks for free.
+ * ========================================================================== */
+
+type Palette = {
+  accent: string;
+  info: string;
+  fit: string;
+  surface: string;
+  onAccent: string;
+};
+
+/** Minimal shape needed to write paint properties; keeps this testable. */
+type PaintTarget = {
+  getLayer: (id: string) => unknown;
+  setPaintProperty: (layer: string, name: string, value: unknown) => void;
+};
+
+function mapToken(name: string): string {
+  if (typeof document === "undefined") return "#000000";
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  // An undefined token, or one whose own value is still a var() reference,
+  // reaches MapLibre unparseable. Fall back rather than throw the layer away:
+  // a black circle is a cosmetic bug, a missing layer is a broken map.
+  if (!value || value.includes("var(")) return "#000000";
+  return value;
+}
+
+function mapPalette(): Palette {
+  return {
+    accent: mapToken("--accent"),
+    info: mapToken("--info"),
+    fit: mapToken("--fit"),
+    surface: mapToken("--surface"),
+    onAccent: mapToken("--on-accent"),
+  };
+}
+
+/**
+ * Write every colour-bearing paint property on every layer this file owns.
+ * Idempotent and guarded by getLayer, so it is safe to call after each
+ * addLayer, and again whenever the theme changes.
+ */
+export function applyMapPalette(map: PaintTarget): void {
+  const p = mapPalette();
+  const set = (layer: string, name: string, value: unknown) => {
+    if (map.getLayer(layer)) map.setPaintProperty(layer, name, value);
+  };
+
+  set("cluster-circles", "circle-color", ["step", ["get", "point_count"], p.accent, 10, p.info, 30, p.accent]);
+  set("cluster-circles", "circle-stroke-color", p.surface);
+  set("cluster-count", "text-color", p.onAccent);
+  set("unclustered-point", "circle-color", ["case", ["get", "selected"], p.accent, p.fit]);
+  set("unclustered-point", "circle-stroke-color", p.surface);
+  set("plan-route-line", "line-color", p.accent);
+  set("spiderfied-point", "circle-color", p.accent);
+  set("spiderfied-point", "circle-stroke-color", p.surface);
+}
+
 export interface ClusterLayerProps {
   experiences: ReadonlyArray<Experience>;
   /** Ids currently in the plan, drawn in `accent`. */
@@ -126,14 +194,10 @@ export function ClusterLayer({
         // circle at ALL zooms: one instanced quad per point, no placement pass.
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": ["step", ["get", "point_count"], "var(--accent)", 10, "var(--info)", 30, "var(--accent)"],
+          "circle-color": ["step", ["get", "point_count"], mapToken("--accent"), 10, mapToken("--info"), 30, mapToken("--accent")],
           "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 30, 26],
           "circle-stroke-width": 2,
-          "circle-stroke-color": "var(--surface)",
-          // All of these are colour values handed to MapLibre's own paint
-          // engine, which does not resolve CSS custom properties. They are
-          // read off the document at attach time so there is still exactly one
-          // source of truth for the palette.
+          "circle-stroke-color": mapToken("--surface"),
         },
       });
     }
@@ -152,7 +216,7 @@ export function ClusterLayer({
           "text-font": ["Geist Mono Regular"],
           "text-allow-overlap": true,
         },
-        paint: { "text-color": "var(--on-accent)" },
+        paint: { "text-color": mapToken("--on-accent") },
       });
     }
 
@@ -163,10 +227,10 @@ export function ClusterLayer({
         source: CLUSTERED_SOURCE,
         filter: ["!", ["has", "point_count"]],
         paint: {
-          "circle-color": ["case", ["get", "selected"], "var(--accent)", "var(--fit)"],
+          "circle-color": ["case", ["get", "selected"], mapToken("--accent"), mapToken("--fit")],
           "circle-radius": 7,
           "circle-stroke-width": 2,
-          "circle-stroke-color": "var(--surface)",
+          "circle-stroke-color": mapToken("--surface"),
         },
       });
     }
@@ -182,7 +246,21 @@ export function ClusterLayer({
 
     maplibre.on("click", "unclustered-point", handleClick);
 
+    // Attach-time colours, then keep them in step with the theme. ThemeScript
+    // sets data-theme on <html> before first paint, but a later toggle (or the
+    // OS flipping to dark while the tab is open) changes the token values under
+    // us, and MapLibre will not re-read them on its own.
+    applyMapPalette(maplibre);
+
+    const themeRoot = document.documentElement;
+    const observer = new MutationObserver(() => applyMapPalette(maplibre));
+    observer.observe(themeRoot, { attributes: true, attributeFilter: ["data-theme"] });
+    const onSchemeChange = () => applyMapPalette(maplibre);
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", onSchemeChange);
+
     return () => {
+      observer.disconnect();
+      window.matchMedia("(prefers-color-scheme: dark)").removeEventListener("change", onSchemeChange);
       maplibre.off("click", "unclustered-point", handleClick);
     };
   }, [mapRef]);
@@ -271,13 +349,14 @@ export function RouteLine({ plan, mapRef, resolvePoint, className }: RouteLinePr
 
     if (!map.getSource(ROUTE_SOURCE)) {
       map.addSource(ROUTE_SOURCE, { type: "geojson", data: line });
+      applyMapPalette(map);
       map.addLayer({
         id: "plan-route-line",
         type: "line",
         source: ROUTE_SOURCE,
         layout: { "line-cap": "round", "line-join": "round" },
         paint: {
-          "line-color": "var(--accent)",
+          "line-color": mapToken("--accent"),
           "line-width": 3,
           // Dashed, so the planned route is never mistaken for a live
           // navigation trace.
@@ -485,10 +564,10 @@ function spiderfy(
         type: "circle",
         source: "spiderfied",
         paint: {
-          "circle-color": "var(--accent)",
+          "circle-color": mapToken("--accent"),
           "circle-radius": 8,
           "circle-stroke-width": 3,
-          "circle-stroke-color": "var(--surface)",
+          "circle-stroke-color": mapToken("--surface"),
         },
       });
     }
