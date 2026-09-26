@@ -167,12 +167,19 @@ export function parseHours(raw: string | null | undefined): OpeningHours {
  * day's rule. Probing a single day would silently drop every night venue, and
  * night markets are most of what a Mumbai traveller plans.
  */
-export function intervalsForWeekday(
-  hours: OpeningHours,
-  weekday: Weekday,
-  clock: CityClock = MUMBAI,
-): HoursEvaluation {
-  if (hours.status === "absent" || hours.raw === null) {
+  export function intervalsForWeekday(
+    hours: OpeningHours,
+    weekday: Weekday,
+    clock: CityClock = MUMBAI,
+  ): HoursEvaluation {
+    // The clock is accepted so every interval helper in this file takes the same
+    // shape and callers cannot pass it to one and not another, but raw OSM
+    // opening-hours strings are already expressed in local wall-clock time, so
+    // there is nothing to convert here. Kept (rather than removed) because
+    // `intervalsForWeek` forwards it, and a silent arity change across these
+    // helpers is exactly the kind of drift the seam tests exist to catch.
+    void clock;
+    if (hours.status === "absent" || hours.raw === null) {
     return { status: "absent", intervals: [] };
   }
   if (hours.status === "unparsable") {

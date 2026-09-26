@@ -12,9 +12,7 @@
  */
 import { describe, expect, it } from "vitest";
 import {
-  Experience,
   Fit,
-  Money,
   Plan,
   PlanStop,
   ScoreBreakdown,

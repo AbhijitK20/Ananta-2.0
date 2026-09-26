@@ -58,7 +58,6 @@ export function replan(
   change: ContextChange,
 ): ReplanResult {
   const prevStops = [...(prev.stops ?? [])].sort(byOrder);
-  const prevIds = prevStops.map((s) => s.experienceId);
 
   // What the traveller had locked in before any of this started. Diffing against
   // this rather than against `prev` is the whole point of the function.

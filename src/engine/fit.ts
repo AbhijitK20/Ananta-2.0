@@ -9,14 +9,9 @@
  */
 import type { DiscoveryContext, Experience, Fit, Money } from "@/contracts";
 import { isOpenDuring, describeHours, intervalsForWeekday, type OpenVerdict } from "./hours";
-import { toMajor, addMoney, compareMoney, formatMoney } from "@/lib/money";
-import { formatDuration, MINUTES_PER_DAY, type Weekday } from "@/lib/time";
+import { addMoney, compareMoney, formatMoney } from "@/lib/money";
+import { formatDuration, type Weekday } from "@/lib/time";
 
-/** "09:30" from minutes-from-midnight. */
-function clock(minutes: number): string {
-  const m = ((minutes % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
-  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
-}
 
 /** Budget comparison that treats an absent ceiling as "not violated". */
 function withinBudget(spent: Money, budget: Money | null): boolean {
@@ -55,9 +50,9 @@ export function computeFit(
       : { minor: partyMinor, currency: exp.pricePerPerson.currency };
   const runningCost = addMoney(input.cost, stopCost);
 
-  const totalMin = input.travelMin + input.bufferMin + exp.durationMin;
-  const fitRatio = totalMin > 0 ? ctx.availableMin / totalMin : 1;
-  const costPerHead = ctx.partySize > 0 ? toMajor(stopCost) / ctx.partySize : 0;
+    const totalMin = input.travelMin + input.bufferMin + exp.durationMin;
+    const fitRatio = totalMin > 0 ? ctx.availableMin / totalMin : 1;
+
 
   const checks: Fit["checks"] = [
     {

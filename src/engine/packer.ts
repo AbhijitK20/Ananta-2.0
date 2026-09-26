@@ -43,8 +43,8 @@ import type {
 } from "@/contracts";
 import { buildRadiusGraph, connectedComponents, type RadiusGraph } from "./geo";
 import { score, DEFAULT_PROFILE, type WeightProfile } from "./scoring";
-import { bufferFor, partyCost, type Candidate, type FilterOptions } from "./feasibility";
-import { toLeg, type TravelContext, type TravelMode } from "./travel";
+import { bufferFor, type Candidate, type FilterOptions } from "./feasibility";
+import { toLeg, type TravelMode } from "./travel";
 import { computeFit } from "./fit";
 import { addMoney, zero } from "@/lib/money";
 import { seedFrom, seededRandom } from "@/lib/id";

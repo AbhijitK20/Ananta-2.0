@@ -20,9 +20,8 @@ import type {
   WeightProfile,
   Provenance,
 } from "@/contracts";
-import { toMajor, formatPerPerson } from "@/lib/money";
-import { EPOCH_ISO, bucketOf } from "@/lib/time";
-/** Peak for Mumbai congestion: 08:00-11:00 and 17:00-21:00. */
+import { formatPerPerson } from "@/lib/money";
+import { EPOCH_ISO } from "@/lib/time";/** Peak for Mumbai congestion: 08:00-11:00 and 17:00-21:00. */
 function isPeakHour(minute: number): boolean {
   return (minute >= 8 * 60 && minute < 11 * 60) || (minute >= 17 * 60 && minute < 21 * 60);
 }

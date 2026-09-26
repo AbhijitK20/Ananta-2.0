@@ -14,7 +14,7 @@
  * eval set, by construction" — that starts here.
  */
 import { describe, expect, it } from "vitest";
-import { DiscoveryContext, Experience, Plan } from "@/contracts";
+import { DiscoveryContext, Experience } from "@/contracts";
 import { fromMinor } from "@/lib/money";
 import { planItinerary, type PlanResult } from "@/engine/plan";
 

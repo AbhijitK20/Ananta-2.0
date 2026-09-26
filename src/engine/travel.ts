@@ -18,7 +18,6 @@
  */
 import type { GeoPoint, TravelLeg } from "@/contracts";
 import { haversineMetres } from "./geo";
-import { bucketOf } from "@/lib/time";
 
 /** Peak for the congestion model: 08:00-11:00 and 17:00-21:00. */
 function isPeakHour(minute: number): boolean {
@@ -124,7 +123,10 @@ const OSRM_PROFILE: Record<TravelMode, string> = {
 /** OSRM's public server. Keyless. Free-flow, so the multiplier is applied after. */
 export const osrm: RouteProvider = {
   name: "osrm",
-  async route(from, to, mode, atMin) {
+    async route(from, to, mode, _atMin) {
+      // `_atMin` is unused here because OSRM returns free-flow duration and the
+      // congestion multiplier is applied by the caller, not the provider. It
+      // stays in the signature because it is part of the RouteProvider contract.
     const profile = OSRM_PROFILE[mode];
     const url =
       `https://router.project-osrm.org/route/v1/${profile}/` +

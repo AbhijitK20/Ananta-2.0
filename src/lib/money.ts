@@ -21,10 +21,8 @@ export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 /**
  * Minor-unit exponent per currency. Powers of ten only — if a currency ever
  * needs 3 decimals this becomes a lookup, and that day we revisit the design.
- */
-const MINOR_UNIT_EXPONENT: Record<SupportedCurrency, number> = { INR: 2 };
-
-const MoneySchema = z.object({
+   */
+  const MoneySchema = z.object({
   minor: z.number().int().nonnegative(),
   currency: z.string().length(3),
 });
