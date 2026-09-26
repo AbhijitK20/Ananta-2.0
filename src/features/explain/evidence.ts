@@ -72,6 +72,7 @@ import type {
   Rejection,
   RejectionCode,
   ScoreBreakdown,
+  WeightProfile,
 } from "../../contracts";
 import { formatMinutes, formatMoney } from "../../llm/format";
 import { groundedFigures, unsupportedFigures } from "../../llm/guardrails";
@@ -106,6 +107,17 @@ export type Evidence = {
   unit: EvidenceUnit;
   /** `ScoreComponent.weight`, for score evidence. */
   weight: number | null;
+  /**
+   * True when this contribution came from a LEARNED weight rather than a stated
+   * preference — `ScoreBreakdown.learnedComponents` says so.
+   *
+   * The contract is explicit that nothing is learned about a traveller without
+   * being shown to them, and a weight that quietly moved a ranking is exactly the
+   * thing a traveller would want to interrogate. Marking the line is the difference
+   * between "we think this suits you" and "we decided it suits you after watching
+   * what you clicked".
+   */
+  learned: boolean;
   /** `Experience.provenance` for the field the claim rests on, when declared. */
   provenance: Provenance | null;
 };
@@ -180,6 +192,55 @@ export type ExplanationLedger = {
    * with the most impact, in the engine's own words.
    */
   rescue: string | null;
+  /**
+   * Every weight term a LEARNED profile moved, deduplicated. The contract requires
+   * this to be shown, and a list is the only form in which "shown" is checkable
+   * rather than decorative.
+   */
+  learnedKeys: string[];
+  /** Every must-see the traveller named, and what became of it. */
+  mustSee: MustSee[];
+  /**
+   * What this ledger was built FROM, so `auditLedger` can refuse to compare a
+   * ledger against data it was not derived from. Sizes rather than identities
+   * deliberately: this is a tripwire for "you passed different options to the two
+   * calls", not a content hash.
+   */
+  source: LedgerSource;
+};
+
+/**
+ * A must-see the traveller named, and what became of it.
+ *
+ * `mustsee: true` on a `DecomposedRequest` means the traveller asked for something
+ * by name. The one thing worse than not getting it is not being told, so every
+ * must-see is accounted for here with the outcome it actually got.
+ *
+ * RESOLUTION IS EXACT-ID ONLY. A request's `pos` is free text ("the dhobi ghat
+ * walk"), and matching that against a catalogue with anything cleverer than string
+ * equality would mean inventing a correspondence the traveller never made. So a
+ * request either names an id we hold — and resolves — or it is reported unresolved,
+ * which is the truth and is actionable in a different way: it is a data gap, and
+ * data gaps are the raw material of the provider-side unmet-demand feed.
+ */
+export type MustSee = {
+  /** `DecomposedRequest.pos`, verbatim. */
+  requested: string;
+  /** The experience id it resolved to, or null when nothing matched exactly. */
+  resolvedId: string | null;
+  /** The outcome of that experience, or null when the request resolved to nothing. */
+  outcome: Outcome | null;
+  /** The blocking constraint, when it resolved and did not make it. */
+  blockedBy: RejectionCode | null;
+};
+
+export type LedgerSource = {
+  planId: string;
+  contextId: string;
+  catalogue: number;
+  fits: number;
+  scores: number;
+  rejections: number;
 };
 
 export type ExplainOptions = {
@@ -200,7 +261,13 @@ export type ExplainOptions = {
 };
 
 export type LedgerViolation = {
-  code: "missing_explanation" | "unknown_experience" | "plan_contradiction" | "evidence_drift" | "ungrounded_claim";
+  code:
+    | "missing_explanation"
+    | "unknown_experience"
+    | "plan_contradiction"
+    | "evidence_drift"
+    | "ungrounded_claim"
+    | "source_mismatch";
   message: string;
   experienceId: string | null;
 };
@@ -343,6 +410,7 @@ function fitEvidence(fit: Fit): Evidence[] {
       value: window,
       unit: "minutes",
       weight: null,
+      learned: false,
       provenance: null,
     },
     {
@@ -358,6 +426,7 @@ function fitEvidence(fit: Fit): Evidence[] {
       value: cost.minor,
       unit: "minor_units",
       weight: null,
+      learned: false,
       provenance: null,
     },
     {
@@ -368,6 +437,7 @@ function fitEvidence(fit: Fit): Evidence[] {
       value: fit.travelMin,
       unit: "minutes",
       weight: null,
+      learned: false,
       provenance: null,
     },
     {
@@ -378,6 +448,7 @@ function fitEvidence(fit: Fit): Evidence[] {
       value: fit.activityMin,
       unit: "minutes",
       weight: null,
+      learned: false,
       provenance: null,
     },
     {
@@ -389,6 +460,30 @@ function fitEvidence(fit: Fit): Evidence[] {
       value: fit.bufferMin,
       unit: "minutes",
       weight: null,
+      learned: false,
+      provenance: null,
+    },
+    /*
+      The engine's own one-word verdict, which nothing else in the plan repeats.
+      `fit:window` and `fit:cost` report the arithmetic; this reports the CALL. It
+      matters most when the two disagree — a stop the engine called `does_not_fit`
+      that is in the plan anyway means a relaxation was applied, and saying so is the
+      difference between a confident recommendation and a confident-looking one.
+    */
+    {
+      key: `fit:verdict:${fit.verdict}`,
+      claim:
+        fit.verdict === "does_not_fit"
+          ? "The engine's own verdict is that it does not fit, and it is in the plan anyway."
+          : fit.verdict === "tight"
+            ? "The engine rates the margin tight."
+            : "The engine's verdict is that it fits.",
+      polarity: fit.verdict === "does_not_fit" ? "opposes" : fit.verdict === "tight" ? "neutral" : "supports",
+      source: "fit",
+      value: null,
+      unit: "none",
+      weight: null,
+      learned: false,
       provenance: null,
     },
     // The engine's own per-constraint verdicts. The index is in the key because
@@ -401,6 +496,7 @@ function fitEvidence(fit: Fit): Evidence[] {
       value: null,
       unit: "none" as const,
       weight: null,
+      learned: false,
       provenance: null,
     })),
   ];
@@ -408,6 +504,10 @@ function fitEvidence(fit: Fit): Evidence[] {
 
 function scoreEvidence(score: ScoreBreakdown | undefined): Evidence[] {
   if (!score) return [];
+  // `learnedComponents` is the contract's own list of the terms a learned weight
+  // moved. Reading it here is what lets the UI say "we learned this one" on the
+  // line it applies to, rather than only in a separate weights panel.
+  const learned = new Set(score.learnedComponents);
   return score.components.map((component) => ({
     key: `score:${component.key}`,
     // The engine's own ledger line when it wrote one. Otherwise the arithmetic,
@@ -419,6 +519,7 @@ function scoreEvidence(score: ScoreBreakdown | undefined): Evidence[] {
     value: component.value,
     unit: "points" as const,
     weight: component.weight,
+    learned: learned.has(component.key),
     provenance: null,
   }));
 }
@@ -452,6 +553,7 @@ function provenanceEvidence(experience: Experience | undefined): Evidence[] {
       value: null,
       unit: "none",
       weight: null,
+      learned: false,
       provenance: value,
     });
   }
@@ -495,6 +597,7 @@ function explainSelected(stop: PlanStop, experience: Experience | undefined): Ex
       value: null,
       unit: "none" as const,
       weight: null,
+      learned: false,
       provenance: null,
     })),
     ...scoreEvidence(stop.score),
@@ -554,6 +657,7 @@ function explainConsidered(
       value: score?.total ?? null,
       unit: "points" as const,
       weight: null,
+      learned: false,
       provenance: null,
     },
     {
@@ -564,6 +668,7 @@ function explainConsidered(
       value: plan.stops.length,
       unit: "none" as const,
       weight: null,
+      learned: false,
       provenance: null,
     },
   ].sort(compareEvidence);
@@ -596,6 +701,7 @@ function rejectionEvidence(row: Rejection, currency: string): Evidence {
     value: row.shortfall,
     unit: row.unit ?? "none",
     weight: null,
+    learned: false,
     provenance: null,
   };
 }
@@ -729,6 +835,7 @@ function explainNotConsidered(id: string, experience: Experience | undefined): E
         value: null,
         unit: "none",
         weight: null,
+        learned: false,
         provenance: null,
       },
     ],
@@ -757,6 +864,7 @@ function relaxationEvidence(plan: Plan): Evidence[] {
     value: null,
     unit: "none" as const,
     weight: null,
+    learned: false,
     provenance: null,
   }));
 }
@@ -776,6 +884,47 @@ function rejectedOrder(rows: readonly Rejection[]): [string, [Rejection, ...Reje
 function heaviestRescue(plan: Plan): string | null {
   const worst = [...plan.stressFactors].sort((a, b) => b.weight * b.value - a.weight * a.value)[0];
   return worst?.rescue ?? null;
+}
+
+/** Every weight term a learned profile moved, deduplicated and ordered. */
+function learnedKeysIn(explanations: readonly Explanation[]): string[] {
+  const keys = new Set<string>();
+  for (const item of explanations) {
+    for (const entry of item.evidence) {
+      if (entry.learned) keys.add(entry.key.replace(/^score:/, ""));
+    }
+  }
+  return [...keys].sort();
+}
+
+/** `filter:over_budget` -> `over_budget`. The key namespace is ours, so this is safe. */
+function codeOf(key: string): RejectionCode | null {
+  const code = key.startsWith("filter:") ? key.slice("filter:".length) : "";
+  return code in CODE_SENTENCE ? (code as RejectionCode) : null;
+}
+
+/**
+ * Every must-see the traveller named, and what became of it. Exact-id resolution
+ * only, for the reason on `MustSee`.
+ */
+function mustSeeIn(
+  ctx: DiscoveryContext,
+  byId: ReadonlyMap<string, Explanation>,
+  known: ReadonlySet<string>,
+): MustSee[] {
+  const out: MustSee[] = [];
+  for (const request of ctx.requests) {
+    if (!request.mustsee) continue;
+    const resolvedId = known.has(request.pos) ? request.pos : null;
+    const explanation = resolvedId === null ? undefined : byId.get(resolvedId);
+    out.push({
+      requested: request.pos,
+      resolvedId,
+      outcome: explanation?.outcome ?? null,
+      blockedBy: explanation?.blocking ? codeOf(explanation.blocking.key) : null,
+    });
+  }
+  return out;
 }
 
 /**
@@ -837,6 +986,20 @@ export function explainPlan(plan: Plan, ctx: DiscoveryContext, opts: ExplainOpti
     byId: new Map(explanations.map((item) => [item.experienceId, item])),
     relaxations: relaxationEvidence(plan),
     rescue: heaviestRescue(plan),
+    learnedKeys: learnedKeysIn(explanations),
+    mustSee: mustSeeIn(
+      ctx,
+      new Map(explanations.map((item) => [item.experienceId, item])),
+      new Set([...(opts.catalogue?.keys() ?? []), ...stopIds]),
+    ),
+    source: {
+      planId: plan.id,
+      contextId: plan.contextId,
+      catalogue: opts.catalogue?.size ?? 0,
+      fits: Object.keys(opts.fits ?? {}).length,
+      scores: Object.keys(opts.scores ?? {}).length,
+      rejections: plan.rejected.length,
+    },
   };
 }
 
@@ -848,6 +1011,51 @@ export function explainOne(
   opts: ExplainOptions = {},
 ): Explanation | null {
   return explainPlan(plan, ctx, opts).byId.get(id) ?? null;
+}
+
+/**
+ * The engine's published `score`, typed structurally.
+ *
+ * Declared here rather than imported from the discovery feature's `EnginePort` so
+ * this file keeps no dependency on another feature's seam, and so a caller can hand
+ * in the real engine's function directly. `pack(ctx, items): Plan` takes no weight
+ * profile and scores internally, so a breakdown for a candidate that was NOT packed
+ * exists only if someone calls `score` for it — and until someone does, a
+ * `considered` candidate has no ranking to show. This is that someone.
+ */
+export type ScoreFn = (
+  ctx: DiscoveryContext,
+  items: readonly Experience[],
+  weights: WeightProfile,
+) => readonly ScoreBreakdown[];
+
+/**
+ * Fill in breakdowns for candidates the plan did not take, keeping the ones it
+ * already has.
+ *
+ * Existing entries always win. A stop's `PlanStop.score` is the engine's own
+ * arithmetic and must never be recomputed: two calls to `score` with the same inputs
+ * should agree, but "should" is not a property worth relying on for the number a
+ * traveller is shown.
+ *
+ * Ids the engine returns nothing for are simply absent, and an absent breakdown
+ * produces no evidence — `explainPlan` then reports that candidate on its fit and
+ * the committed window alone, which is the truth.
+ */
+export function scoreCandidates(
+  score: ScoreFn,
+  ctx: DiscoveryContext,
+  items: readonly Experience[],
+  weights: WeightProfile,
+  already: Readonly<Record<string, ScoreBreakdown>> = {},
+): Record<string, ScoreBreakdown> {
+  const out: Record<string, ScoreBreakdown> = { ...already };
+  const missing = items.filter((item) => !(item.id in out));
+  if (missing.length === 0) return out;
+  for (const breakdown of score(ctx, missing, weights)) {
+    out[breakdown.experienceId] = breakdown;
+  }
+  return out;
 }
 
 /** Just the ids that did not make it, in the engine's order. */

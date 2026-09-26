@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { Rejection as RejectionSchema, type Plan, type Rejection } from "../../contracts";
 
-import { auditLedger, explainOne, explainPlan, ledgerSummary, outcomeLabel } from "./index";
+import { auditLedger, explainOne, explainPlan, ledgerSummary, outcomeLabel, scoreCandidates } from "./index";
 import type { ExplanationLedger } from "./index";
 import {
   CATALOGUE,
@@ -298,3 +298,164 @@ describe("one tapped thing, whichever of the four outcomes it has", () => {
 
 
 
+
+describe("the engine's own verdict, which nothing else in the plan repeats", () => {
+  it("reports a `fits` call as support", () => {
+    const market = need("exp_market_01");
+    const verdict = market.evidence.find((item) => item.key.startsWith("fit:verdict:"));
+    expect(verdict?.key).toBe("fit:verdict:fits");
+    expect(verdict?.polarity).toBe("supports");
+    expect(verdict?.claim).toBe("The engine's verdict is that it fits.");
+  });
+
+  it("reports a `tight` call neutrally, not as praise", () => {
+    const verdict = need("exp_pottery_02").evidence.find((item) => item.key.startsWith("fit:verdict:"));
+    expect(verdict?.key).toBe("fit:verdict:tight");
+    expect(verdict?.polarity).toBe("neutral");
+    expect(verdict?.claim).toBe("The engine rates the margin tight.");
+  });
+
+  it("says so when a stop the engine called `does_not_fit` is in the plan anyway", () => {
+    // The honest reading: a relaxation was applied to get this in, and the ledger
+    // says so rather than presenting it as a confident fit.
+    const walk = need("exp_walk_03");
+    const verdict = walk.evidence.find((item) => item.key.startsWith("fit:verdict:"));
+    expect(verdict?.key).toBe("fit:verdict:does_not_fit");
+    expect(verdict?.polarity).toBe("opposes");
+    expect(verdict?.claim).toBe("The engine's own verdict is that it does not fit, and it is in the plan anyway.");
+  });
+});
+
+describe("what the engine learned, shown on the line it moved", () => {
+  it("marks the learned contribution and lists it for the panel", () => {
+    const market = need("exp_market_01");
+    const crowd = market.evidence.find((item) => item.key === "score:crowd");
+    // `SCORE_MARKET.learnedComponents` is `["crowd"]`, so this one line is a learned
+    // preference and every other line is a stated one.
+    expect(crowd?.learned).toBe(true);
+    expect(LEDGER.learnedKeys).toContain("crowd");
+    for (const item of market.evidence) {
+      if (item.source !== "score") continue;
+      expect(item.learned, item.key).toBe(item.key === "score:crowd");
+    }
+  });
+
+  it("reports nothing learned when nothing was learned", () => {
+    const pottery = need("exp_pottery_02");
+    expect(pottery.evidence.filter((item) => item.learned)).toEqual([]);
+    // The ledger lists terms, not experiences, so one learned term appears once.
+    expect(new Set(LEDGER.learnedKeys).size).toBe(LEDGER.learnedKeys.length);
+    expect(LEDGER.learnedKeys).toEqual([...LEDGER.learnedKeys].sort());
+  });
+});
+
+describe("a must-see the traveller named", () => {
+  it("accounts for every one, and only the must-sees", () => {
+    // Three requests, two of them must-sees, and the non-must-see is ignored.
+    expect(LEDGER.mustSee.map((item) => item.requested)).toEqual(["exp_cafe_04", "the dhobi ghat walk"]);
+  });
+
+  it("resolves an exact id and reports the constraint that blocked it", () => {
+    const cafe = LEDGER.mustSee[0];
+    expect(cafe?.resolvedId).toBe("exp_cafe_04");
+    expect(cafe?.outcome).toBe("rejected");
+    // This is the answer to "you asked for it and it is not here".
+    expect(cafe?.blockedBy).toBe("hours_unverified");
+  });
+
+  it("reports free text as unresolved rather than guessing a match", () => {
+    const prose = LEDGER.mustSee[1];
+    // "the dhobi ghat walk" is not an id, and fuzzy-matching it against the
+    // catalogue would invent a correspondence the traveller never made.
+    expect(prose?.resolvedId).toBeNull();
+    expect(prose?.outcome).toBeNull();
+    expect(prose?.blockedBy).toBeNull();
+    // It is still reported, because a silent must-see is worse than an unmet one.
+    expect(prose?.requested).toBe("the dhobi ghat walk");
+  });
+});
+
+describe("the audit refuses to compare a ledger against data it was not built from", () => {
+  it("says so in one line instead of reporting drift for every id", () => {
+    const stripped = { ...LEDGER };
+    const audit = auditLedger(stripped, PLAN, CTX, { scores: SCORES });
+    expect(audit.ok).toBe(false);
+    // Exactly one violation, and it names the cause.
+    expect(audit.violations).toHaveLength(1);
+    expect(audit.violations[0]?.code).toBe("source_mismatch");
+    expect(audit.violations[0]?.message).toContain("built from different data");
+  });
+
+  it("passes when the same options are used for both calls", () => {
+    expect(auditLedger(LEDGER, PLAN, CTX, OPTS).ok).toBe(true);
+    expect(LEDGER.source).toEqual({
+      planId: PLAN.id,
+      contextId: CTX.id,
+      catalogue: 5,
+      fits: 4,
+      scores: 3,
+      rejections: 3,
+    });
+  });
+});
+
+describe("scoring the candidates the packer did not take", () => {
+  const weights = {
+    version: "wp_1.2.0",
+    weights: {},
+    source: "prior" as const,
+    updatedAt: "2026-01-01T00:00:00.000Z",
+    observations: 0,
+  };
+
+  it("fills only the gaps and never recomputes a stop's own breakdown", () => {
+    const asked: string[][] = [];
+    const result = scoreCandidates(
+      (ctx, items) => {
+        asked.push(items.map((item) => item.id));
+        return items.map((item) => ({
+          experienceId: item.id,
+          total: 0.5,
+          components: [],
+          profileVersion: "wp_1.2.0",
+          learnedComponents: [],
+        }));
+      },
+      CTX,
+      [{ id: "exp_market_01" } as never, { id: "exp_shore_05" } as never],
+      weights,
+      SCORES,
+    );
+
+    // The stop already had one, so only the un-packed candidate was asked about.
+    expect(asked).toEqual([["exp_shore_05"]]);
+    expect(result.exp_market_01).toBe(SCORES.exp_market_01);
+    expect(result.exp_shore_05?.total).toBe(0.5);
+  });
+
+  it("calls nothing when there is nothing missing", () => {
+    let called = false;
+    scoreCandidates(
+      () => {
+        called = true;
+        return [];
+      },
+      CTX,
+      [{ id: "exp_market_01" } as never],
+      weights,
+      SCORES,
+    );
+    expect(called).toBe(false);
+  });
+
+  it("leaves an id the engine declines to score absent, rather than inventing a zero", () => {
+    const result = scoreCandidates(() => [], CTX, [{ id: "exp_shore_05" } as never], weights, {});
+    expect(result.exp_shore_05).toBeUndefined();
+    // And the ledger then reports that candidate on its fit and the window alone.
+    const withoutScores = explainPlan(PLAN, CTX, { catalogue, fits: FITS });
+    const shore = withoutScores.byId.get("exp_shore_05");
+    expect(shore?.outcome).toBe("considered");
+    expect(shore?.evidence.some((item) => item.source === "score")).toBe(false);
+    expect(shore?.score).toBeNull();
+  });
+});

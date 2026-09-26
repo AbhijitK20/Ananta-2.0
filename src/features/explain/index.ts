@@ -25,6 +25,7 @@ export {
   explainOne,
   explainPlan,
   rejectedIds,
+  scoreCandidates,
   type Evidence,
   type EvidencePolarity,
   type EvidenceSource,
@@ -33,15 +34,21 @@ export {
   type Explanation,
   type ExplanationLedger,
   type LedgerAudit,
+  type LedgerSource,
   type LedgerViolation,
+  type MustSee,
   type Outcome,
   type RecoveryAction,
+  type ScoreFn,
 } from "./evidence";
 
 export {
+  explainSwaps,
   ledgerSummary,
   outcomeLabel,
+  swapCost,
   whyLedgerProps,
   type LedgerHandlers,
+  type SwapExplanation,
   type WhyLedgerProps,
 } from "./ledger";

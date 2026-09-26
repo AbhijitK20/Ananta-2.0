@@ -106,7 +106,16 @@ export const CTX = DiscoveryContext.parse({
   interests: ["local", "craft"],
   avoid: ["crowded"],
   weather: { condition: "cloudy", tempC: 29, source: "simulated" },
-  requests: [],
+  requests: [
+    // Resolves by exact id, and the gate dropped it — so the panel can answer
+    // "you asked for this, and here is why it is not here".
+    { pos: "exp_cafe_04", neg: null, mustsee: true, type: "location" },
+    // Names a place in words rather than by id. Nothing matches it exactly, and the
+    // honest answer is a data gap, not a constraint the traveller failed.
+    { pos: "the dhobi ghat walk", neg: null, mustsee: true, type: "location" },
+    // Not a must-see, so it must not appear in the ledger's must-see accounting.
+    { pos: "exp_market_01", neg: "crowds", mustsee: false, type: "location" },
+  ],
   excludedIds: [],
   pinnedIds: [],
   original: { availableMin: 180, budget: { minor: 150_000, currency: "INR" }, partySize: 4, accessNeeds: ["lowStairs"] },
