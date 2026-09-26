@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type {
   ContextChange,
@@ -23,6 +23,19 @@ import { Sheet } from "@/components/ui/Overlays";
 import { LearnedWeights, ResultCard, WhyLedger } from "@/components/fit";
 
 import { CONTEXT_TRIGGERS } from "../_fixtures";
+
+/**
+ * How many result cards render before the traveller asks for more.
+ *
+ * 24 is roughly two screens of cards. The catalogue is ~5,000 rows, so this is
+ * not a tuning knob for taste — it is the difference between a page that renders
+ * in milliseconds and one that builds five thousand DOM subtrees on the server
+ * and again on the client.
+ */
+const VISIBLE_STEPS = 24;
+
+/** How many more cards each "Show more" press adds. */
+const VISIBLE_INCREMENT = 48;
 import { AccessibilityControls } from "./AccessibilityControls";
 import { ChatSidecar } from "./ChatSidecar";
 import { MapPanel } from "./MapPanel";
@@ -115,6 +128,98 @@ export function DiscoverySurface({
         .filter((item) => !rejectedIds.has(item.id) || item.id === selectedId),
     [experiences, plannedIds, rejectedIds, selectedId],
   );
+
+  /*
+    Ranked, and paged.
+
+    Two problems arrived together when the catalogue went from 40 hand-written
+    rows to ~5,000 harvested ones, and neither is a styling problem.
+
+    1. The list was in catalogue order, which for a harvested catalogue is OSM
+       element order — effectively arbitrary. The first screen was whatever the
+       overpass response happened to contain, not the best places for this
+       traveller. Sorting by the score the engine already computed for every row
+       costs nothing extra; the page has been calculating `scores` for all of
+       them since the catalogue load and throwing them away at the render.
+
+    2. All ~5,000 rendered at once, so the page grew to thousands of DOM nodes
+       and the user scrolled forever. `VISIBLE_STEPS` renders a screenful and
+       grows on request. The total is stated, because a silently truncated list
+       reads as "that is everything" and is not.
+  */
+  const ranked = useMemo(
+    () =>
+      [...candidates].sort((a, b) => {
+        /*
+          Fit first, score second. Not the other way round.
+
+          `score` measures how good a place is for this traveller; it does not
+          measure whether the place is reachable in the time available. Sorting on
+          score alone put "does not fit" cards at the top of the list, because
+          the scores are near-tied across thousands of rows (3.566 vs 3.564) so a
+          fit-aware tiebreaker almost never fired. That is the exact behaviour
+          the product says it refuses: a recommendation that does not fit is not
+          shown, and it was being shown first.
+
+          So the primary key is the gate's own verdict. Everything that fits is
+          ranked above everything that does not, and score only orders within
+          each group. The does-not-fit rows stay in the list, ranked last and
+          still de-emphasised by the card, because the near-miss is what tells
+          the traveller what to change.
+        */
+        const aFit = fits[a.id]?.verdict === "does_not_fit" ? 1 : 0;
+        const bFit = fits[b.id]?.verdict === "does_not_fit" ? 1 : 0;
+        if (aFit !== bFit) return aFit - bFit;
+        const byScore = (scores[b.id]?.total ?? 0) - (scores[a.id]?.total ?? 0);
+        if (byScore !== 0) return byScore;
+        return a.name.localeCompare(b.name);
+      }),
+    [candidates, scores, fits],
+  );
+
+  const [visibleCount, setVisibleCount] = useState(VISIBLE_STEPS);
+  useEffect(() => {
+    // A context change re-ranks the list; keeping a stale count of 400 would
+    // leave the traveller buried in rows that no longer apply.
+    setVisibleCount(VISIBLE_STEPS);
+  }, [context]);
+
+  const visible = useMemo(
+    () => ranked.slice(0, visibleCount).concat(selectedId ? ranked.filter((r) => r.id === selectedId) : []),
+    [ranked, visibleCount, selectedId],
+  );
+  const remaining = Math.max(0, ranked.length - visibleCount);
+
+  /**
+   * What the map draws as highlighted.
+   *
+   * This was the plan's stops and nothing else, so selecting a place from the
+   * list could never light up its marker — the card would change and the map
+   * would sit there unchanged. The selection belongs in this set alongside the
+   * plan. Memoised on the joined key because ClusterLayer re-projects every
+   * feature when this array's contents change, and a fresh array identity on
+   * each render would make that run on every keystroke in the context editor.
+   */
+  const mapHighlights = useMemo(
+    () => (selectedId ? [...new Set([...planned, selectedId])] : planned),
+    [planned, selectedId],
+  );
+
+  /**
+   * Select a place and reveal it on the map.
+   *
+   * This is the coupling that was missing. `selectedId` marks the card, and
+   * `revealedId` is what ClusterLayer watches to fly the map, expand the
+   * containing cluster and spiderfy if the area is still too dense to resolve.
+   * Setting only one of them produced the two symptoms that sent us here: the
+   * card highlighted with nothing on the map, or the map moved with no card
+   * highlighted.
+   */
+  const revealExperience = useCallback((id: string, name: string) => {
+    setSelectedId(id);
+    setRevealedId(id);
+    setAnnouncement(`${name} selected and shown on the map.`);
+  }, []);
 
   /** Patch the context. Every control goes through here. */
   const patchContext = useCallback((patch: Partial<DiscoveryContext>) => {
@@ -370,7 +475,7 @@ export function DiscoverySurface({
               />
             ) : (
               <ul className="space-y-3">
-                {candidates.map((experience) => {
+                {visible.map((experience) => {
                   const fit = fits[experience.id];
                   if (!fit) return null;
                   const rejection = rejectedById.get(experience.id);
@@ -388,12 +493,9 @@ export function DiscoverySurface({
                         onPrimaryAction={
                           isPlanned
                             ? undefined
-                            : () => {
-                                setRevealedId(experience.id);
-                                setSelectedId(experience.id);
-                                setAnnouncement(`${experience.name} revealed on the map.`);
-                              }
+                            : () => revealExperience(experience.id, experience.name)
                         }
+                        onReveal={(item) => revealExperience(item.id, item.name)}
                         onSelect={(item) => {
                           setLedgerFor(item.id);
                           setLedgerOpen(true);
@@ -404,6 +506,33 @@ export function DiscoverySurface({
                 })}
               </ul>
             )}
+
+            {/*
+              Pagination, with the honest count.
+
+              The catalogue is ~5,000 rows, so "no pagination" was not a polish
+              item: the server rendered every card and the client hydrated five
+              thousand subtrees before anything was interactive. The total is
+              stated rather than implied, because a list that silently stops is
+              indistinguishable from a list that has run out.
+            */}
+            {remaining > 0 ? (
+              <div className="mt-4 flex flex-col items-start gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => setVisibleCount((n) => n + VISIBLE_INCREMENT)}
+                >
+                  Show {Math.min(VISIBLE_INCREMENT, remaining)} more
+                </Button>
+                <p className="text-xs text-ink-muted">
+                  Showing {Math.min(visibleCount, ranked.length)} of {ranked.length} places
+                </p>
+              </div>
+            ) : ranked.length > 0 ? (
+              <p className="mt-4 text-xs text-ink-muted">
+                All {ranked.length} places shown.
+              </p>
+            ) : null}
 
             {/* The journey. Vertical, with a connector between every pair. */}
             <Card className="mt-4">
@@ -428,8 +557,12 @@ export function DiscoverySurface({
               plan={plan}
               experienceById={experienceById}
               revealedId={revealedId}
-              selectedIds={planned}
-              onSelect={(id) => setSelectedId(id)}
+              selectedIds={mapHighlights}
+              onSelect={(id) => {
+                const item = experienceById.get(id);
+                setSelectedId(id);
+                if (item) setAnnouncement(`${item.name} selected on the map.`);
+              }}
               className="h-[24rem] lg:h-[32rem]"
             />
 
