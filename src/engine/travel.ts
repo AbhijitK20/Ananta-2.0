@@ -233,7 +233,13 @@ function toResult(
   _ctx: TravelContext,
 ): TravelResult {
   return {
-    minutes: Math.max(1, Math.round(raw.minutes)),
+    // CEIL, never round. A leg that reports 12 minutes when it is 12.4 makes
+    // the plan optimistic, and the error compounds across every stop — so the
+    // traveller is the one who discovers it, by being late. Rounding up costs
+    // at most a minute and fails in the safe direction. The floor of 1 keeps a
+    // genuinely adjacent venue from costing zero, which would let a plan pack
+    // an unbounded number of stops into the same minute.
+    minutes: Math.max(1, Math.ceil(raw.minutes)),
     metres: Math.round(raw.metres),
     estimated: !live,
     detail: detail ?? raw.detail ?? null,

@@ -21,7 +21,7 @@ import type {
   Provenance,
 } from "@/contracts";
 import { toMajor, formatPerPerson } from "@/lib/money";
-import { bucketOf } from "@/lib/time";
+import { EPOCH_ISO, bucketOf } from "@/lib/time";
 /** Peak for Mumbai congestion: 08:00-11:00 and 17:00-21:00. */
 function isPeakHour(minute: number): boolean {
   return (minute >= 8 * 60 && minute < 11 * 60) || (minute >= 17 * 60 && minute < 21 * 60);
@@ -49,7 +49,9 @@ export const DEFAULT_PROFILE: WeightProfile = {
     providerReliability: 0.15,
   },
   source: "prior",
-  updatedAt: new Date(0).toISOString(),
+  // A named sentinel, not a Date. Constructing one here would put a Date back
+  // inside the engine; see EPOCH_ISO in lib/time.ts.
+  updatedAt: EPOCH_ISO,
   observations: 0,
 };
 
