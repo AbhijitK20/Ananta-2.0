@@ -82,7 +82,17 @@ export function computeFit(
     },
     {
       label: "Open",
-      pass: hours.open,
+      // `hours.unknown` means we could not tell (never surveyed, or an
+      // expression we cannot read). That is NOT the same as "closed", and
+      // treating it as a failure is how the packer silently drops every
+      // experience whose hours nobody has checked -- which, for a catalogue
+      // harvested from OSM, is most of the long tail. The file's own
+      // hoursDetail() comment calls this out; this check is where that rule
+      // has to actually hold, because `!checks.every(pass)` is what produces
+      // `does_not_fit`. Confidently shut still fails; merely unknown passes
+      // and the detail line says plainly that the hours are unverified, so
+      // the traveller sees the caveat rather than inheriting a false certainty.
+      pass: hours.unknown ? true : hours.open,
       detail: hoursDetail(hours, exp.hours, weekday),
     },
     {

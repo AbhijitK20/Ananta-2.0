@@ -94,13 +94,25 @@ export function validate(plan: Plan): ValidationResult {
   // ---------------------------------------------------------------------------
   // 1. Time: does the itinerary's own duration equal the sum of its parts?
   // ---------------------------------------------------------------------------
-  // A stop's on-site time is `fit.activityMin` and each leg adds `minutes`.
+  // The three components of a stop are `fit.travelMin` (getting there),
+  // `fit.activityMin` (on site) and `fit.bufferMin` (the overhead the engine
+  // adds so a plan is not knife-edge), plus each leg's `minutes`.
+  //
+  // The buffer MUST be included, and getting that wrong is not hypothetical: the
+  // packer sets `Plan.totalMin` to elapsed wall-clock, which counts buffers,
+  // while a naive parts-sum does not. The first end-to-end test caught exactly
+  // that 25-minute drift. `Plan.utilisation` is `plannedMin / availableMin` and
+  // is the headline that tells the traveller how much of their day is gone, so
+  // the total has to mean "time actually spent, including recovery" -- which is
+  // the packer's elapsed figure, and the sum the validator must reproduce.
+  //
   // This is deliberately NOT derived from arrive/depart deltas: those are two
   // independent assertions of the same fact, and a packer that wrote both from
   // one clock is the normal case. Checking the parts sum is the stronger test.
   const activityMin = stops.reduce((sum, s) => sum + (s.fit?.activityMin ?? 0), 0);
+  const bufferMin = stops.reduce((sum, s) => sum + (s.fit?.bufferMin ?? 0), 0);
   const travelMin = legs.reduce((sum, l) => sum + (l.minutes ?? 0), 0);
-  const recomputedTotalMin = activityMin + travelMin;
+  const recomputedTotalMin = activityMin + bufferMin + travelMin;
 
   if (stops.length > 0) {
     const drift = recomputedTotalMin - (plan.totalMin ?? 0);
@@ -109,7 +121,8 @@ export function validate(plan: Plan): ValidationResult {
         fail(
           "total_min_mismatch",
           `Plan claims ${plan.totalMin} min but its own stops and legs sum to ` +
-            `${recomputedTotalMin} min (${activityMin} on site + ${travelMin} travelling). ` +
+            `${recomputedTotalMin} min (${activityMin} on site + ${bufferMin} buffer + ` +
+            `${travelMin} travelling). ` +
             `Off by ${drift > 0 ? "+" : ""}${drift} min.`,
           "plan.totalMin",
         ),

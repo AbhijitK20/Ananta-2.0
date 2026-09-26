@@ -89,7 +89,11 @@ function leg(fromId: string, toId: string, minutes: number): TravelLeg {
 function goodPlan(): Plan {
   const stops = [stop("a", 0, 600, 45, 50000), stop("b", 1, 655, 60, 30000)];
   const legs = [leg("a", "b", 10)];
-  const totalMin = stops.reduce((s, x) => s + x.fit.activityMin, 0) +
+  // Mirrors validate()'s recompute exactly: activity + buffer + travel. The
+  // default fit() carries bufferMin 5, so the two stops add 10 here. Getting
+  // this wrong is the 25-minute drift the first e2e test caught in the packer.
+  const totalMin =
+    stops.reduce((s, x) => s + x.fit.activityMin + x.fit.bufferMin, 0) +
     legs.reduce((s, l) => s + l.minutes, 0);
   const totalCost = fromMinor(
     stops.reduce((s, x) => s + (x.fit.cost?.minor ?? 0), 0),
@@ -156,8 +160,8 @@ describe("validate", () => {
 
   it("tolerates a single minute of rounding drift but not a dropped leg", () => {
     // One minute is the packer's own rounding; a dropped leg is tens of minutes.
-    expect(validate(corrupt({ totalMin: 116 })).ok).toBe(true);
-    expect(validate(corrupt({ totalMin: 130 })).ok).toBe(false);
+    expect(validate(corrupt({ totalMin: 126 })).ok).toBe(true);
+    expect(validate(corrupt({ totalMin: 140 })).ok).toBe(false);
   });
 
   it("catches a totalCost that does not match its stops", () => {
