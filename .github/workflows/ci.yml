@@ -19,21 +19,29 @@ jobs:
         with:
           node-version: "22"
 
-      # The committed package-lock.json currently has 23 entries with no
-      # `version` field, which makes `npm ci` abort with "Invalid Version:".
-      # Regenerating it is Abhijit's call (TASKS.md: package.json is a group
-      # decision), so CI installs without it rather than being left permanently
-      # red. Delete this step once the lockfile is repaired.
+      # NOT `npm ci`, and this is a known open defect rather than a preference.
+      #
+      # The committed package-lock.json has 23 of 609 entries with no `version`
+      # field, so `npm ci` aborts with "Invalid Version:" (verified: exit code 1
+      # on the current lockfile). `npm install --no-package-lock` resolves from
+      # package.json and leaves the committed lockfile untouched.
+      #
+      # A PR review reported this lockfile as already repaired. It is not, and
+      # `upstream/main` has not moved since this branch was cut, so nothing has
+      # been fixed yet. Reverting this step to `npm ci` without repairing the
+      # lockfile would leave the pipeline permanently red.
+      #
+      # TO REVERT: repair the lockfile (regenerate it, or fill in the 23 missing
+      # `version` fields), then replace the step below with `npm ci`. The
+      # lockfile is not touched in this PR because it is owned by another stream.
       - name: Install
         run: npm install --no-package-lock
 
-      - name: Approve install scripts (esbuild is required by tsx)
-        run: |
-          npm install-scripts approve esbuild || true
-          npm install-scripts approve unrs-resolver || true
-
       - name: Typecheck
         run: npx tsc --noEmit
+
+      - name: Engine contract
+        run: npx vitest run
 
       - name: Token gate — no colour literal outside tokens.css
         run: npx tsx scripts/theme-lint.ts
@@ -54,8 +62,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      # See the `gate` job for why this is not `npm ci` yet.
       - run: npm install --no-package-lock
-      - run: npm install-scripts approve unrs-resolver || true
       # The ESLint CLI, not `next lint`. `next lint` is deprecated in Next 16
       # and interactively prompts when it finds no config, so as a CI step it
       # would hang the job rather than pass or fail it.

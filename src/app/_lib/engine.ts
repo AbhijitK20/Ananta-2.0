@@ -38,7 +38,13 @@ import {
  *
  * Declared as a TYPE, not an interface we implement — so importing this module
  * cannot accidentally satisfy the engine's contract while missing a function.
- * The `satisfies` check at the bottom is what makes a mismatch a build error.
+ *
+ * The `satisfies EngineApi` check at the bottom of this file constrains the
+ * RUNTIME GUARD below to these names. It does NOT compare either one against the
+ * real engine: `tsc` resolves `@/engine` to the ambient declaration in
+ * `engine-seam.d.ts` and never to a real module, so a mismatch between this type
+ * and a future `src/engine/index.ts` is invisible to the typechecker. That
+ * comparison is `tests/engine-seam.test.ts`, and nothing else.
  */
 export type EngineApi = {
   retrieve(input: { context: DiscoveryContext; catalogue: Experience[]; limit?: number }): Experience[];
@@ -86,6 +92,30 @@ export type EngineAvailability =
   | { ready: false; reason: string };
 
 /**
+ * The exports the UI requires before it will call the engine at all.
+ *
+ * Exported so `tests/engine-seam.test.ts` can assert that this runtime guard and
+ * the test's own copy of the contract have not drifted apart. That test is the
+ * only thing that can catch the drift, because the ambient declaration in
+ * `engine-seam.d.ts` is invisible to the typechecker once it exists.
+ *
+ * Order does not matter; the test sorts both sides.
+ */
+export const REQUIRED_ENGINE_EXPORTS = [
+  "retrieve",
+  "filterFeasible",
+  "score",
+  "pack",
+  "validate",
+  "replan",
+  "computeFit",
+  "stress",
+  "isOpenDuring",
+  "travelBetween",
+  "observe",
+] as const satisfies ReadonlyArray<keyof EngineApi>;
+
+/**
  * Resolve the engine, or explain why there isn't one.
  *
  * Cached after the first attempt: the dynamic import is awaited on every
@@ -103,20 +133,7 @@ export async function loadEngine(): Promise<EngineAvailability> {
     // Check the whole surface, not just that the module resolved. A partial
     // engine that fails halfway through a request is worse than none, because
     // the failure surfaces as a wrong answer instead of an error.
-    const required: Array<keyof EngineApi> = [
-      "retrieve",
-      "filterFeasible",
-      "score",
-      "pack",
-      "validate",
-      "replan",
-      "computeFit",
-      "stress",
-      "isOpenDuring",
-      "travelBetween",
-      "observe",
-    ];
-    const missing = required.filter((key) => typeof mod[key] !== "function");
+    const missing = REQUIRED_ENGINE_EXPORTS.filter((key) => typeof mod[key] !== "function");
     if (missing.length > 0) {
       cached = {
         ready: false,

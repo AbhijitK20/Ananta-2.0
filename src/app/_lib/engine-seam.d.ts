@@ -20,16 +20,36 @@
  * app cannot accidentally satisfy the engine's contract by importing this,
  * because a `.d.ts` emits nothing.
  *
- * WHY IT CANNOT DRIFT SILENTLY. Two independent checks cover the gap:
- *  - `loadEngine()` checks at runtime that all eleven exported functions
- *    actually exist and are functions. A partial engine fails loudly on the
- *    first request rather than halfway through producing a wrong answer.
- *  - `satisfies EngineApi` in engine.ts checks this declaration against the
- *    shape the rest of the app assumes, so a change to the seam breaks
- *    typecheck.
- * If the real engine's signatures differ from TASKS.md, Abhijit's own
- * typecheck is what catches it, and the fix is to delete this file and correct
- * the seam.
+ * HOW DRIFT IS CAUGHT — AND WHAT THIS FILE CANNOT DO.
+ *
+ * An ambient module declaration is invisible to the typechecker once it exists.
+ * `tsc` resolves `@/engine` to THIS file and never to a real one, so once it is
+ * present the typechecker is satisfied by the FICTION. An earlier version of
+ * this comment claimed that `satisfies EngineApi` in engine.ts would "break
+ * typecheck" on a change to the seam. That was false: `satisfies` checks this
+ * declaration against the shape the UI assumes, and both sides are code in this
+ * directory. It cannot compare either one to an engine that does not exist yet.
+ *
+ * So the real protections are, in order of strength:
+ *
+ *  1. `tests/engine-seam.test.ts` imports the REAL `@/engine` and asserts every
+ *     declared export is a function. It is enabled by the presence of
+ *     `src/engine/index.ts`, so the day the engine lands the same commit starts
+ *     enforcing this contract with no edit here. This is the only check that
+ *     compares the declaration against a real module.
+ *  2. That test also asserts the runtime guard in `engine.ts` and its own copy
+ *     of the contract still agree, so the two lists cannot drift apart while the
+ *     engine is still absent.
+ *  3. `loadEngine()` checks at runtime that all eleven exports exist before the
+ *     app calls any of them. This is DEFENCE IN DEPTH, not the primary gate: it
+ *     runs per request, it reports a missing engine honestly to the user, and it
+ *     keeps a partial engine from producing a half-built plan. It cannot catch
+ *     a wrong SIGNATURE, only a missing export.
+ *
+ * What actually enforces the contract is the engine integration itself: when
+ * `src/engine/index.ts` lands it must satisfy this declaration, and the fix for
+ * any mismatch is to delete this file and correct the seam — not to widen a type
+ * at the call site.
  */
 declare module "@/engine" {
   import type {
