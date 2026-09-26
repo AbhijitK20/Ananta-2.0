@@ -1,9 +1,10 @@
-# PRD — TravelBuddy (Ananta)
+# PRD — Ananta
 
 > Don't optimise for places. **Optimise for moments.**
 
-Research codename ATHITI · Masterplan: [`MASTERPLAN.md`](MASTERPLAN.md) ·
-Decisions: [`DECISIONS.md`](DECISIONS.md) · Contracts: `src/contracts/index.ts`
+Research codename: ATHITI · Masterplan: [`MASTERPLAN.md`](MASTERPLAN.md) ·
+Decisions: [`DECISIONS.md`](DECISIONS.md) · Features:
+[`FEATURES.md`](FEATURES.md) · Contracts: `src/contracts/index.ts`
 
 | | |
 |---|---|
@@ -89,59 +90,59 @@ Priority: **M** = must ship · **S** = should · **N** = nice
 
 ### Discovery
 
-| # | Requirement | Pri | Owner |
-|---|---|:--:|---|
-| F1 | Resolve a location by pin, free text, or "I am at <hotel/landmark>" | M | V |
-| F2 | Capture the window: available minutes + wall-clock now | M | A |
-| F3 | Capture budget as a total, optionally a per-person ceiling | M | A |
-| F4 | Capture party: size, type, child ages | M | V |
-| F5 | Capture accessibility needs as discrete booleans, never a score | M | A |
-| F6 | Capture interests, and things to avoid | M | V |
-| F7 | Detect weather from a real forecast, with a manual override | S | V |
-| F8 | Return a **chained, time-boxed plan**, not a list | M | A |
-| F9 | Every stop carries a `Fit` with per-constraint pass/fail | M | A |
-| F10 | Every stop carries a `ScoreBreakdown` in plain sentences | M | A |
-| F11 | Report **why a specific thing the traveller asked about is missing** | M | A |
-| F12 | Suggest alternatives when the first choice is infeasible | M | A |
+| # | Requirement | Pri |
+|---|---|:--:|
+| F1 | Resolve a location by pin, free text, or "I am at <hotel/landmark>" | M |
+| F2 | Capture the window: available minutes + wall-clock now | M |
+| F3 | Capture budget as a total, optionally a per-person ceiling | M |
+| F4 | Capture party: size, type, child ages | M |
+| F5 | Capture accessibility needs as discrete booleans, never a score | M |
+| F6 | Capture interests, and things to avoid | M |
+| F7 | Detect weather from a forecast, with a manual override, labelling the source `live` or `simulated` | S |
+| F8 | Return a **chained, time-boxed plan**, not a list | M |
+| F9 | Every stop carries a `Fit` with per-constraint pass/fail | M |
+| F10 | Every stop carries a `ScoreBreakdown` in plain sentences | M |
+| F11 | Report **why a specific thing the traveller asked about is missing** | M |
+| F12 | Suggest alternatives when the first choice is infeasible | M |
 
 ### Adaptation
 
-| # | Requirement | Pri | Owner |
-|---|---|:--:|---|
-| F13 | Re-solve on a context change and emit a **minimal swap set** | M | A |
-| F14 | Every swap carries a written reason and a score delta | M | A |
-| F15 | Preserve intent: diff against `original`, never the last mutation | M | A |
-| F16 | One-click triggers for rain, lost time, sold out, budget cut | M | K |
-| F17 | A named relaxation ladder that always says what it gave up | M | A |
+| # | Requirement | Pri |
+|---|---|:--:|
+| F13 | Re-solve on a context change and emit a **minimal swap set** | M |
+| F14 | Every swap carries a written reason and a score delta | M |
+| F15 | Preserve intent: diff against `original`, never the last mutation | M |
+| F16 | One-click triggers for rain, lost time, sold out, budget cut | M |
+| F17 | A named relaxation ladder that always says what it gave up | M |
 
 ### Trust and learning
 
-| # | Requirement | Pri | Owner |
-|---|---|:--:|---|
-| F18 | Provenance badge on every inferred field | M | K |
-| F19 | "What I learned about you" — weights visible and editable | S | K |
-| F20 | Learn from interactions, shown to the user, deletable | S | A |
-| F21 | Report incorrect information, and act on it | S | V |
-| F22 | Stress score with one concrete rescue move | S | A |
+| # | Requirement | Pri |
+|---|---|:--:|
+| F18 | Provenance badge on every inferred field | M |
+| F19 | "What I learned about you" — weights visible and editable | S |
+| F20 | Learn from interactions, shown to the user, deletable | S |
+| F21 | Report incorrect information, and act on it | S |
+| F22 | Stress score with one concrete rescue move | S |
 
 ### Provider
 
-| # | Requirement | Pri | Owner |
-|---|---|:--:|---|
-| F23 | Create and edit a listing with duration, price, capacity, accessibility | S | V |
-| F24 | Define availability slots with capacity | S | V |
-| F25 | Receive, accept or decline booking requests, with a reason | S | V |
-| F26 | Impressions, requests, acceptance rate | S | V |
-| F27 | **Unmet-demand feed** — what nearby travellers wanted and could not get | S | V |
-| F28 | Listing-quality score with the measured effect on match rate | N | V |
+| # | Requirement | Pri |
+|---|---|:--:|
+| F23 | Create and edit a listing with duration, price, capacity, accessibility | S |
+| F24 | Define availability slots with capacity | S |
+| F25 | Receive, accept or decline booking requests, with a reason | S |
+| F26 | Impressions, requests, acceptance rate | S |
+| F27 | **Unmet Demand → Provider Opportunity** — what nearby travellers wanted and could not get | S |
+| F28 | Listing-quality score with the measured effect on match rate | N |
 
 ### Scale
 
-| # | Requirement | Pri | Owner |
-|---|---|:--:|---|
-| F29 | Engine is city-agnostic; a city is a manifest | M | A |
-| F30 | Navi Mumbai supported, including ferry corridors | S | A |
-| F31 | Runs fully offline for the demo path | M | A |
+| # | Requirement | Pri |
+|---|---|:--:|
+| F29 | Engine is city-agnostic; a city is a manifest | M |
+| F30 | Navi Mumbai supported, including ferry corridors | S |
+| F31 | Runs fully offline for the demo path | M |
 
 ## 6. Non-functional requirements
 
@@ -160,15 +161,15 @@ Priority: **M** = must ship · **S** = should · **N** = nice
 
 ## 7. Data requirements
 
-| Layer | Volume | Owner | Notes |
-|---|---|---|---|
-| Curated experiences | ~250 | A + V | 3 fields that only a local knows: `durationMin`, true `pricePerPerson`, real `capacity` |
-| OSM spine | ~2–4k | A | Real coordinates and names. Sparse on hours/price/accessibility — by design |
-| Reviews | ~1.5k | V | Author, date, party type, party size, spend. Powers Bayesian ratings |
-| Events / festivals | 30–50 | V | Ganesh Chaturthi, monsoon-season events, weekly markets |
-| Transit corridors | 40–60 | A | Station pairs with real in-vehicle + wait times |
-| Congestion model | per corridor × time band | A | Documented **estimate**, labelled as such |
-| Unmet demand | generated live | V | The most valuable dataset in the product |
+| Layer | Volume | Notes |
+|---|---|---|
+| Curated experiences | ~250 | 3 fields that only a local knows: `durationMin`, true `pricePerPerson`, real `capacity` |
+| OSM spine | ~2–4k | Real coordinates and names. Sparse on hours/price/accessibility — by design, and measured |
+| Reviews | ~1.5k | Author, date, party type, party size, spend. Powers Bayesian ratings |
+| Events / festivals | 30–50 | Ganesh Chaturthi, monsoon-season events, weekly markets |
+| Transit corridors | 40–60 | Station pairs with real in-vehicle + wait times |
+| Congestion model | per corridor × time band | Documented **estimate**, labelled as such |
+| Unmet Demand | accumulated per search | The most valuable dataset in the product. Empty until people use it, which is why the demo seeds it |
 
 ## 8. Out of scope
 
@@ -181,14 +182,14 @@ Navi Mumbai · native mobile apps · offline sync.
 
 | Risk | Likelihood | Mitigation |
 |---|---|---|
-| Curated dataset is the long pole (~2 person-days) | High | Start Day 2, 60/day, and let OSM+inference backfill if we fall behind — visibly labelled |
+| Curated dataset is the long pole (~2 person-days) | High | Hand-author first, let OSM + inference backfill if we fall behind — visibly labelled |
 | Live LLM fails or rate-limits mid-demo | Medium | Deterministic regex NLU + template narration; eval passes with `LLM=off`; `LLM=off` toggle in the UI |
-| Overpass or OSRM is down or blocked | Medium | 3 mirrors with failover, aggressive caching, **committed offline snapshot** |
-| Travel times look wrong for Mumbai | High | Congestion multiplier + transit corridors, and the estimate is labelled. Better to show a reasoned estimate than free-flow lie |
-| OSM attributes too sparse | Certain | Measured and designed around — hence the curated layer |
-| Three people conflict | Medium | This file. Zero file overlap, frozen contracts, daily merges |
+| Overpass or OSRM is down or blocked | **Measured, not hypothetical** | Already true from this host. Mirror failover, aggressive caching, haversine fallback, **committed offline snapshot and committed isochrones** |
+| Travel times look wrong for Mumbai | High | Congestion multiplier + transit corridors, and the estimate is labelled. Better to show a reasoned estimate than a free-flow lie |
+| OSM attributes too sparse | Certain | Measured in `data/reference/` and designed around — hence the curated layer, and hence absent-is-unknown |
+| Three people conflict | Medium | One frozen contract file, zero file overlap |
 | Scope creep into the marketplace | Medium | D4 caps it at listings + requests, no payments |
-| Nobody owns deployment | Medium | O4 on Day 4 standup. No CLI and no creds on this machine |
+| No deployment target available | Medium | O4 in `DECISIONS.md`. The demo runs locally and offline, so this blocks a URL, not a demo |
 
 ## 10. Acceptance
 

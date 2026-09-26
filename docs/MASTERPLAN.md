@@ -1,4 +1,4 @@
-# MASTERPLAN — TravelBuddy (Ananta)
+# MASTERPLAN — Ananta
 
 > Don't optimise for places. **Optimise for moments.**
 
@@ -18,7 +18,7 @@ Three things to internalise:
 1. **The engine is deterministic TypeScript. The LLM is never in the decision
    path.** It does natural-language understanding, explanation narration, and
    offline data enrichment. Nothing else. This is why the eval harness means
-   anything, and it is the one thing most of the reference projects get wrong.
+   anything, and it is the failure mode the reference projects mostly share.
 2. **Nothing can be recommended that does not fit.** Time budget, budget,
    opening hours, capacity, group fit, accessibility, weather, distance — these
    are hard filters, not ranking weights. A card either passes or it is not
@@ -53,7 +53,7 @@ A **fit-first discovery engine** with two surfaces:
   where every stop demonstrably fits. Change reality, and the plan re-solves and
   tells you what it swapped and why.
 - **Provider:** a listing, real availability, a request inbox, and — the part
-  that matters — an **unmet-demand feed** telling them what travellers nearby
+  that matters — **Unmet Demand → Provider Opportunity**, telling them what travellers nearby
   searched for and could not get, and which single constraint killed it.
 
 The differentiator is not "AI recommendations". It is that we treat a
@@ -107,7 +107,7 @@ Hard, in this order, cheapest first:
 
 Each rejection carries a **finished sentence with real numbers**: *"Needs 40 min
 more than you have left"*, not *"constraint violated"*. Two consumers: the
-"why not this" panel, and the provider unmet-demand feed.
+"why not this" panel, and Unmet Demand and the Provider Opportunity built from it.
 
 ### 3.2 Scoring
 
@@ -127,8 +127,8 @@ being visible and editable.
 
 ### 3.3 Packing
 
-Cluster-then-route, from ITINERA (deployed in production at TuTu, thousands of
-users):
+Cluster-then-route, following ITINERA, which the paper reports as deployed in
+production:
 
 1. Build a radius graph over feasible candidates (Web-Mercator metres).
 2. Peel maximum cliques with Bron–Kerbosch → **diameter-bounded** clusters.
@@ -137,8 +137,8 @@ users):
 5. Stitch clusters at their closest POI pair.
 6. If short of stops, harvest the best remaining from an adjacent cluster.
 
-Accepted under **LAHC + restart-from-best + adaptive penalties** — the only real
-anti-local-optima mechanism found in any of the 71 repos.
+Accepted under **LAHC + restart-from-best + adaptive penalties** — the only
+anti-local-optima mechanism we found in the systems tier of the corpus.
 
 ### 3.4 Validation and relaxation
 
@@ -152,11 +152,12 @@ minimum 1 stop instead of 2" is a far better demo than an unsat core, and unlike
 an unsat core it is honest: the reference implementation we would have copied
 does not actually have one.
 
-## 4. Adaptive replanning
+## 4. Replan
 
-The PS explicitly asks for it. Our `DiscoveryContext` keeps `original` forever,
-and the replanner diffs **against that**, never against the last mutation. That is
-masterplan principle 3: *don't replace the user's intent when reality changes.*
+Adaptation is explicitly part of the problem statement. `DiscoveryContext` keeps
+`original` forever, and the replan diffs **against that**, never against the last
+mutation. That is masterplan principle 3: *don't replace the user's intent when
+reality changes.*
 
 Triggers we support, all demo-able in one click:
 
@@ -174,7 +175,8 @@ number of swaps is the demo metric**: aim for ≤2.
 
 ## 5. Explainability
 
-Not a feature bolted on — it is the thesis.
+Not a feature bolted on — it is the part of the product that makes the rest
+defensible.
 
 - **Why this** — ranked score contributions, each a finished sentence.
 - **Why not that** — the `Rejection` for a specific thing the traveller asked
@@ -188,18 +190,22 @@ Not a feature bolted on — it is the thesis.
 
 ## 6. Data strategy
 
-Three layers, because raw OSM cannot carry this product. Measured, not assumed:
+Three layers, because raw OSM cannot carry this product. Measured, not assumed —
+and the measurement is committed, in `data/reference/`:
 
 | Layer | What it is | How we get it |
 |---|---|---|
-| **Spine** | Real coordinates, names, categories, addresses, partial hours | OSM via Overpass, 3 mirrors with failover, cached, **committed offline snapshot** so the demo never touches the network |
+| **Spine** | Real coordinates, names, categories, addresses, partial hours | OSM via Overpass, cached, **committed offline snapshot** so the demo never touches the network |
 | **Experience** | ~250 curated Mumbai + Navi Mumbai records with the fields OSM lacks: duration, price, capacity, kid-friendly, step-free, indoor/outdoor, booking, seasonality, best time of day | Hand-authored from local knowledge. ~2 person-days. **This is the demo catalogue** |
 | **Signals** | Reviews (author, date, party type, party size, spend), festival/event calendar | Seeded. Powers Bayesian ratings and the "reviews mention: gets crowded after 5pm" insight |
 
-**The measurement that forces this:** a Bandra West bbox returns 199 POIs. 91%
-have `name`; 16% have `opening_hours`; 1% have `wheelchair`; 0% have `fee`; and
-OSM has no ratings at all. A pure "scrape and list" build cannot satisfy a single
-graded factor.
+**The measurement that forces this:** across **1,739 iD presets**, `opening_hours`
+is present on **8.9%**, `wheelchair` on **6.2%**, `fee` on **4.1%**,
+`diet:vegetarian` and `wheelchair:description` on **0%** — and **84.4% carry no
+gate field at all**. OSM has no ratings to offer either. A pure "scrape and list"
+build cannot satisfy a single graded factor, and a gate that treated an absent
+field as a failure would delete the catalogue before ranking started. That is why
+absent is `unknown` and never `fail`.
 
 Plus **LLM enrichment** for the OSM long tail: infer duration, price band,
 family-suitability and accessibility from name + category, each field tagged
@@ -221,10 +227,10 @@ Three people, three streams, **zero file overlap**. The ownership map is in
 [`TASKS.md`](../TASKS.md) and the contracts that make it safe are frozen in
 `src/contracts/index.ts`.
 
-| | Owns | The one thing only they can do |
+| | Owns | Focus |
 |---|---|---|
-| **Abhijit** | Data, engine, ML | The engine that makes the whole thing true |
-| **Karan** | UI/UX | The feasibility meter, which is the thesis made visible |
+| **Abhijit** | Data, engine, ML | The feasibility gate, the packer, the validator |
+| **Karan** | UI/UX | The feasibility meter — the fit made visible |
 | **Vishwesh** | Features, provider side, content | The provider flywheel, and the eval scenarios |
 
 ## 9. What we are deliberately not doing
@@ -255,7 +261,9 @@ Stated so nobody relitigates it in the middle of the week:
 
 ## 11. Success criteria
 
-Not "shipped". Shipped **and measured**:
+Not "shipped". Shipped **and measured**. Every row is a **target**; the measured
+value lives in `docs/EVAL_RESULTS.md`, generated by `npm run eval`, and nowhere
+else.
 
 | Metric | Target | Why it matters |
 |---|---|---|
@@ -264,7 +272,9 @@ Not "shipped". Shipped **and measured**:
 | Coverage | ≥ 90% of eval scenarios yield a plan | The engine fails gracefully, not silently |
 | Replan swaps per context change | ≤ 2 | The adaptive claim, quantified |
 | Travel per stop | < 1.8 km median | The Mumbai reality check |
-| Provider unmet-demand accuracy | ≥ 80% of suggestions actionable | The flywheel is real |
+| Provider Opportunity actionability | ≥ 80% of suggestions actionable | The flywheel is real |
 | Eval suite passes with `LLM=off` | yes | Proves we do not depend on a model being up |
 
-The last one is the credibility anchor. It is in `docs/EVAL_SPEC.md`.
+The last one is the credibility anchor. It is specified in `docs/EVAL_SPEC.md`.
+Until the table is generated, this section is a set of promises, and the
+presentation says so.

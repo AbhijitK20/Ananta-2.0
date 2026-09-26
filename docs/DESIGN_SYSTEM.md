@@ -1,11 +1,11 @@
-# DESIGN SYSTEM — for Karan
+# DESIGN SYSTEM — Ananta
 
-> Your file. Nobody else writes in `src/components/`, `src/styles/`,
-> `tailwind.config.ts`, or `src/app/`.
+> Tokens, components, copy rules and accessibility. The test for anything here is
+> whether a traveller can tell in under two seconds whether something **fits**.
 
-The thesis of this product is *"this actually fits"*. Your job is to make that
-**visible in under two seconds**. The feasibility meter is the signature element
-— it is the one place boldness is spent. Everything around it stays quiet.
+The claim this product makes is *"this actually fits"*. The design's whole job is
+to make that visible. The feasibility meter is the signature element — it is the
+one place boldness is spent. Everything around it stays quiet.
 
 ---
 
@@ -190,12 +190,13 @@ Labels at **68** → `"High friction"`, at **38** → `"Trip feels sane"`. Show
 **inverts for positive dimensions**. Borrowed from
 `nomadnote/components/TripStressRadar.tsx:120-246`.
 
-**`WhyLedger`** — dual, because the thesis is transparency.
+**`WhyLedger`** — dual, because the reasoning is the product.
 
 - *Why this* — `ScoreComponent[]` as ranked sentences, with the learned ones
   marked.
-- *Why not that* — the `Rejection` for a specific thing. This is the feature
-  nobody else has, and it is the one a judge will remember.
+- *Why not that* — the `Rejection` for a specific thing: the constraint, the
+  shortfall, and three actions. Not present in any of the five traveller apps we
+  read, and the one a judge will remember.
 
 **`ScoreBreakdownList`** — the components as a small bar chart with the weight
 visible. Proves the ranking is arithmetic, not a hunch.
@@ -234,7 +235,13 @@ Performance rules that are not optional, from `maplibre-gl-js/src`:
 - Hit-test `circle`, not `symbol` — collision-hidden symbols are not queryable.
 - De-dup `e.features` by id. Tile buffering guarantees duplicates.
 - `promoteId`, **not** `generateId`, or hover state dies on `setData`.
-- `clusterProperties` for a live **"12 of 40 open now"** cluster label.
+- `clusterProperties` for a cluster label of the form **"12 of 40"**, and it must
+  say what the 12 means: *open now*, *fits your window*, *fits your budget*. A bare
+  count invites the reading that it is a live footfall figure, and it is not — it
+  is a count against the traveller's own `DiscoveryContext`, recomputed on the
+  client from the same feasibility gate the plan used. If `opening_hours` is
+  absent for a record, it is neither open nor closed, and the label must not
+  imply otherwise.
 - Cluster counts as **HTML**, not glyphs — raster basemaps and blocked glyph
   endpoints make glyph clusters unreliable. AdventureLog's
   `FullMap.svelte:313-352` says so in a comment worth reading.
@@ -315,22 +322,23 @@ Put it in CI. Add `--watch` to the dev script so the feedback is instant.
 - [ ] No emoji in code or copy; all four cause-branching zero-result states
 - [ ] Mobile at 360px, desktop at 1440px
 
-## 8. Reading list
+## 8. Borrowed patterns, and where they came from
 
-From the reference clones, before you start:
+Every non-obvious pattern below is lifted from a specific reference repository, so
+the credit is on the record and the reasoning is checkable. The clones are
+gitignored, so the paths are for provenance, not for clicking.
 
-1. `TREK/client/src/components/Planner/DayPlanSidebarRouteConnector.tsx:14-36` — the travel connector
-2. `TREK/client/src/components/Roadtrip/RangeStrip.tsx:57-72` — the masked block bar
-3. `TREK/client/src/index.css:762-765` + `Roadtrip/typeScale.ts:16-38` — the per-tier scale
-4. `TREK/client/src/theme/applyAppearance.ts:58-67` — WCAG luminance derivation
-5. `nomadnote/components/TripStressRadar.tsx:120-246` — the Radar, complete
-6. `nomadnote/components/ItineraryBuilder.tsx:123-160` — bar + number + title pattern
-7. `AdventureLog/frontend/src/lib/components/map/FullMap.svelte:313-352` — HTML cluster counts
-8. `AdventureLog/frontend/src/routes/map/+page.svelte:515-560` — the viewport-delta gate
-9. `trip-tracker/frontend/src/app/.../place-box-content.component.html:19-43` — accessibility pills
-10. `trip-planner/` — for the permalink idea only: FNV-32a hash → seeded PRNG → alliterative slug, so the same search always yields the same shareable URL with no database. Worth stealing for share links.
+| # | Source | What we took |
+|---|---|---|
+| 1 | TREK `client/src/components/Planner/DayPlanSidebarRouteConnector.tsx:14-36` | the travel connector |
+| 2 | TREK `client/src/components/Roadtrip/RangeStrip.tsx:57-72` | the masked block bar |
+| 3 | TREK `client/src/index.css:762-765` + `Roadtrip/typeScale.ts:16-38` | the per-tier scale |
+| 4 | TREK `client/src/theme/applyAppearance.ts:58-67` | WCAG luminance derivation |
+| 5 | NomadNote `components/TripStressRadar.tsx:120-246` | the radar, complete — and the reason the component is credited rather than renamed |
+| 6 | NomadNote `components/ItineraryBuilder.tsx:123-160` | bar + number + title pattern |
+| 7 | AdventureLog `frontend/src/lib/components/map/FullMap.svelte:313-352` | HTML cluster counts |
+| 8 | AdventureLog `frontend/src/routes/map/+page.svelte:515-560` | the viewport-delta gate |
+| 9 | trip-tracker `frontend/src/app/.../place-box-content.component.html:19-43` | accessibility pills |
+| 10 | trip-planner | the permalink idea only: FNV-32a hash → seeded PRNG → alliterative slug, so the same context always yields the same shareable URL with no database |
 
-And the two design skills now installed and working:
-`frontend-design` (Anthropic) for the anti-templated direction, `taste-skill`
-for brief-inference and the dials. Full findings in
-`research/findings/01-traveler-uiux.md`.
+Full findings in `research/findings/01-traveler-uiux.md`.

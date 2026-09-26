@@ -3,8 +3,8 @@
 Real data pulled and derived on this machine, not copied from a blog post. Every
 number here was measured, and every claim records how it was measured.
 
-Regenerate anything in here with the commands in each section. Nothing here is a
-runtime dependency — the app fetches live at request time.
+Regenerate anything in here with the commands in each section. **Two of these are
+production inputs, not documentation** — see §3.
 
 ---
 
@@ -116,6 +116,28 @@ curl -s -X POST https://valhalla1.openstreetmap.de/isochrone \
 
 ---
 
+## 3. Which of this is production input
+
+**`isochrones/` — yes, and it has to be.** `valhalla1.openstreetmap.de` is the
+only free isochrone source we could reach, OSRM 404s entirely, and Overpass is
+blocked from this host. The app reads these polygons at request time and does not
+call Valhalla during the demo. Treat them as a data table with a regeneration
+command, not as reference reading.
+
+`osm-tagging-schema/` — design input. It fixes the gate's field semantics and
+supplies the coverage table in §1, which is quoted throughout the docs. Nothing
+reads it at runtime.
+
+## Still outstanding
+
+The seeded catalogue needs ~30 manually labelled places in one neighbourhood, and
+Overpass is unreachable from this host, so it is being hand-authored. Routes to
+unblock a live harvest: a different network, or a self-hosted Overpass. Either way
+the hand-curation is not wasted — it is the layer that carries every field the
+gate actually needs, per the coverage table in §1.
+
+---
+
 ## Endpoint status checked on this host
 
 Findings §0 rows 5 and the "routing providers" table are now partly stale:
@@ -124,12 +146,7 @@ Findings §0 rows 5 and the "routing providers" table are now partly stale:
 |---|---|---|
 | `valhalla1.openstreetmap.de` | **working** | `/status` advertises `isochrone`, `sources_to_targets`. The only free isochrone source confirmed live. |
 | `routing.openstreetmap.de` | **404 on all OSRM paths** | `/` returns 200 but `/route/v1/…`, `/table/v1/…`, `/nearest/v1/…` all 404. The free-matrix claim no longer holds; `matrix_*.json` here came from Valhalla instead. |
-| `overpass-api.de` + 3 mirrors | **unreachable** | TCP fails on both IPv4 and IPv6. Likely egress filtering on this host, not an Overpass outage. **Live POI harvest is blocked here** — this is why the MVP's ~30-place seeded dataset is still outstanding. |
+| `overpass-api.de` + 3 mirrors | **unreachable** | TCP fails on both IPv4 and IPv6. Likely egress filtering on this host, not an Overpass outage. **Live POI harvest is blocked here.** |
 
-## Still outstanding
-
-The MVP needs ~30 manually labelled places in one neighbourhood. That is blocked on
-Overpass from this host. Routes to unblock: a different network, a self-hosted
-Overpass, or hand-curating from the `attraction`/`amenity` presets in
-`osm-tagging-schema/preset-checklists.json` plus the isochrone polygons here to
-bound each place.
+Anything in the docs that describes a routing or harvest path as "live" is wrong
+on this host. The demo path does not use one.
