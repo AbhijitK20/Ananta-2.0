@@ -108,3 +108,11 @@ data/local/
 data/cities/
 
 # stray pre-existing symlinks in the skills dir (not project files)
+
+# agentmemory local state. The server writes its database and managed engine
+# binary under ~/.agentmemory (global, outside the repo) by default, but
+# `--data-dir .` or an AGENTMEMORY_DATA_DIR override would drop a state store
+# and a pinned iii-engine binary into the working tree. Never commit either.
+.agentmemory/
+data/state_store.db
+data/iii-config.yaml
