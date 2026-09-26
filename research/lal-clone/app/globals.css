@@ -1,0 +1,1348 @@
+/* ==========================================================================
+   LIKE A LOCAL GUIDE — clone stylesheet
+
+   Every value here was read off the live site with getComputedStyle and the
+   site's own stylesheets, not eyeballed off a screenshot. The probe output is
+   in /tmp/opencode/ref/dom-home.json if a number here needs re-deriving.
+
+   Layout maths that produced the captured geometry, so the numbers below are
+   not arbitrary:
+     container  1200 max-width, 20px gutters      -> content 1200 at 1440vw
+     hero       min-height 460, 70px block padding  -> captured 460 tall
+     city grid  4 x 1fr, 18px gap, 1104 inner       -> 258 per card (captured)
+     tips grid  3 x 1fr, 24px gap, 1040 inner       -> 344 per card (captured)
+   ========================================================================== */
+
+:root {
+  /* palette ------------------------------------------------------------ */
+  --lal-ink: #251e20;
+  --lal-ink-2: #52474a;
+  --lal-ink-3: #7a6e71;
+  --lal-ink-4: #6f6467;
+  --lal-ink-5: #a89ea1;
+  --lal-accent: #b833ab;
+  --lal-accent-soft: #f5e6f2;
+  --lal-accent-tint: #f3b9e9;
+  --lal-amber: #ffa800;
+  --lal-line: #e2e8ef;
+  --lal-shell: #f1f2f3;
+  --lal-blush: #fbf4fa;
+  --lal-media: #efe9ec;
+  --lal-hero-from: #2a1c27;
+  --lal-hero-to: #5a1e52;
+
+  /* type --------------------------------------------------------------- */
+  /* Fraunces + Inter, self-hosted by next/font. These are the families the
+     design is actually built from — see the note at the foot of this file. */
+  --lal-display: var(--font-fraunces), Georgia, serif;
+  /* Two display tokens, because the source site has two. Elementor writes
+     font-family:"Fraunces",Sans-serif, whose fallback is the SANS stack. The
+     site's own hand-written widget CSS writes Fraunces,Georgia,serif, whose
+     fallback is a real serif. In the default mode both are Fraunces and the
+     split is invisible; in system mode it is the difference between a heading
+     that is 84px too narrow and one that is right. */
+  --lal-display-inline: var(--lal-display);
+  --lal-ui: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  /* shadows ------------------------------------------------------------ */
+  --lal-shadow-card: 0 4px 18px rgb(37 30 32 / 0.08);
+  --lal-shadow-card-hover: 0 12px 30px rgb(37 30 32 / 0.15);
+  --lal-shadow-tile: 0 1px 4px rgb(0 0 0 / 0.08);
+  --lal-shadow-tile-hover: 0 8px 20px rgb(0 0 0 / 0.14);
+  --lal-shadow-hero-hover: 0 18px 50px rgb(37 30 32 / 0.16);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--lal-ink);
+  font-family: var(--lal-ui);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+.lal-skip {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The reference is a full-width BOX with 20px gutters that contains a 1200px
+   inner element centred inside it. Collapsing the two into one padded wrapper
+   puts every element 20px too far right at desktop widths, which is exactly the
+   kind of error a screenshot hides and a measurement catches. */
+.lal-box {
+  width: 100%;
+  padding-inline: 20px;
+}
+
+.lal-container {
+  width: 100%;
+  /* 1220, not 1200, because of the 10px padding below. The reference is a
+     1200px inner element centred inside a wrapper that carries 10px of inset
+     inside the 20px gutter — so the content is 1200 wide and starts at x=120 at
+     a 1440 viewport, while the element that owns the inset is 20px wider.
+     Capping at 1200 and then insetting moves the centre 10px left and takes
+     14 rows with it; capping at 1220 reproduces both numbers exactly. */
+  max-width: 1220px;
+  margin-inline: auto;
+  padding-inline: 10px;
+}
+
+
+/* ============================== header ================================== */
+
+.lal-header {
+  background: #fff;
+  border-bottom: 1px solid var(--lal-line);
+  padding-block: 10px;
+}
+
+.lal-header .lal-box {
+  padding-block: 0;
+}
+
+.lal-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  padding-block: 14px;
+}
+
+.lal-header__logo img {
+  display: block;
+  width: 190px;
+  height: auto;
+}
+
+.lal-header__right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px 18px;
+  width: 70%;
+  /* Not decoration: 10px here is what makes the row 75 tall, and the row is
+     what makes the header 124 rather than 117. */
+  padding: 10px;
+}
+
+.lal-nav {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lal-nav a {
+  display: flex;
+  align-items: center;
+  margin-inline: 10px;
+  padding: 20px 10px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--lal-ink-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.lal-nav a:hover,
+.lal-nav a[aria-current="page"] {
+  color: var(--lal-accent);
+}
+
+.lal-cta-wrap {
+  display: flex;
+  align-items: flex-start;
+  /* 8px, not a magic nudge: the reference button is an inline-block, so its
+     parent's 26.4px line box adds the font descender underneath it. Centring
+     the 53px wrapper instead of the 45px button is what puts the button 4px
+     above the row's centre, as it is on the original. */
+  padding-bottom: 8px;
+  line-height: 26.4px;
+}
+
+.lal-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  background: var(--lal-amber);
+  color: #fff;
+  font-family: var(--lal-display);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 15px 30px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: filter 0.2s ease;
+}
+
+.lal-cta:hover {
+  filter: brightness(0.94);
+}
+
+.lal-burger {
+  display: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  font-size: 25px;
+  color: var(--lal-ink);
+  cursor: pointer;
+}
+
+/* =============================== hero =================================== */
+
+.lal-hero.lal-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 460px;
+  padding: 70px 20px;
+  background-image: linear-gradient(135deg, var(--lal-hero-from) 0%, var(--lal-hero-to) 100%);
+  text-align: center;
+}
+
+.lal-hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* 10px inline, matching the reference's boxed container. Costs nothing at
+     1440 — every child there is centred, so a symmetric inset is a no-op — and
+     is the difference between a 350px and a 330px hero at 390. */
+  padding: 10px;
+}
+
+.lal-hero__eyebrow {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--lal-accent-tint);
+}
+
+.lal-hero__title {
+  margin: 0;
+  font-family: var(--lal-display);
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.lal-hero__desc {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.65;
+  color: rgb(255 255 255 / 0.867);
+}
+
+.lal-search__wrap {
+  width: 100%;
+  max-width: 560px;
+  padding-top: 12px;
+}
+
+.lal-search {
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  min-height: 50px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--lal-shell);
+}
+
+.lal-search__input {
+  flex: 1 1 0%;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 4px;
+  padding-inline: 16.6667px;
+  height: 40px;
+  background: transparent;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  font-family: var(--lal-ui);
+  font-size: 15px;
+  color: var(--lal-ink-2);
+}
+
+.lal-search__input::placeholder {
+  color: var(--lal-ink-2);
+  opacity: 1;
+}
+
+.lal-search__submit {
+  display: grid;
+  flex: 0 0 50px;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: var(--lal-accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lal-search__submit:hover {
+  background: #a52e99;
+}
+
+.lal-hero__hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgb(255 255 255 / 0.733);
+}
+
+/* ============================== cities ================================== */
+
+.lal-cities.lal-box {
+  display: flex;
+  align-items: center;
+  padding-block: 0;
+}
+
+.lal-cities__inner {
+  width: 100%;
+  padding-block: 56px 6px;
+}
+
+.lal-cities__panel {
+  width: 100%;
+  max-width: 1104px;
+  margin: 0 auto 20px;
+  padding: 10px;
+}
+
+.lal-h2 {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 40px;
+  font-family: var(--lal-display);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--lal-ink);
+  text-align: center;
+}
+
+.lal-feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 280px;
+  margin: 0 0 18px;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--lal-ink);
+  background-position: center;
+  background-size: cover;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lal-feature:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--lal-shadow-hero-hover);
+}
+
+.lal-feature__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.72) 0%, rgb(0 0 0 / 0.4) 55%, rgb(0 0 0 / 0.2) 100%);
+}
+
+.lal-feature__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 22px 24px;
+}
+
+.lal-badge {
+  background: var(--lal-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.lal-feature__title {
+  font-family: var(--lal-display-inline);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.45);
+}
+
+.lal-feature__desc {
+  max-width: 620px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #ffffffe6;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+}
+
+.lal-feature__cta {
+  margin-top: 6px;
+  background: #fff;
+  color: var(--lal-accent);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 28px;
+}
+
+.lal-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+.lal-tile {
+  position: relative;
+  display: block;
+  height: 210px;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--lal-ink);
+  background-position: center;
+  background-size: cover;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lal-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--lal-shadow-tile-hover);
+}
+
+.lal-tile__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0) 35%, rgb(0 0 0 / 0.72) 100%);
+}
+
+.lal-tile__label {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  max-width: calc(100% - 28px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--lal-display-inline);
+  font-size: 23px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.45);
+}
+
+.lal-cities__cta {
+  display: flex;
+  justify-content: center;
+  padding-top: 22px;
+}
+
+.lal-footer__nav {
+  /* inline-flex, not a flex row with a computed width. The reference's row is
+     496px of content and the surrounding block is text-align:center, so
+     inline-flex shrink-wraps and centres in one step. Giving the same flex row
+     `width: max-content` instead produced 396px: the sizing pass dropped each
+     link's 20px of inline padding, because a list-item is not a flex item and
+     its max-content came from the text rather than the padded box. */
+  display: inline-flex;
+}
+
+
+.lal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: var(--lal-accent);
+  color: #fff;
+  font-family: var(--lal-display);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 12px 24px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.lal-btn:hover {
+  filter: brightness(0.94);
+}
+
+/* ============================== promise ================================= */
+
+.lal-promise {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 50px 20px 54px;
+  background: var(--lal-blush);
+}
+
+.lal-promise__inner {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 1200px;
+}
+
+.lal-promise__item {
+  display: flex;
+  flex: 0 0 30%;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 360px;
+  padding: 8px;
+  text-align: center;
+}
+
+.lal-promise__title {
+  margin: 0;
+  font-family: var(--lal-display);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--lal-ink);
+}
+
+.lal-promise__desc {
+  width: 100%;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--lal-ink-2);
+}
+
+/* =============================== tips =================================== */
+
+.lal-tips {
+  max-width: 1120px;
+  margin: 56px auto;
+  padding-inline: 20px;
+}
+
+.lal-tips__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.lal-tips__title {
+  margin: 0 0 6px;
+  font-family: var(--lal-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--lal-ink);
+}
+
+.lal-tips__sub {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--lal-ink-3);
+}
+
+.lal-tips__all {
+  color: var(--lal-accent);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lal-tips__all:hover {
+  text-decoration: underline;
+}
+
+.lal-tips__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.lal-tip {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--lal-shadow-card);
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.lal-tip:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--lal-shadow-card-hover);
+}
+
+.lal-tip__media {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--lal-media);
+}
+
+.lal-tip__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.lal-tip:hover .lal-tip__media img {
+  transform: scale(1.05);
+}
+
+.lal-tip__body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 16px 18px 18px;
+}
+
+.lal-tip__cat {
+  align-self: flex-start;
+  background: var(--lal-accent-soft);
+  color: var(--lal-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 20px;
+}
+
+.lal-tip__title {
+  font-family: var(--lal-display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--lal-ink);
+}
+
+.lal-tip__ex {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lal-ink-4);
+}
+
+.lal-tip__meta {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--lal-ink-5);
+}
+
+/* ============================== footer ================================== */
+
+.lal-footer {
+  background: var(--lal-ink);
+  padding-block: 46px 30px;
+  text-align: center;
+}
+
+.lal-footer__inner {
+  max-width: 1200px;
+  margin-inline: auto;
+  /* 24px bottom, not 10px: the reference's inner column is a flex container
+     with a 14px widget gap, and that trailing gap falls inside the inner rather
+     than in the footer's own padding. */
+  padding-block: 10px 24px;
+}
+
+.lal-footer__title {
+  margin: 0 0 14px;
+  font-family: var(--lal-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.lal-footer__title a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.lal-footer__tagline {
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgb(255 255 255 / 0.7);
+}
+
+.lal-footer__nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  /* The 14px the nav row's own bottom margin contributed. Without it the
+     collapsed footer comes out 14px short at every width under 1025. */
+  margin: 0 auto 14px;
+  border: 1px solid var(--lal-line);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.lal-footer__nav {
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 auto 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.lal-footer__nav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Both the padding AND the 10px inline margin. The reference link widget
+     carries both, and the margin is what makes each list item 124 wide rather
+     than 104 — the single reason a 496px nav row came out at 396. */
+  margin: 0 10px;
+  padding: 20px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  color: #fffcfc;
+  text-decoration: none;
+}
+
+.lal-footer__nav a:hover {
+  color: var(--lal-accent-tint);
+}
+
+.lal-footer__affiliate {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.lal-footer__affiliate a {
+  color: var(--lal-amber);
+  text-decoration: none;
+}
+
+.lal-footer__legal {
+  width: max-content;
+  max-width: 100%;
+  margin: 14px auto 20px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+
+
+.lal-footer__legal a {
+  color: #fffcfc;
+  text-decoration: none;
+}
+
+.lal-footer__legal li {
+  display: flex;
+  align-items: center;
+}
+
+.lal-footer__legal a:hover {
+  text-decoration: underline;
+}
+
+.lal-footer__fine {
+  /* The reference box is the sentence's own width, not a round 939 — and 939 is
+     a few pixels too narrow for it, which wraps the last word onto line two. */
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto 14px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: rgb(255 255 255 / 0.5);
+}
+
+.lal-footer__publish {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 0.5);
+}
+
+/* 364px, not fit-content: the reference wraps this line to two rows. The extra
+   specificity is needed because `.lal-fit` is declared last. */
+.lal-footer__inner .lal-footer__publish {
+  max-width: 364px;
+}
+
+.lal-footer__publish a {
+  color: #fffcfc;
+}
+
+/* =========================== inner pages =============================== */
+
+.lal-page {
+  padding: 56px 20px 20px;
+}
+
+.lal-page__inner {
+  max-width: 1120px;
+  margin-inline: auto;
+}
+
+.lal-page__title {
+  margin: 0 0 12px;
+  font-family: var(--lal-display);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--lal-ink);
+}
+
+.lal-page__lede {
+  margin: 0 0 32px;
+  max-width: 760px;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--lal-ink-2);
+}
+
+.lal-prose {
+  max-width: 760px;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--lal-ink-2);
+}
+
+.lal-prose h2 {
+  margin: 36px 0 12px;
+  font-family: var(--lal-display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--lal-ink);
+}
+
+.lal-prose h3 {
+  margin: 28px 0 10px;
+  font-family: var(--lal-display);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--lal-ink);
+}
+
+.lal-prose p {
+  margin: 0 0 16px;
+}
+
+.lal-prose ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.lal-prose li {
+  margin-bottom: 8px;
+}
+
+.lal-prose a {
+  color: var(--lal-accent);
+  font-weight: 500;
+}
+
+.lal-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.lal-chip {
+  border: 1px solid var(--lal-line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 7px 15px;
+  font-family: var(--lal-ui);
+  font-size: 0.9rem;
+  color: var(--lal-ink-2);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.lal-chip:hover {
+  border-color: var(--lal-accent);
+  color: var(--lal-accent);
+}
+
+.lal-chip[aria-pressed="true"] {
+  border-color: var(--lal-accent);
+  background: var(--lal-accent);
+  color: #fff;
+}
+
+/* city detail */
+
+.lal-city-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 340px;
+  margin-bottom: 40px;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--lal-ink);
+  background-position: center;
+  background-size: cover;
+}
+
+.lal-city-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0) 30%, rgb(0 0 0 / 0.78) 100%);
+}
+
+.lal-city-hero__body {
+  position: relative;
+  padding: 32px;
+}
+
+.lal-city-hero__title {
+  margin: 0 0 8px;
+  font-family: var(--lal-display);
+  font-size: 46px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.5);
+}
+
+.lal-city-hero__desc {
+  max-width: 620px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #ffffffe6;
+}
+
+.lal-place {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--lal-line);
+}
+
+.lal-place__media {
+  flex: 0 0 200px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--lal-media);
+}
+
+.lal-place__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lal-place__cat {
+  display: inline-block;
+  margin-bottom: 6px;
+  background: var(--lal-accent-soft);
+  color: var(--lal-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 20px;
+}
+
+.lal-place__title {
+  margin: 0 0 6px;
+  font-family: var(--lal-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--lal-ink);
+}
+
+.lal-place__meta {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--lal-ink-5);
+}
+
+.lal-place__ex {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--lal-ink-2);
+}
+
+/* form */
+
+.lal-form {
+  display: grid;
+  gap: 18px;
+  max-width: 640px;
+}
+
+.lal-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lal-ink);
+}
+
+.lal-field input,
+.lal-field textarea,
+.lal-field select {
+  width: 100%;
+  border: 1px solid var(--lal-line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px 14px;
+  font-family: var(--lal-ui);
+  font-size: 15px;
+  color: var(--lal-ink);
+}
+
+.lal-field textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.lal-field input:focus-visible,
+.lal-field textarea:focus-visible,
+.lal-field select:focus-visible,
+.lal-search__input:focus-visible,
+.lal-btn:focus-visible,
+.lal-cta:focus-visible,
+.lal-nav a:focus-visible {
+  outline: 2px solid var(--lal-accent);
+  outline-offset: 2px;
+}
+
+/* ============================ responsive =============================== */
+
+/* Breakpoints and every value below were measured on the live site at 1024 and
+   390, not assumed. The source of most of them is Elementor's own responsive
+   CSS: `--width: 92%` on the city panel from 768 up, `--width: 560px` on the
+   search form from 768 up, `--width: 30%` on each promise column from 768 up,
+   and the nav collapsing to a slide-in panel at 1024. Note the panel's 1104px
+   on desktop is not a max-width at all — it is 92% of the 1200px container. */
+
+@media (min-width: 768px) {
+  .lal-cities__panel {
+    width: 92%;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* Nav collapses into a panel behind a toggler; the group stops being 70%. */
+  .lal-burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+  }
+
+  .lal-header__right {
+    width: auto;
+  }
+
+  .lal-nav {
+    display: none;
+  }
+
+  .lal-header[data-open="true"] .lal-nav {
+    display: flex;
+  }
+
+  /* Only the nav collapses. The legal line is a paragraph in the source, not a
+     menu, and hiding it costs 54px of footer height that the original keeps. */
+  .lal-footer__nav {
+    display: none;
+  }
+
+  .lal-footer__nav-toggle {
+    display: inline-flex;
+  }
+
+  .lal-tile-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* The city panel already carries its own 10px inset, so the container's
+     10px would double it: 350px of panel becomes 330 and every tile inside
+     loses 10px. The original only insets once on this branch. */
+  .lal-cities__inner {
+    padding-inline: 0;
+  }
+
+  /* The hero does NOT shrink its type. At 390 the source still runs a 52px h1
+     and a 19px lede — it just wraps to three lines. Reducing the font instead,
+     which is the reflex, gives a 390px page 453px shorter than the original. */
+  .lal-search__wrap {
+    max-width: 100%;
+  }
+
+  .lal-feature {
+    min-height: 0;
+  }
+
+  .lal-feature__title {
+    font-size: 24px;
+  }
+
+  .lal-feature__desc {
+    font-size: 13px;
+  }
+
+  .lal-feature__cta {
+    font-size: 13px;
+    padding: 9px 16px;
+  }
+
+  .lal-tile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .lal-tile {
+    height: 120px;
+    border-radius: 12px;
+  }
+
+  .lal-tile__label {
+    left: 12px;
+    bottom: 10px;
+    font-size: 16px;
+  }
+
+  .lal-promise__item {
+    flex: 1 1 100%;
+  }
+
+  .lal-tips {
+    margin: 40px auto;
+  }
+
+  .lal-tips__title {
+    font-size: 25px;
+  }
+
+  .lal-tips__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lal-page__title {
+    font-size: 32px;
+  }
+
+  .lal-city-hero__title {
+    font-size: 30px;
+  }
+
+  .lal-place {
+    flex-direction: column;
+  }
+
+  .lal-place__media {
+    flex-basis: auto;
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   FONT MODE — read this before chasing a 13px width mismatch.
+
+   likealocalguide.com declares `font-family: Fraunces` and `Inter` but serves
+   NO @font-face and no Google Fonts request for either. Verified on the live
+   site: canvas measurement of "Fresh local tips" at 600/30px returns the same
+   194.44px for `Fraunces, Georgia, serif`, `serif` and `Georgia`, and
+   `document.fonts` lists only Font Awesome and the icon font. So the live site
+   renders entirely in the browser's default serif and sans.
+
+   That means the live pixels and the intended design do not match, and a
+   faithful clone has to pick one:
+
+     default           real Fraunces + Inter. This is the design. Headings
+                       measure wider and a few paragraphs gain a line.
+     [data-lal-fonts="system"]
+                       drop to the same system fallback the live site gets,
+                       which reproduces its exact metrics. Set on <html> to
+                       bug-for-bug the current rendering.
+
+   Geometry is identical either way; only glyph widths change.
+   ========================================================================== */
+
+:root[data-lal-fonts="system"] {
+  /* sans-serif, not serif — and that is not a typo. Elementor declares
+     font-family:"Fraunces",Sans-serif on every heading, so with Fraunces
+     unavailable the live site renders its display type in the body sans. Its
+     intended serif never appears on screen. Verified: the live h1 measures
+     659px, identical under sans-serif, Arial, Helvetica, Roboto and
+     Inter/sans-serif, against 575px for Georgia and 769px for DejaVu Serif. */
+  --lal-display: sans-serif;
+  --lal-display-inline: Georgia, serif;
+  --lal-ui: sans-serif;
+}
+
+.lal-footer__publish-wrap {
+  /* padding, not margin on the child: a child's top margin collapses out of its
+     parent and the wrapper ends up 10px short. */
+  width: max-content;
+  max-width: 364px;
+  margin-inline: auto;
+  padding-top: 10px;
+}
+
+/* The link's inline padding has to be counted by the list item, or the row
+   shrink-wraps to the bare text and every item lands 20px left of the
+   original. Making the item a flex container is what makes the padding part of
+   the item's own max-content. */
+.lal-footer__nav li {
+  display: flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   PLACED LAST, AND IT MUST STAY LAST.
+
+   Every centred line in this design is a shrink-to-fit box with auto inline
+   margins. Elementor centres a centred heading by fitting it rather than by
+   centring a full-width block, and the difference is 1004px of element width on
+   the footer title while looking identical in a screenshot.
+
+   Declared here rather than beside the other primitives because the component
+   rules above use `margin` shorthands, and an earlier declaration of equal
+   specificity loses to them. Deleting this block de-centres the footer without
+   breaking anything you can see.
+   ========================================================================== */
+
+.lal-fit {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+/* ==========================================================================
+   WORLD FILMSTRIP BAND
+
+   The 100-card rotating strip on the home page. Two things about this wrapper
+   are deliberate and both differ from every other band on the page:
+
+   1. It is genuinely full-bleed. Every other section is a .lal-box, which
+      carries 20px of inline padding to hold content off the viewport edge. A
+      contact sheet has no edges to hold off -- the photograph is the section,
+      so the band runs to both gutters and the 440px min-height is the only
+      thing setting its size.
+
+   2. It carries its own vertical padding rather than a sibling section's
+      bottom padding, because the strip is a dark, high-contrast object in a
+      page of light cards. It needs air on both sides or the city picker's
+      white panel above it and the blush promise block below it both look
+      clipped.
+
+   The strip's own styles live in filmstrip.css; this is only the page slot.
+   ========================================================================== */
+
+.lal-world {
+  width: 100%;
+  padding-block: 0;
+  background: var(--lal-shell);
+}
+
+/* Visually hidden, still announced. Used for the band's heading: the strip
+   labels itself via aria-label and a live region, so the h2 only has to exist
+   for document structure, not to be seen. */
+.lal-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 650px) {
+  .lal-world {
+    padding-block: 0;
+  }
+}

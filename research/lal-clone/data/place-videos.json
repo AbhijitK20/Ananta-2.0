@@ -1,0 +1,20 @@
+{
+ "edinburgh": {
+  "src": "/places/_test.mp4",
+  "provider": "ffmpeg-testsrc2",
+  "licence": "CC0",
+  "title": "TEST CLIP - not real footage"
+ },
+ "london": {
+  "src": "/places/_test.mp4",
+  "provider": "ffmpeg-testsrc2",
+  "licence": "CC0",
+  "title": "TEST CLIP - not real footage"
+ },
+ "dublin": {
+  "src": "/places/_test.mp4",
+  "provider": "ffmpeg-testsrc2",
+  "licence": "CC0",
+  "title": "TEST CLIP - not real footage"
+ }
+}

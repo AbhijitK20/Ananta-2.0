@@ -1,0 +1,128 @@
+{
+ "cities": {
+  "h1": [
+   ".g-h1",
+   ".elementor-widget-heading h1"
+  ],
+  "lede": [
+   ".g-lede",
+   ".elementor-element-8c26d2e p"
+  ],
+  "search": [
+   ".g-search",
+   ".elementor-element-b70ddb4"
+  ],
+  "hint": [
+   ".g-hint",
+   ".elementor-element-d3f3a63 p"
+  ],
+  "homecity": [
+   ".g-homecity",
+   ".elementor-element-f3a9c21"
+  ],
+  "h2": [
+   ".g-h2",
+   ".elementor-element-b2c3d40 h2"
+  ],
+  "grid": [
+   ".g-grid--cities",
+   ".lalg-featured"
+  ],
+  "citycard": [
+   ".g-citycard",
+   ".lalg-citycard"
+  ]
+ },
+ "blog": {
+  "h1": [
+   ".g-h1",
+   "h1"
+  ],
+  "lede": [
+   ".g-lede",
+   "h1 + p"
+  ],
+  "count": [
+   ".g-count",
+   "h1 + p + p"
+  ],
+  "grid": [
+   ".lal-tips__grid",
+   ".lal-tips__grid"
+  ],
+  "tipcard": [
+   ".lal-tip",
+   ".lal-tip"
+  ]
+ },
+ "social-impact": {
+  "h1": [
+   ".g-h1",
+   "h1"
+  ],
+  "lede": [
+   ".g-lede",
+   "h1 + p"
+  ],
+  "controls": [
+   ".g-controls",
+   ".lalg-controls"
+  ],
+  "grid": [
+   ".g-grid",
+   ".lalg-grid"
+  ],
+  "card": [
+   ".g-card",
+   ".lalg-card"
+  ]
+ },
+ "about": {
+  "h1": [
+   ".g-edit__title",
+   "h1"
+  ],
+  "sub": [
+   ".g-edit__sub",
+   ".elementor-element-0482767 p"
+  ]
+ },
+ "contact": {
+  "h1": [
+   ".g-edit__title",
+   "h1"
+  ],
+  "sub": [
+   ".g-edit__sub",
+   ".elementor-element-faa5114 p"
+  ],
+  "split": [
+   ".g-split h3",
+   "h3"
+  ]
+ },
+ "partners": {
+  "h1": [
+   ".g-edit__title",
+   "h1"
+  ],
+  "sub": [
+   ".g-edit__sub",
+   ".elementor-element-p1a0002 p"
+  ],
+  "pricing": [
+   ".g-pricing__label",
+   "h2"
+  ]
+ },
+ "lisbon": {
+  "h1": [
+   ".g-edit__title",
+   "h1"
+  ],
+  "sub": [
+   ".g-edit__sub",
+   ".elementor-element-0a9d9e3 p"
+  ]
+ }
+}

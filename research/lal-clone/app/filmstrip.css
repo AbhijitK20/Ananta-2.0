@@ -1,0 +1,383 @@
+/* ==========================================================================
+   COUNTRY FILMSTRIP — the band that sits on the home page.
+
+   Ported from the `character-filmstrip` shader bundle, with two structural
+   changes that the 100-country set forced:
+
+   1. No iframe. The source bundle renders into a sandboxed `srcdoc` iframe,
+      which is right for a third-party preview and wrong here: it would put
+      100 <img> behind an opaque origin, and video mounting, focus-driven
+      decoding and lazy loading all get harder for no benefit. Same maths, same
+      look, as ordinary DOM.
+
+   2. Video mounts only near the focus. 100 autoplaying videos is ~900MB and
+      will not run; see CountryFilmstrip.tsx for the windowing.
+
+   The palette is the bundle's sepia film stock, kept on purpose — a warm
+   contact-sheet treatment against the site's magenta and coral reads as a
+   different object entirely, which is the effect wanted from one band on a
+   long page. Every colour is a variable so it can be retargeted in one place.
+   ========================================================================== */
+
+.fs {
+  --fs-stock: #d8c9ad;
+  --fs-stock-2: #e7d9bd;
+  --fs-ink: #171612;
+  --fs-cream: #f3e7ce;
+  --fs-name: #f3e6cc;
+  --fs-role: #d46a27;
+  --fs-accent: #ce5d20;
+  --fs-rule: rgb(255 255 255 / 0.64);
+  --fs-hair: rgb(28 22 14 / 0.14);
+  --fs-shadow: rgb(57 38 19 / 0.42);
+
+  position: relative;
+  width: 100%;
+  /* 580, not the source bundle's 440. The bundle had nine narrow cards; at 100
+     the focused card is a third wider, and because it is rotated its
+     axis-aligned box is ~35px taller than the element itself. At 440 the card
+     clipped 6px off the top of the band and sat 44px on top of the region
+     rail. 580 clears the rotated bounds with room for the rail beneath. */
+  min-height: 580px;
+  overflow: hidden;
+  isolation: isolate;
+  perspective: 1450px;
+  background:
+    linear-gradient(90deg, rgb(80 58 31 / 0.08) 1px, transparent 1px) 50% 0 / 25% 100%,
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 109px,
+      rgb(72 52 30 / 0.13) 110px,
+      transparent 111px
+    ),
+    radial-gradient(circle at var(--fs-pointer-x, 50%) 48%, rgb(255 246 220 / 0.78), transparent 34%),
+    var(--fs-stock);
+  cursor: ew-resize;
+  touch-action: none;
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* The stock's own grain, and the darkening at the frame edges that makes the
+   strip read as a photograph rather than as cards on a page. */
+.fs::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.27;
+  background:
+    repeating-radial-gradient(circle at 12% 18%, rgb(71 51 30 / 0.17) 0 0.5px, transparent 0.7px 4px),
+    repeating-radial-gradient(circle at 78% 71%, rgb(255 255 255 / 0.35) 0 0.5px, transparent 0.8px 5px);
+  mix-blend-mode: multiply;
+}
+
+.fs::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgb(84 58 29 / 0.19),
+    transparent 14%,
+    transparent 86%,
+    rgb(84 58 29 / 0.19)
+  );
+}
+
+.fs__deck {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+/* ------------------------------------------------------------------- card -- */
+
+.fs-card {
+  --focus: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(148px, 15vw, 216px);
+  aspect-ratio: 0.72;
+  padding: 7px;
+  overflow: hidden;
+  border: 1px solid rgb(47 34 19 / 0.42);
+  border-radius: 4px;
+  color: var(--fs-cream);
+  background: var(--fs-stock-2);
+  box-shadow:
+    0 calc(10px + var(--focus) * 24px) calc(18px + var(--focus) * 36px)
+      rgb(57 38 19 / calc(0.2 + var(--focus) * 0.26)),
+    inset 0 0 0 1px var(--fs-rule);
+  appearance: none;
+  outline: none;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.fs-card::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  z-index: 3;
+  border: 1px solid rgb(28 22 14 / calc(0.12 + var(--focus) * 0.12));
+  pointer-events: none;
+}
+
+.fs-card:focus-visible {
+  box-shadow:
+    0 26px 50px rgb(57 38 19 / 0.42),
+    0 0 0 4px rgb(206 93 32 / 0.34);
+}
+
+.fs-card__frame {
+  position: absolute;
+  inset: 7px 7px 25%;
+  overflow: hidden;
+  background: #766a58;
+}
+
+.fs-card__img,
+.fs-card__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(calc(1.04 + (1 - var(--focus)) * 0.06));
+  filter:
+    sepia(calc((1 - var(--focus)) * 0.24))
+    saturate(calc(0.66 + var(--focus) * 0.34))
+    contrast(1.04);
+}
+
+/* A held frame with no video still needs to move, or 100 static cards read as a
+   contact sheet. This is the Ken Burns stand-in: a slow drift that the video,
+   once present, covers. */
+.fs-card__img {
+  animation: fs-drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes fs-drift {
+  from {
+    object-position: 42% 55%;
+  }
+  to {
+    object-position: 58% 45%;
+  }
+}
+
+.fs-card__video {
+  position: absolute;
+  inset: 0;
+}
+
+.fs-card__foot {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  height: calc(25% - 7px);
+  display: grid;
+  grid-template-columns: clamp(26px, 3.2vw, 43px) 1fr;
+  align-items: center;
+  gap: clamp(6px, 0.7vw, 11px);
+  padding: clamp(7px, 0.8vw, 12px);
+  color: var(--fs-cream);
+  background: var(--fs-ink);
+  text-align: left;
+}
+
+.fs-card__idx {
+  display: grid;
+  width: clamp(23px, 2.7vw, 37px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--fs-accent);
+  border-radius: 50%;
+  color: var(--fs-accent);
+  font: 600 clamp(7px, 0.68vw, 11px)/1 ui-monospace, "SFMono-Regular", monospace;
+}
+
+.fs-card__meta {
+  min-width: 0;
+}
+
+.fs-card__name,
+.fs-card__role {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fs-card__name {
+  color: var(--fs-name);
+  font-size: clamp(8px, 0.86vw, 13px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+}
+
+.fs-card__role {
+  margin-top: clamp(3px, 0.35vw, 5px);
+  color: var(--fs-role);
+  font-size: clamp(5px, 0.48vw, 7px);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1;
+}
+
+/* Credit line. Most of this imagery is CC BY-SA, which requires naming the
+   author, so this is not decorative and must not be removed for a cleaner
+   card. Kept to the hover/focus state so it does not fight the photograph. */
+.fs-card__credit {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  z-index: 4;
+  max-width: calc(100% - 14px);
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: rgb(23 22 18 / 0.72);
+  color: rgb(243 231 206 / 0.9);
+  font: 500 9px/1.35 ui-monospace, "SFMono-Regular", monospace;
+  opacity: 0;
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+
+.fs-card:hover .fs-card__credit,
+.fs-card:focus-visible .fs-card__credit {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ chrome -- */
+
+.fs__label {
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  z-index: 6;
+  margin: 0;
+  color: var(--fs-ink);
+  font: 700 clamp(9px, 0.62vw, 11px)/1 ui-monospace, "SFMono-Regular", monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.fs__count {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  z-index: 6;
+  margin: 0;
+  color: var(--fs-ink);
+  font: 600 clamp(9px, 0.62vw, 11px)/1 ui-monospace, "SFMono-Regular", monospace;
+  letter-spacing: 0.14em;
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.fs__regions {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 16px;
+}
+
+.fs__region {
+  padding: 5px 11px;
+  border: 1px solid rgb(47 34 19 / 0.28);
+  border-radius: 999px;
+  background: rgb(255 250 240 / 0.5);
+  color: var(--fs-ink);
+  font: 700 clamp(8px, 0.56vw, 10px)/1 ui-monospace, "SFMono-Regular", monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.fs__region:hover,
+.fs__region:focus-visible,
+.fs__region[aria-pressed="true"] {
+  border-color: var(--fs-accent);
+  background: var(--fs-accent);
+  color: var(--fs-cream);
+}
+
+.fs__hint {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  z-index: 6;
+  margin: 0;
+  color: var(--fs-ink);
+  font: 500 clamp(8px, 0.54vw, 10px)/1 ui-monospace, "SFMono-Regular", monospace;
+  letter-spacing: 0.1em;
+  opacity: 0.42;
+}
+
+.fs__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------- responsive -- */
+
+@media (max-width: 650px) {
+  .fs {
+    min-height: 620px;
+    cursor: ns-resize;
+    background:
+      linear-gradient(90deg, rgb(80 58 31 / 0.08) 1px, transparent 1px) 50% 0 / 50% 100%,
+      repeating-linear-gradient(
+        0deg,
+        transparent 0,
+        transparent 87px,
+        rgb(72 52 30 / 0.13) 88px,
+        transparent 89px
+      ),
+      radial-gradient(circle at 50% 50%, rgb(255 246 220 / 0.78), transparent 35%),
+      var(--fs-stock);
+  }
+
+  .fs-card {
+    width: clamp(142px, 47vw, 180px);
+  }
+
+  .fs__hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-card {
+    will-change: auto;
+  }
+
+  .fs-card__img {
+    animation: none;
+  }
+}

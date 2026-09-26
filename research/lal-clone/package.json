@@ -1,0 +1,28 @@
+{
+  "name": "lal-clone",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pixel-faithful frontend clone of likealocalguide.com, captured not eyeballed. Reference material: not product surface.",
+  "scripts": {
+    "dev": "next dev --port 4310",
+    "build": "next build",
+    "start": "next start --port 4310",
+    "typecheck": "tsc --noEmit",
+    "capture": "node tools/capture.mjs",
+    "verify": "node tools/verify.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.26",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-globe.gl": "^2.38.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "playwright": "^1.49.1",
+    "typescript": "~5.9.3"
+  }
+}
