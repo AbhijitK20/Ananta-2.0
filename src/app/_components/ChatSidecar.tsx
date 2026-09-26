@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Send } from "lucide-react";
 
-import { DialogueDecision, type DiscoveryContext } from "@/contracts";
+// `import type`, not a value import. `DialogueDecision` is a zod schema, and
+// pulling it in as a value ships the whole 824-line contract to the browser to
+// satisfy two type positions that never touch it at runtime.
+import type { DialogueDecision, DiscoveryContext } from "@/contracts";
 
 import { cn } from "@/components/cn";
 import { Button } from "@/components/ui/Button";

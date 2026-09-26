@@ -22,7 +22,7 @@ import { SegmentedControl, Slider, Toggle } from "@/components/ui/Controls";
 import { Sheet } from "@/components/ui/Overlays";
 import { LearnedWeights, ResultCard, WhyLedger } from "@/components/fit";
 
-import { CONTEXT_TRIGGERS } from "../_fixtures";
+import { CONTEXT_TRIGGERS } from "./triggers";
 import { AccessibilityControls } from "./AccessibilityControls";
 import { ChatSidecar } from "./ChatSidecar";
 import { MapPanel } from "./MapPanel";
@@ -42,6 +42,12 @@ export interface DiscoverySurfaceProps {
    *  fixture data while claiming to be live would be the one dishonest thing
    *  this product could do. */
   source: "engine" | "fixtures";
+  /**
+   * Rows in the full catalogue, so the list can say what it is not showing.
+   * The list is capped; without this the cap would be invisible, which is the
+   * dishonesty this file's `source` badge exists to prevent.
+   */
+  catalogueSize?: number;
 }
 
 /**
@@ -62,6 +68,7 @@ export function DiscoverySurface({
   rejections: initialRejections,
   weights,
   source,
+  catalogueSize,
 }: DiscoverySurfaceProps) {
   const [context, setContext] = useState<DiscoveryContext>(initialContext);
   const [plan, setPlan] = useState<Plan>(initialPlan);
@@ -369,6 +376,27 @@ export function DiscoverySurface({
                 suggestions={["Step-free only", "Under an hour", "Free"]}
               />
             ) : (
+              <>
+                {/*
+                  The cap, stated. The list is the top of the retrieval ranking
+                  plus every rejection, not the whole catalogue, and a silently
+                  truncated list reads as "these are all your options". The
+                  `source` badge already exists because a demo that looks
+                  complete while hiding rows is the dishonesty this product
+                  cannot afford; this is the same principle one level down.
+
+                  Counted off `experiences`, NOT `candidates`. `candidates`
+                  filters OUT both the planned and the rejected rows — those
+                  render in the timeline and the ledger below instead — so
+                  counting it here would claim a smaller number than the page
+                  actually shows.
+                */}
+                {catalogueSize !== undefined && experiences.length < catalogueSize ? (
+                  <p className="mb-3 text-meta text-ink-muted">
+                    Showing {experiences.length} of {catalogueSize} places — everything
+                    planned, everything the gate refused, and the strongest of the rest.
+                  </p>
+                ) : null}
               <ul className="space-y-3">
                 {candidates.map((experience) => {
                   const fit = fits[experience.id];
@@ -403,6 +431,7 @@ export function DiscoverySurface({
                   );
                 })}
               </ul>
+              </>
             )}
 
             {/* The journey. Vertical, with a connector between every pair. */}

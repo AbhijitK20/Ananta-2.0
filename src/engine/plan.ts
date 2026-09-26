@@ -74,6 +74,16 @@ export interface PlanResult {
   };
   /** The hard-gate rejections, hoisted so "why not that" works without the plan. */
   rejected: Rejection[];
+  /**
+   * Ids retrieval returned, in rank order, BEFORE the gate.
+   *
+   * Exists so a caller can show a shortlist without re-running retrieval or
+   * shipping the whole catalogue to the client. The landing page used to
+   * serialise all 4,982 Mumbai rows plus a fit and a score for every one of
+   * them into the HTML — a 48.9 MB response. It already had this list in hand
+   * and threw it away.
+   */
+  candidateIds: string[];
 }
 
 /**
@@ -195,5 +205,6 @@ export function planItinerary(
       stops: packed.stops.length,
     },
     rejected: gate.rejected,
+    candidateIds: experiences.map((e) => e.id),
   };
 }

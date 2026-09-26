@@ -15,11 +15,8 @@
  *
  * HOW IT AVOIDS A PERMANENT SKIP. The test is enabled by the PRESENCE of the
  * real engine module, resolved from disk rather than by a version flag or a
- * manual un-skip. Today `src/engine/index.ts` does not exist and the
- * assertions are skipped; the moment the engine integration lands, the same
- * commit starts enforcing all eleven exports with nobody editing this file.
- * That is the difference between a skip that hides a failure and a gate that is
- * simply not applicable yet.
+ * manual un-skip. The engine has landed, so these assertions run and stay run.
+ * That is the difference between a skip that hides a failure and a gate.
  *
  * `tests/**` is Abhijit's directory per TASKS.md. The repository owner asked
  * for this file explicitly, which is the only reason it is here.
@@ -51,6 +48,10 @@ const REQUIRED = [
   "validate",
   "replan",
   "observe",
+  // The orchestrator, and the only supported way to get a Plan. Added because
+  // `discover()` now calls it instead of hand-wiring the three stages, which is
+  // what returned 500 on every API request.
+  "planItinerary",
 ] as const;
 
 const ENGINE_ENTRY = resolve(process.cwd(), "src/engine/index.ts");
@@ -102,6 +103,76 @@ describe("engine contract", () => {
   it("the runtime guard and this test agree on the required surface", async () => {
     const { REQUIRED_ENGINE_EXPORTS } = await import("@/app/_lib/engine");
     expect([...REQUIRED_ENGINE_EXPORTS].sort()).toEqual([...REQUIRED].sort());
+  });
+
+  /**
+   * The test that would have caught the production 500.
+   *
+   * The two tests above only assert `typeof mod[name] === "function"`. That is a
+   * NAME check, and it passed happily while both API routes returned 500: the
+   * seam called `filterFeasible(ctx, candidates)` and `pack(ctx, survivors)`,
+   * but the landed engine declares `filterFeasible(ctx, candidates, opts)` and
+   * `pack(ctx, feasible, opts)` with `opts` REQUIRED. Every name existed, so
+   * every name check passed, and every call threw a TypeError on `opts.weekday`.
+   *
+   * `plan.ts` documents the drift in its own header ("The seam advertised
+   * `pack(): Plan` but the implementation returned a different type") and then
+   * routes around the seam instead of fixing it. A name check cannot see that,
+   * because the seam's ambient declaration is fiction tsc already believes.
+   *
+   * So: CALL the seam. Arity and shape are the only things that actually broke,
+   * and the only way to see them is to invoke the thing.
+   */
+  it.skipIf(!ENGINE_PRESENT)("the seam can actually call the engine", async () => {
+    const { discover } = await import("@/app/_lib/engine");
+    const { DiscoveryContext } = await import("@/contracts");
+
+    const context = DiscoveryContext.parse({
+      id: "seam-probe",
+      origin: { label: "Bandra West, Mumbai", point: { lat: 19.0495, lon: 72.832 } },
+      availableMin: 180,
+      nowMin: 840,
+      budget: { minor: 300000, currency: "INR" },
+      budgetPerPerson: null,
+      partySize: 2,
+      partyType: "couple",
+      childAges: [],
+      accessNeeds: ["lowStairs"],
+      diets: [],
+      interests: ["street_food", "market", "heritage", "art"],
+      avoid: [],
+      weather: { condition: "clear", tempC: 29, source: "live" },
+      travelMode: "walk",
+      requests: [],
+      excludedIds: [],
+      pinnedIds: [],
+      original: {
+        availableMin: 180,
+        budget: { minor: 300000, currency: "INR" },
+        partySize: 2,
+        accessNeeds: ["lowStairs"],
+      },
+    });
+
+    // Must not reject. The production failure was an unhandled TypeError here,
+    // which Next turned into a bodiless 500.
+    const result = await discover(context);
+
+    expect(result.source).toBe("engine");
+    // `pack` returns a PackResult, which is NOT a Plan. If the seam ever hands
+    // that through unassembled again, these are the fields that go missing.
+    expect(result.plan).toMatchObject({
+      id: expect.any(String),
+      contextId: context.id,
+      stops: expect.any(Array),
+      legs: expect.any(Array),
+      rejected: expect.any(Array),
+      relaxations: expect.any(Array),
+      stressFactors: expect.any(Array),
+      engineVersion: expect.any(String),
+    });
+    // `validate` needs a real Plan, not a PackResult.
+    expect(result.validation).not.toBeNull();
   });
 
   it("reports the engine's presence honestly", () => {

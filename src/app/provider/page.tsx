@@ -19,8 +19,12 @@ export const metadata: Metadata = {
   Client-rendered on purpose. `ProviderPanel` owns its own store and calls the
   demo API on mount, so there is nothing meaningful to render on the server and
   a prerender would only freeze an empty shell into the HTML.
+
+  No `export const dynamic` here either. It used to say `force-static` for the
+  same reason it was harmless, but the CSP nonce in `src/middleware.ts` requires
+  dynamic rendering, and Next rejects the combination outright. Since a
+  prerender was only ever freezing an empty shell, dropping it costs nothing.
 */
-export const dynamic = "force-static";
 
 export default function ProviderPage() {
   return (

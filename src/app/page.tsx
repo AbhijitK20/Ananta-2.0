@@ -5,6 +5,8 @@ import {
   type DiscoveryContext,
   type Experience,
   type Fit,
+  type Plan,
+  type Rejection,
   type ScoreBreakdown,
 } from "@/contracts";
 
@@ -13,19 +15,17 @@ import { loadCatalogue } from "./_lib/catalogue";
 import { loadEngine } from "./_lib/engine";
 
 /*
-  Imported by MODULE PATH, not from "@/engine".
+  Imported from the barrel, `@/engine`, which is now safe to do.
 
-  `src/app/_lib/engine-seam.d.ts` declares `module "@/engine"` as an ambient
-  declaration, so anything importing the barrel alias is typed by that
-  declaration rather than by the real code -- which is why calling
-  `computeFit` through "@/engine" type-errors on a third argument the real
-  function has always taken. Importing the concrete modules gets the true
-  signatures, and the seam test still guards the barrel separately.
+  This used to import by module path and carry a comment explaining why: an
+  ambient `engine-seam.d.ts` declared `module "@/engine"` and gave the barrel
+  fictional signatures that `computeFit`'s real third argument did not fit
+  through. That declaration is deleted. The barrel types are the real ones now,
+  so a signature change in the engine is a compile error on this page instead of
+  a runtime surprise in production.
 */
-import { planItinerary } from "@/engine/plan";
-import { computeFit } from "@/engine/fit";
-import { score } from "@/engine/scoring";
-import { DEFAULT_PROFILE } from "@/engine/scoring";
+import { DEFAULT_PROFILE, computeFit, planItinerary, score } from "@/engine";
+import { weekdayOf } from "@/lib/time";
 
 import {
   FIXTURE_EXPERIENCES,
@@ -109,19 +109,54 @@ export default async function Page() {
     failure mode this whole seam was built to prevent.
   */
   if (engine.ready && catalogue.experiences.length > 0) {
+    /*
+      `weekdayOf` rather than a literal. The old value here was `6` with the
+      comment "Saturday", but `lib/time` numbers weekdays 0 = Monday, so 6 is
+      SUNDAY — the gate was evaluating Sunday's opening hours for a plan whose
+      own comment claimed Saturday. `lib/time` warns about exactly this
+      conflation, and it is invisible because both are small integers.
+
+      Derived from the clock for the same reason `month` already was: the
+      catalogue's hours are real OSM hours, so they should be checked against
+      the real day rather than a hard-coded one that silently rots.
+    */
+    const now = new Date();
+    const weekday = weekdayOf(now);
+
     const result = planItinerary(OPENING_CONTEXT, catalogue.experiences, {
-      weekday: 6, // Saturday: the catalogued hours are evaluated against a real day
-      month: new Date().getMonth() + 1,
+      weekday,
+      month: now.getMonth() + 1,
       mode: "walk",
       planId: "mumbai-opening",
     });
 
-    // Per-card fit and score for EVERY catalogue row, not just the planned ones.
-    // The result list renders all of them, and a card with no fit is a card the
-    // UI cannot draw a feasibility meter on.
+    /*
+      The shortlist, and why it is bounded.
+
+      This used to loop all 4,982 rows computing a `Fit` and a `ScoreBreakdown`
+      for each, then hand `catalogue.experiences`, `fits` and `scores` to a
+      client component. The deployed response was 48.9 MB of HTML and 22 seconds
+      to first byte, because every row — provenance, perception, booking and all
+      — was serialised into the RSC flight payload and then turned into ~4,900
+      live `ResultCard`s on arrival.
+
+      Retrieval already ranked the catalogue down to 120 rows by BM25 and geo
+      reach, and `PlanResult.candidateIds` now hands that ranking back instead of
+      discarding it. Anything the gate rejected is force-included, because the
+      "why not that" ledger is the product and a rejection with no card is
+      invisible. Everything else is a scored fallback below the retrieved set, so
+      the list can still fill out when the gate is strict.
+    */
+    const shortlisted = shortlist(
+      catalogue.experiences,
+      result.candidateIds,
+      result.plan,
+      result.rejected,
+    );
+
     const fits: Record<string, Fit> = {};
     const scores: Record<string, ScoreBreakdown> = {};
-    for (const experience of catalogue.experiences) {
+    for (const experience of shortlisted) {
       const travelMin = travelEstimate(OPENING_CONTEXT, experience);
       // The visit window is the card's own slot, placed as early as the
       // traveller could reach it. It is a per-card estimate, not the plan's
@@ -137,7 +172,7 @@ export default async function Page() {
           experience.pricePerPerson === null
             ? { minor: 0, currency: "INR" }
             : experience.pricePerPerson,
-        weekday: 6,
+        weekday,
       });
       scores[experience.id] = score(OPENING_CONTEXT, experience, DEFAULT_PROFILE, {
         travelMin,
@@ -148,12 +183,13 @@ export default async function Page() {
       <DiscoverySurface
         initialPlan={result.plan}
         context={OPENING_CONTEXT}
-        experiences={catalogue.experiences}
+        experiences={shortlisted}
         fits={fits}
         scores={scores}
         rejections={result.rejected}
         weights={DEFAULT_PROFILE}
         source="engine"
+        catalogueSize={catalogue.experiences.length}
       />
     );
   }
@@ -170,6 +206,54 @@ export default async function Page() {
       source="fixtures"
     />
   );
+}
+
+/**
+ * How many ranked candidates the list may show beyond the planned and rejected
+ * rows.
+ *
+ * ponytail: ceiling — there is no "load more" and no search over the long tail.
+ * A discovery list of forty options is longer than anyone reads, and the map is
+ * built from this same array, so raising this raises the map's point count too.
+ * Add server-side pagination when a user asks to see past the fortieth.
+ */
+const MAX_CANDIDATES = 40;
+
+/**
+ * The rows that cross the server/client boundary.
+ *
+ * Three groups, in priority order:
+ *  1. what the plan actually stops at — omitting these breaks the timeline
+ *  2. what the gate rejected — the "why not that" ledger is the product, and a
+ *     rejection with no card behind it renders as nothing
+ *  3. the top of the retrieval ranking — the near-misses and the maybes
+ *
+ * Order is preserved from the inputs so the list reads planned-first, which is
+ * what `DiscoverySurface` expects when it filters candidates itself.
+ */
+function shortlist(
+  catalogue: ReadonlyArray<Experience>,
+  candidateIds: ReadonlyArray<string>,
+  plan: Plan,
+  rejected: ReadonlyArray<Rejection>,
+): Experience[] {
+  const byId = new Map(catalogue.map((item) => [item.id, item]));
+  const chosen = new Set<string>();
+
+  const take = (id: string): void => {
+    if (byId.has(id)) chosen.add(id);
+  };
+
+  for (const stop of plan.stops) take(stop.experienceId);
+  for (const rejection of rejected) take(rejection.experienceId);
+  for (const id of candidateIds) {
+    if (chosen.size >= plan.stops.length + rejected.length + MAX_CANDIDATES) break;
+    take(id);
+  }
+
+  // Returned in catalogue order rather than the order they were added, so the
+  // sequence is stable between renders instead of depending on set iteration.
+  return catalogue.filter((item) => chosen.has(item.id));
 }
 
 /**

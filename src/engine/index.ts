@@ -35,6 +35,24 @@ export { computeFit } from "./fit";
 // Packing. Cluster, order, and stay inside the window.
 export { pack, ENGINE_VERSION } from "./packer";
 
+/*
+  The orchestrator, and the ONLY supported way to get a Plan.
+
+  `retrieve -> filterFeasible -> pack` cannot be wired up by a caller. `pack`
+  returns a `PackResult` (stops, legs, totals, no utilisation, no stress, no
+  `createdAt`) which is deliberately not a `Plan`, so somebody has to assemble
+  the contract shape — and forwarding weekday/month to both the gate and the
+  packer without forgetting one is a real trap, not a stylistic one. `plan.ts`
+  exists to be the single answer.
+
+  It is on the seam because it is what every consumer actually needs. Callers
+  that hand-assemble the stages are how the API routes ended up passing two
+  arguments to a three-argument `filterFeasible` and returning 500 on every
+  request while all 1,145 tests passed.
+*/
+export { planItinerary } from "./plan";
+export type { PlanOptions, PlanResult } from "./plan";
+
 // Validation. The independent check: recompute the plan, reject on drift.
 export { validate } from "./validate";
 
