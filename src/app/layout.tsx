@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
+import { MeshDriftBackground } from "./_components/MeshDriftBackground";
 import { ThemeScript } from "./_components/ThemeScript";
 
 import "../styles/globals.css";
@@ -52,6 +53,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a href="#main" className="skip-link">
           Skip to the plan
         </a>
+        {/*
+          One canvas for the whole app. It lives in the root layout rather than
+          in each page so the backdrop cannot drift between routes -- adding a
+          page gets the same background for free, and there is no way to forget
+          it. It is fixed, takes no layout space, and ignores pointer events, so
+          it does not disturb any page's own stacking or hit-testing.
+        */}
+        <MeshDriftBackground />
         {children}
       </body>
     </html>
