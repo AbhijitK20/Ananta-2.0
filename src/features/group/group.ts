@@ -18,15 +18,16 @@
  *     the engine and group plans change with it.
  *
  *  2. **Hard beats strong beats soft, and a ceiling only ever tightens.** A
- *     wheelchair is not something a group votes on, so access needs, and the
- *     money and walking limits stated as hard, go in as they are. The group's
- *     walking limit is the *strictest* one anybody stated and its ceiling is the
- *     *lowest*, because every weaker limit is already satisfied by the stricter
- *     one. That is why these axes need no arbitration at all — and it is why
- *     "average the group" is never the right answer for them. Interests are the
- *     opposite case: they are wants, not limits, so they are ranked by how many
- *     people asked for them and the tail is reported as dropped rather than
- *     quietly ignored.
+ *     wheelchair is not something a group votes on, and neither is somebody's
+ *     diet, so access needs, diets, and the money and walking limits stated as
+ *     hard, go in as they are. The group's walking limit is the *strictest* one
+ *     anybody stated, its ceiling is the *lowest*, and its access and diet sets
+ *     are the unions, because every weaker limit is already satisfied by the
+ *     stricter one and every member's diet has to be fed. That is why these axes
+ *     need no arbitration at all — and it is why "average the group" is never the
+ *     right answer for them. Interests are the opposite case: they are wants, not
+ *     limits, so they are ranked by how many people asked for them and the tail is
+ *     reported as dropped rather than quietly ignored.
  *
  *  3. **The tension is reported, not resolved.** `docs/MASTERPLAN.md` §10 asked
  *     for "shared constraints + per-person personas + a visible tension axis", and
@@ -35,7 +36,9 @@
  *     engine rejection, a load-model cut, a number in the plan, a distance from
  *     the engine's own router. This file never invents a disagreement between two
  *     people who did not have one, and it reports no conflict for an axis where
- *     the group had nothing to lose.
+ *     the group had nothing to lose. Where the engine does not report something
+ *     this file needs in order to be right — whether a stop answered an interest,
+ *     say — it says nothing at all about it rather than guessing.
  *
  *  4. **A group that cannot be served gets an ask, not an itinerary.** The ask is
  *     read off the shortfall the engine itself reported — the rupees short, the
@@ -51,10 +54,12 @@
 import {
   type AccessNeed,
   type Accessibility,
+  type ContextChange,
   type DiscoveryContext,
   type Experience,
   type GeoPoint,
   type Plan,
+  type Rejection,
   type ScoreBreakdown,
   type WeatherNow,
   type WeightProfile,
@@ -76,8 +81,10 @@ import { hm, money, plural } from "../discovery/format";
 import {
   createSession,
   discover,
+  replan,
   type DiscoverOutcome,
   type DiscoverySession,
+  type ReplanOutcome,
 } from "../discovery/replanner";
 
 // ---------------------------------------------------------------------------
@@ -123,6 +130,12 @@ export type GroupMember = {
     budgetMinor?: number;
     /** Body facts. A group cannot outvote these, so they are never averaged. */
     accessNeeds?: AccessNeed[];
+    /**
+     * Open vocabulary, the contract's own. Also a fact about a body rather than a
+     * taste, so it unions: a vegetarian and a jain in one group is a place that
+     * feeds both, not a place that feeds the average of the two.
+     */
+    diets?: string[];
     walking?: GroupWalking;
     indoorOnly?: boolean;
   };
@@ -147,7 +160,7 @@ export type GroupRequest = {
   budgetMinor?: number | null;
 };
 
-export type GroupAxis = "party" | "walking" | "indoor" | "budget" | "access" | "interests";
+export type GroupAxis = "party" | "walking" | "indoor" | "budget" | "access" | "diet" | "interests";
 
 /** One axis, resolved, with the words that decided it. The audit trail. */
 export type GroupDecision = {
@@ -171,10 +184,12 @@ export type GroupAggregate = {
   partySize: number;
   childAges: number[];
   elders: number;
-  /** Fixed axis order: party, walking, indoor, budget, access, interests. */
+  /** Fixed axis order: party, walking, indoor, budget, access, diet, interests. */
   decisions: GroupDecision[];
   /** Union of everybody's hard access needs, and whose each one is. */
   access: { needs: AccessNeed[]; by: Map<AccessNeed, string[]> };
+  /** Union of everybody's hard diets, and whose each one is. */
+  diets: { names: string[]; by: Map<string, string[]> };
   interests: { kept: GroupInterest[]; dropped: GroupInterest[] };
   /** Sorted by id. The personas themselves, never merged away. */
   members: readonly GroupMember[];
@@ -330,6 +345,10 @@ function push(map: Map<string, string[]>, name: string, label: string): void {
  * layer: a "hard interest" with no test for satisfaction would be a promise the
  * engine cannot keep, and the contract's real hard-intent field is
  * `requests[].mustsee`, which the chat path already owns.
+ *
+ * A soft ask for something somebody else asked for strongly still counts towards
+ * the support, because "two of you want this" is true whether the second person
+ * was certain or hopeful, and the count is the number the sentence shows.
  */
 function interestsOf(members: readonly GroupMember[]): { kept: GroupInterest[]; dropped: GroupInterest[] } {
   const strong = new Map<string, string[]>();
@@ -337,6 +356,10 @@ function interestsOf(members: readonly GroupMember[]): { kept: GroupInterest[]; 
   for (const member of members) {
     for (const raw of member.strong?.interests ?? []) push(strong, norm(raw), member.label);
     for (const raw of member.soft?.interests ?? []) push(soft, norm(raw), member.label);
+  }
+  for (const [name, labels] of soft) {
+    const strongLabels = strong.get(name);
+    if (strongLabels) for (const label of labels) if (!strongLabels.includes(label)) strongLabels.push(label);
   }
   const bySupport = (a: GroupInterest, b: GroupInterest): number =>
     b.labels.length - a.labels.length || a.name.localeCompare(b.name);
@@ -367,8 +390,31 @@ function accessOf(members: readonly GroupMember[]): { needs: AccessNeed[]; by: M
   return { needs: [...by.keys()].sort(), by };
 }
 
+/**
+ * Diets union for the same reason access needs do, and unlike walking there is no
+ * ordering to reconcile: a place that feeds the vegetarian and the jain feeds both,
+ * and a place that feeds neither is out. The names stay in the contract's open
+ * vocabulary and go out normalised, so "Jain" and "jain " are one requirement.
+ *
+ * There is no verification pass for this axis, unlike access. What `Experience`
+ * means by `diets` — a subset to satisfy, a menu to intersect — is the engine's
+ * call and is not in the contract, so guessing at it here would be a second opinion
+ * about someone else's semantics. The union is what the engine is obliged to read.
+ */
+function dietsOf(members: readonly GroupMember[]): { names: string[]; by: Map<string, string[]> } {
+  const by = new Map<string, string[]>();
+  for (const member of members) {
+    for (const raw of member.hard?.diets ?? []) push(by, norm(raw), member.label);
+  }
+  return { names: [...by.keys()].sort(), by };
+}
+
 const withCount = (interest: GroupInterest): string =>
   interest.labels.length > 1 ? `${interest.name} (${interest.labels.length} of you)` : interest.name;
+
+/** "a place has to feed everybody" / "a place has to feed both of them". */
+const dietSubject = (count: number): string =>
+  count === 1 ? "everybody" : count === 2 ? "both of them" : `all ${count}`;
 
 /**
  * N people and their statements in, one `ContextSeed` out. Pure, deterministic
@@ -387,6 +433,7 @@ export function aggregateGroup(request: GroupRequest, members: readonly GroupMem
   const indoor = indoorOf(ordered);
   const ceiling = ceilingOf(ordered, size, request.budgetMinor ?? null);
   const access = accessOf(ordered);
+  const diets = dietsOf(ordered);
   const interests = interestsOf(ordered);
   const labels = labelsOf(ordered);
 
@@ -401,6 +448,7 @@ export function aggregateGroup(request: GroupRequest, members: readonly GroupMem
     childAges,
     elderly: elders,
     accessNeeds: access.needs,
+    diets: diets.names,
     interests: interests.kept.map((row) => row.name),
     weather: request.weather,
     prefs: { walking: walking.value, indoorOnly: indoor.value },
@@ -470,6 +518,16 @@ export function aggregateGroup(request: GroupRequest, members: readonly GroupMem
               .join(", ")}: only places that can take ${access.needs.length > 1 ? "them" : "it"} are on the list.`,
     },
     {
+      axis: "diet",
+      value: diets.names.join("+") || "none",
+      strength: "hard",
+      by: labels.filter((label) => diets.names.some((name) => (diets.by.get(name) ?? []).includes(label))),
+      reason:
+        diets.names.length === 0
+          ? "Nobody stated a diet, so food is not filtering the list."
+          : `${diets.names.map((name) => `${name} (${joinAnd(diets.by.get(name) ?? [])})`).join(", ")}: a place has to feed ${dietSubject(diets.names.length)}.`,
+    },
+    {
       axis: "interests",
       value: interests.kept.map((row) => row.name).join(","),
       strength: "strong",
@@ -496,6 +554,7 @@ export function aggregateGroup(request: GroupRequest, members: readonly GroupMem
     elders,
     decisions,
     access,
+    diets,
     interests,
     members: ordered,
   };
@@ -677,9 +736,72 @@ function hardBreaches(
 }
 
 /**
- * Which of the group's stated interests the plan does not answer, and what
- * stopped the places that would have. Reported as `strained`, not `blocking`: the
- * group has a plan, and this is what it cost.
+ * Which group axis a rejection code is about, for *reporting* only. `RELIEF` above
+ * is the stricter question — what could be changed to relieve it — and a code can
+ * be reportable without being relievable, which is the case for every code here
+ * that describes the market rather than the group: a gallery that is shut is not
+ * anybody's fault and there is nothing for the group to answer.
+ *
+ * A code that is not listed is reported under `party`, which is the honest
+ * fallback: we know something stopped the plan and we do not know whose axis it was.
+ */
+const AXIS_OF: Readonly<Partial<Record<string, GroupAxis>>> = {
+  over_budget: "budget",
+  over_budget_per_person: "budget",
+  too_far: "walking",
+  leg_too_long_to_walk: "walking",
+  walking_budget_exceeded: "walking",
+  too_many_back_to_back: "walking",
+  block_too_long_without_rest: "walking",
+  window_exceeded: "party",
+  duration_exceeds_budget: "party",
+  travel_time_exceeds_budget: "party",
+  not_step_free: "access",
+  not_stroller_ok: "access",
+  no_low_stairs: "access",
+  no_hearing_loop: "access",
+  no_restroom: "access",
+  inaccessible: "access",
+  diet_mismatch: "diet",
+  excluded_by_traveller: "interests",
+  capacity_exceeded: "party",
+  weather_unsafe: "party",
+  closed_now: "party",
+  closed_during_window: "party",
+  hours_unverified: "party",
+  sold_out: "party",
+  requires_booking_not_available: "party",
+  lead_time_too_short: "party",
+  seasonal_mismatch: "party",
+};
+
+const axisOf = (code: string): GroupAxis => AXIS_OF[code] ?? "party";
+
+/**
+ * Who set the ceiling on an axis. For a hard axis that is the people who stated
+ * it; for `party` it is nobody in particular, and the composition is the honest
+ * answer because the party as a whole is what a window or a headcount is about.
+ */
+const heldByFor = (aggregate: GroupAggregate, axis: GroupAxis): string[] =>
+  axis === "party"
+    ? labelsOf(aggregate.members.filter((member) => member.role === "child" || member.role === "elder"))
+    : byAxis(aggregate, axis);
+
+/**
+ * Which of the group's stated interests the plan does not answer, who stopped it,
+ * and what the engine's own words were.
+ *
+ * Two honesty rules, both learned the hard way:
+ *
+ *  - **Only the engine may say whether a stop matched.** Its `interest` component
+ *    names every stated interest that hit, so the answer is read off that sentence
+ *    rather than re-derived from the catalogue. A second matcher in this file would
+ *    be a second opinion about the engine's vocabulary.
+ *  - **If the engine does not report interest hits at all, this reports nothing.**
+ *    An engine that scores without naming its matches is not saying "nothing
+ *    matched", it is saying nothing at all, and turning that silence into "Child did
+ *    not get their entertainment" would be inventing a conflict between a child and
+ *    a plan. So coverage is only claimed when there is something to claim it from.
  */
 function unservedInterests(
   plan: Plan,
@@ -694,50 +816,68 @@ function unservedInterests(
   const wanted = aggregate.interests.kept.map((row) => row.name);
   if (wanted.length === 0) return [];
   const served = new Set(plan.stops.flatMap((stop) => servedIn(interestReason(stop.score), wanted)));
+  const unserved = aggregate.interests.kept.filter((interest) => !served.has(interest.name));
+  if (unserved.length === 0) return [];
   const byId = new Map(catalogue.map((item) => [item.id, item]));
 
-  return aggregate.interests.kept
-    .filter((interest) => !served.has(interest.name))
-    .map((interest) => {
-      // Ask the engine which candidates would have matched, so the evidence names
-      // real places and the real reason each of them is not in the plan.
-      //
-      // ponytail: one `score` call per catalogue row, and only when a want went
-      // unanswered. Upgrade path if it shows up in a profile: score the shortlist
-      // once and index it by id.
-      const matched = catalogue.filter((item) =>
-        servedIn(
-          interestReason(engine.score(ctx, [item], weights).find((row) => row.experienceId === item.id)),
-          [interest.name],
-        ).length > 0,
-      );
-      const stopped = rejections().filter((blocker) =>
-        matched.some((item) => item.id === blocker.at),
-      );
-      // A want can also have been lost to the travel-load veto rather than to the
-      // gate, and the cut is recorded with its own sentence, so both are evidence.
-      const cut = excluded.filter((drop) => matched.some((item) => item.id === drop.id));
-      return {
-        axis: "interests" as const,
-        severity: "strained" as const,
-        heldBy: [],
-        costing: interest.labels,
-        reason:
-          matched.length === 0
-            ? `Nothing near here matches ${interest.name}, which ${joinAnd(interest.labels)} asked for.`
-            : `Nothing in the plan matches ${interest.name}, which ${joinAnd(interest.labels)} asked for.`,
-        evidence: [
-          ...namesOf(
-            matched.map((item) => item.id),
-            byId,
-          ).map((name) => `Would have matched: ${name}.`),
-          ...stopped.map(
-            (blocker) => `${byId.get(blocker.at ?? "")?.name ?? blocker.at ?? "That place"}: ${blocker.message}`,
-          ),
-          ...cut.map((drop) => `${byId.get(drop.id)?.name ?? drop.id} was cut: ${drop.reason}`),
-        ].flat(),
-      };
-    });
+  // One pass over the catalogue, and only because a want went unanswered. Each row
+  // is scored once and read for every open want, which is what keeps the cost at one
+  // engine call per place rather than one per place per want.
+  const scored = new Map(
+    catalogue.map((item) => [
+      item.id,
+      interestReason(engine.score(ctx, [item], weights).find((row) => row.experienceId === item.id)),
+    ]),
+  );
+  // Did the engine name its matches at all? A breakdown with no interest component
+  // anywhere means the vocabulary above is not the engine's, and we stop here.
+  const engineNamed = plan.stops.some((stop) => interestReason(stop.score) !== undefined) ||
+    [...scored.values()].some((reason) => reason !== undefined);
+  if (!engineNamed) return [];
+
+  const cutAxis = aggregate.decisions.find((decision) => decision.axis === "walking")?.value !== "any"
+    ? ("walking" as const)
+    : ("party" as const);
+
+  return unserved.map((interest) => {
+    const matched = catalogue.filter((item) => servedIn(scored.get(item.id), [interest.name]).length > 0);
+    const matchedIds = new Set(matched.map((item) => item.id));
+    const stopped = rejections().filter((blocker) => blocker.at !== null && matchedIds.has(blocker.at));
+    // A want can also have been lost to the travel-load veto rather than to the
+    // gate, and the cut carries its own sentence, so both go in as evidence.
+    const cut = excluded.filter((drop) => matchedIds.has(drop.id));
+    // Who held the ceiling that took it. The gate's own code says, and the load
+    // veto can only be the walking cap or the party, so nothing is invented.
+    const axes = new Set<GroupAxis>([
+      ...stopped.map((blocker) => axisOf(blocker.code)),
+      ...cut.map(() => cutAxis),
+    ]);
+    const heldBy = [...axes].flatMap((axis) => heldByFor(aggregate, axis));
+    const who =
+      heldBy.length > 0
+        ? ` Blocked by the ${[...axes].join(" and ")} constraint ${joinAnd(heldBy)} stated.`
+        : "";
+    return {
+      axis: "interests" as const,
+      severity: "strained" as const,
+      heldBy: [...new Set(heldBy)].sort(),
+      costing: interest.labels,
+      reason:
+        (matched.length === 0
+          ? `Nothing near here matches ${interest.name}, which ${joinAnd(interest.labels)} asked for.`
+          : `Nothing in the plan matches ${interest.name}, which ${joinAnd(interest.labels)} asked for.`) + who,
+      evidence: [
+        ...namesOf(
+          matched.map((item) => item.id),
+          byId,
+        ).map((name) => `Would have matched: ${name}.`),
+        ...stopped.map(
+          (blocker) => `${byId.get(blocker.at ?? "")?.name ?? blocker.at ?? "That place"}: ${blocker.message}`,
+        ),
+        ...cut.map((drop) => `${byId.get(drop.id)?.name ?? drop.id} was cut: ${drop.reason}`),
+      ].flat(),
+    };
+  });
 }
 
 /**
@@ -940,6 +1080,180 @@ export type GroupPlan =
       ask: Ask[];
     };
 
+/** Everything the conflict chain needs, named once because three callers need it. */
+type Solved = {
+  plan: Plan;
+  load: LoadReport;
+  excluded: readonly LoadExclusion[];
+  aggregate: GroupAggregate;
+  ctx: DiscoveryContext;
+  byId: ReadonlyMap<string, Experience>;
+  catalogue: readonly Experience[];
+  engine: EnginePort;
+  weights: WeightProfile;
+  blockers: () => readonly Blocker[];
+};
+
+/**
+ * The group's audit of a plan the pipeline has already admitted. One
+ * implementation, three callers: a first solve, a replan, and the guard that
+ * decides whether an admitted plan is allowed to exist at all for this group.
+ */
+function conflictsFor(solved: Solved): GroupConflict[] {
+  return [
+    ...hardBreaches(solved.plan, solved.ctx, solved.aggregate, solved.byId),
+    ...unservedInterests(
+      solved.plan,
+      solved.aggregate,
+      solved.ctx,
+      solved.catalogue,
+      solved.engine,
+      solved.weights,
+      solved.blockers,
+      solved.excluded,
+    ),
+    ...loadTension(solved.aggregate, solved.load, solved.excluded),
+  ];
+}
+
+const blockersFrom = (rejections: readonly Rejection[]): Blocker[] =>
+  rejections.map((rejection) => ({
+    code: rejection.code,
+    at: rejection.experienceId,
+    message: rejection.message,
+    shortfall: rejection.shortfall,
+    unit: rejection.unit,
+  }));
+
+const loadBlockers = (load: LoadReport | null): Blocker[] =>
+  (load?.violations ?? []).map((violation) => ({
+    code: violation.code,
+    at: violation.at,
+    message: violation.message,
+    shortfall: violation.shortfall,
+    unit: violation.unit,
+  }));
+
+/**
+ * The pipeline's own violations, folded in with the gate's rejections so that a
+ * refusal is reported in one vocabulary. `engine_error` is in here on purpose: when
+ * the engine throws, its message is the only account of what happened, and dropping
+ * it would leave a group being told their constraints were impossible when the
+ * truth is that the index was offline.
+ */
+const violationRows = (violations: readonly { code: string; message: string; at: string | null }[]): Blocker[] =>
+  violations.map((violation) => ({
+    code: violation.code,
+    at: violation.at,
+    message: violation.message,
+    shortfall: null,
+    unit: null,
+  }));
+
+/**
+ * The gate's own account of the candidates, straight from the engine, fetched at
+ * most once and only when something needs explaining. Allowed to fail: a run may
+ * have failed *because* the engine threw, and an empty list then means "no
+ * candidate evidence", which is the truth — the violations the pipeline returned
+ * are still reported on their own.
+ */
+function blockerSource(
+  engine: EnginePort,
+  ctx: DiscoveryContext,
+  catalogue: readonly Experience[],
+): () => readonly Blocker[] {
+  let cache: readonly Blocker[] | null = null;
+  return () => {
+    if (cache === null) {
+      try {
+        cache = blockersFrom(engine.filterFeasible(ctx, [...catalogue]).rejected);
+      } catch {
+        cache = [];
+      }
+    }
+    return cache;
+  };
+}
+
+/**
+ * One blocking conflict per axis, each with the engine's own sentences and the
+ * decision that set the axis. Collapsing all of this into a single "party"
+ * conflict was the lazy version and it was also the useless one: a group that
+ * cannot go anywhere because of a ceiling and a group that cannot go anywhere
+ * because of stairs get the same sentence, and only one of those is a conversation
+ * the group can have. `stuck` when nothing was attributable at all — the engine
+ * threw, and there is genuinely no axis to name.
+ */
+function blockingByAxis(
+  rows: readonly Blocker[],
+  aggregate: GroupAggregate,
+  byId: ReadonlyMap<string, Experience>,
+  fallback: string,
+): GroupConflict[] {
+  const everyone = labelsOf(aggregate.members);
+  const grouped = new Map<GroupAxis, Blocker[]>();
+  for (const row of rows) {
+    const axis = axisOf(row.code);
+    const bucket = grouped.get(axis);
+    if (bucket) bucket.push(row);
+    else grouped.set(axis, [row]);
+  }
+  if (grouped.size === 0) return [blocking("party", [], everyone, fallback, [fallback])];
+
+  return [...grouped.entries()]
+    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+    .map(([axis, bucket]) => {
+      const decision = decisionFor(aggregate, axis);
+      const places = new Set(bucket.map((row) => row.at)).size;
+      return blocking(
+        axis,
+        heldByFor(aggregate, axis),
+        everyone,
+        `${plural(places, "place", "places")} ruled out on ${axis}. ${decision.reason}`,
+        [
+          ...[...new Set(bucket.map((row) => row.message))].slice(0, 3),
+          ...namesOf(bucket.map((row) => row.at), byId).map((name) => `Ruled out: ${name}.`),
+        ],
+      );
+    });
+}
+
+/**
+ * No plan, and why not. One implementation for the first solve and for a re-solve
+ * that came back empty, because they are the same event with the same evidence.
+ *
+ * `unmet` follows the discovery feature's own rule rather than a second one: a
+ * group is blocked when candidates existed and every one of them was eliminated on
+ * a hard constraint. No rejection at all means nothing was retrieved, which is a
+ * market gap — so there is no constraint to ask about and no conflict to raise.
+ */
+function unserved(
+  blockers: () => readonly Blocker[],
+  planRejections: readonly Rejection[],
+  aggregate: GroupAggregate,
+  byId: ReadonlyMap<string, Experience>,
+  ctx: DiscoveryContext,
+  engine: EnginePort,
+  catalogue: readonly Experience[],
+): { reason: string; conflicts: GroupConflict[]; ask: Ask[] } {
+  const rows = byCode([...blockers(), ...blockersFrom(planRejections)]);
+  const unmet = rows.size > 0;
+  return {
+    reason: unmet
+      ? "Nothing within reach works for all of you at once."
+      : "There is nothing to plan from where you are.",
+    conflicts: unmet
+      ? blockingByAxis(
+          [...rows.values()].flat(),
+          aggregate,
+          byId,
+          "There is nothing to plan from where you are.",
+        )
+      : [],
+    ask: unmet ? asksFrom(rows.keys(), rows, ctx, aggregate, engine, catalogue) : [],
+  };
+}
+
 /**
  * Aggregate, then run the ordinary discovery pipeline on the result. There is no
  * group-specific solve, no group-specific gate and no group-specific plan: the
@@ -966,113 +1280,52 @@ export function planForGroup(input: GroupPlanInput): GroupPlan {
   const active: DiscoverySession = state === base ? session : { ...session, state };
   const ctx = active.state.ctx;
   const byId = new Map(input.catalogue.map((item) => [item.id, item]));
-
-  // The gate's own account of the candidates, straight from the engine. Called at
-  // most once, and only when something needs explaining. Allowed to fail: the run
-  // may have failed *because* the engine threw, and an empty list then means "no
-  // candidate evidence", which is the truth — the violations `discover` returned
-  // are still reported.
-  let cache: readonly Blocker[] | null = null;
-  const blockers = (): readonly Blocker[] => {
-    if (cache === null) {
-      try {
-        cache = input.engine
-          .filterFeasible(ctx, [...input.catalogue])
-          .rejected.map((rejection) => ({
-            code: rejection.code,
-            at: rejection.experienceId,
-            message: rejection.message,
-            shortfall: rejection.shortfall,
-            unit: rejection.unit,
-          }));
-      } catch {
-        cache = [];
-      }
-    }
-    return cache;
-  };
+  const blockers = blockerSource(input.engine, ctx, input.catalogue);
 
   const outcome = discover(input.engine, active);
-  const loadBlockers = (load: LoadReport | null): Blocker[] =>
-    (load?.violations ?? []).map((violation) => ({
-      code: violation.code,
-      at: violation.at,
-      message: violation.message,
-      shortfall: violation.shortfall,
-      unit: violation.unit,
-    }));
 
   if (!outcome.ok) {
     // The engine threw, or `admit` refused. Both mean this group cannot be served
     // as asked, and both arrive with the numbers that say why.
-    const rows = byCode([...blockers(), ...loadBlockers(outcome.load)]);
-    const codes = new Set([...outcome.violations.map((violation) => violation.code), ...rows.keys()]);
-    const everyone = labelsOf(aggregate.members);
+    const stated = violationRows(outcome.violations);
+    const rows = byCode([...blockers(), ...loadBlockers(outcome.load), ...stated]);
+    const codes = new Set([...rows.keys()]);
     return {
       ok: false,
       aggregate,
       session: active,
       outcome,
       reason: outcome.reason,
-      conflicts: [
-        blocking("party", [], everyone, outcome.reason, [
-          ...outcome.violations.map((violation) => violation.message),
-          ...namesOf([...rows.values()].flat().map((row) => row.at), byId).map((name) => `Ruled out: ${name}.`),
-        ]),
-      ],
+      conflicts: blockingByAxis([...rows.values()].flat(), aggregate, byId, outcome.reason),
       ask: asksFrom(codes, rows, ctx, aggregate, input.engine, input.catalogue),
     };
   }
 
   if (outcome.plan.stops.length === 0) {
-    const rows = byCode(blockers());
-    const unmet = outcome.demand.status === "unmet";
-    const ruled = namesOf([...rows.values()].flat().map((row) => row.at), byId);
+    const nothing = unserved(blockers, outcome.plan.rejected, aggregate, byId, ctx, input.engine, input.catalogue);
     return {
       ok: false,
       aggregate,
       session: active,
       outcome,
-      reason: unmet
-        ? "Nothing within reach works for all of you at once."
-        : "There is nothing to plan from where you are.",
-      conflicts: unmet
-        ? [
-            blocking(
-              "party",
-              [],
-              labelsOf(aggregate.members),
-              `Every one of the ${plural(ruled.length, "place", "places")} near here was ruled out on a hard constraint this group set.`,
-              [
-                ...aggregate.decisions
-                  .filter((decision) => decision.strength === "hard")
-                  .map((decision) => `${decision.axis}: ${decision.reason}`),
-                ...ruled.map((name) => `Ruled out: ${name}.`),
-              ],
-            ),
-          ]
-        : [],
-      // No rejection means nothing was retrieved, so there is no constraint to ask
-      // about: that is a market gap, and it belongs in unmet demand, not in a
-      // question for the group.
-      ask: unmet ? asksFrom(rows.keys(), rows, ctx, aggregate, input.engine, input.catalogue) : [],
+      reason: nothing.reason,
+      conflicts: nothing.conflicts,
+      ask: nothing.ask,
     };
   }
 
-  const conflicts = [
-    ...hardBreaches(outcome.plan, ctx, aggregate, byId),
-    ...unservedInterests(
-      outcome.plan,
-      aggregate,
-      ctx,
-      input.catalogue,
-      input.engine,
-      input.weights,
-      blockers,
-      outcome.excluded,
-    ),
-    ...loadTension(aggregate, outcome.load, outcome.excluded),
-  ];
+  const conflicts = conflictsFor({
+    plan: outcome.plan,
+    load: outcome.load,
+    excluded: outcome.excluded,
+    aggregate,
+    ctx,
+    byId,
+    catalogue: input.catalogue,
+    engine: input.engine,
+    weights: input.weights,
+    blockers,
+  });
   const refused = conflicts.filter((conflict) => conflict.severity === "blocking");
   if (refused.length > 0) {
     // The pipeline returned a plan that breaks something the group said was hard.
@@ -1089,5 +1342,277 @@ export function planForGroup(input: GroupPlanInput): GroupPlan {
     };
   }
 
-  return { ok: true, aggregate, session: active, outcome, conflicts, ask: [] };
+  return {
+    ok: true,
+    aggregate,
+    // The session the pipeline returned, not the one we handed it: this is the one
+    // carrying the admitted plan, its load report and its exclusions, and it is what
+    // `replanForGroup` needs to adapt the group's plan rather than nothing.
+    session: outcome.session,
+    outcome,
+    conflicts,
+    ask: [],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Replanning a group that already has a plan
+// ---------------------------------------------------------------------------
+
+export type GroupReplanInput = {
+  engine: EnginePort;
+  /** The session `planForGroup` returned. Its `plan` is the one being adapted. */
+  session: DiscoverySession;
+  /** The aggregate that session was built from. It carries the personas. */
+  aggregate: GroupAggregate;
+  catalogue: readonly Experience[];
+  weights: WeightProfile;
+  /** What the group just agreed to, or every ask they were shown. */
+  answer: Ask | readonly Ask[];
+};
+
+export type GroupReplan =
+  | {
+      ok: true;
+      aggregate: GroupAggregate;
+      session: DiscoverySession;
+      outcome: Extract<ReplanOutcome, { ok: true }>;
+      conflicts: GroupConflict[];
+      /**
+       * Always empty. A group that can be served has nothing left to be asked, and
+       * the field is here so a caller can read `.ask` without branching on `ok` first.
+       */
+      ask: Ask[];
+    }
+  | {
+      ok: false;
+      aggregate: GroupAggregate;
+      /** The session as it stands: a failed re-solve never costs the group its plan. */
+      session: DiscoverySession;
+      change: ContextChange | null;
+      reason: string;
+      conflicts: GroupConflict[];
+      ask: Ask[];
+    };
+
+/**
+ * The group accepts an answer, and the *existing* replanner does the work:
+ * `applyOps` folds the ask into the editor state, `replan` re-solves, and `admit`
+ * decides whether the result may be shown. So a group that already has a plan gets
+ * the same diff, the same reality panel and the same guarantees as any other
+ * replan, and this file only reports the tension afterwards.
+ *
+ * Three things it will not do: it will not invent a plan when there was none to
+ * adapt, it will not re-solve when the answer changes nothing the planner reads, and
+ * it will not return a new plan that breaks a hard group constraint — the same
+ * refusal `planForGroup` makes, for the same reason.
+ */
+export function replanForGroup(input: GroupReplanInput): GroupReplan {
+  const { aggregate, engine, catalogue, weights, session } = input;
+  const answers = Array.isArray(input.answer) ? input.answer : [input.answer];
+  const edit = applyOps(session.state, answers.map((ask) => ask.op));
+
+  if (!edit.change) {
+    // `applyOps` reports no change when nothing the planner reads moved. Re-solving
+    // would burn an engine pass to return the same plan, and reporting a change
+    // nobody made would be worse.
+    return {
+      ok: false,
+      aggregate,
+      session,
+      change: null,
+      reason: "That would not change anything the planner reads, so nothing was re-solved.",
+      conflicts: [],
+      ask: [],
+    };
+  }
+
+  if (session.plan === null) {
+    return {
+      ok: false,
+      aggregate,
+      session,
+      change: edit.change,
+      reason: "There is no plan to adapt yet, so this has to be a new solve rather than a re-solve.",
+      conflicts: [],
+      ask: [],
+    };
+  }
+
+  const outcome = replan(engine, { ...session, state: edit.state }, edit.change);
+  const ctx = outcome.session.state.ctx;
+  const byId = new Map(catalogue.map((item) => [item.id, item]));
+  const blockers = blockerSource(engine, ctx, catalogue);
+
+  if (!outcome.ok) {
+    const stated = violationRows(outcome.violations);
+    const rows = byCode([...blockers(), ...loadBlockers(outcome.load), ...stated]);
+    const codes = new Set([...rows.keys()]);
+    return {
+      ok: false,
+      aggregate,
+      session: outcome.session,
+      change: outcome.change,
+      reason: outcome.reason,
+      conflicts: blockingByAxis([...rows.values()].flat(), aggregate, byId, outcome.reason),
+      ask: asksFrom(codes, rows, ctx, aggregate, engine, catalogue),
+    };
+  }
+
+  if (outcome.plan.stops.length === 0) {
+    // The re-solve is allowed to come back with nothing, and `admit` will pass an
+    // empty plan: it is a true plan, just an empty one. For a group it is not a
+    // result — the window they agreed to is gone — so it is reported the same way a
+    // first solve reports it, with the evidence and the question.
+    const nothing = unserved(blockers, outcome.plan.rejected, aggregate, byId, ctx, engine, catalogue);
+    return {
+      ok: false,
+      aggregate,
+      session: outcome.session,
+      change: outcome.change,
+      reason: nothing.reason,
+      conflicts: nothing.conflicts,
+      ask: nothing.ask,
+    };
+  }
+
+  const conflicts = conflictsFor({
+    plan: outcome.plan,
+    load: outcome.load,
+    excluded: outcome.excluded,
+    aggregate,
+    ctx,
+    byId,
+    catalogue,
+    engine,
+    weights,
+    blockers,
+  });
+  const refused = conflicts.filter((conflict) => conflict.severity === "blocking");
+  if (refused.length > 0) {
+    return {
+      ok: false,
+      aggregate,
+      session: outcome.session,
+      change: outcome.change,
+      reason: refused[0]?.reason ?? "The re-solved plan does not work for everyone in the group.",
+      conflicts,
+      // Not offered here either. The previous plan is what the group still has, and
+      // it was valid when it was made.
+      ask: [],
+    };
+  }
+
+  return { ok: true, aggregate, session: outcome.session, outcome, conflicts, ask: [] };
+}
+
+// ---------------------------------------------------------------------------
+// Negotiation
+// ---------------------------------------------------------------------------
+
+/** How many times `resolveGroup` will ask before it gives up on itself. */
+export const MAX_ROUNDS = 3;
+
+export type GroupRound = {
+  /** The question put to the group, or null when there was none left to ask. */
+  ask: Ask | null;
+  /** Why the round ended the way it did. */
+  reason: string;
+  /** What the group was told it had lost, after this round. */
+  conflicts: GroupConflict[];
+  /** Stops in the plan this round produced. 0 means none. */
+  stops: number;
+};
+
+export type GroupResolution = {
+  ok: boolean;
+  /** Every round, in order. The transcript the panel shows. */
+  rounds: GroupRound[];
+  /** The last plan produced, whichever way it went. */
+  plan: GroupPlan;
+  /**
+   * True when no remaining answer would help: nothing left to ask, or the last
+   * answer changed nothing the planner reads. This is what stops a caller from
+   * looping on an ask that goes nowhere.
+   */
+  stuck: boolean;
+};
+
+/**
+ * The fields an ask can move, and therefore everything that has to change for an
+ * answer to count as progress. Mirrors the reasoning in `context.ts`: a field left
+ * out here is one the loop would treat as "answered" while nothing happened.
+ */
+function visibleKey(ctx: DiscoveryContext): string {
+  return JSON.stringify({
+    availableMin: ctx.availableMin,
+    budget: ctx.budget?.minor ?? null,
+    perPerson: ctx.budgetPerPerson?.minor ?? null,
+    accessNeeds: [...ctx.accessNeeds].sort(),
+    avoid: [...ctx.avoid].sort(),
+    interests: [...ctx.interests].sort(),
+    travelMode: ctx.travelMode,
+    partySize: ctx.partySize,
+    childAges: [...ctx.childAges].sort(),
+  });
+}
+
+/**
+ * The group co-decider: solve, ask the group the single most useful question, take
+ * the answer, solve again. Bounded three ways so it always terminates — by a
+ * served plan, by having no question left to ask, and by noticing that the last
+ * answer did not move anything the planner reads.
+ *
+ * Only the group's own asks are applied, one per round and always the one that
+ * would free the most candidates, so the transcript is a negotiation rather than a
+ * search. Nothing is relaxed that the group did not agree to, and a group that
+ * cannot be served ends with `ok: false` and no itinerary.
+ */
+export function resolveGroup(input: GroupPlanInput & { maxRounds?: number }): GroupResolution {
+  const rounds = Math.max(1, Math.min(MAX_ROUNDS, input.maxRounds ?? MAX_ROUNDS));
+  const transcript: GroupRound[] = [];
+  const accepted: Ask[] = [];
+  let plan = planForGroup({ ...input, adjust: accepted });
+
+  for (let round = 0; round < rounds; round += 1) {
+    if (plan.ok) {
+      return {
+        ok: true,
+        rounds: transcript,
+        plan,
+        stuck: false,
+      };
+    }
+    const ask = plan.ask[0];
+    if (!ask) {
+      // Either the group cannot be served and there is nothing they could change,
+      // or there was nothing to plan from. Either way, asking again is pointless.
+      transcript.push({
+        ask: null,
+        reason: plan.reason,
+        conflicts: plan.conflicts,
+        stops: 0,
+      });
+      return { ok: false, rounds: transcript, plan, stuck: true };
+    }
+
+    const before = visibleKey(plan.session.state.ctx);
+    accepted.push(ask);
+    const next = planForGroup({ ...input, adjust: accepted });
+    const moved = visibleKey(next.session.state.ctx) !== before;
+    transcript.push({
+      ask,
+      reason: next.ok ? "The group could be served." : next.reason,
+      conflicts: next.conflicts,
+      stops: next.ok ? next.outcome.plan.stops.length : 0,
+    });
+    plan = next;
+    if (!moved) {
+      // The answer was accepted and the context did not move. Offering it again
+      // would loop for ever, so this is where the negotiation stops.
+      return { ok: false, rounds: transcript, plan, stuck: true };
+    }
+  }
+
+  return { ok: false, rounds: transcript, plan, stuck: plan.ask.length === 0 };
 }
