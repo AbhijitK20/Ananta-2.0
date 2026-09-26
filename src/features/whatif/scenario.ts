@@ -65,6 +65,7 @@ import type { EnginePort } from "../discovery/engine";
 import { hm, money } from "../discovery/format";
 import { type RealityChanged, buildRealityChanged } from "../discovery/reality";
 import { type DiscoverySession, type Violation, discover } from "../discovery/replanner";
+import { type GateChange, gateChanges } from "./gates";
 
 // ---------------------------------------------------------------------------
 // 1. Clone
@@ -420,6 +421,13 @@ export function deltaOf(added: number, removed: number, feasible: boolean): Scen
 // ---------------------------------------------------------------------------
 
 export type ScenarioResult = {
+  /**
+   * A literal discriminant, so a serialised result crossing an API boundary
+   * cannot be mistaken for a live plan. A what-if is not bookable and must never
+   * reach a booking flow; the cheapest guard is a type that says so at every
+   * switch statement.
+   */
+  kind: "what_if";
   /** The context the planner was actually given. A clone, never the live one. */
   ctx: DiscoveryContext;
   change: ContextChange;
@@ -429,6 +437,8 @@ export type ScenarioResult = {
   /** The whole "reality changed" panel, built for a trip that never happened. */
   reality: RealityChanged;
   compare: ScenarioComparison;
+  /** What became possible, and what stopped being. See `gates.ts`. */
+  gates: GateChange[];
   breaches: ScenarioBreach[];
   feasible: boolean;
   delta: ScenarioDelta;
@@ -546,12 +556,14 @@ export function simulate(
   return {
     ok: true,
     scenario: {
+      kind: "what_if",
       ctx,
       change: edit.change,
       plan,
       validation: built.validation,
       reality,
       compare: comparePlans(current, plan, session.state.ctx, ctx),
+      gates: gateChanges(current, plan, session.catalogue),
       breaches,
       feasible,
       delta: deltaOf(diff.added.length, diff.removed.length, feasible),
