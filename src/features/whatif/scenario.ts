@@ -65,6 +65,7 @@ import type { EnginePort } from "../discovery/engine";
 import { hm, money } from "../discovery/format";
 import { type RealityChanged, buildRealityChanged } from "../discovery/reality";
 import { type DiscoverySession, type Violation, discover } from "../discovery/replanner";
+import { type GateChange, gateChanges } from "./gates";
 
 // ---------------------------------------------------------------------------
 // 1. Clone
@@ -539,12 +540,14 @@ export function simulate(
   return {
     ok: true,
     scenario: {
+      kind: "what_if",
       ctx,
       change: edit.change,
       plan,
       validation: built.validation,
       reality,
       compare: comparePlans(current, plan, session.state.ctx, ctx),
+      gates: gateChanges(current, plan, session.catalogue),
       breaches,
       feasible,
       delta: deltaOf(diff.added.length, diff.removed.length, feasible),

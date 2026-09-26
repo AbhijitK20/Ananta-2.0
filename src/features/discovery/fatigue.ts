@@ -7,7 +7,7 @@
  * inert: `prefers_no_walks` was written into `DiscoveryContext.avoid` and then
  * nothing read it. This file is the reader.
  *
- * Three rules, all load-bearing:
+ * FIVE RULES, all load-bearing.
  *
  *  1. **The router is the only source of distance.** Every metre here comes out
  *     of `Plan.legs`, or out of `engine.travelBetween` when a plan arrives
@@ -18,20 +18,44 @@
  *  2. **Only `mode: "walk"` legs count as walking.** An `auto` leg's `metres`
  *     are driven metres. Counting them would invent a 4 km walk out of a car
  *     trip, which is exactly the kind of decorative number this is meant to
- *     replace.
+ *     replace. A non-walk leg also costs no strain: we have no data on how far
+ *     someone walks to a station, so we charge nothing rather than guess. That
+ *     under-counts by design and `metrics.unpricedLegs` says how much.
  *
- *  3. **The budget is derived from the context, not from the plan.** Walking
+ *  3. **A stop is not a rest.** Standing at a market for ninety minutes costs
+ *     something, and `session` after `session` is how a day wrecks people. So
+ *     every stop is charged for its duration at a posture rate taken from the
+ *     row's own `seatingAvailable` when we have it and from its category when we
+ *     do not. This is the one axis a distance-only model cannot see: six short
+ *     stops can be harder than two long ones.
+ *
+ *  4. **Effort is cumulative, so a flat kilometre budget is wrong.** The fourth
+ *     kilometre of a day is not the first kilometre. Each metre is charged at a
+ *     rate that grows with the strain already spent, and a genuine sit-down
+ *     (`REST_GAP_MIN`) gives some of it back. Two plans that walk the same
+ *     distance are therefore not equally hard, and only one of them is the same
+ *     plan twice. Strain is denominated in metre-equivalents, so it compares
+ *     against the same `budget.walkMetres` a traveller would quote at you.
+ *
+ *  5. **The budget is derived from the context, not from the plan.** Walking
  *     capacity, longest unbroken block and how many stops can follow each other
- *     all follow from `avoid` tokens, `childAges`, `accessNeeds`, `partySize`
- *     and `availableMin`. Two different parties looking at the same plan get
- *     two different verdicts, which is the whole claim.
+ *     all follow from `avoid` tokens, `childAges`, `accessNeeds`, `partySize`,
+ *     `weather` and `availableMin`. Two different parties looking at the same
+ *     plan get two different verdicts, which is the whole claim.
  *
  * Consequences, in `replanner.ts` and nowhere else: `packWithinLoad` /
  * `replanWithinLoad` re-solve with the offending stop off the list, and `admit`
  * refuses a plan that is still over budget. So a plan a traveller can be shown
  * is a plan their group can walk.
+ *
+ * NOT HERE, ON PURPOSE: the `max_walk_<n>m` token. `whatif` owns that judgement
+ * and tests it end to end, including the case where a planner ignores the cap,
+ * so this file records the cap in `budget.walkCapM` and in `budget.basis` and
+ * leaves the verdict alone — two components must not both refuse a plan for the
+ * same reason. `walkCapOf` below is the canonical reader if that ever changes.
  */
 import type {
+  Category,
   ContextChange,
   DiscoveryContext,
   Experience,
@@ -39,6 +63,7 @@ import type {
   Plan,
   ReplanResult,
   TravelLeg,
+  WeatherNow,
 } from "../../contracts";
 import { WALK_TOKENS } from "./context";
 import type { EnginePort, TravelMode } from "./engine";
@@ -59,6 +84,45 @@ const DAY_WALK_M = 6000;
  */
 export const REST_GAP_MIN = 30;
 
+/**
+ * Standing still, as a fraction of walking pace. Walking is 70 strain-units a
+ * minute, so 6 is about 8.5%: an hour on your feet in a market is worth a bit
+ * over 350 m of walking. Deliberately small — a stop is much cheaper than
+ * walking it — because a stop you can sit at is very much cheaper still.
+ */
+const STAND_STRAIN_PER_MIN = 6;
+
+/**
+ * How much harder each further metre is, per unit of capacity already spent.
+ *
+ * At 1.0, spending half your allowance makes the next metre cost 1.5x and
+ * spending all of it makes it cost 2x. That is the shape of the real thing: the
+ * tail of a long day is where people give up, and a model that charges every
+ * metre the same cannot see that.
+ */
+const FATIGUE_GAIN = 1;
+
+/**
+ * Share of the strain spent before a break that a real sit-down gives back, and
+ * the ceiling on how much one break can return. Bounded so a plan cannot bank
+ * recovery across a dozen gaps and walk 20 km.
+ */
+const RECOVERY_RATE = 0.35;
+const RECOVERY_CAP_SHARE = 0.25;
+
+/**
+ * Strain capacity is larger than the walking budget, because most of a day out
+ * is spent standing or sitting rather than walking. 1.6x lets a party use its
+ * whole walking allowance AND spend a normal day on its feet without the model
+ * calling that over budget.
+ */
+const STRAIN_HEADROOM = 1.6;
+
+/** Above this, walking starts to cost more than it does at a mild temperature. */
+const COMFORTABLE_C = 24;
+/** Per extra degree past `COMFORTABLE_C`. 30 C is +11%, 40 C is +29%. */
+const HEAT_PER_C = 0.018;
+
 /** `DiscoveryContext.travelMode` includes "any"; the router does not. */
 const ROUTER_MODE: Record<DiscoveryContext["travelMode"], TravelMode> = {
   walk: "walk",
@@ -78,6 +142,21 @@ export function toleranceOf(ctx: DiscoveryContext): WalkingTolerance {
   if (ctx.avoid.includes(WALK_TOKENS.minimal)) return "minimal";
   if (ctx.avoid.includes(WALK_TOKENS.low)) return "low";
   return "any";
+}
+
+const WALK_CAP_TOKEN = /^max_walk_(\d+)m$/;
+
+/**
+ * The exact walking ceiling a "what if" asked for, read back out of the frozen
+ * context. Recorded in the budget and in the evidence; not enforced here, for
+ * the reason in the file header. Exported so there is one regex for it.
+ */
+export function walkCapOf(ctx: DiscoveryContext): number | null {
+  for (const token of ctx.avoid) {
+    const hit = WALK_CAP_TOKEN.exec(token);
+    if (hit?.[1]) return Number(hit[1]);
+  }
+  return null;
 }
 
 type ToleranceTable = {
@@ -105,11 +184,19 @@ const MOBILITY_NEEDS = new Set(["wheelchair", "stroller", "lowStairs"]);
 export type LoadBudget = {
   /** Distance on foot this party can be asked to cover in this window. */
   walkMetres: number;
+  /**
+   * Total effort this party can be asked to spend, in the same metre-equivalents
+   * as `walkMetres`, so the two can be compared without a conversion table.
+   * Always `walkMetres * STRAIN_HEADROOM`.
+   */
+  strainCapacity: number;
   maxConsecutiveStops: number;
   /** Longest run of stops with no sit-down, regardless of how many there are. */
   maxBlockMin: number;
   maxLegWalkMetres: number;
   tolerance: WalkingTolerance;
+  /** The exact cap a "what if" asked for, if one is in force. Reported, not enforced. */
+  walkCapM: number | null;
   /** Multiplier on the budget from who is travelling. 1 for a healthy adult. */
   groupFactor: number;
   /**
@@ -161,12 +248,52 @@ const round2 = (value: number): number => Math.round(value * 100) / 100;
 const round1 = (value: number): number => Math.round(value * 10) / 10;
 const km = (metres: number): string => `${round1(metres / 1000)} km`;
 
+/**
+ * What the sky is doing to the cost of being on foot. This is a different axis
+ * from `weather_averse`, which is about whether to go out at all: a party that
+ * decided to go out anyway still walks more slowly for it.
+ *
+ * Applied to *effort*, never to `walkMetres`. A hot day does not shorten how far
+ * a body can physically walk; it makes every metre of it cost more, and the
+ * strain model is the only place that distinction can live. Putting it in both
+ * would count the same heat twice and make the strain check contradict the
+ * distance check it is supposed to sit behind.
+ */
+function weatherLoad(ctx: DiscoveryContext): { factor: number; basis: string[] } {
+  const basis: string[] = [];
+  let factor = 1;
+
+  const heat = Math.max(0, ctx.weather.tempC - COMFORTABLE_C);
+  if (heat > 0) {
+    factor *= 1 + heat * HEAT_PER_C;
+    basis.push(`strain_temp:${ctx.weather.tempC}c(+${round1(heat * HEAT_PER_C * 100)}%)`);
+  }
+  const byCondition: Partial<Record<WeatherNow["condition"], [number, string]>> = {
+    heat: [1.2, "strain_condition:heat"],
+    heavy_rain: [1.15, "strain_condition:heavy_rain"],
+    storm: [1.15, "strain_condition:storm"],
+    light_rain: [1.05, "strain_condition:light_rain"],
+    wind: [1.05, "strain_condition:wind"],
+  };
+  const hit = byCondition[ctx.weather.condition];
+  if (hit) {
+    factor *= hit[0];
+    basis.push(hit[1]);
+  }
+  return { factor: round2(factor), basis };
+}
+
 export function loadBudget(ctx: DiscoveryContext): LoadBudget {
   const tolerance = toleranceOf(ctx);
   const table = TOLERANCE[tolerance];
   const { factor, basis } = partyLoad(ctx);
+  const { factor: sky, basis: skyBasis } = weatherLoad(ctx);
+  const walkCapM = walkCapOf(ctx);
 
   // A window is a hard ceiling on its own: 45 minutes cannot hold a day's walking.
+  // The party factor is the whole group penalty and is applied HERE, once. The
+  // strain model must not apply it again: a metre of this party's walking is
+  // already one metre of the budget they were just given.
   const windowCap = ctx.availableMin * WALK_M_PER_MIN;
   const personalCap = DAY_WALK_M * table.share;
   const walkMetres = Math.round(Math.min(personalCap, windowCap) * factor);
@@ -177,10 +304,12 @@ export function loadBudget(ctx: DiscoveryContext): LoadBudget {
 
   return {
     walkMetres,
+    strainCapacity: Math.round(walkMetres * STRAIN_HEADROOM),
     maxConsecutiveStops: table.maxConsecutiveStops,
     maxBlockMin,
     maxLegWalkMetres: table.maxLegWalkMetres,
     tolerance,
+    walkCapM,
     groupFactor: factor,
     basis: [
       // "any" has no token, because it is the absence of a stated limit rather
@@ -191,9 +320,54 @@ export function loadBudget(ctx: DiscoveryContext): LoadBudget {
       `daily_cap:${Math.round(personalCap)}m`,
       `window_cap:${Math.round(windowCap)}m(${ctx.availableMin}min@${WALK_M_PER_MIN}m/min)`,
       `group_factor:${factor}`,
+      ...skyBasis,
+      ...(walkCapM === null ? [] : [`walk_cap:${walkCapM}m(reported_not_enforced)`]),
+      `strain_headroom:${STRAIN_HEADROOM}x`,
       ...basis,
     ],
   };
+}
+
+// ---------------------------------------------------------------------------
+// Posture
+// ---------------------------------------------------------------------------
+
+/**
+ * What a stop costs to be at, as a multiple of the standing rate.
+ *
+ * Three classes, not thirty-six: seated, mixed, and on-your-feet. The split is
+ * the only thing that changes a plan's verdict, and finer categories would be
+ * invention dressed as precision. `seatingAvailable` overrides the class
+ * whenever the row carries it, because a market with benches is not a market
+ * without them, and a `null` there means "nobody recorded it", never "no".
+ */
+const SEATED: readonly Category[] = [
+  "cafe", "restaurant", "wellness", "theatre", "church", "mosque", "temple", "nightlife",
+];
+const ON_FEET: readonly Category[] = [
+  "nature", "beach", "adventure", "dance_performance", "music_live", "community_hosted",
+  "art_studio", "craft_workshop",
+];
+
+function postureOf(item: Experience | undefined): { factor: number; basis: string } {
+  if (!item) return { factor: 1, basis: "posture:unknown_row" };
+  const standing = SEATED.includes(item.category)
+    ? "seated"
+    : ON_FEET.includes(item.category)
+      ? "on_feet"
+      : "mixed";
+  let factor = standing === "seated" ? 0.5 : standing === "on_feet" ? 1.2 : 1;
+
+  const seating = item.accessibility.seatingAvailable;
+  if (seating === true) factor = Math.min(factor, 0.45);
+  else if (seating === false) factor = Math.max(factor, 1.15);
+
+  // Outside with no shade, standing is standing. Only outdoors; `covered` and
+  // `indoor` already give you somewhere to stop.
+  if (item.indoorOutdoor === "outdoor") factor *= 1.15;
+
+  const seatingNote = seating === null ? "seating:unknown" : `seating:${seating}`;
+  return { factor: round2(factor), basis: `posture:${standing}(${seatingNote},${item.indoorOutdoor})` };
 }
 
 // ---------------------------------------------------------------------------
@@ -264,6 +438,146 @@ function pointOf(id: string, catalogue: ReadonlyMap<string, Experience>): GeoPoi
 }
 
 // ---------------------------------------------------------------------------
+// The strain timeline
+// ---------------------------------------------------------------------------
+
+/**
+ * One charged moment in the day. Kept whole rather than summed on the fly,
+ * because the whole argument of this file is that the order matters: you cannot
+ * know what a metre costs without knowing what came before it, and you cannot
+ * show a traveller which stop hurt without having kept them apart.
+ */
+export type StrainStep = {
+  kind: "leg" | "stop" | "rest";
+  /** Stop id, leg destination, or "origin" for a break before the first stop. */
+  id: string;
+  minutes: number;
+  /** On-foot metres. Zero for anything that is not a `walk` leg. */
+  metres: number;
+  /** Posture multiplier for a stop, 1 for a leg. */
+  posture: number;
+  /** The fatigue multiplier in force when this step was charged. */
+  multiplier: number;
+  /** Strain added, or handed back for a `rest`. */
+  strain: number;
+  /** Strain already spent when this step began. */
+  strainBefore: number;
+  basis: string;
+};
+
+type StrainTimeline = {
+  steps: StrainStep[];
+  used: number;
+  fromLegs: number;
+  fromStops: number;
+  recovered: number;
+  unpricedLegs: number;
+  worst: StrainStep | null;
+};
+
+/**
+ * Walk the day in order, charging as we go. The order is the point: rule 4.
+ *
+ * `budget` is threaded in rather than recomputed so the caller measures the day
+ * against exactly the budget it is about to compare it with.
+ */
+function strainOf(
+  plan: Plan,
+  ctx: DiscoveryContext,
+  legs: readonly TravelLeg[],
+  catalogue: ReadonlyMap<string, Experience>,
+  budget: LoadBudget,
+): StrainTimeline {
+  const steps: StrainStep[] = [];
+  const capacity = Math.max(1, budget.strainCapacity);
+  const { factor: sky } = weatherLoad(ctx);
+  let used = 0;
+  let fromLegs = 0;
+  let fromStops = 0;
+  let recovered = 0;
+  let unpricedLegs = 0;
+  let worst: StrainStep | null = null;
+
+  const note = (step: StrainStep): void => {
+    steps.push(step);
+    if (step.kind === "leg") fromLegs += step.strain;
+    else if (step.kind === "stop") fromStops += step.strain;
+    else recovered += -step.strain;
+    // The worst single *stop*, not the worst leg: the traveller can act on "this
+    // one is too long to stand at" and not on "the second kilometre is expensive".
+    if (step.kind === "stop" && (worst === null || step.strain > worst.strain)) worst = step;
+  };
+
+  for (const [index, stop] of plan.stops.entries()) {
+    const leg = legs[index];
+    if (leg) {
+      const onFoot = leg.mode === "walk";
+      if (!onFoot) unpricedLegs += leg.minutes;
+      const multiplier = round2(1 + FATIGUE_GAIN * (used / capacity));
+      // No `groupFactor` here, and that is deliberate. The party penalty is
+      // already in `budget.walkMetres`, so dividing again would make walking
+      // exactly one's own budget cost several budgets, and the strain check
+      // would refuse every plan the distance check had just passed.
+      const strain = onFoot ? Math.round(leg.metres * multiplier * sky) : 0;
+      note({
+        kind: "leg",
+        id: leg.toId,
+        minutes: leg.minutes,
+        metres: onFoot ? leg.metres : 0,
+        posture: 1,
+        multiplier,
+        strain,
+        strainBefore: used,
+        basis: onFoot
+          ? `leg:walk(${leg.metres}m@${multiplier}x,sky${sky})`
+          : `leg:${leg.mode}(not_foot,unpriced)`,
+      });
+      used += strain;
+    }
+
+    const posture = postureOf(catalogue.get(stop.experienceId));
+    const minutes = Math.max(0, stop.departMin - stop.arriveMin);
+    const strain = Math.round(minutes * STAND_STRAIN_PER_MIN * posture.factor);
+    note({
+      kind: "stop",
+      id: stop.experienceId,
+      minutes,
+      metres: 0,
+      posture: posture.factor,
+      multiplier: 1,
+      strain,
+      strainBefore: used,
+      basis: `${posture.basis}x${minutes}min`,
+    });
+    used += strain;
+
+    const next = plan.stops[index + 1];
+    const gap = next ? next.arriveMin - stop.departMin : 0;
+    if (gap < REST_GAP_MIN) continue;
+    // A real break gives back a share of what came before, and no more than the
+    // recovery ceiling — otherwise a plan could bank rest and walk forever.
+    const back = Math.min(
+      Math.round(used * RECOVERY_RATE),
+      Math.round(capacity * RECOVERY_CAP_SHARE),
+    );
+    note({
+      kind: "rest",
+      id: stop.experienceId,
+      minutes: gap,
+      metres: 0,
+      posture: 1,
+      multiplier: 1,
+      strain: -back,
+      strainBefore: used,
+      basis: `rest:${gap}min(-${back})`,
+    });
+    used = Math.max(0, used - back);
+  }
+
+  return { steps, used, fromLegs, fromStops, recovered, unpricedLegs, worst };
+}
+
+// ---------------------------------------------------------------------------
 // Report
 // ---------------------------------------------------------------------------
 
@@ -271,6 +585,7 @@ export type LoadCode =
   | "window_exceeded"
   | "walking_budget_exceeded"
   | "leg_too_long_to_walk"
+  | "strain_exhausted"
   | "too_many_back_to_back"
   | "block_too_long_without_rest";
 
@@ -282,7 +597,7 @@ export type LoadViolation = {
   message: string;
   /** Over the limit by this much, in `unit`. */
   shortfall: number;
-  unit: "metres" | "minutes" | "stops";
+  unit: "metres" | "minutes" | "stops" | "strain";
 };
 
 export type LoadDrop = {
@@ -294,7 +609,14 @@ export type LoadDrop = {
    */
   savesMetresUpTo: number;
   savesMinUpTo: number;
-  /** `metres + 10*minutes` over the stop's engine score: relief per point of value. */
+  /**
+   * Strain this stop is responsible for: its own posture cost plus the walking
+   * either side of it. This is what makes the ranking work on a plan where every
+   * leg is driven, where the metre saving is zero for every stop and the old
+   * ranking collapsed to "shortest activity first".
+   */
+  savesStrainUpTo: number;
+  /** `strain + metres + 10 * minutes` over the stop's engine score. */
   rank: number;
 };
 
@@ -325,6 +647,18 @@ export type LoadMetrics = {
   /** Metres on foot over the budget. 0 when there is no walking. */
   loadRatio: number;
   blockRatio: number;
+  /** Total effort spent, in metre-equivalents. Rule 4: order matters. */
+  strainUsed: number;
+  strainFromLegs: number;
+  strainFromStops: number;
+  /** Strain handed back by real breaks. */
+  strainRecovered: number;
+  /** `strainUsed / budget.strainCapacity`. The number a group should be shown. */
+  strainRatio: number;
+  /** Minutes of travel we deliberately did not price, because it was not on foot. */
+  unpricedLegs: number;
+  /** The stop that cost the most to be at, with the sentence for why. */
+  worstStop: { id: string; minutes: number; strain: number; basis: string } | null;
   /** True when the origin point was missing, so the first leg has no metres. */
   originDistanceUnknown: boolean;
 };
@@ -336,6 +670,8 @@ export type LoadReport = {
   violations: LoadViolation[];
   /** Ranked by relief per point of engine score. First one is what we cut. */
   dropOrder: LoadDrop[];
+  /** Every charged moment, in order. The audit trail behind `metrics`. */
+  timeline: StrainStep[];
 };
 
 /** A stop dropped because the plan was over budget, with the sentence that says so. */
@@ -347,11 +683,13 @@ export type LoadExclusion = { id: string; reason: string; savesMetresUpTo: numbe
  * Not `violations[0]`. A day that overruns its window *because* it walks further
  * than the group can walk should say so about the walking — that is the thing
  * they can act on, by asking for a nearer stop or a car. Fixed order, so the same
- * report always produces the same sentence.
+ * report always produces the same sentence. A stated limit outranks a derived
+ * one, because the stated one is the one they can relax.
  */
 const SEVERITY: LoadCode[] = [
   "walking_budget_exceeded",
   "leg_too_long_to_walk",
+  "strain_exhausted",
   "too_many_back_to_back",
   "block_too_long_without_rest",
   "window_exceeded",
@@ -434,6 +772,8 @@ export function loadOf(
     if (gap >= REST_GAP_MIN) restGaps.push({ afterId: from.experienceId, beforeId: to.experienceId, minutes: gap });
   }
 
+  const strain = strainOf(plan, ctx, legs, catalogue, budget);
+
   const metrics: LoadMetrics = {
     walkMetres,
     walkMin,
@@ -449,6 +789,20 @@ export function loadOf(
     restGaps,
     loadRatio: budget.walkMetres > 0 ? round2(walkMetres / budget.walkMetres) : 0,
     blockRatio: budget.maxBlockMin > 0 ? round2(longestBlockMin / budget.maxBlockMin) : 0,
+    strainUsed: strain.used,
+    strainFromLegs: strain.fromLegs,
+    strainFromStops: strain.fromStops,
+    strainRecovered: strain.recovered,
+    strainRatio: round2(strain.used / Math.max(1, budget.strainCapacity)),
+    unpricedLegs: strain.unpricedLegs,
+    worstStop: strain.worst
+      ? {
+          id: strain.worst.id,
+          minutes: strain.worst.minutes,
+          strain: strain.worst.strain,
+          basis: strain.worst.basis,
+        }
+      : null,
     originDistanceUnknown: ctx.origin.point === null && plan.stops.length > 0,
   };
 
@@ -490,7 +844,23 @@ export function loadOf(
     });
   }
 
-  // 4. Too many back to back, even if each one is short.
+  // 4. Total effort, which is not the same question as distance. This is the one
+  //    that catches a plan nobody walked too far but nobody could have done.
+  if (strain.used > budget.strainCapacity) {
+    const worst = metrics.worstStop;
+    const where = worst
+      ? ` That one place alone is worth ${km(worst.strain)} of walking, for ${worst.minutes} min.`
+      : "";
+    violations.push({
+      code: "strain_exhausted",
+      at: worst?.id ?? null,
+      message: `That is ${strain.used} of effort against ${budget.strainCapacity} for this group — ${strain.fromStops} of it standing still and ${strain.fromLegs} walking.${where}`,
+      shortfall: strain.used - budget.strainCapacity,
+      unit: "strain",
+    });
+  }
+
+  // 5. Too many back to back, even if each one is short.
   if (consecutiveMax > budget.maxConsecutiveStops) {
     violations.push({
       code: "too_many_back_to_back",
@@ -501,7 +871,7 @@ export function loadOf(
     });
   }
 
-  // 5. A long day on no rest, however it is split.
+  // 6. A long day on no rest, however it is split.
   if (longestBlockMin > budget.maxBlockMin) {
     violations.push({
       code: "block_too_long_without_rest",
@@ -517,35 +887,61 @@ export function loadOf(
     metrics,
     budget,
     violations,
-    dropOrder: dropOrder(plan, legs, longestRun, budget.maxConsecutiveStops),
+    dropOrder: dropOrder(plan, legs, strain.steps, longestRun, budget.maxConsecutiveStops),
+    timeline: strain.steps,
   };
 }
 
 /**
  * Which stop to cut, worst value for the relief first. Two stops that free the
- * same walking are separated by the engine's own score, so the one we give up is
+ * same effort are separated by the engine's own score, so the one we give up is
  * the one the engine liked least.
+ *
+ * Effort, not just metres, is what a cut is measured in. On a plan where every
+ * leg is driven, the metre saving is zero for every stop and a distance-only
+ * ranking degenerates into "shortest activity first" — which cuts the cafe and
+ * keeps the three-hour market. The strain timeline already knows what each stop
+ * cost, so that case is now ranked on the thing that actually broke.
  *
  * A stop inside the run that has no break in it is worth twice as much to drop,
  * because dropping anything else does not shorten the run — the run violation
  * survives the swap. That is the one place the ranking is not pure value.
  */
-function dropOrder(plan: Plan, legs: readonly TravelLeg[], longestRun: Run | null, maxConsecutive: number): LoadDrop[] {
+function dropOrder(
+  plan: Plan,
+  legs: readonly TravelLeg[],
+  steps: readonly StrainStep[],
+  longestRun: Run | null,
+  maxConsecutive: number,
+): LoadDrop[] {
   const inRun = new Set(longestRun && longestRun.ids.length > maxConsecutive ? longestRun.ids : []);
+  // What each stop is on the hook for, by name rather than by position: a
+  // reconstruction that assumed one leg per stop broke the moment a plan had a
+  // leg the engine did not number the way we guessed.
+  const strainOfStop = new Map<string, number>();
+  for (const step of steps) {
+    if (step.kind !== "stop") continue;
+    strainOfStop.set(step.id, (strainOfStop.get(step.id) ?? 0) + step.strain);
+  }
+
   return plan.stops
-    .map((stop, index) => {
+    .map((stop) => {
       // Leg `index` arrives here, leg `index + 1` leaves. Both go if this stop does.
+      const index = plan.stops.indexOf(stop);
       const before = legs[index];
       const after = legs[index + 1];
       const saved = [before, after].filter((leg): leg is TravelLeg => leg?.mode === "walk");
       const savesMetresUpTo = sum(saved.map((leg) => leg.metres));
       const savesMinUpTo = sum(saved.map((leg) => leg.minutes)) + Math.max(0, stop.departMin - stop.arriveMin);
-      const relief = savesMetresUpTo + 10 * savesMinUpTo;
+      const savesStrainUpTo =
+        (strainOfStop.get(stop.experienceId) ?? 0) + sum(saved.map((leg) => leg.metres));
+      const relief = savesStrainUpTo + 0.1 * savesMetresUpTo + savesMinUpTo;
       const rank = inRun.has(stop.experienceId) ? 2 * relief : relief;
       return {
         id: stop.experienceId,
         savesMetresUpTo,
         savesMinUpTo,
+        savesStrainUpTo,
         rank: Math.round(rank * 10) / 10,
         value: Math.max(1, stop.score.total),
       };
@@ -606,7 +1002,7 @@ function solveUnderLoad(
 
     excluded.push({
       id: drop.id,
-      reason: leadViolation(load)?.message ?? "Over the walking budget for this group.",
+      reason: leadViolation(load)?.message ?? "Over what this group can do in that time.",
       savesMetresUpTo: drop.savesMetresUpTo,
       savesMinUpTo: drop.savesMinUpTo,
     });
@@ -663,7 +1059,7 @@ export function replanWithinLoad(
   const excluded: LoadExclusion[] = [
     {
       id: drop.id,
-      reason: leadViolation(load)?.message ?? "Over the walking budget for this group.",
+      reason: leadViolation(load)?.message ?? "Over what this group can do in that time.",
       savesMetresUpTo: drop.savesMetresUpTo,
       savesMinUpTo: drop.savesMinUpTo,
     },

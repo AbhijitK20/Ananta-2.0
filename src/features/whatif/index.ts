@@ -8,23 +8,27 @@
  * it rains?" is an actual itinerary you could look at — and therefore one you can
  * catch being wrong.
  *
- *   import { SCENARIO_PRESET_BY_ID, simulate } from "@/features/whatif";
+ *   import { SCENARIO_PRESET_BY_ID, present, simulate } from "@/features/whatif";
  *
  *   const preset = SCENARIO_PRESET_BY_ID.get("more_money")!;
  *   const outcome = simulate(engine, session, preset.edits);
- *   outcome.ok && renderWhatIf(outcome.scenario);   // never render the live plan
+ *   if (outcome.ok) render(present(outcome.scenario, preset.question));
+ *
+ * `present` resolves every string and every delta, so the component renders
+ * numbers and never computes them. Those two lines are the entire integration
+ * surface for whoever owns the page.
+ *
+ * Three shapes, in increasing order of how much they answer:
+ *
+ *   simulate   one question, one plan, one diff against the live trip.
+ *   gates      what became POSSIBLE, read from `Plan.rejected` on both sides.
+ *              The diff cannot see it; it only explains what left a plan.
+ *   ladder     one axis, many rungs, and the rung where it stops paying — the
+ *              answer to "is ₹500 more worth it", which no single plan can give.
  *
  * The live trip cannot be mutated, and cannot be replaced either: `simulate`
  * returns no `DiscoverySession`, so there is nothing here to adopt by mistake.
  */
-// The public surface is one function and one token convention. Everything else —
-// the clone, the patch, the comparison, the breach check — is a step inside
-// `simulate` and is tested through it, because a caller that recomputes any of it
-// is a caller who can get a different answer than the planner did.
-//
-// `walkCapToken` / `walkCapOf` are the exception, and deliberately so: the
-// `max_walk_<m>m` convention is a contract with whoever implements the engine,
-// and a convention nobody can name is a convention nobody honours.
 export {
   WALK_CAP_PREFIX,
   deltaOf,
@@ -39,6 +43,35 @@ export {
   type ScenarioOutcome,
   type ScenarioResult,
 } from "./scenario";
+
+export {
+  findingsIn,
+  gateChanges,
+  unlockedBy,
+  type GateChange,
+  type GateChangeKind,
+  type GateState,
+} from "./gates";
+
+export {
+  editFor,
+  labelFor,
+  ladder,
+  LADDER_UNITS,
+  type Ladder,
+  type LadderAxis,
+  type LadderRung,
+  type LadderUnit,
+  type MarginalStep,
+} from "./ladder";
+
+export {
+  present,
+  type PanelDirection,
+  type PanelRow,
+  type PanelStop,
+  type WhatIfPanel,
+} from "./present";
 
 export {
   SCENARIO_PRESETS,

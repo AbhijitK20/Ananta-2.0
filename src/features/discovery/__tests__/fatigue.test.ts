@@ -35,6 +35,7 @@ import {
   leadViolation,
   loadBudget,
   loadOf,
+  walkCapOf,
   type ContextSeed,
   type EnginePort,
   type TravelMode,
@@ -49,6 +50,8 @@ const POINTS = {
   colaba: { lat: 19.02, lon: 72.85 },
   near_market: { lat: 19.023, lon: 72.853 },
   near_cafe: { lat: 19.021, lon: 72.851 },
+  long_market: { lat: 19.024, lon: 72.854 },
+  long_gallery: { lat: 19.025, lon: 72.856 },
   mid_gallery: { lat: 19.032, lon: 72.866 },
   far_fort: { lat: 19.055, lon: 72.905 },
 } satisfies Record<string, GeoPoint>;
@@ -75,6 +78,56 @@ const CATALOGUE: Experience[] = [
 ];
 
 const CATALOGUE_BY_ID = new Map(CATALOGUE.map((item) => [item.id, item]));
+
+/**
+ * Long stops, in their own catalogue.
+ *
+ * Kept apart from `CATALOGUE` on purpose: the packer below packs everything it
+ * is handed, so two extra rows in the main list would walk into every other test
+ * in this file. These exist for the one question a distance-only model cannot
+ * answer — what a day of *standing* costs.
+ */
+const LONG_CATALOGUE: Experience[] = [
+  ...CATALOGUE,
+  place("long_market", 90, "market"),
+  place("long_gallery", 90, "gallery"),
+  exp({
+    id: "seated_gallery",
+    name: "seated_gallery",
+    category: "gallery",
+    location: POINTS.mid_gallery,
+    durationMin: 90,
+    pricePerPerson: rupees(20000),
+    indoorOutdoor: "outdoor",
+  }),
+  exp({
+    id: "benched_market",
+    name: "benched_market",
+    category: "market",
+    location: POINTS.mid_gallery,
+    durationMin: 90,
+    pricePerPerson: rupees(20000),
+    indoorOutdoor: "outdoor",
+    accessibility: {
+      stepFree: null,
+      strollerOk: null,
+      lowStairs: null,
+      seatingAvailable: true,
+      hearingLoop: null,
+      restroomOnSite: null,
+    },
+  }),
+];
+
+const LONG_MAP = new Map(LONG_CATALOGUE.map((item) => [item.id, item]));
+
+/**
+ * Everything a schedule may name, in one lookup. `timedPlan` resolves through
+ * this rather than `CATALOGUE_BY_ID` so the long-stop tests do not need their
+ * own copy of the builder. Resolution only: the packer still takes the items it
+ * is handed, so a row appearing here cannot walk into another test's plan.
+ */
+const LOOKUP = new Map([...CATALOGUE, ...LONG_CATALOGUE].map((item) => [item.id, item]));
 
 /** Catalogue rows for these ids, in the order the engine's scores put them. */
 const byScore = (ids: readonly string[]): Experience[] =>
@@ -221,7 +274,7 @@ function pack(ctx: DiscoveryContext, items: readonly Experience[]): Plan {
  */
 function timedPlan(
   ctx: DiscoveryContext,
-  schedule: readonly { id: keyof typeof POINTS; arriveMin: number }[],
+  schedule: readonly { id: string; arriveMin: number }[],
   overrides: Partial<Plan> = {},
 ): Plan {
   const mode = legMode(ctx);
@@ -229,7 +282,7 @@ function timedPlan(
   const stops: Plan["stops"] = [];
   let from = ctx.origin.point;
   for (const [order, entry] of schedule.entries()) {
-    const item = CATALOGUE_BY_ID.get(entry.id);
+    const item = LOOKUP.get(entry.id);
     if (!item) throw new Error(`no such place: ${entry.id}`);
     const leg = from ? route(from, item.location, mode, entry.arriveMin) : null;
     if (leg) legs.push(leg);
@@ -616,5 +669,299 @@ describe("travel load — determinism", () => {
     // the engine's score breaks the tie, it does not get overruled.
     expect(report.dropOrder.map((drop) => drop.id)).toEqual(["far_fort", "mid_gallery"]);
     expect(report.dropOrder[0]?.savesMetresUpTo).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Rule 4: effort is cumulative, so a flat kilometre budget is the wrong model
+// ---------------------------------------------------------------------------
+
+describe("travel load — cumulative strain", () => {
+  const engine = () => loadEngine();
+
+  it("charges the same walking harder when it is spread across a long day", () => {
+    // One plan's worth of walking, twice. Same places, same order, same metres —
+    // the only difference is whether anyone sat down in the middle.
+    const crammed = timedPlan(ctxOf({ availableMin: 480 }), [
+      { id: "near_market", arriveMin: 600 },
+      { id: "near_cafe", arriveMin: 640 },
+      { id: "mid_gallery", arriveMin: 685 },
+    ]);
+    const spread = timedPlan(ctxOf({ availableMin: 480 }), [
+      { id: "near_market", arriveMin: 600 },
+      { id: "near_cafe", arriveMin: 700 },
+      { id: "mid_gallery", arriveMin: 805 },
+    ]);
+
+    const a = loadOf(crammed, ctxOf({ availableMin: 480 }), engine(), CATALOGUE_MAP);
+    const b = loadOf(spread, ctxOf({ availableMin: 480 }), engine(), CATALOGUE_MAP);
+
+    // Identical on every distance measure. This is the whole point of rule 4.
+    expect(b.metrics.walkMetres).toBe(a.metrics.walkMetres);
+    expect(b.metrics.walkMin).toBe(a.metrics.walkMin);
+    expect(b.metrics.activityMin).toBe(a.metrics.activityMin);
+
+    expect(b.metrics.restGaps).toHaveLength(2);
+    expect(a.metrics.restGaps).toHaveLength(0);
+    expect(b.metrics.strainRecovered).toBeGreaterThan(0);
+    expect(a.metrics.strainRecovered).toBe(0);
+    expect(b.metrics.strainUsed).toBeLessThan(a.metrics.strainUsed);
+    // And the tail of the crammed day is charged at a higher rate, not just
+    // summed higher: the last leg costs more per metre in the plan with no rest.
+    const lastLeg = (report: typeof a): number => report.timeline.filter((s) => s.kind === "leg").at(-1)?.multiplier ?? 0;
+    expect(lastLeg(b)).toBeLessThan(lastLeg(a));
+  });
+
+  it("refuses a day of standing that walks almost nowhere", () => {
+    // The case a distance-only model cannot see at all: zero metres on foot, and
+    // still too much to do. A toddler in the party and "no walking" asked for.
+    const seed = {
+      availableMin: 480,
+      origin: { label: "somewhere" },
+      travelMode: "auto" as const,
+      partySize: 4,
+      childAges: [4],
+      prefs: { walking: "minimal" as const },
+    };
+    const ctx = ctxOf(seed);
+    const built = loadOf(
+      timedPlan(ctx, [
+        { id: "long_market", arriveMin: 600 },
+        { id: "long_gallery", arriveMin: 730 },
+        { id: "near_market", arriveMin: 860 },
+      ]),
+      ctx,
+      loadEngine(),
+      LONG_MAP,
+    );
+
+    expect(built.metrics.walkMetres).toBe(0);
+    expect(built.metrics.loadRatio).toBe(0);
+    expect(built.metrics.strainUsed).toBeGreaterThan(built.budget.strainCapacity);
+    expect(built.violations.map((entry) => entry.code)).toEqual(["strain_exhausted"]);
+    // The refusal names the stop that cost the most, and what it cost.
+    expect(built.violations[0]?.at).toBe("long_market");
+    expect(built.violations[0]?.message).toMatch(/standing still/);
+    expect(built.metrics.worstStop?.basis).toMatch(/posture:mixed/);
+  });
+
+  it("accepts the very same plan when nobody has capped the group", () => {
+    // One preference is the only difference between refused and accepted, which
+    // is what makes this a constraint rather than a verdict on the plan.
+    const schedule = [
+      { id: "long_market", arriveMin: 600 },
+      { id: "long_gallery", arriveMin: 730 },
+      { id: "near_market", arriveMin: 860 },
+    ];
+    const shared = { availableMin: 480, origin: { label: "somewhere" }, travelMode: "auto" as const, partySize: 4, childAges: [4] };
+    const capped = ctxOf({ ...shared, prefs: { walking: "minimal" } });
+    const free = ctxOf(shared);
+
+    const a = loadOf(timedPlan(capped, schedule), capped, loadEngine(), LONG_MAP);
+    const b = loadOf(timedPlan(free, schedule), free, loadEngine(), LONG_MAP);
+
+    // The physical work is identical. What differs is how much of it the group
+    // was given room for.
+    expect(a.metrics.strainFromStops).toBe(b.metrics.strainFromStops);
+    expect(a.metrics.strainFromLegs).toBe(b.metrics.strainFromLegs);
+    expect(b.budget.strainCapacity).toBeGreaterThan(a.budget.strainCapacity);
+    expect(a.verdict).toBe("overloaded");
+    expect(b.verdict).toBe("ok");
+  });
+
+  it("keeps the group penalty in one place, so walking your budget is not two budgets", () => {
+    // Regression guard for the mistake that made strain contradict distance: the
+    // party factor and the weather were each applied to the budget *and* to the
+    // cost. A party that walks exactly its own allowance must come out well
+    // inside its strain capacity, or the two checks can never both be satisfied.
+    const seed = { availableMin: 240, travelMode: "walk" as const, weather: { tempC: 41, condition: "heat" as const } };
+    const ctx = ctxOf({ ...seed, partySize: 3, childAges: [4] });
+    const engineNow = loadEngine();
+    const report = loadOf(pack(ctx, byScore(["near_market", "near_cafe"])), ctx, engineNow, CATALOGUE_MAP);
+
+    expect(report.metrics.walkMetres).toBeLessThanOrEqual(report.budget.walkMetres);
+    expect(report.metrics.strainUsed).toBeLessThan(report.budget.strainCapacity);
+    expect(report.verdict).toBe("ok");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Rule 3: a stop is not a rest
+// ---------------------------------------------------------------------------
+
+describe("travel load — a stop is not a rest", () => {
+  const strainOfStop = (report: { timeline: { kind: string; strain: number }[] }): number =>
+    report.timeline.filter((step) => step.kind === "stop").reduce((total, step) => total + step.strain, 0);
+  const postureOfStop = (report: { timeline: { kind: string; posture: number }[] }): number =>
+    report.timeline.find((step) => step.kind === "stop")?.posture ?? 0;
+
+  const one = (seed: Parameters<typeof ctxOf>[0], id: string) =>
+    loadOf(timedPlan(ctxOf(seed), [{ id, arriveMin: 600 }]), ctxOf(seed), loadEngine(), LONG_MAP);
+
+  it("prices posture off the row, and a cafe is cheaper than a market for the same hour", () => {
+    const seed = { availableMin: 480, origin: { label: "somewhere" }, travelMode: "auto" as const };
+    const market = one(seed, "long_market");
+    const gallery = one(seed, "long_gallery");
+    const cafe = one(seed, "near_cafe");
+
+    // A cafe you can sit in is not a market you have to stand in. That is the
+    // whole of rule 3, and no distance budget can express it.
+    expect(postureOfStop(cafe)).toBeLessThan(postureOfStop(market));
+    expect(strainOfStop(cafe)).toBeLessThan(strainOfStop(market));
+    // Two mixed outdoor places of the same length cost the same, whatever they
+    // are called: the classes are three, not thirty-six.
+    expect(postureOfStop(gallery)).toBe(postureOfStop(market));
+    expect(strainOfStop(gallery)).toBe(strainOfStop(market));
+
+    // And the number is exactly duration x rate x posture, so it can be
+    // re-derived offline rather than taken on trust.
+    const step = market.timeline.find((entry) => entry.kind === "stop");
+    expect(step?.strain).toBe(Math.round(90 * 6 * postureOfStop(market)));
+    expect(market.metrics.worstStop?.basis).toMatch(/posture:mixed\(seating:unknown,outdoor\)/);
+    expect(cafe.metrics.worstStop?.basis).toMatch(/posture:seated/);
+  });
+
+  it("believes a recorded bench over the category it guessed from", () => {
+    const seed = { availableMin: 480, origin: { label: "somewhere" }, travelMode: "auto" as const };
+    const withoutBenches = one(seed, "long_market");
+    const withBenches = one(seed, "benched_market");
+
+    // Same category, same 90 min outdoors, but this row says there is seating.
+    // A recorded fact beats a category guess, in both directions.
+    expect(postureOfStop(withBenches)).toBeLessThan(postureOfStop(withoutBenches));
+    expect(strainOfStop(withBenches)).toBeLessThan(strainOfStop(withoutBenches));
+    expect(withBenches.metrics.worstStop?.basis).toMatch(/seating:true/);
+  });
+
+  it("ranks a cut by effort, so an all-driven plan still loses its heaviest stop", () => {
+    // The degenerate case the metre-only ranking could not see: with nothing on
+    // foot, every stop's metre saving is zero and a distance-only ranking has
+    // nothing to say. Effort still does.
+    const seed = { availableMin: 480, origin: { label: "somewhere" }, travelMode: "auto" as const };
+    const ctx = ctxOf(seed);
+    const report = loadOf(
+      timedPlan(ctx, [
+        { id: "long_market", arriveMin: 600 },
+        { id: "near_cafe", arriveMin: 690 },
+      ]),
+      ctx,
+      loadEngine(),
+      LONG_MAP,
+    );
+
+    expect(report.metrics.walkMetres).toBe(0);
+    for (const drop of report.dropOrder) expect(drop.savesMetresUpTo).toBe(0);
+    expect(report.dropOrder[0]?.id).toBe("long_market");
+    expect(report.dropOrder[0]?.savesStrainUpTo).toBeGreaterThan(report.dropOrder[1]?.savesStrainUpTo ?? 0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Rule 5: the sky is part of the budget
+// ---------------------------------------------------------------------------
+
+describe("travel load — the sky counts", () => {
+  it("makes the same plan cost more as the day heats up", () => {
+    const plan = () => pack(ctxOf({ availableMin: 240 }), byScore(["near_market", "near_cafe"]));
+    const at = (tempC: number) =>
+      loadOf(plan(), ctxOf({ availableMin: 240, weather: { tempC, condition: "clear" } }), loadEngine(), CATALOGUE_MAP);
+
+    const mild = at(24);
+    const warm = at(34);
+    const hot = at(44);
+    // Identical plan, identical distances: only the effort changes.
+    expect(mild.metrics.walkMetres).toBe(hot.metrics.walkMetres);
+    expect(warm.metrics.strainUsed).toBeGreaterThan(mild.metrics.strainUsed);
+    expect(hot.metrics.strainUsed).toBeGreaterThan(warm.metrics.strainUsed);
+    expect(mild.budget.basis.some((line) => line.startsWith("strain_temp:"))).toBe(false);
+    expect(hot.budget.basis).toContain("strain_temp:44c(+36%)");
+  });
+
+  it("charges more in a storm than in clear air, and says which", () => {
+    const plan = () => pack(ctxOf({ availableMin: 240 }), byScore(["near_market", "near_cafe"]));
+    const clear = loadOf(plan(), ctxOf({ availableMin: 240, weather: { tempC: 24, condition: "clear" } }), loadEngine(), CATALOGUE_MAP);
+    const storm = loadOf(plan(), ctxOf({ availableMin: 240, weather: { tempC: 24, condition: "storm" } }), loadEngine(), CATALOGUE_MAP);
+
+    expect(storm.metrics.strainUsed).toBeGreaterThan(clear.metrics.strainUsed);
+    expect(storm.budget.basis).toContain("strain_condition:storm");
+    // And the distance budget is untouched: heat does not shorten a pair of legs.
+    expect(storm.budget.walkMetres).toBe(clear.budget.walkMetres);
+  });
+
+  it("prices nothing for a driven leg, and says how much it did not price", () => {
+    const seed = { availableMin: 240, travelMode: "auto" as const };
+    const report = loadOf(
+      pack(ctxOf(seed), byScore(["mid_gallery", "near_market", "near_cafe"])),
+      ctxOf(seed),
+      loadEngine(),
+      CATALOGUE_MAP,
+    );
+    expect(report.metrics.unpricedLegs).toBeGreaterThan(0);
+    expect(report.timeline.some((step) => step.kind === "leg" && step.basis.includes("unpriced"))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The walk cap: reported here, judged by `whatif`
+// ---------------------------------------------------------------------------
+
+describe("travel load — the numeric walk cap", () => {
+  const capped = (metres: number) => ctxOf({ avoid: [`max_walk_${metres}m`] });
+
+  it("reads the cap out of the frozen context and puts it in the evidence", () => {
+    expect(walkCapOf(capped(800))).toBe(800);
+    expect(walkCapOf(ctxOf())).toBeNull();
+    expect(walkCapOf(ctxOf({ avoid: ["crowded", "max_walk_1200m", "indoors_only"] }))).toBe(1200);
+
+    const budget = loadBudget(capped(800));
+    expect(budget.walkCapM).toBe(800);
+    expect(budget.basis).toContain("walk_cap:800m(reported_not_enforced)");
+  });
+
+  it("does not refuse a plan over it, because whatif owns that verdict", () => {
+    // `whatif` tests this end to end, including a planner that ignores the cap,
+    // and its scenario result is a *breach report* rather than a refusal. If this
+    // gate refused first, `discover` would fail and the what-if would never get
+    // to report anything. Two components must not both refuse the same plan.
+    const ctx = capped(800);
+    const walked = loadOf(
+      pack(ctxOf({ availableMin: 480 }), byScore(["mid_gallery", "near_market"])),
+      ctx,
+      loadEngine(),
+      CATALOGUE_MAP,
+    );
+    // 3841 m walked: over the 800 m cap asked for, comfortably inside the 6000 m
+    // the same context allows by default. Reported, and still not a refusal.
+    expect(walked.metrics.walkMetres).toBe(3841);
+    expect(walked.budget.walkCapM).toBe(800);
+    expect(walked.violations.map((entry) => entry.code)).not.toContain("walking_budget_exceeded");
+    expect(walked.verdict).toBe("ok");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The four fields `group.ts` reads off a report
+// ---------------------------------------------------------------------------
+
+describe("travel load — the shape other features depend on", () => {
+  it("still answers every question the group-tension panel asks of it", () => {
+    // `group.ts` builds its sentence out of exactly these. If one goes, its
+    // evidence prints "undefined" to a provider, so they are pinned here rather
+    // than left to a type error nobody would notice.
+    const report = loadOf(
+      pack(ctxOf({ prefs: { walking: "low" } }), byScore(["mid_gallery", "near_market", "near_cafe"])),
+      ctxOf({ prefs: { walking: "low" } }),
+      loadEngine(),
+      CATALOGUE_MAP,
+    );
+    expect(typeof report.budget.walkMetres).toBe("number");
+    expect(typeof report.budget.maxLegWalkMetres).toBe("number");
+    expect(Array.isArray(report.budget.basis)).toBe(true);
+    expect(report.budget.basis.length).toBeGreaterThan(0);
+    expect(typeof report.metrics.availableMin).toBe("number");
+    // And the strain additions are additive, not replacements.
+    expect(typeof report.metrics.strainUsed).toBe("number");
+    expect(typeof report.budget.strainCapacity).toBe("number");
+    expect(report.budget.strainCapacity).toBe(Math.round(report.budget.walkMetres * 1.6));
   });
 });
