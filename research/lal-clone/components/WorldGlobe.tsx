@@ -45,7 +45,7 @@ const slugOf = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-type Pin = {
+export type Pin = {
   id: string;
   name: string;
   country: string;
@@ -57,8 +57,14 @@ type Pin = {
   meta?: Meta;
 };
 
-/** Only places that actually have coordinates can be plotted. */
-function buildPins(): Pin[] {
+/**
+ * Only places that actually have coordinates can be plotted.
+ *
+ * Exported so the globe and the list beside it are built from one pass. If each
+ * derived its own list they would drift the moment a place lost coordinates,
+ * and clicking a row would fly the camera to the wrong pin.
+ */
+export function buildPins(): Pin[] {
   const out: Pin[] = [];
   PLACES.forEach((place, index) => {
     if (place.lat == null || place.lng == null) return;
@@ -192,11 +198,26 @@ export function WorldGlobe({
         pointAltitude={0.012}
         pointRadius={0.32}
         pointsTransitionDuration={420}
-        onPointHover={(pin: object) => {
+        /* The hover handler's first argument is `object | null` in
+           react-globe.gl 2.x -- it goes null when the pointer leaves the point,
+           which is the case this line exists to handle. Declaring the
+           parameter as bare `object` is what made it unassignable. */
+        onPointHover={(pin: object | null) => {
           // Canvas gives no hover affordance of its own.
           document.body.style.cursor = pin ? "pointer" : "";
         }}
-        pointLabel={(pin: object) => labelFor(pin as Pin)}
+        /* pointLabel is typed to return `React.ReactHTMLElement<HTMLElement>`,
+           which is an element that *already carries* a `ref`. JSX cannot
+           produce that shape -- `<div>` with children gives ReactElement -- so
+           a rich label like the one above is unspellable in the type system
+           even though globe.gl only ever reads the element. The cast is
+           confined to this one call rather than loosening labelFor's return
+           type, so the rest of the file keeps its real checking. */
+        pointLabel={
+          ((pin: object) => labelFor(pin as Pin)) as unknown as NonNullable<
+            React.ComponentProps<typeof Globe>["pointLabel"]
+          >
+        }
         onPointClick={(pin: object) => {
           const p = pin as Pin;
           if (typeof p?.index === "number") onSelect(p.index);
