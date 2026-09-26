@@ -20,6 +20,7 @@
  */
 import type { ContextChange, DiscoveryContext, Plan, RelaxationApplied } from "@/contracts";
 import type { PlanDiff } from "./diff";
+import type { LoadExclusion } from "./fatigue";
 import { hm, money, plural } from "./format";
 
 /** The swap budget from `docs/EVAL_SPEC.md`. Over it is a finding, not a state. */
@@ -56,6 +57,13 @@ export type RealityChanged = {
   /** False only if something overwrote `DiscoveryContext.original`. */
   intentPreserved: boolean;
   relaxations: RelaxationApplied[];
+  /**
+   * Stops the travel-load model took off the list, each with the sentence that
+   * justified it. Separate from `removed`, because the engine's own rejection
+   * for these says "excluded by traveller" or similar and the traveller did not
+   * exclude them — we did, because the group cannot walk that far.
+   */
+  excludedForLoad: LoadExclusion[];
   /** The single highest-impact fix, from the top stress factor. */
   rescue: string | null;
   warnings: string[];
@@ -77,6 +85,7 @@ export type RealityInput = {
   intent: DiscoveryContext;
   enginePreservedIntent: boolean;
   stressBefore: number | null;
+  excluded?: LoadExclusion[];
 };
 
 function shapeOf(plan: Plan, ctx: DiscoveryContext): PlanShape {
@@ -140,6 +149,7 @@ export function buildRealityChanged(input: RealityInput): RealityChanged {
     intent: intentLines(intent),
     intentPreserved,
     relaxations: after.relaxations,
+    excludedForLoad: input.excluded ?? [],
     rescue,
     warnings: warningsFor(diff, intentPreserved, input.enginePreservedIntent),
   };

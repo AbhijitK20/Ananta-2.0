@@ -19,6 +19,26 @@ export type { EnginePort, TravelMode } from "./engine";
 export { hm, money, plural } from "./format";
 
 export {
+  REST_GAP_MIN,
+  leadViolation,
+  legsOf,
+  loadBudget,
+  loadOf,
+  packWithinLoad,
+  replanWithinLoad,
+  toleranceOf,
+  type LoadBudget,
+  type LoadCode,
+  type LoadDrop,
+  type LoadExclusion,
+  type LoadMetrics,
+  type LoadReport,
+  type LoadSolve,
+  type LoadViolation,
+  type ReplanUnderLoad,
+} from "./fatigue";
+
+export {
   DEFAULT_PREFS,
   FLOOR_MIN,
   INDOOR_TOKEN,
@@ -87,8 +107,59 @@ export {
 
 export {
   CONFIDENCE_GATE,
+  OWN_CONFIDENCE,
+  elderOp,
+  planTurn,
+  readTurn,
+  summariseSwaps,
+  turnReason,
+  type CopilotTurn,
+  type SwapNames,
+  type TurnReason,
+  type TurnReading,
+} from "./copilot";
+
+export {
   handleChat,
   mockIntentParser,
   type ChatOutcome,
   type IntentParser,
 } from "./chat";
+
+export {
+  asksOf,
+  assessDemand,
+  captureUnmet,
+  createLedger,
+  mergeRejections,
+  rankBlockers,
+  recordDemand,
+  signalId,
+  topSignals,
+  type BlockedOn,
+  type BlockingCodeCount,
+  type DemandAsks,
+  type DemandAssessment,
+  type DemandLedger,
+  type DemandMeta,
+  type DemandSignal,
+  type DemandStatus,
+  type DiscoveryReport,
+  type Range,
+} from "./unmet";
+
+// Repairing a trip that is already under way: the clock, the locks, the places
+// that are gone, and the two invariants a plan must not break on the way through.
+export {
+  gone,
+  readLocks,
+  repair,
+  repairOps,
+  upcoming,
+  type GoneCause,
+  type GonePlace,
+  type RepairEvent,
+  type RepairGap,
+  type RepairLocks,
+  type RepairOutcome,
+} from "./repair";

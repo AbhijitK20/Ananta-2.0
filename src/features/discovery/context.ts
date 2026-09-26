@@ -352,7 +352,9 @@ export type EditorOp =
   | { kind: "set_walking"; walking: WalkingTolerance; note?: string }
   | { kind: "set_weather"; condition: WeatherNow["condition"]; tempC?: number; note?: string }
   | { kind: "set_weather_sensitivity"; sensitivity: WeatherSensitivity; note?: string }
-  | { kind: "set_mood"; mood: string | null; note?: string };
+  | { kind: "set_mood"; mood: string | null; note?: string }
+  | { kind: "advance_clock"; nowMin: number; note?: string }
+  | { kind: "pin"; experienceIds: string[]; note?: string };
 
 function withOp(state: EditorState, op: EditorOp): EditorState {
   const ctx: DiscoveryContext = { ...state.ctx };
@@ -416,6 +418,24 @@ function withOp(state: EditorState, op: EditorOp): EditorState {
       break;
     case "set_mood":
       prefs.mood = op.mood;
+      break;
+    // The clock moving is not a preference, it is the day. `nowMin` goes
+    // forward and `availableMin` — "minutes from now until they must leave" —
+    // comes down by the same number, so the two can never disagree. That single
+    // edit is what makes "replan only what is left" expressible without a new
+    // contract field, and it lands on `time_shrank` through the existing
+    // classifier rather than a kind invented here.
+    case "advance_clock": {
+      const next = Math.min(1440, Math.max(ctx.nowMin, Math.round(op.nowMin)));
+      ctx.availableMin = Math.max(FLOOR_MIN, ctx.availableMin - (next - ctx.nowMin));
+      ctx.nowMin = next;
+      break;
+    }
+    // `pinnedIds` is the contract's own "already in the plan" list, and nothing
+    // else in this file ever wrote to it. A stop that is done, or that has a
+    // booking we cannot alter, goes here so the packer is told to keep it.
+    case "pin":
+      ctx.pinnedIds = [...new Set([...ctx.pinnedIds, ...op.experienceIds])];
       break;
   }
   return { ctx: lowerPrefs(ctx, prefs), prefs };

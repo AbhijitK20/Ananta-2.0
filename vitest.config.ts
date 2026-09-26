@@ -23,6 +23,6 @@ export default defineConfig({
     // Node environment, not jsdom: every test in this suite is about module
     // resolution and export shape, and none of them render.
     environment: "node",
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.ts", "src/**/*.test.ts", "src/**/__tests__/**/*.test.ts"],
   },
 });

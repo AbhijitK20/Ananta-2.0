@@ -25,11 +25,18 @@ import {
   type DiscoveryContext,
   type Experience,
   type Plan as PlanType,
+  type Rejection,
   type ReplanResult,
   type ValidationResult,
   type WeightProfile,
 } from "../../contracts";
 import type { EnginePort } from "./engine";
+import {
+  assessDemand,
+  mergeRejections,
+  type DemandAssessment,
+  type DemandMeta,
+} from "./unmet";
 import {
   type EditorChange,
   type EditorState,
@@ -41,6 +48,14 @@ import {
 import { type PlanDiff, diffPlans, indexCatalogue } from "./diff";
 import { type ActionInput, runAction, type DiscoveryAction } from "./actions";
 import { type RealityChanged, buildRealityChanged } from "./reality";
+import {
+  type LoadExclusion,
+  type LoadReport,
+  leadViolation,
+  loadOf,
+  packWithinLoad,
+  replanWithinLoad,
+} from "./fatigue";
 
 export type Violation = { code: string; message: string; at: string | null };
 
@@ -61,6 +76,15 @@ export type DiscoverySession = {
   weights: WeightProfile;
   lastDiff: PlanDiff | null;
   lastReality: RealityChanged | null;
+  /**
+   * How much the last admitted plan asked of the body, and the budget it was
+   * measured against. Null only before the first plan. The UI reads this; it
+   * never computes it, and it is not a mood ring — `budget.basis` is why the
+   * plan passed or did not.
+   */
+  lastLoad: LoadReport | null;
+  /** Stops the load model took off the list, with the sentence that said why. */
+  lastExclusions: LoadExclusion[];
 };
 
 export type SessionInit = {
@@ -81,6 +105,8 @@ export function createSession(init: SessionInit): DiscoverySession {
     weights: init.weights,
     lastDiff: null,
     lastReality: null,
+    lastLoad: null,
+    lastExclusions: [],
   };
 }
 
@@ -104,7 +130,14 @@ function zodViolation(error: { issues: { path: PropertyKey[]; message: string }[
 /**
  * Contract parse, then engine validation, then the two structural checks the
  * engine cannot make about a plan it did not build: every stop must resolve to
- * something the UI can render, and the plan must belong to this context.
+ * something the UI can render, and the plan must belong to this context. Then
+ * the travel-load gate.
+ *
+ * The load check is last on purpose. It is an opinion about difficulty, the rest
+ * are facts, so a plan that is broken in any other way is reported for that
+ * reason instead of being argued with about walking. It is here at all because
+ * `engine.validate` checks whether the plan is *true*, and no engine check
+ * answers whether it is *doable* by the people who are actually going.
  */
 function admit(
   engine: EnginePort,
@@ -148,6 +181,15 @@ function admit(
   if (!validation.ok) {
     return { ok: false, violations: validation.violations, validation };
   }
+
+  const load = loadOf(plan, ctx, engine, catalogue);
+  if (load.verdict !== "ok") {
+    return {
+      ok: false,
+      violations: load.violations.map((entry) => ({ code: entry.code, message: entry.message, at: entry.at })),
+      validation,
+    };
+  }
   return { ok: true, plan, validation };
 }
 
@@ -156,20 +198,61 @@ function admit(
 // ---------------------------------------------------------------------------
 
 export type DiscoverOutcome =
-  | { ok: true; session: DiscoverySession; plan: PlanType; validation: ValidationResult }
-  | { ok: false; session: DiscoverySession; violations: Violation[]; reason: string };
+  | {
+      ok: true;
+      session: DiscoverySession;
+      plan: PlanType;
+      validation: ValidationResult;
+      /** Travel load of the plan we are showing, and what it was measured against. */
+      load: LoadReport;
+      /** Stops the load model removed on the way here. */
+      excluded: LoadExclusion[];
+      /**
+       * What the run meant for demand. `satisfied` when the traveller got stops,
+       * `unmet` when candidates existed and every one was eliminated on a hard
+       * constraint, `unserved` when nothing was planned and nothing is to blame.
+       * A signal is only written when the caller passed `meta`, because the
+       * contract row needs a traveller and a time.
+       */
+      demand: DemandAssessment;
+    }
+  | {
+      ok: false;
+      session: DiscoverySession;
+      violations: Violation[];
+      reason: string;
+      load: LoadReport | null;
+    };
 
-/** retrieve -> filter -> score -> pack -> admit. Pure engine calls, in that order. */
-export function discover(engine: EnginePort, session: DiscoverySession): DiscoverOutcome {
+/**
+ * retrieve -> filter -> score -> pack -> admit. Pure engine calls, in that order.
+ *
+ * The one thing that is not an engine call is inside `packWithinLoad`: if the
+ * packed plan asks more of this group than they can do, the offending stop comes
+ * off the candidate list and the engine packs again. That is how "less walking"
+ * stops being a note to self and becomes the plan.
+ */
+export function discover(
+  engine: EnginePort,
+  session: DiscoverySession,
+  meta?: DemandMeta,
+): DiscoverOutcome {
   const ctx = session.state.ctx;
   let packed: PlanType;
+  let solved: ReturnType<typeof packWithinLoad>;
+  let rejected: Rejection[] = [];
+  let considered = 0;
   try {
     const shortlist = engine.retrieve({
       context: ctx,
       catalogue: [...session.catalogue.values()],
       limit: RETRIEVE_LIMIT,
     });
+    considered = shortlist.length;
     const feasible = engine.filterFeasible(ctx, shortlist);
+    // Kept because a plan that comes back empty is only evidence about the market
+    // if we know which constraints eliminated the candidates.
+    rejected = feasible.rejected;
     const byId = new Map(shortlist.map((item) => [item.id, item]));
     const items = feasible.passed
       .map((id) => byId.get(id))
@@ -181,13 +264,15 @@ export function discover(engine: EnginePort, session: DiscoverySession): Discove
     const ordered = [...items].sort(
       (a, b) => (rank.get(b.id) ?? 0) - (rank.get(a.id) ?? 0) || a.id.localeCompare(b.id),
     );
-    packed = engine.pack(ctx, ordered);
+    solved = packWithinLoad(engine, ctx, ordered, session.catalogue);
+    packed = solved.plan;
   } catch (error) {
     return {
       ok: false,
       session,
       violations: [{ code: "engine_error", message: messageOf(error), at: null }],
       reason: "We could not build a plan for this window.",
+      load: null,
     };
   }
 
@@ -197,10 +282,40 @@ export function discover(engine: EnginePort, session: DiscoverySession): Discove
       ok: false,
       session,
       violations: gate.violations,
-      reason: "We built a plan we could not stand behind, so there is nothing to show yet.",
+      // A load refusal gets the real sentence, because "nowhere you can walk to"
+      // is a different problem from "we made an error" and the traveller can act
+      // on one of them.
+      reason:
+        solved.load.violations.length > 0
+          ? leadViolation(solved.load)?.message ?? "We built a plan we could not stand behind, so there is nothing to show yet."
+          : "We built a plan we could not stand behind, so there is nothing to show yet.",
+      load: solved.load,
     };
   }
-  return { ok: true, session: { ...session, plan: gate.plan }, plan: gate.plan, validation: gate.validation };
+  return {
+    ok: true,
+    session: {
+      ...session,
+      plan: gate.plan,
+      lastLoad: solved.load,
+      lastExclusions: solved.excluded,
+    },
+    plan: gate.plan,
+    validation: gate.validation,
+    load: solved.load,
+    excluded: solved.excluded,
+    demand: assessDemand(
+      {
+        ctx,
+        plan: gate.plan,
+        // The engine may report a rejection in either place, and counting both
+        // would inflate `topBlockingCount`.
+        rejected: mergeRejections(rejected, gate.plan.rejected),
+        considered,
+      },
+      meta,
+    ),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -216,6 +331,10 @@ export type ReplanOutcome =
       diff: PlanDiff;
       reality: RealityChanged;
       validation: ValidationResult;
+      /** Travel load of the plan we are showing, and the budget it was held to. */
+      load: LoadReport;
+      /** Stops the load model took off the list to get there. */
+      excluded: LoadExclusion[];
     }
   | {
       ok: false;
@@ -224,6 +343,7 @@ export type ReplanOutcome =
       change: ContextChange;
       violations: Violation[];
       reason: string;
+      load: LoadReport | null;
     };
 
 function messageOf(error: unknown): string {
@@ -247,6 +367,10 @@ function stressBefore(engine: EnginePort, plan: PlanType, ctx: DiscoveryContext)
 
 /**
  * old plan -> context change -> engine replan -> validation -> new plan -> diff.
+ *
+ * `replanWithinLoad` is where the load model gets a vote: if the engine's answer
+ * is over budget, the offending stop goes on `excludedIds` and the same change is
+ * solved once more. One extra engine call, never a local re-solve.
  *
  * On any failure the session comes back untouched, so the caller can keep
  * rendering the previous plan and show `reason`. There is no partial-success
@@ -272,13 +396,19 @@ export function replan(
       change,
       violations: [],
       reason: "There is no valid plan to adapt yet, so nothing was changed.",
+      load: null,
     };
   }
   const ctx = session.state.ctx;
 
   let result: ReplanResult;
+  let load: LoadReport;
+  let excluded: LoadExclusion[];
   try {
-    result = engine.replan(previous, ctx, change);
+    const solved = replanWithinLoad(engine, previous, ctx, change, session.catalogue);
+    result = solved.result;
+    load = solved.load;
+    excluded = solved.excluded;
   } catch (error) {
     return {
       ok: false,
@@ -286,6 +416,7 @@ export function replan(
       change,
       violations: [{ code: "engine_error", message: messageOf(error), at: null }],
       reason: "The re-solve failed, so your plan is unchanged.",
+      load: null,
     };
   }
 
@@ -296,7 +427,11 @@ export function replan(
       session,
       change,
       violations: gate.violations,
-      reason: "The new plan did not hold up, so your previous one stands.",
+      reason:
+        load.violations.length > 0
+          ? leadViolation(load)?.message ?? "The new plan did not hold up, so your previous one stands."
+          : "The new plan did not hold up, so your previous one stands.",
+      load,
     };
   }
 
@@ -316,16 +451,29 @@ export function replan(
     intent: session.intent,
     enginePreservedIntent: result.preservedIntent,
     stressBefore: stressBefore(engine, previous, ctx),
+    // Cut for load, so the panel can say "we left this out because you said
+    // less walking" instead of quoting an engine rejection about a constraint
+    // the traveller never mentioned.
+    excluded,
   });
 
   return {
     ok: true,
-    session: { ...session, plan: gate.plan, lastDiff: diff, lastReality: reality },
+    session: {
+      ...session,
+      plan: gate.plan,
+      lastDiff: diff,
+      lastReality: reality,
+      lastLoad: load,
+      lastExclusions: excluded,
+    },
     plan: gate.plan,
     change,
     diff,
     reality,
     validation: gate.validation,
+    load,
+    excluded,
   };
 }
 
@@ -333,7 +481,9 @@ export function replan(
 // The one call a chip makes
 // ---------------------------------------------------------------------------
 
-export type ActionOutcome = ReplanOutcome | { ok: false; session: DiscoverySession; reason: string };
+export type ActionOutcome =
+  | ReplanOutcome
+  | { ok: false; session: DiscoverySession; reason: string; load: null };
 
 /**
  * Chip -> editor op -> context change -> replan. The session's editor state is
@@ -364,7 +514,7 @@ export function applyEditorChange(
   edit: EditorChange | null,
 ): ActionOutcome {
   if (!edit || !edit.change) {
-    return { ok: false, session, reason: "That would not change anything, so nothing was re-solved." };
+    return { ok: false, session, reason: "That would not change anything, so nothing was re-solved.", load: null };
   }
   const candidate: DiscoverySession = { ...session, state: edit.state };
   const outcome = replan(engine, candidate, edit.change, session.state.ctx);
