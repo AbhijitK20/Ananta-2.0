@@ -20,6 +20,10 @@ import { computeFit } from "@/engine/fit";
 import { score, DEFAULT_PROFILE } from "@/engine/scoring";
 import { DiscoveryContext, type Experience, type Fit, type Plan, type Rejection, type ScoreBreakdown } from "@/contracts";
 import { weekdayOf } from "@/lib/time";
+import { realEngine } from "@/features/discovery/real-engine";
+import { createSession, type DiscoverySession } from "@/features/discovery/replanner";
+import type { EnginePort } from "@/features/discovery/engine";
+import type { ContextSeed } from "@/features/discovery/context";
 import { loadCatalogue } from "./catalogue";
 
 /** Bandra West. Verified against the catalogue, not guessed — see `page.tsx`. */
@@ -246,4 +250,51 @@ export function paramsFromContext(context: DiscoveryContext): string {
   if (rupees !== 3000) params.set("b", String(rupees));
   if (context.accessNeeds.length) params.set("needs", context.accessNeeds.join(","));
   return params.toString();
+}
+
+/**
+ * A `DiscoverySession` for the feature layer, built from the same URL the home
+ * page reads.
+ *
+ * This is the seam the traveller-side features were waiting on. Every one of
+ * them — `whatif`, `group`, `weather`, `health`, `explain`, `discovery/unmet` —
+ * takes a session and an `EnginePort`, and until this existed there was no way
+ * for a route to hand them one, so 20,828 lines of finished feature code had no
+ * caller. `createSession` is cheap (a context and a catalogue index), so each
+ * feature route builds its own rather than sharing one across requests.
+ *
+ * The plan is NOT computed here. `whatif` runs the real planner once per
+ * scenario by design — "a what-if runs the real planner, not a narration of what
+ * the planner would do" — so pre-computing it would be both wasted and wrong.
+ */
+export async function computeFeatureSession(
+  params: URLSearchParams,
+): Promise<{ session: DiscoverySession; catalogue: Experience[]; engine: EnginePort }> {
+  // Parsed once. The context is the source of truth for every field, and five
+  // separate parses of the same params is five places for two of them to disagree.
+  const ctx = contextFromParams(params);
+
+  const seed: ContextSeed = {
+    id: ctx.id,
+    origin: { label: ctx.origin.label, point: { ...ctx.origin.point! } },
+    availableMin: ctx.availableMin,
+    nowMin: ctx.nowMin,
+    budgetMinor: ctx.budget?.minor ?? null,
+    partySize: ctx.partySize,
+    accessNeeds: [...ctx.accessNeeds],
+    // Left empty on purpose: the URL carries the traveller's situation, not their
+    // interests, and inventing interests here would make every score depend on
+    // a guess the traveller never made.
+    interests: [],
+    travelMode: ctx.travelMode,
+    weather: { ...ctx.weather },
+  };
+
+  const { experiences } = await loadCatalogue();
+  const engine = realEngine();
+  return {
+    session: createSession({ engine, seed, catalogue: experiences, weights: DEFAULT_PROFILE }),
+    catalogue: experiences,
+    engine,
+  };
 }
