@@ -25,6 +25,21 @@ Two rules make it honest:
 
 ## 2. Run it
 
+**Not wired yet.** The command below does not exist on this branch, and
+`docs/EVAL_RESULTS.md` has never been generated. The harness calls `EnginePort`
+and `src/engine/` is empty, so there is nothing to measure until the engine
+stream lands. A runner pointed at the test reference engine would produce a table
+full of fixture numbers, and this document is explicit that a file nobody can
+re-derive is not a result.
+
+What *does* run today, and covers the scenarios themselves:
+
+```bash
+npm run content:validate   # every scenario: shape, ids, codes, context.original
+```
+
+The intended commands, for when the engine is here:
+
 ```bash
 npm run eval              # full table -> docs/EVAL_RESULTS.md
 npm run eval -- --llm-off

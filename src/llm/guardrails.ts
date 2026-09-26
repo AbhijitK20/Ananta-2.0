@@ -176,6 +176,27 @@ function cleanAccessNeeds(value: unknown): AccessNeed[] {
 }
 
 /**
+ * Strict-schema DTO -> the contract's optional `Patch`.
+ *
+ * `@ai-sdk/openai-compatible` sends our zod schema as `json_schema` with
+ * `strict: true`, and strict requires every property to be listed in `required`
+ * and spelled `["T", "null"]` rather than omitted. So the model returns `null` for
+ * "no change", and this is where that becomes "no key".
+ *
+ * It has to happen BEFORE `sanitizePatch`, which reads `null` as a real value —
+ * `budgetMinor: null` is the contract's way of saying "clear the budget". A model
+ * saying "nothing" must not read as the traveller withdrawing their budget.
+ */
+export function dtoToPatch(dto: unknown): Patch {
+  const out: Record<string, unknown> = {};
+  if (dto == null || typeof dto !== "object") return out as Patch;
+  for (const [key, value] of Object.entries(dto as Record<string, unknown>)) {
+    if (value !== null && value !== undefined) out[key] = value;
+  }
+  return out as Patch;
+}
+
+/**
  * Rebuilds the patch from an allow-list. Nothing is merged in: a key the model
  * invented simply has no branch here, and a value it got wrong is clamped or
  * dropped. This is the function that makes "may only produce a context patch" a

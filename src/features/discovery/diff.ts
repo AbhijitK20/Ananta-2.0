@@ -19,6 +19,7 @@ import type {
   ContextChange,
   DiscoveryContext,
   Experience,
+  GeoPoint,
   IndoorOutdoor,
   Minutes,
   Money,
@@ -82,6 +83,8 @@ export type DiffInput = {
   catalogue: ReadonlyMap<string, Experience>;
   change: ContextChange;
   travelMode: DiscoveryContext["travelMode"];
+  /** Where the day starts, so a first-stop removal can price its inbound leg. */
+  origin: GeoPoint | null;
 };
 
 const byStop = (plan: Plan): ReadonlyMap<string, PlanStop> =>
@@ -148,10 +151,18 @@ function legMode(preference: DiscoveryContext["travelMode"]): TravelLeg["mode"] 
 }
 
 /**
- * The travel the removal actually saved. The new plan's legs no longer contain
- * the removed stop, so the saving has to come from the router rather than from
- * a subtraction of two leg lists. Null when the removed stop was last in the
- * day or is missing from the catalogue.
+ * The travel the removal actually saved.
+ *
+ * Removing one stop changes TWO legs, not one. A middle stop's `prev -> here` and
+ * `here -> next` become a single direct `prev -> next`, so the saving is the two
+ * old legs minus the new one. The first stop is the same shape with the day\'s
+ * ORIGIN as `prev`, and the last stop saves its inbound leg outright. Measuring
+ * only `here -> next` is the first-stop case, so every other removal reported a
+ * number the panel then contradicted.
+ *
+ * Null when the removed stop or either neighbour is missing from the catalogue, or
+ * when the day starts somewhere we cannot route from — the panel then says nothing
+ * rather than something wrong.
  */
 function savedTravel(
   engine: EnginePort,
@@ -159,14 +170,26 @@ function savedTravel(
   before: Plan,
   catalogue: ReadonlyMap<string, Experience>,
   travelMode: DiscoveryContext["travelMode"],
+  origin: GeoPoint | null,
 ): number | null {
   const index = before.stops.findIndex((stop) => stop.experienceId === id);
+  if (index < 0) return null;
   const here = catalogue.get(id);
+  if (!here) return null;
+  const mode = ROUTER_MODE[travelMode];
+  const at = before.stops[index]?.departMin ?? 0;
+  const leg = (from: GeoPoint, to: GeoPoint): number => engine.travelBetween(from, to, mode, at).minutes;
+
+  const prevStop = before.stops[index - 1];
+  const prev = prevStop ? catalogue.get(prevStop.experienceId) : undefined;
+  const from = prev ? prev.location : origin;
+  if (!from) return null;
+  const inbound = leg(from, here.location);
+
   const next = before.stops[index + 1];
   const there = next ? catalogue.get(next.experienceId) : undefined;
-  if (index < 0 || !here || !there) return null;
-  return engine.travelBetween(here.location, there.location, ROUTER_MODE[travelMode], before.stops[index]?.departMin ?? 0)
-    .minutes;
+  if (!there) return inbound;
+  return Math.max(0, inbound + leg(here.location, there.location) - leg(from, there.location));
 }
 
 
@@ -188,7 +211,7 @@ export function diffPlans(
   after: Plan,
   input: DiffInput,
 ): PlanDiff {
-  const { catalogue, change, travelMode } = input;
+  const { catalogue, change, travelMode, origin } = input;
   const beforeStops = byStop(before);
   const afterStops = byStop(after);
 
@@ -197,7 +220,7 @@ export function diffPlans(
     .map((stop) => {
       const diff = stopDiff("removed", stop.experienceId, stop, undefined, catalogue);
       diff.reason = removalReason(stop.experienceId, after, change);
-      diff.travelSavedMin = savedTravel(engine, stop.experienceId, before, catalogue, travelMode);
+      diff.travelSavedMin = savedTravel(engine, stop.experienceId, before, catalogue, travelMode, origin);
       return diff;
     });
 

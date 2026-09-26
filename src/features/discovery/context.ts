@@ -222,8 +222,10 @@ function grew(next: readonly string[], prev: readonly string[]): boolean {
  * Load-bearing: this key must name EVERY field the planner reads. A field left
  * out is a silent `null` from `classifyChange`, and a `null` means the caller
  * skips the replan — so a traveller who edits that field sees a stale plan. That
- * is how `partySize`, `childAges`, `partyType`, `budgetPerPerson`, `nowMin` and
- * `weather.tempC` were being dropped on the floor.
+ * is how `partySize`, `childAges`, `partyType`, `budgetPerPerson`, `nowMin`,
+ * `weather.tempC` and `accessNeeds` were being dropped on the floor. In
+ * particular a REMOVED access need is invisible to `grew()`, so the only check
+ * that could see it is this one.
  */
 function preferenceKey(ctx: DiscoveryContext): string {
   return JSON.stringify({
@@ -232,6 +234,7 @@ function preferenceKey(ctx: DiscoveryContext): string {
     diets: [...ctx.diets].sort(),
     interests: [...ctx.interests].sort(),
     travelMode: ctx.travelMode,
+    accessNeeds: [...ctx.accessNeeds].sort(),
     requests: ctx.requests.map((r) => [r.pos, r.neg, r.mustsee, r.type]),
     pinned: [...ctx.pinnedIds].sort(),
     party: [ctx.partySize, ctx.partyType, [...ctx.childAges].sort()],

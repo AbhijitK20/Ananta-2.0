@@ -10,7 +10,7 @@ import {
   type BookingState,
   type Experience,
 } from "../../contracts";
-import { committedSeats, type DatedSlot, type AvailabilityBlock } from "./availability";
+import { deriveAvailability, type DatedSlot, type AvailabilityBlock } from "./availability";
 import { fail, ok, type Result } from "./result";
 import { isOnOrAfter } from "./time";
 
@@ -38,8 +38,12 @@ export type BookingContext = {
   slot: DatedSlot | undefined;
   blocks: readonly AvailabilityBlock[];
   today: string;
-  /** Seats already committed to this slot by other confirmed requests. */
-  committed: number;
+  /**
+   * Seats still bookable, from the SAME derivation the availability grid shows:
+   * capacity minus confirmed seats minus carts. Recomputing it here would let a
+   * slot with carts on it confirm past what the provider can see.
+   */
+  remaining: number;
 };
 
 export type Decision = { allowed: true } | { allowed: false; code: ProviderErrorCode; reason: string };
@@ -128,12 +132,11 @@ export function confirmDecision(ctx: BookingContext): Decision {
       reason: `${slot.date} is marked unavailable (${blocked.reason}), so nobody can be added to it.`,
     };
   }
-  const remaining = Math.max(0, slot.slot.capacity - ctx.committed);
-  if (remaining < request.partySize) {
+  if (ctx.remaining < request.partySize) {
     return {
       allowed: false,
       code: "insufficient_capacity",
-      reason: `Only ${remaining} of ${slot.slot.capacity} places are left, and this request is for ${request.partySize}.`,
+      reason: `Only ${ctx.remaining} of ${slot.slot.capacity} places are left, and this request is for ${request.partySize}.`,
     };
   }
   return { allowed: true };
@@ -190,7 +193,7 @@ export function bookingContext(
     slot,
     blocks,
     today,
-    committed: slot ? committedSeats(slot.slot.id, allRequests) : 0,
+    remaining: slot ? deriveAvailability(slot.slot, allRequests).remaining : 0,
   };
 }
 
@@ -235,7 +238,7 @@ export function requestViews(
         request,
         slot: context.slot,
         experience: listings.find((listing) => listing.id === request.experienceId),
-        remaining: Math.max(0, (context.slot?.slot.capacity ?? 0) - context.committed),
+        remaining: context.remaining,
         canConfirm: confirmDecision(context),
         // No reason argument: the inbox is deciding whether to DRAW the button,
         // and a provider who has not typed one yet must still be able to.

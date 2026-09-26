@@ -64,18 +64,24 @@ export type EnrichRejection =
   | { code: "EVIDENCE_NOT_VERBATIM"; field: EnrichField; quote: string }
   | { code: "LOW_CONFIDENCE"; field: EnrichField; confidence: number }
   | { code: "VALUE_OUT_OF_RANGE"; field: EnrichField; value: unknown }
-  | { code: "UNKNOWN_CATEGORY"; value: string }
+  | { code: "UNKNOWN_CATEGORY"; field: "category"; value: string }
   | { code: "CONTRADICTS_OSM_TAG"; field: EnrichField; osm: string; llm: string }
   | { code: "ABSTAINED"; reason: string };
 
-const InferenceSchema = z.strictObject({
-  duration_min: z.number().int().min(5).max(720).nullable().default(null),
-  price_minor: z.number().int().min(0).max(100_000_000).nullable().default(null),
-  indoor: z.enum(["indoor", "outdoor", "covered", "mixed", "unknown"]).default("unknown"),
-  category: z.string().max(40).nullable().default(null),
-  kid_friendly: z.boolean().nullable().default(null),
-  step_free: z.boolean().nullable().default(null),
-  tags: z.array(z.string().min(2).max(40)).max(6).default([]),
+/**
+ * Required and nullable, never optional: this goes out as a strict `json_schema`,
+ * and strict rejects a schema that leaves a property out of `required`. `null` is
+ * the honest answer here, and the field list below is deliberately the same eight
+ * the model is told to fill in.
+ */
+export const InferenceSchema = z.strictObject({
+  duration_min: z.number().int().min(5).max(720).nullable(),
+  price_minor: z.number().int().min(0).max(100_000_000).nullable(),
+  indoor: z.enum(["indoor", "outdoor", "covered", "mixed", "unknown"]),
+  category: z.string().max(40).nullable(),
+  kid_friendly: z.boolean().nullable(),
+  step_free: z.boolean().nullable(),
+  tags: z.array(z.string().min(2).max(40)).max(6),
   evidence: z
     .array(
       z.strictObject({
@@ -83,10 +89,9 @@ const InferenceSchema = z.strictObject({
         quote: z.string().min(4).max(300),
       }),
     )
-    .max(8)
-    .default([]),
+    .max(8),
   confidence: z.number().min(0).max(1),
-  abstain_reason: z.string().max(200).nullable().default(null),
+  abstain_reason: z.string().max(200).nullable(),
 });
 
 export type Inference = z.infer<typeof InferenceSchema>;
@@ -147,7 +152,7 @@ export function validateInference(raw: unknown, blob: string, osmTags: Record<st
   if (isPresent(v.category)) {
     const match = Category.options.find((c) => c === String(v.category).toLowerCase().replace(/\s+/g, "_"));
     if (match) category = match;
-    else rejections.push({ code: "UNKNOWN_CATEGORY", value: String(v.category) });
+    else rejections.push({ code: "UNKNOWN_CATEGORY", field: "category", value: String(v.category) });
   }
 
   // A rule is the OSM tag, not the model.

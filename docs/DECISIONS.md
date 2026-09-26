@@ -79,7 +79,7 @@ The three sources disagreed:
 - masterplan v4 §3: explicit exclusion, "no booking marketplace"
 - masterplan v3: *Feature 14 Provider Dashboard*, *Feature 15 Provider Experience
   Creation*, *Phase 5 — Availability & Booking*
-- team discussion: "full marketplace loop"
+- Abhijit, directly: "full marketplace loop"
 
 **Decision: build the provider side, but as listings + booking *requests*, with
 no payments and no commission.** Rationale:
@@ -97,7 +97,7 @@ Scope: provider listing editor, availability slots, booking request inbox,
 provider analytics. **Not** in scope: payments, commission, payouts, refunds,
 disputes.
 
-**Revisit if** the provider side lands early.
+**Revisit at the Day 3 checkpoint** if we are ahead of schedule.
 
 ## D5. Embeddings — schema yes, vectors optional — LOCKED
 
@@ -240,15 +240,19 @@ multiplier** selected by IST clock and label the estimate as an estimate.
 
 ---
 
-## Open
+## Open, with checkpoints
 
-| # | Question | Blocks |
-|---|---|---|
-| O1 | Does the provider side ship, or become stretch? (D4 is "ship, lightweight") | the demo spine |
-| O2 | Do we self-host routing, or stay on public keyless endpoints? Given the 404s in D10, self-hosting Valhalla is the obvious answer | the routing facade |
-| O3 | Embeddings — ship, or leave behind the `Embedder` interface? | Phase 4 of the roadmap |
-| O4 | Deploy target. No deployment CLI or credentials are available in the build environment | a live URL for the demo |
-| O5 | Second city, or deepen Mumbai? (Navi Mumbai is the obvious one — ferry corridors, planned-city grid, very different from island Mumbai) | the multi-city claim |
+A day-based checkpoint is the only forcing function a three-way split has. Keep
+the column; "the demo spine" is a component, not a moment, and nothing happens at
+a component.
+
+| # | Question | Blocks | Checkpoint |
+|---|---|---|---|
+| O1 | Does the provider side ship, or become stretch? (D4 is "ship, lightweight") | the demo spine | Day 3 standup |
+| O2 | Do we self-host routing, or stay on public keyless endpoints? Given the 404s in D10, self-hosting Valhalla is the obvious answer | the routing facade | Day 2 |
+| O3 | Embeddings — ship, or leave behind the `Embedder` interface? | Phase 4 of the roadmap | Day 4 |
+| O4 | Deploy target. No deployment CLI or credentials are available in the build environment | a live URL for the demo | Day 2 — needs an account from Abhijit |
+| O5 | Second city, or deepen Mumbai? (Navi Mumbai is the obvious one — ferry corridors, planned-city grid, very different from island Mumbai) | the multi-city claim | Day 5 |
 
 ## Corrections we are carrying forward
 

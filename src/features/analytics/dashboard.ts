@@ -14,6 +14,7 @@ import {
   buildCells,
   localDate,
   localMinutesOfDay,
+  rowsInWindow,
 } from "./aggregate";
 import { timeBucketOf, timeBucketShort } from "./format";
 import { buildOpportunities, buildProviderSuggestions } from "./opportunities";
@@ -62,8 +63,12 @@ export function buildDashboard(
   // Demand "near you" is demand in the neighbourhoods the provider actually
   // operates in, not demand everywhere. Claiming city-wide numbers for a Fort
   // studio would be the kind of overreach this whole layer is trying to avoid.
+  // The window filter is not optional: `aggregateDemand` applies it, so skipping
+  // it here made `metrics.unmetNearby` disagree with `demand.total` and put
+  // out-of-window searches on the heat grid.
   const hoods = new Set(listings.map((l) => l.neighbourhood).filter((h): h is string => h !== null));
-  const nearby = hoods.size === 0 ? [] : source.unmetDemand.filter((d) => hoods.has(d.neighbourhood ?? ""));
+  const windowed = rowsInWindow(source.unmetDemand, source.dataset.asOf, windowDays);
+  const nearby = hoods.size === 0 ? [] : windowed.filter((d) => hoods.has(d.neighbourhood ?? ""));
 
   const metrics = buildMetrics(interactions, bookings, nearby, opportunities, suggestions);
   const notes = buildNotes(source, metrics, nearby, minSample);

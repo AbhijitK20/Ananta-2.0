@@ -12,7 +12,7 @@
  * the code they cover and `vitest run` picks them up from the default glob.
  */
 import { describe, expect, it } from "vitest";
-import { DiscoveryContext, type ContextChange } from "../../../contracts";
+import { DiscoveryContext, type ContextChange, type GeoPoint } from "../../../contracts";
 import {
   ACTION_BY_ID,
   CONFIDENCE_GATE,
@@ -118,6 +118,18 @@ describe("context editor", () => {
     }
   });
 
+  it("does not silently drop an access need the traveller just removed", () => {
+    // `grew()` can only see an ADDED need, so a removal has to be caught by the
+    // preference key. Without it, `classifyChange` returned null, the editor threw
+    // the edit away, and the plan stayed filtered by a constraint that was gone.
+    const base = applyOp(editor(), { kind: "set_access_needs", needs: ["wheelchair"] });
+    expect(base.change).not.toBeNull();
+    const cleared = applyOp(base.state, { kind: "set_access_needs", needs: [] });
+    expect(cleared.state.ctx.accessNeeds).toEqual([]);
+    expect(cleared.change).not.toBeNull();
+    expect(classifyChange(base.state.ctx, cleared.state.ctx)).toBe(cleared.change?.kind);
+  });
+
   it("derives party type, and adds the access needs an older adult implies", () => {
     const base = editor();
     const withChild = applyOp(base, { kind: "set_party", partySize: 4, childAges: [6] });
@@ -189,6 +201,7 @@ describe("plan diff", () => {
       catalogue: catalogueMap,
       change: change(),
       travelMode: "any",
+      origin: null,
     });
 
     expect(diff.removed.map((entry) => entry.id)).toEqual(["market"]);
@@ -196,17 +209,70 @@ describe("plan diff", () => {
     expect(diff.unchanged.map((entry) => entry.id)).toEqual(["cafe"]);
     expect(diff.removed[0]?.name).toBe("Outdoor market");
     expect(diff.removed[0]?.reason).toBe("Heavy rain, and this one has no cover.");
-    expect(diff.removed[0]?.travelSavedMin).toBe(12);
+    // `market` is the FIRST stop and this seed's origin has no point, so there is
+    // no inbound leg to price. The panel says nothing rather than guessing.
+    expect(diff.removed[0]?.travelSavedMin).toBeNull();
     expect(diff.unchanged[0]?.reordered).toBe(true);
     expect(diff.swapCount).toBe(1);
     expect(diff.changed).toBe(true);
+  });
+
+  it("charges a middle removal for BOTH of its legs, not just the outbound one", () => {
+    const before = plan(editor().ctx, [
+      { id: "market", order: 0, arriveMin: 610, durationMin: 40 },
+      { id: "craft", order: 1, arriveMin: 670, durationMin: 40 },
+      { id: "cafe", order: 2, arriveMin: 730, durationMin: 40 },
+    ]);
+    const after = plan(editor().ctx, [
+      { id: "market", order: 0, arriveMin: 610, durationMin: 40 },
+      { id: "cafe", order: 1, arriveMin: 670, durationMin: 40 },
+    ]);
+    const engine = fakeEngine({ initial: before, catalogue: CATALOGUE });
+    const at = (id: string) => catalogueMap.get(id)!.location;
+    const minutes = (from: string, to: string) => engine.travelBetween(at(from), at(to), "auto", 650).minutes;
+    // Removing `craft` turns market->craft->cafe into one market->cafe leg.
+    const expected = minutes("market", "craft") + minutes("craft", "cafe") - minutes("market", "cafe");
+
+    const diff = diffPlans(engine, before, after, {
+      catalogue: catalogueMap,
+      change: change(),
+      travelMode: "any",
+      origin: null,
+    });
+    expect(diff.removed[0]?.id).toBe("craft");
+    expect(diff.removed[0]?.travelSavedMin).toBe(expected);
+  });
+
+  it("prices a first-stop removal against the day's origin", () => {
+    const seed: ContextSeed = { ...SEED, origin: { label: "Colaba", point: { lat: 19.0, lon: 72.9 } } };
+    const state = createContext(seed);
+    const before = plan(state.ctx, [
+      { id: "market", order: 0, arriveMin: 610, durationMin: 40 },
+      { id: "cafe", order: 1, arriveMin: 670, durationMin: 40 },
+    ]);
+    const after = plan(state.ctx, [{ id: "cafe", order: 0, arriveMin: 620, durationMin: 40 }]);
+    const engine = fakeEngine({ initial: before, catalogue: CATALOGUE });
+    const origin = state.ctx.origin.point!;
+    const at = (id: string) => catalogueMap.get(id)!.location;
+    const minutes = (from: GeoPoint, to: GeoPoint) => engine.travelBetween(from, to, "auto", 650).minutes;
+    const expected =
+      minutes(origin, at("market")) + minutes(at("market"), at("cafe")) - minutes(origin, at("cafe"));
+
+    const diff = diffPlans(engine, before, after, {
+      catalogue: catalogueMap,
+      change: change(),
+      travelMode: "any",
+      origin,
+    });
+    expect(diff.removed[0]?.id).toBe("market");
+    expect(diff.removed[0]?.travelSavedMin).toBe(expected);
   });
 
   it("is deterministic: the same two plans always give the same diff", () => {
     const before = plan(editor().ctx, [{ id: "market", order: 0, arriveMin: 610 }]);
     const after = plan(editor().ctx, [{ id: "craft", order: 0, arriveMin: 620 }]);
     const engine = fakeEngine({ initial: before, catalogue: CATALOGUE });
-    const input = { catalogue: catalogueMap, change: change(), travelMode: "any" as const };
+    const input = { catalogue: catalogueMap, change: change(), travelMode: "any" as const, origin: null };
     expect(diffPlans(engine, before, after, input)).toEqual(diffPlans(engine, before, after, input));
   });
 
@@ -216,6 +282,7 @@ describe("plan diff", () => {
       catalogue: catalogueMap,
       change: change(),
       travelMode: "any",
+      origin: null,
     });
     expect(diff.removed).toEqual([]);
     expect(diff.added).toEqual([]);
