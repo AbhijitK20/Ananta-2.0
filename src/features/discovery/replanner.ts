@@ -335,6 +335,13 @@ export type ReplanOutcome =
       load: LoadReport;
       /** Stops the load model took off the list to get there. */
       excluded: LoadExclusion[];
+      /**
+       * The same verdict `discover` gives, on the same terms. A re-solve that
+       * empties the plan is the strongest unmet-demand signal this product
+       * produces: the traveller had something a minute ago and now has nothing,
+       * and "nothing" here is a fact about supply, not about our engine.
+       */
+      demand: DemandAssessment;
     }
   | {
       ok: false;
@@ -387,6 +394,8 @@ export function replan(
    * right whenever the plan was built from it.
    */
   prevCtx: DiscoveryContext = session.state.ctx,
+  /** Attribution for the demand row. Without it the verdict is still reported. */
+  meta?: DemandMeta,
 ): ReplanOutcome {
   const previous = session.plan;
   if (!previous) {
@@ -474,6 +483,19 @@ export function replan(
     validation: gate.validation,
     load,
     excluded,
+    demand: assessDemand(
+      {
+        ctx,
+        plan: gate.plan,
+        // A re-solve does not go through `filterFeasible` again, so the plan's own
+        // rejections are the whole record. `considered` is what the previous plan
+        // was serving: an empty result from three stops is a different fact from an
+        // empty result from nothing.
+        rejected: gate.plan.rejected,
+        considered: previous.stops.length,
+      },
+      meta,
+    ),
   };
 }
 
@@ -495,8 +517,9 @@ export function applyAction(
   engine: EnginePort,
   session: DiscoverySession,
   action: DiscoveryAction,
+  meta?: DemandMeta,
 ): ActionOutcome {
-  return applyEditorChange(engine, session, runAction(action, actionInput(session)));
+  return applyEditorChange(engine, session, runAction(action, actionInput(session)), meta);
 }
 
 export function actionInput(session: DiscoverySession): ActionInput {
@@ -512,12 +535,13 @@ export function applyEditorChange(
   engine: EnginePort,
   session: DiscoverySession,
   edit: EditorChange | null,
+  meta?: DemandMeta,
 ): ActionOutcome {
   if (!edit || !edit.change) {
     return { ok: false, session, reason: "That would not change anything, so nothing was re-solved.", load: null };
   }
   const candidate: DiscoverySession = { ...session, state: edit.state };
-  const outcome = replan(engine, candidate, edit.change, session.state.ctx);
+  const outcome = replan(engine, candidate, edit.change, session.state.ctx, meta);
   return outcome.ok ? outcome : { ...outcome, session };
 }
 
@@ -526,6 +550,7 @@ export function applyOpsAndReplan(
   engine: EnginePort,
   session: DiscoverySession,
   ops: readonly EditorOp[],
+  meta?: DemandMeta,
 ): ActionOutcome {
-  return applyEditorChange(engine, session, applyOps(session.state, ops));
+  return applyEditorChange(engine, session, applyOps(session.state, ops), meta);
 }

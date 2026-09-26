@@ -8,27 +8,36 @@
  * evidence about the market, and if it is, write it down in a shape that
  * aggregates.
  *
- * Four rules, all load-bearing:
+ * Six rules, all load-bearing:
  *
  *  1. **Zero results is not automatically unmet demand.** It only is when the
  *     engine eliminated candidates on hard constraints. A thrown engine, a plan
  *     that failed `admit()`, and a catalogue that was never searched are three
  *     different things, and none of them is a provider opportunity. One of them
  *     is our bug.
- *  2. **Nothing is invented.** There are no seeded rows, no sampled traveller, no
- *     clock. Every number in a `DemandSignal` is either read out of the context
- *     the traveller gave us or counted out of the `Rejection`s the engine
- *     returned for that same request.
- *  3. **The row id IS the aggregation key.** Equivalent requests produce the same
- *     fingerprint, therefore the same `UnmetDemand.id`, so persisting is an
- *     upsert and a duplicate is structurally impossible without a second,
- *     deliberate dedupe pass. No hashing: the key is short enough to read, and
- *     this module must stay importable from a client bundle.
- *  4. **The contract row is one real request; the ledger is the aggregate.**
- *     `signal.demand` is the first occurrence, verbatim, so every field in it is
- *     a fact about something a traveller actually asked for. The counts, the
- *     spread and the last-seen time live beside it in the `DemandSignal`, where
- *     nobody mistakes them for a single event.
+ *  2. **A re-solve counts.** Most unsatisfied discovery in this product is not a
+ *     first search, it is rain starting or the clock running out. `replan()`
+ *     feeds this same policy, because a plan that used to work and now returns
+ *     nothing is the strongest demand signal the product produces.
+ *  3. **Nothing is invented.** There are no seeded rows, no sampled traveller, no
+ *     clock. Every number in a `DemandSignal` is either read out of the context the
+ *     traveller gave us or counted out of the `Rejection`s the engine returned for
+ *     that same request. Where the contract cannot hold the fact — a blocking code
+ *     for a catalogue that was never searched — no row is written at all.
+ *  4. **The row id IS the aggregation key.** Equivalent requests produce the same
+ *     fingerprint, therefore the same `UnmetDemand.id`, so persisting is an upsert
+ *     and a duplicate is structurally impossible without a second, deliberate
+ *     dedupe pass. No hashing: the key is short enough to read, and this module must
+ *     stay importable from a client bundle.
+ *  5. **Counts are derived from evidence.** `observations` lists the
+ *     `(traveller, time)` pairs actually folded in, and `count` is always
+ *     `observations.length`. Re-recording the same request — a double submit, a
+ *     retry, a replayed event — therefore cannot inflate a number a provider will
+ *     be shown. Nothing in this file increments a count; they are recomputed.
+ *  6. **The contract row is one real request; the ledger is the aggregate.**
+ *     `signal.demand` is the first occurrence, verbatim, so every field in it is a
+ *     fact about something a traveller actually asked for. Counts, spread and
+ *     last-seen time live beside it, where nobody mistakes them for one event.
  *
  * Typical wiring, in one place in `src/app`:
  *
@@ -53,11 +62,13 @@ import {
   MUMBAI_TZ_OFFSET_MIN,
   categoryIntent,
   durationBandOf,
+  humanise,
   localMinutesOfDay,
   partyBandOf,
   priceBandOf,
+  rejectionLabel,
 } from "../analytics/aggregate";
-import { timeBucketOf } from "../analytics/format";
+import { formatCount, formatInr, timeBucketOf } from "../analytics/format";
 import type { ClaimTier } from "../analytics/types";
 import { INDOOR_TOKEN, slug } from "./context";
 
@@ -67,6 +78,12 @@ export type TimeBucket = Experience["bestTimeOfDay"][number];
 export interface Range {
   min: number;
   max: number;
+}
+
+/** One real request, as the proof that a count is not a projection. */
+export interface DemandObservation {
+  travellerId: string;
+  at: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -130,9 +147,23 @@ export function asksOf(ctx: DiscoveryContext): DemandAsks {
 // Which constraint killed the candidates
 // ---------------------------------------------------------------------------
 
+/** A shortfall, in the unit the engine reported it in. */
+export interface BlockingShortfall {
+  amount: number;
+  unit: NonNullable<Rejection["unit"]>;
+}
+
 export interface BlockingCodeCount {
   code: RejectionCode;
   count: number;
+  /**
+   * The SMALLEST shortfall reported for this code — the nearest miss, and so the
+   * cheapest change that would have served this traveller. A provider can act on
+   * "the closest option was ₹500 over" and cannot act on "blocked on price"; the
+   * largest shortfall is the one that reads as a problem and fixes nothing. A
+   * structural constraint gets `null` rather than a made-up number.
+   */
+  shortfall: BlockingShortfall | null;
 }
 
 /** The constraint that eliminated the most candidates. The actionable bit. */
@@ -151,16 +182,23 @@ export interface BlockedOn extends BlockingCodeCount {
 export function rankBlockers(rejected: readonly Rejection[]): BlockedOn | null {
   const counts = new Map<RejectionCode, number>();
   const messages = new Map<RejectionCode, string>();
+  const shortfalls = new Map<RejectionCode, BlockingShortfall>();
   for (const row of rejected) {
     counts.set(row.code, (counts.get(row.code) ?? 0) + 1);
     if (!messages.has(row.code)) messages.set(row.code, row.message);
+    if (row.shortfall !== null && row.unit !== null) {
+      const seen = shortfalls.get(row.code);
+      if (!seen || row.shortfall < seen.amount) {
+        shortfalls.set(row.code, { amount: row.shortfall, unit: row.unit });
+      }
+    }
   }
   const all: BlockingCodeCount[] = [...counts.entries()]
-    .map(([code, count]) => ({ code, count }))
+    .map(([code, count]) => ({ code, count, shortfall: shortfalls.get(code) ?? null }))
     .sort((a, b) => b.count - a.count || (a.code < b.code ? -1 : a.code > b.code ? 1 : 0));
   const top = all[0];
   if (!top) return null;
-  return { code: top.code, count: top.count, message: messages.get(top.code) ?? top.code, all };
+  return { ...top, message: messages.get(top.code) ?? top.code, all };
 }
 
 /**
@@ -207,17 +245,29 @@ export interface DemandSignal {
   fingerprint: string;
   /** The contract row. `id === signalId(fingerprint)`. */
   demand: UnmetDemand;
-  /** Real failed requests folded in. Starts at 1. Never seeded, never estimated. */
+  /** Always `observations.length`. Derived, never incremented. See rule 5. */
   count: number;
+  /**
+   * The real requests folded in, and the only thing `count` is allowed to come
+   * from. Re-observing a pair already listed here is the same request seen twice,
+   * so the ledger ignores it instead of inventing a second traveller.
+   */
+  observations: readonly DemandObservation[];
   firstAt: string;
   lastAt: string;
   blocking: BlockedOn;
   asks: DemandAsks;
   timeBucket: TimeBucket;
+  /** The area as the traveller named it, for copy. The row carries the slug. */
+  locality: string;
   /** Stated ceilings across the folded requests. null when none stated one. */
   budget: Range | null;
   availableMin: Range;
   partySize: Range;
+}
+
+function observationKey(observation: DemandObservation): string {
+  return `${observation.travellerId}|${observation.at}`;
 }
 
 /** The row id is the aggregation key. Readable, stable, and dependency-free. */
@@ -289,7 +339,8 @@ export function captureUnmet(
 
   const asks = asksOf(ctx);
   const budgetMinor = ctx.budget?.minor ?? null;
-  const neighbourhood = slug(meta.neighbourhood ?? ctx.origin.label) || "unspecified";
+  const locality = (meta.neighbourhood ?? ctx.origin.label).trim();
+  const neighbourhood = slug(locality) || "unspecified";
   const timeBucket = timeBucketOf(localMinutesOfDay(meta.at, meta.tzOffsetMin ?? MUMBAI_TZ_OFFSET_MIN));
   const fingerprint = fingerprintOf({
     neighbourhood,
@@ -322,15 +373,18 @@ export function captureUnmet(
   });
   if (!row.success) return null;
 
+  const observations: DemandObservation[] = [{ travellerId: meta.travellerId, at: meta.at }];
   return {
     fingerprint,
     demand: row.data,
-    count: 1,
+    count: observations.length,
+    observations,
     firstAt: meta.at,
     lastAt: meta.at,
     blocking: blocked,
     asks,
     timeBucket,
+    locality: locality || "the area",
     budget: budgetMinor === null ? null : { min: budgetMinor, max: budgetMinor },
     availableMin: { min: ctx.availableMin, max: ctx.availableMin },
     partySize: { min: ctx.partySize, max: ctx.partySize },
@@ -348,7 +402,11 @@ export interface DiscoveryReport {
   plan: Plan | null;
   /** Every rejection this run produced, from wherever the engine put them. */
   rejected: readonly Rejection[];
-  /** How many candidates the engine actually looked at. */
+  /**
+   * What the engine had in hand for this traveller: the retrieved shortlist on a
+   * first run, the previous plan's stops on a re-solve. It is what makes an empty
+   * result legible — zero of three candidates is a market, zero of nothing is not.
+   */
   considered: number;
 }
 
@@ -393,6 +451,45 @@ export function assessDemand(report: DiscoveryReport, meta?: DemandMeta): Demand
 }
 
 // ---------------------------------------------------------------------------
+// Copy — the provider feed needs a sentence, not a row
+// ---------------------------------------------------------------------------
+
+function unitText(shortfall: BlockingShortfall): string {
+  switch (shortfall.unit) {
+    case "minutes":
+      return `${shortfall.amount} min`;
+    case "minor_units":
+      return formatInr(shortfall.amount);
+    case "metres":
+      return `${shortfall.amount} m`;
+    case "people":
+      return `${shortfall.amount} people`;
+  }
+}
+
+/**
+ * One finished sentence, no placeholders, every number interpolated. This is the
+ * line a provider reads, so it says what was wanted, where, when, how often, and
+ * the one number that would have made it possible.
+ *
+ * Deliberately one blocker. `signal.blocking.all` carries the rest for a
+ * drill-down; a sentence with four reasons is a sentence nobody finishes reading.
+ */
+export function describeSignal(signal: DemandSignal): string {
+  const wants: string[] = [signal.asks.category === null ? "an experience" : humanise(signal.asks.category)];
+  if (signal.asks.indoorOnly) wants.push("indoors");
+  if (signal.asks.kidGroup) wants.push("with children");
+  if (signal.asks.diets.length > 0) wants.push(signal.asks.diets.join("/"));
+  const where = ` in ${signal.locality}`;
+  const money = signal.budget === null ? "" : ` at ${priceBandOf(signal.budget.max).label}`;
+  const gap = signal.blocking.shortfall === null ? "" : `, short by ${unitText(signal.blocking.shortfall)}`;
+  return (
+    `${formatCount(signal.count, "traveller")} wanted ${wants.join(", ")}${where}${money}, this ${signal.timeBucket}. ` +
+    `Every candidate was ruled out by ${rejectionLabel(signal.blocking.code)}${gap}.`
+  );
+}
+
+// ---------------------------------------------------------------------------
 // The ledger
 // ---------------------------------------------------------------------------
 
@@ -426,13 +523,19 @@ function bySignalRank(a: DemandSignal, b: DemandSignal): number {
  * Fold a signal into the ledger. Pure, so the same requests in the same order
  * always produce the same bytes and a test can assert on it.
  *
- * On a match the aggregate grows — `count`, the spread, the blocked-candidate
- * total — and the row is refreshed in exactly two places: `at`, so a
- * time-windowed query sees the freshest signal, and `topBlockingCount`, so the
- * number on the persisted row is the real running total rather than one request's
- * share of it. `travellerId`, `point`, `neighbourhood` and `constraints` are left
- * alone: they describe the same gap either way, and rewriting them would mean
- * inventing a request nobody made.
+ * Idempotent by construction. A signal whose `(traveller, time)` pair is already
+ * folded in is the same request seen twice — a double submit, a retry, a replayed
+ * event — and returns the ledger untouched rather than a second traveller. Every
+ * count is then recomputed from `observations`, so no number in here can drift
+ * away from the requests that justify it.
+ *
+ * On a real match the aggregate grows — the spread, the blocked-candidate total —
+ * and the row is refreshed in exactly two places: `at`, so a time-windowed query
+ * sees the freshest signal, and `topBlockingCount`, so the number on the persisted
+ * row is the real running total rather than one request's share of it.
+ * `travellerId`, `point`, `neighbourhood` and `constraints` are left alone: they
+ * describe the same gap either way, and rewriting them would mean inventing a
+ * request nobody made.
  */
 export function recordDemand(ledger: DemandLedger, signal: DemandSignal): DemandLedger {
   const existing = ledger.signals.find((row) => row.fingerprint === signal.fingerprint);
@@ -440,6 +543,13 @@ export function recordDemand(ledger: DemandLedger, signal: DemandSignal): Demand
     return { signals: [...ledger.signals, signal].sort(bySignalRank) };
   }
 
+  const seen = new Set(existing.observations.map(observationKey));
+  const fresh = signal.observations.filter((entry) => !seen.has(observationKey(entry)));
+  if (fresh.length === 0) return ledger;
+
+  const observations = [...existing.observations, ...signal.observations].sort((a, b) =>
+    observationKey(a).localeCompare(observationKey(b)),
+  );
   const blockingCount = existing.blocking.count + signal.blocking.count;
   const merged: DemandSignal = {
     ...existing,
@@ -448,7 +558,8 @@ export function recordDemand(ledger: DemandLedger, signal: DemandSignal): Demand
       at: signal.lastAt,
       topBlockingCount: blockingCount,
     },
-    count: existing.count + signal.count,
+    count: observations.length,
+    observations,
     lastAt: existing.lastAt < signal.lastAt ? signal.lastAt : existing.lastAt,
     blocking: { ...existing.blocking, count: blockingCount },
     budget: widenBudget(existing.budget, signal.budget),

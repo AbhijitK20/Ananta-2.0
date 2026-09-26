@@ -14,12 +14,12 @@
  */
 import { describe, expect, it } from "vitest";
 import {
+  Plan,
   UnmetDemand,
   type DiscoveryContext,
   type Experience,
   type FeasibleResult,
   type Fit,
-  type Plan,
   type Rejection,
   type RejectionCode,
   type RetrieveInput,
@@ -28,21 +28,24 @@ import {
   type ValidationResult,
   type WeightProfile,
 } from "../../../contracts";
+// The concrete modules, not the feature barrel: this covers unmet demand and the
+// two calls that report it, and it should not break because an unrelated part of
+// the feature's public surface is being edited.
+import type { ContextSeed } from "../context";
+import type { EnginePort, TravelMode } from "../engine";
+import { applyOpsAndReplan, createSession, discover } from "../replanner";
 import {
   assessDemand,
   createLedger,
-  createSession,
-  discover,
+  describeSignal,
   recordDemand,
   signalId,
   topSignals,
-  type ContextSeed,
   type DemandLedger,
   type DemandSignal,
   type DiscoveryReport,
-} from "..";
-import type { EnginePort, TravelMode } from "../engine";
-import { WEIGHTS, exp, plan as planOf } from "./fixtures";
+} from "../unmet";
+import { WEIGHTS, exp, plan as planOf, replanResult } from "./fixtures";
 
 // ---------------------------------------------------------------------------
 // A catalogue that cannot serve the request
@@ -107,6 +110,46 @@ const CAFE = exp({
 });
 
 const UNSERVABLE = [WORKSHOP, MARKET, GALLERY];
+
+/** An affordable, short, roomy option — so only one constraint can be at fault. */
+function easy(over: Parameters<typeof exp>[0]): Experience {
+  return exp({
+    category: "art_studio",
+    neighbourhood: "Fort",
+    location: FORT,
+    indoorOutdoor: "indoor",
+    durationMin: 30,
+    pricePerPerson: { minor: 80000, currency: "INR" },
+    capacity: 10,
+    ...over,
+  });
+}
+
+/** Three options, every one of them ₹500 over a ₹1,000 ceiling, and nothing else wrong. */
+const OVER_BUDGET = [
+  easy({ id: "a", name: "A", pricePerPerson: { minor: 150000, currency: "INR" } }),
+  easy({ id: "b", name: "B", pricePerPerson: { minor: 190000, currency: "INR" } }),
+  easy({ id: "c", name: "C", pricePerPerson: { minor: 240000, currency: "INR" } }),
+];
+
+/** Three options, all affordable and all with stairs. A structural gap. */
+const ALL_STAIRS = [
+  easy({ id: "s1", name: "S1", accessibility: { stepFree: false, strollerOk: false, lowStairs: false, seatingAvailable: true, hearingLoop: null, restroomOnSite: true } }),
+  easy({ id: "s2", name: "S2", accessibility: { stepFree: false, strollerOk: false, lowStairs: null, seatingAvailable: true, hearingLoop: null, restroomOnSite: true } }),
+  easy({ id: "s3", name: "S3", accessibility: { stepFree: null, strollerOk: false, lowStairs: null, seatingAvailable: true, hearingLoop: null, restroomOnSite: true } }),
+];
+
+/** One traveller who wants an art class, indoors is not asked for, no kids. */
+const SOLO_ART: ContextSeed = {
+  id: "ctx-art",
+  origin: { label: "Fort", point: FORT },
+  availableMin: 90,
+  nowMin: 1020,
+  budgetMinor: 100000,
+  partySize: 1,
+  interests: ["art class"],
+  weather: { condition: "clear", tempC: 28, source: "live" },
+};
 
 // ---------------------------------------------------------------------------
 // The reference gate — real hard constraints, real shortfalls
@@ -237,19 +280,36 @@ const FAMILY_SEED: ContextSeed = {
   weather: { condition: "light_rain", tempC: 27, source: "live" },
 };
 
-/** A request this catalogue can serve: money, time and stairs all relaxed. */
-const SERVABLE_SEED: ContextSeed = { ...FAMILY_SEED, budgetMinor: 300000, availableMin: 45, accessNeeds: [] };
+/**
+ * A request this catalogue can serve, and one the travel-load gate also agrees
+ * with: one traveller, no children, no access needs, a long window. A fixture
+ * that strains a solo traveller for 30 minutes is a fixture that tests the load
+ * model, not unmet demand.
+ */
+const SOLO_SEED: ContextSeed = {
+  id: "ctx-solo",
+  origin: { label: "Fort", point: FORT },
+  availableMin: 240,
+  nowMin: 1020,
+  budgetMinor: 300000,
+  partySize: 1,
+  accessNeeds: [],
+  interests: ["coffee"],
+  weather: { condition: "clear", tempC: 28, source: "live" },
+};
 
 const AT = "2026-09-26T14:00:00.000Z";
+const NEXT_DAY = "2026-09-27T14:00:00.000Z";
 
 function run(
   seed: ContextSeed = FAMILY_SEED,
   catalogue: readonly Experience[] = UNSERVABLE,
   at = AT,
+  travellerId = "trav-1",
 ) {
   const engine = gateEngine(catalogue);
   const session = createSession({ engine, seed, catalogue, weights: WEIGHTS });
-  const outcome = discover(engine, session, { travellerId: "trav-1", at });
+  const outcome = discover(engine, session, { travellerId, at });
   return { engine, session, outcome };
 }
 
@@ -320,10 +380,10 @@ describe("unmet demand, from a real request with no feasible candidate", () => {
 
     // Every candidate dies on exactly one hard constraint, so all three codes tie
     // at one and the tie-break is the code name — not the engine's emission order.
-    expect(signal.blocking.all).toEqual([
-      { code: "capacity_exceeded", count: 1 },
-      { code: "not_step_free", count: 1 },
-      { code: "over_budget", count: 1 },
+    expect(signal.blocking.all.map((row) => row.code)).toEqual([
+      "capacity_exceeded",
+      "not_step_free",
+      "over_budget",
     ]);
     expect(signal.demand.topBlockingCode).toBe("capacity_exceeded");
     expect(signal.demand.topBlockingCount).toBe(1);
@@ -331,15 +391,27 @@ describe("unmet demand, from a real request with no feasible candidate", () => {
     expect(signal.blocking.message).toBe("Seats 2; you are 4.");
   });
 
+  it("keeps the shortfall, because a provider can act on that and not on a code", () => {
+    const signal = signalOf(run().outcome);
+    const byCode = new Map(signal.blocking.all.map((row) => [row.code, row.shortfall]));
+
+    expect(byCode.get("capacity_exceeded")).toEqual({ amount: 2, unit: "people" });
+    expect(byCode.get("over_budget")).toEqual({ amount: 50000, unit: "minor_units" });
+    // A structural constraint has no number to quote, and none is invented.
+    expect(byCode.get("not_step_free")).toBeNull();
+    expect(signal.blocking.shortfall).toEqual({ amount: 2, unit: "people" });
+  });
+
   it("counts a dominant blocker correctly when one constraint did most of the killing", () => {
-    const cheap = UNSERVABLE.map((item) =>
+    const dearer = UNSERVABLE.map((item) =>
       item.id === "fort-market" ? { ...item, pricePerPerson: { minor: 150000, currency: "INR" as const } } : item,
     );
-    const signal = signalOf(run(FAMILY_SEED, cheap).outcome);
+    const signal = signalOf(run(FAMILY_SEED, dearer).outcome);
 
     // Two candidates now die on price, one on capacity.
     expect(signal.demand.topBlockingCode).toBe("over_budget");
     expect(signal.demand.topBlockingCount).toBe(2);
+    expect(signal.blocking.shortfall).toEqual({ amount: 50000, unit: "minor_units" });
   });
 
   it("does not double-count a rejection the engine reported twice", () => {
@@ -348,12 +420,77 @@ describe("unmet demand, from a real request with no feasible candidate", () => {
 
     // `discover` merges `FeasibleResult.rejected` with `Plan.rejected`, and this
     // gate reports every rejection in both places.
-    const codes = outcome.demand.status === "unmet" ? outcome.demand.blocked.all : [];
-    expect(codes).toEqual([
-      { code: "capacity_exceeded", count: 1 },
-      { code: "not_step_free", count: 1 },
-      { code: "over_budget", count: 1 },
-    ]);
+    const codes = outcome.demand.status === "unmet" ? outcome.demand.blocked.all.map((row) => row.count) : [];
+    expect(codes).toEqual([1, 1, 1]);
+  });
+});
+
+describe("a re-solve that empties the plan", () => {
+  /** One stop, then a storm: the engine has nothing left to offer. */
+  function rainRun() {
+    const first = run(SOLO_SEED, [CAFE]);
+    if (!first.outcome.ok) throw new Error("fixture did not build");
+
+    const ctx = first.outcome.session.state.ctx;
+    const storm: Rejection = {
+      experienceId: "fort-cafe",
+      code: "weather_unsafe",
+      message: "A storm is over the city and this is not weather-safe.",
+      shortfall: null,
+      unit: null,
+      relaxable: false,
+    };
+    const empty = Plan.parse({ ...planOf(ctx, []), rejected: [storm] });
+    const engine: EnginePort = { ...gateEngine([CAFE]), replan: (_p, _c, change) => replanResult(empty, change) };
+
+    return applyOpsAndReplan(
+      engine,
+      first.outcome.session,
+      [{ kind: "set_weather", condition: "storm" }],
+      { travellerId: "trav-1", at: NEXT_DAY },
+    );
+  }
+
+  it("is unmet demand, because the traveller had something and now has nothing", () => {
+    const outcome = rainRun();
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.plan.stops).toHaveLength(0);
+    expect(outcome.demand.status).toBe("unmet");
+    if (outcome.demand.status !== "unmet") return;
+    expect(outcome.demand.blocked.code).toBe("weather_unsafe");
+    expect(outcome.demand.signal?.demand.topBlockingCode).toBe("weather_unsafe");
+  });
+
+  it("writes a row for the storm, not for the plan that was there before", () => {
+    const outcome = rainRun();
+    if (!outcome.ok) throw new Error("unreachable");
+    const signal = outcome.demand.status === "unmet" ? outcome.demand.signal : null;
+    if (!signal) throw new Error("expected a signal");
+
+    expect(signal.demand.constraints.weather).toBe("storm");
+    expect(signal.demand.at).toBe(NEXT_DAY);
+    expect(signal.observations).toEqual([{ travellerId: "trav-1", at: NEXT_DAY }]);
+  });
+
+  it("leaves a re-solve that still has stops out of the ledger", () => {
+    const first = run(SOLO_SEED, [CAFE]);
+    if (!first.outcome.ok) throw new Error("fixture did not build");
+    const ctx = first.outcome.session.state.ctx;
+    const still = planOf(ctx, [{ id: "fort-cafe", order: 0, arriveMin: ctx.nowMin, durationMin: 30 }]);
+    const engine: EnginePort = { ...gateEngine([CAFE]), replan: (_p, _c, change) => replanResult(still, change) };
+
+    const outcome = applyOpsAndReplan(
+      engine,
+      first.outcome.session,
+      [{ kind: "set_weather", condition: "cloudy" }],
+      { travellerId: "trav-1", at: NEXT_DAY },
+    );
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.demand).toEqual({ status: "satisfied", stops: 1 });
   });
 });
 
@@ -376,6 +513,7 @@ describe("aggregation", () => {
     expect(ledger.signals).toHaveLength(1);
     const only = ledger.signals[0]!;
     expect(only.count).toBe(2);
+    expect(only.observations).toHaveLength(2);
     expect(only.fingerprint).toBe(first.fingerprint);
     // The spread is observed, and the first occurrence's row is left alone except
     // for the two fields that must stay current.
@@ -386,6 +524,38 @@ describe("aggregation", () => {
     expect(only.demand.topBlockingCount).toBe(2);
     expect(only.firstAt).toBe(AT);
     expect(only.lastAt).toBe("2026-09-27T14:00:00.000Z");
+  });
+
+  it("ignores the same request arriving twice", () => {
+    const signal = signalOf(run().outcome);
+
+    let ledger = createLedger();
+    ledger = recordDemand(ledger, signal);
+    // A double submit, a retry, a replayed event. One traveller asked once, so
+    // one traveller appears on the provider's dashboard.
+    const again = recordDemand(ledger, signal);
+    const third = recordDemand(again, signal);
+
+    expect(third.signals[0]?.count).toBe(1);
+    expect(third.signals[0]?.observations).toHaveLength(1);
+    // The ledger is not even rebuilt.
+    expect(third).toBe(again);
+  });
+
+  it("counts the same traveller twice only when they asked twice", () => {
+    const morning = signalOf(run(FAMILY_SEED, UNSERVABLE, AT, "trav-7").outcome);
+    const night = signalOf(run(FAMILY_SEED, UNSERVABLE, NEXT_DAY, "trav-7").outcome);
+
+    let ledger = createLedger();
+    ledger = recordDemand(ledger, morning);
+    ledger = recordDemand(ledger, night);
+
+    expect(ledger.signals).toHaveLength(1);
+    expect(ledger.signals[0]?.count).toBe(2);
+    expect(ledger.signals[0]?.observations).toEqual([
+      { travellerId: "trav-7", at: AT },
+      { travellerId: "trav-7", at: NEXT_DAY },
+    ]);
   });
 
   it("keeps a genuinely different gap as a second signal", () => {
@@ -432,9 +602,61 @@ describe("aggregation", () => {
   });
 });
 
+describe("the sentence a provider reads", () => {
+  it("names what was wanted, where, when, how often, and the one fixable number", () => {
+    expect(describeSignal(signalOf(run().outcome))).toBe(
+      "1 traveller wanted Craft workshop, indoors, with children in Fort at ₹500 to ₹1,000, this evening. " +
+        "Every candidate was ruled out by Capacity exceeded, short by 2 people.",
+    );
+  });
+
+  it("pluralises the count, because the count is the claim", () => {
+    let ledger = createLedger();
+    ledger = recordDemand(ledger, signalOf(run().outcome));
+    ledger = recordDemand(
+      ledger,
+      signalOf(run({ ...FAMILY_SEED, budgetMinor: 95000 }, UNSERVABLE, NEXT_DAY, "trav-2").outcome),
+    );
+
+    expect(describeSignal(ledger.signals[0]!)).toContain("2 travellers wanted");
+  });
+
+  it("omits the budget when nobody stated one rather than claiming zero", () => {
+    // Stairs, and no budget at all: the sentence must not invent a ceiling.
+    const signal = signalOf(run({ ...SOLO_ART, budgetMinor: null, accessNeeds: ["wheelchair"] }, ALL_STAIRS).outcome);
+    const sentence = describeSignal(signal);
+
+    expect(signal.budget).toBeNull();
+    expect(sentence).not.toContain("₹0");
+    expect(sentence).not.toContain("no limit stated");
+    expect(sentence).toBe(
+      "1 traveller wanted Art studio in Fort, this evening. Every candidate was ruled out by Not step free.",
+    );
+  });
+
+  it("drops the shortfall clause when the constraint is structural", () => {
+    // Affordable, short, roomy — and all three have stairs. Nothing else to say.
+    const signal = signalOf(run({ ...SOLO_ART, accessNeeds: ["wheelchair"] }, ALL_STAIRS).outcome);
+    const sentence = describeSignal(signal);
+
+    expect(signal.demand.topBlockingCode).toBe("not_step_free");
+    expect(signal.demand.topBlockingCount).toBe(3);
+    expect(signal.blocking.shortfall).toBeNull();
+    expect(sentence).toContain("ruled out by Not step free.");
+    expect(sentence).not.toContain("short by");
+  });
+
+  it("quotes money in rupees, because nobody acts on paise", () => {
+    const signal = signalOf(run(SOLO_ART, OVER_BUDGET).outcome);
+
+    expect(signal.demand.topBlockingCode).toBe("over_budget");
+    expect(describeSignal(signal)).toContain("short by ₹500");
+  });
+});
+
 describe("what is not unmet demand", () => {
   it("leaves a satisfiable request alone", () => {
-    const { outcome } = run(SERVABLE_SEED, [CAFE]);
+    const { outcome } = run(SOLO_SEED, [CAFE]);
 
     expect(outcome.ok).toBe(true);
     if (!outcome.ok) return;
@@ -443,7 +665,7 @@ describe("what is not unmet demand", () => {
   });
 
   it("keeps a satisfiable request out of the ledger", () => {
-    const { outcome } = run(SERVABLE_SEED, [CAFE]);
+    const { outcome } = run(SOLO_SEED, [CAFE]);
     let ledger = createLedger();
     if (outcome.ok && outcome.demand.status === "unmet" && outcome.demand.signal) {
       ledger = recordDemand(ledger, outcome.demand.signal);
