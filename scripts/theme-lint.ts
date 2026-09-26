@@ -47,6 +47,26 @@ const IGNORED_DIRS = new Set([
  */
 const SELF = relative(ROOT, resolve(import.meta.filename));
 
+/**
+ * The lint family exempts itself, as a family.
+ *
+ * A linter's own source necessarily contains every token name, hex and banned
+ * word it searches for — the rules are written down, and the canonical way to
+ * write them down is to name the thing. Exempting only SELF was not enough:
+ * theme-lint flagged the contrast-lint comment that documents why a hex was
+ * corrected, and would flag copy-lint's banned-word list just as readily.
+ *
+ * So the whole `scripts/*-lint.ts` family is skipped, and the trade is explicit:
+ * the price of this exemption is that a real violation planted inside a lint
+ * script goes unreported. That is a fair trade, because those files are tooling
+ * rather than product surface, they are covered by typecheck, and the
+ * alternative is a linter that cries wolf on its own documentation.
+ */
+const LINTER_FAMILY = ["scripts/theme-lint.ts", "scripts/copy-lint.ts", "scripts/contrast-lint.ts"];
+
+const isLintFamily = (rel: string): boolean => LINTER_FAMILY.includes(rel);
+
+
 const SCANNED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css"]);
 
 /**
@@ -246,7 +266,7 @@ function isHexMatch(text: string, source: string, index: number): boolean {
 
 function lintFile(path: string): Violation[] {
   const rel = relative(ROOT, path);
-  if (rel === SELF) return [];
+  if (rel === SELF || isLintFamily(rel)) return [];
   const isTokens = rel === TOKENS_FILE;
   const source = readFileSync(path, "utf8");
   const out: Violation[] = [];

@@ -169,7 +169,7 @@ export function StressRadar({ score, factors, className }: StressRadarProps) {
               </span>
               <span className="text-num-sm text-ink-muted">
                 {Math.round(value)}
-                <span className="text-ink-faint"> · {Math.round(factor.weight * 100)}%</span>
+                <span className="text-ink-muted"> · {Math.round(factor.weight * 100)}%</span>
               </span>
             </li>
           );
@@ -183,7 +183,7 @@ export function StressRadar({ score, factors, className }: StressRadarProps) {
       */}
       {rescue ? (
         <div className="mt-3 rounded-md border border-rule bg-canvas p-3">
-          <span className="text-caps text-ink-faint">Rescue move</span>
+          <span className="text-caps text-ink-muted">Rescue move</span>
           <p className="mt-1 text-body text-ink">{rescue.text}</p>
         </div>
       ) : null}

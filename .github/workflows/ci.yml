@@ -38,6 +38,12 @@ jobs:
       - name: Token gate — no colour literal outside tokens.css
         run: npx tsx scripts/theme-lint.ts
 
+      - name: Copy gate — no emoji, banned filler, or colon reveals
+        run: npx tsx scripts/copy-lint.ts
+
+      - name: Contrast gate — every token pair, both themes, WCAG AA
+        run: npx tsx scripts/contrast-lint.ts
+
       - name: Build
         run: npx next build
 

@@ -95,7 +95,7 @@ export function EmptyState({
 
       {suggestions && suggestions.length > 0 ? (
         <div className="w-full">
-          <div className="text-caps text-ink-faint">Try</div>
+          <div className="text-caps text-ink-muted">Try</div>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {suggestions.map((suggestion) =>
               onSuggestion ? (

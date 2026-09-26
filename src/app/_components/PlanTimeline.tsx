@@ -110,7 +110,7 @@ export function PlanTimeline({
                         {experience?.name ?? stop.experienceId}
                       </h3>
                       {experience?.neighbourhood ? (
-                        <span className="inline-flex items-center gap-1 text-meta-sm text-ink-faint">
+                        <span className="inline-flex items-center gap-1 text-meta-sm text-ink-muted">
                           <Pin aria-hidden className="size-3" strokeWidth={2} />
                           {experience.neighbourhood}
                         </span>
@@ -135,13 +135,13 @@ export function PlanTimeline({
                     ) : experience?.pricePerPerson ? (
                       <span>
                         {minorToRupeesExact(experience.pricePerPerson.minor)}
-                        <span className="text-ink-faint">/person</span>
+                        <span className="text-ink-muted">/person</span>
                       </span>
                     ) : (
                       <span>Free</span>
                     )}
                     {experience ? (
-                      <span className="text-ink-faint">
+                      <span className="text-ink-muted">
                         {ratingToDisplay(experience.rating.value, experience.rating.count)}
                       </span>
                     ) : null}

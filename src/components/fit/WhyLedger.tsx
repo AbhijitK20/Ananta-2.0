@@ -143,7 +143,7 @@ export function WhyLedger({
           </ul>
 
           {rejections && rejections.length > 3 ? (
-            <p className="mt-2 text-meta-sm text-ink-faint">
+            <p className="mt-2 text-meta-sm text-ink-muted">
               {rejections.length} did not fit. The rest are in the full ledger.
             </p>
           ) : null}
@@ -239,7 +239,7 @@ export function LearnedWeights({
             <li key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
               <label htmlFor={`weight-${key}`} className="min-w-0">
                 <span className="block truncate text-body text-ink">{label}</span>
-                <span className="text-meta-sm text-ink-faint">{key}</span>
+                <span className="text-meta-sm text-ink-muted">{key}</span>
               </label>
               {onEdit ? (
                 <input
@@ -260,7 +260,7 @@ export function LearnedWeights({
         })}
       </ul>
 
-      <p className="mt-3 text-meta-sm text-ink-faint">Weight profile {version}</p>
+      <p className="mt-3 text-meta-sm text-ink-muted">Weight profile {version}</p>
     </div>
   );
 }

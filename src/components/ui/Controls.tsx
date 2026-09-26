@@ -160,7 +160,7 @@ export function Slider({
         )}
       />
       {minLabel || maxLabel ? (
-        <div className="flex justify-between text-meta-sm text-ink-faint">
+        <div className="flex justify-between text-meta-sm text-ink-muted">
           <span>{minLabel}</span>
           <span>{maxLabel}</span>
         </div>

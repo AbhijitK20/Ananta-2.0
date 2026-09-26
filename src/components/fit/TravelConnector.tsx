@@ -60,6 +60,9 @@ export function TravelConnector({
       <span className="text-num-sm font-medium text-ink">
         {leg.minutes} min {MODE_LABEL[leg.mode]}
       </span>
+      {/* Decorative separator. ink-faint is for exactly this: punctuation
+          that carries no information. Every value on this row is ink-muted
+          or darker, because the values are the content. */}
       <span aria-hidden className="text-ink-faint">
         ·
       </span>
@@ -73,7 +76,7 @@ export function TravelConnector({
         </>
       ) : null}
       {arriveAtMin !== undefined ? (
-        <span className="ml-auto shrink-0 text-num-sm text-ink-faint">
+        <span className="ml-auto shrink-0 text-num-sm text-ink-muted">
           {minutesToClock(arriveAtMin)}
         </span>
       ) : null}
@@ -111,7 +114,7 @@ export function TravelConnector({
           place in the UI to be honest about it.
         */}
         {leg.estimated ? (
-          <p className="px-2 text-meta-sm text-ink-faint">Estimated for this time of day</p>
+          <p className="px-2 text-meta-sm text-ink-muted">Estimated for this time of day</p>
         ) : null}
       </div>
     </div>

@@ -62,7 +62,7 @@ export function TimeBudgetBar({
         <span className="text-meta-sm text-ink-muted">{label ?? "Time budget"}</span>
         <span className="text-num-sm text-ink">
           {minutesToDuration(plannedMin)}
-          <span className="text-ink-faint"> of {minutesToDuration(availableMin)}</span>
+          <span className="text-ink-muted"> of {minutesToDuration(availableMin)}</span>
         </span>
       </div>
 

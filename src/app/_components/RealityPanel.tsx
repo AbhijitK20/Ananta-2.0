@@ -75,7 +75,7 @@ export function RealityPanel({
       */}
       {lastChange ? (
         <div className="mt-4 rounded-md border border-rule bg-canvas p-3">
-          <span className="text-caps text-ink-faint">Last change</span>
+          <span className="text-caps text-ink-muted">Last change</span>
           <p className="mt-1 text-body text-ink">{lastChange.narrative}</p>
           <p className="mt-1.5 text-meta-sm text-fit">
             Still looking for what you asked for at the start.

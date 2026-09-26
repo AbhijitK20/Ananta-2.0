@@ -24,6 +24,7 @@ import { Sheet } from "@/components/ui/Overlays";
 import { LearnedWeights, ResultCard, WhyLedger } from "@/components/fit";
 
 import { CONTEXT_TRIGGERS, FIXTURE_BY_ID, FIXTURE_FITS, FIXTURE_SCORES } from "../_fixtures";
+import { AccessibilityControls } from "./AccessibilityControls";
 import { ChatSidecar } from "./ChatSidecar";
 import { MapPanel } from "./MapPanel";
 import { PlanTimeline } from "./PlanTimeline";
@@ -183,7 +184,7 @@ export function DiscoverySurface({
         <div className="mx-auto flex max-w-[90rem] flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-baseline gap-2">
             <span className="text-display text-ink">TravelBuddy</span>
-            <span className="text-meta-sm text-ink-faint">plans that actually fit</span>
+            <span className="text-meta-sm text-ink-muted">plans that actually fit</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {/*
@@ -448,6 +449,10 @@ export function DiscoverySurface({
                 observations={weights.observations}
                 version={weights.version}
               />
+            </Card>
+
+            <Card>
+              <AccessibilityControls />
             </Card>
           </aside>
         </div>

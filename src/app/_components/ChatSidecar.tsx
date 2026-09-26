@@ -218,7 +218,7 @@ export function ChatSidecar({ open, onOpenChange, context, onDecision }: ChatSid
         </div>
       ) : (
         <div className="mt-3">
-          <span className="text-caps text-ink-faint">Try</span>
+          <span className="text-caps text-ink-muted">Try</span>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {defaultChips.map((chip) => (
               <Chip key={chip} onClick={() => void send(chip)}>
@@ -247,7 +247,7 @@ export function ChatSidecar({ open, onOpenChange, context, onDecision }: ChatSid
           placeholder="It started raining"
           className={cn(
             "min-h-11 min-w-0 flex-1 rounded-md border border-rule bg-surface px-3",
-            "text-body text-ink placeholder:text-ink-faint",
+            "text-body text-ink placeholder:text-ink-muted",
             "disabled:opacity-45",
           )}
         />

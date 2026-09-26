@@ -28,7 +28,16 @@
   --raw-surface: #fffdf8; /* raised surfaces */
   --raw-ink: #17150f; /* warm carbon. Never pure black */
   --raw-ink-muted: #6f6a5e;
-  --raw-ink-faint: #9a948a;
+  /* DESIGN_SYSTEM §2 lists #9A948A here. That is 2.74:1 on canvas, which
+     cannot carry text at any size, and §5 is explicit that contrast is
+     non-negotiable — so this is lightened until it clears the 3:1 bar for
+     incidental content. The practical consequence is a usage rule, now
+     enforced in the components: `ink-faint` is for DECORATION ONLY
+     (aria-hidden separators, disabled states). Anything a person needs to read
+     uses `ink-muted`, which clears 4.5:1. Darkening this far enough for
+     4.5:1 would put it at #726E66, 0.28 away from `ink-muted` — three
+     indistinguishable text tiers instead of two legible ones. */
+  --raw-ink-faint: #888279;
   --raw-rule: #e4e0d6; /* every 1px divider in the app */
   --raw-accent: #0e4f4a; /* monsoon teal. The ONLY brand accent */
   --raw-accent-soft: #d7e4e2; /* accent at ~12%, for fills */
@@ -36,7 +45,11 @@
   --raw-alarm-soft: #f5e2df;
   --raw-fit: #4a6b3a; /* muted leaf. Fits, confirmed, available */
   --raw-fit-soft: #e2eadd;
-  --raw-warn: #9a6b1f; /* hours unverified, inferred data */
+  /* DESIGN_SYSTEM §2 lists #9A6B1F here: 4.25:1 on canvas, just under the
+     4.5:1 that §5 requires of a semantic colour used AS TEXT. `warn` is used
+     as text (an unverified-hours notice, an inferred-data badge, a tight fit),
+     so it is darkened to clear the bar while staying the same ochre. */
+  --raw-warn: #8b601c;
   --raw-warn-soft: #f2e7d4;
   --raw-info: #3d5a80; /* neutral informational */
   --raw-info-soft: #dfe5ee;
@@ -64,7 +77,7 @@
   --raw-surface-dark: #1c1b16;
   --raw-ink-dark: #ede9df;
   --raw-ink-muted-dark: #a29c90;
-  --raw-ink-faint-dark: #7c776d;
+  --raw-ink-faint-dark: #8a8479;
   --raw-rule-dark: #2c2a23;
   --raw-accent-dark: #3e8e86;
   --raw-accent-soft-dark: #1e3a37;

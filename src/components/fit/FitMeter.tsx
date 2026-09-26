@@ -132,7 +132,7 @@ export function FitMeter({ fit, compact = false, showChecks = false, className }
               <span className="min-w-0">
                 <span className={check.pass ? "text-ink-muted" : "text-alarm"}>{check.label}</span>
                 {check.detail ? (
-                  <span className="text-ink-faint"> — {check.detail}</span>
+                  <span className="text-ink-muted"> — {check.detail}</span>
                 ) : null}
               </span>
             </li>

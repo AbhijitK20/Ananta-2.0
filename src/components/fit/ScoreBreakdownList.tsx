@@ -39,7 +39,7 @@ export function ScoreBreakdownList({ score, compact = false, className }: ScoreB
           Weight profile {score.profileVersion}.
         </caption>
         <thead>
-          <tr className="text-caps text-ink-faint">
+          <tr className="text-caps text-ink-muted">
             <th scope="col" className="pb-1 font-semibold">
               Factor
             </th>
@@ -115,7 +115,7 @@ export function ScoreBreakdownList({ score, compact = false, className }: ScoreB
             <th scope="row" className="py-1.5 pr-2 text-left font-medium text-ink">
               Total
             </th>
-            <td className="text-num-sm text-ink-faint">
+            <td className="text-num-sm text-ink-muted">
               {score.profileVersion}
             </td>
             <td className="py-1.5 text-right text-num-sm font-medium text-ink">
@@ -170,7 +170,7 @@ export function WhyRejected({
         <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
           <span className="text-body font-medium text-ink">{name}</span>
           {distanceLabel ? (
-            <span className="text-num-sm text-ink-faint">{distanceLabel}</span>
+            <span className="text-num-sm text-ink-muted">{distanceLabel}</span>
           ) : null}
         </div>
       ) : null}

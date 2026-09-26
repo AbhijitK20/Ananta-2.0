@@ -102,7 +102,7 @@ export function ResultCard({
         <h3 className="text-title text-ink">{experience.name}</h3>
         <span className="text-caps text-ink-muted">{categoryLabel(experience.category)}</span>
         {experience.neighbourhood ? (
-          <span className="inline-flex items-center gap-1 text-meta-sm text-ink-faint">
+          <span className="inline-flex items-center gap-1 text-meta-sm text-ink-muted">
             <MapPin aria-hidden className="size-3" strokeWidth={2} />
             {experience.neighbourhood}
           </span>
@@ -119,11 +119,11 @@ export function ResultCard({
           <Wallet aria-hidden className="size-3.5" strokeWidth={2} />
           {experience.pricePerPerson ? minorToRupees(experience.pricePerPerson.minor) : "Free"}
           {experience.pricePerPerson ? (
-            <span className="text-ink-faint">/person</span>
+            <span className="text-ink-muted">/person</span>
           ) : null}
         </span>
         {distanceMetres !== undefined ? (
-          <span className="text-ink-faint">{metresToDistance(distanceMetres)} away</span>
+          <span className="text-ink-muted">{metresToDistance(distanceMetres)} away</span>
         ) : null}
       </div>
 
@@ -154,7 +154,7 @@ export function ResultCard({
           <Badge tone="warn" icon={<Sparkles aria-hidden className="size-3" strokeWidth={2} />}>
             AI-inferred
           </Badge>
-          <span className="self-center text-meta-sm text-ink-faint">
+          <span className="self-center text-meta-sm text-ink-muted">
             {inferredFields.length === 1
               ? `${inferredFields[0]} was inferred`
               : `${inferredFields.length} fields inferred`}
