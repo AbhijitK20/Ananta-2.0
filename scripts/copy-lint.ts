@@ -192,14 +192,6 @@ function* walk(dir: string): Generator<string> {
   }
 }
 
-/** The string a node contributes to the page, or null if it is not copy. */
-function copyTextOf(node: ts.Node): string | null {
-  if (ts.isJsxText(node)) return node.text;
-  if (ts.isJsxExpression(node)) return null;
-  if (ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
-  return null;
-}
-
 function checkCopy(
   text: string,
   rel: string,

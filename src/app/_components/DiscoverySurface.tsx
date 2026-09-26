@@ -13,7 +13,6 @@ import type {
   WeightProfile,
 } from "@/contracts";
 
-import { cn } from "@/components/cn";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -23,7 +22,7 @@ import { SegmentedControl, Slider, Toggle } from "@/components/ui/Controls";
 import { Sheet } from "@/components/ui/Overlays";
 import { LearnedWeights, ResultCard, WhyLedger } from "@/components/fit";
 
-import { CONTEXT_TRIGGERS, FIXTURE_BY_ID, FIXTURE_FITS, FIXTURE_SCORES } from "../_fixtures";
+import { CONTEXT_TRIGGERS } from "../_fixtures";
 import { AccessibilityControls } from "./AccessibilityControls";
 import { ChatSidecar } from "./ChatSidecar";
 import { MapPanel } from "./MapPanel";

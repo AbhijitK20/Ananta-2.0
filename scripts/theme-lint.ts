@@ -16,7 +16,7 @@
  *
  * Exit codes: 0 clean, 1 violations found, 2 bad invocation.
  */
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync, watch as fsWatch } from "node:fs";
 import { extname, join, relative, resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "..");
@@ -450,16 +450,19 @@ function main(): number {
     for (const dir of ["src", "scripts"]) {
       const full = join(ROOT, dir);
       if (!statSync(full, { throwIfNoEntry: false })) continue;
-      statSync(full);
       try {
-        // Watch the whole project; the tree is small and the cost is one rescan.
-        const { watch: fsWatch } = require("node:fs") as typeof import("node:fs");
         fsWatch(full, { recursive: true }, () => {
+          // Debounced: an editor writing a file often produces several events,
+          // and rescanning on each one is wasted work.
           if (timer) clearTimeout(timer);
           timer = setTimeout(run, 120);
         });
       } catch {
-        // Recursive watch is unsupported on some platforms. One-shot is fine.
+        // Recursive watch is unsupported on some platforms, and on some network
+        // filesystems. One-shot still works, so degrade rather than fail.
+        process.stdout.write(
+          "Recursive watch is unavailable here. Run theme:lint again after saving.\n",
+        );
         break;
       }
     }

@@ -76,7 +76,10 @@ export function ClusterLayer({
 
     // `promoteId`, NOT `generateId`. generateId mints fresh ids on every
     // setData, which drops hover and selection state mid-interaction.
-    const addSource = (id: string, data: ReturnType<typeof toFeatureCollection>, cluster: boolean) => {
+    // Typed as the general GeoJSON collection rather than the narrower return
+    // of `toFeatureCollection`, because the seed is an empty collection and
+    // the point of this effect is that it does not care what the data is.
+    const addSource = (id: string, data: GeoJSON.FeatureCollection, cluster: boolean) => {
       if (maplibre.getSource(id)) return;
       maplibre.addSource(id, {
         type: "geojson",
@@ -100,8 +103,20 @@ export function ClusterLayer({
       });
     };
 
-    addSource(CLUSTERED_SOURCE, toFeatureCollection(experiences), true);
-    addSource(HIT_SOURCE, toFeatureCollection(experiences), false);
+    // Sources are seeded EMPTY. This effect's only job is to attach sources and
+    // layers once; the data effect below is the single writer of feature data.
+    //
+    // Seeding from `experiences` here would read a prop that is deliberately
+    // not in this effect's dependency list, and it would only be correct by
+    // accident of closure timing — the map can finish loading after the last
+    // data effect has already run and found no source to write to. With an
+    // empty seed that race is impossible: whatever the data effect last wrote
+    // is either present or the source was just created empty, and the next data
+    // change repopulates it.
+    const empty: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
+
+    addSource(CLUSTERED_SOURCE, empty, true);
+    addSource(HIT_SOURCE, empty, false);
 
     if (!maplibre.getLayer("cluster-circles")) {
       maplibre.addLayer({
@@ -346,14 +361,7 @@ export function CardMapCoupling({
         | undefined;
 
       // Which cluster, if any, contains this point right now.
-      const bbox: [[number, number], [number, number]] = [
-        [point.lon, point.lat],
-        [point.lon, point.lat],
-      ];
-      const containing =
-        source && typeof source.getClusterLeaves === "function"
-          ? await findContainingCluster(map, source, point)
-          : null;
+      const containing = clusterAt(map, point);
 
       if (containing !== null && source?.getClusterExpansionZoom) {
         // Step 1 + 2: zoom to the level where the cluster actually splits.
@@ -364,7 +372,6 @@ export function CardMapCoupling({
           duration: 600,
           essential: true,
         });
-        void bbox;
       } else {
         // Not clustered: just bring it into view.
         map.easeTo({
@@ -378,7 +385,7 @@ export function CardMapCoupling({
       // than the zoom range resolves. Spiderfy so the point is genuinely
       // visible rather than merely centred.
       window.setTimeout(() => {
-        const stillClustered = findClusterSync(map, point);
+        const stillClustered = clusterAt(map, point);
         if (stillClustered !== null) spiderfy(map, stillClustered, point);
         onRevealedRef.current?.();
         setBusy(false);
@@ -402,30 +409,21 @@ export function CardMapCoupling({
   );
 }
 
-/** Async cluster lookup via the source's own query path. */
-async function findContainingCluster(
-  map: ReturnType<MapRef["getMap"]>,
-  source: { getClusterLeaves(clusterId: number, limit?: number): Promise<{ id?: string }[]> },
-  point: GeoPoint,
-): Promise<number | null> {
-  // querySourceFeatures returns one row per tile that intersects, and the
-  // cluster_id lives on the row. Take the first that actually contains our id.
-  const features = map.querySourceFeatures(CLUSTERED_SOURCE);
-  for (const feature of features) {
-    const clusterId = feature.properties?.cluster_id;
-    if (typeof clusterId !== "number") continue;
-    const coords = (feature.geometry as GeoJSON.Point | undefined)?.coordinates;
-    if (!coords) continue;
-    if (Math.abs(coords[0] ?? 0 - point.lon) < 0.02 && Math.abs((coords[1] ?? 0) - point.lat) < 0.02) {
-      return clusterId;
-    }
-  }
-  void source;
-  return null;
-}
-
-/** Sync cluster lookup for the post-zoom spiderfy check. */
-function findClusterSync(
+/**
+ * The cluster containing a point, or null.
+ *
+ * `querySourceFeatures` returns one row per intersecting tile and the
+ * `cluster_id` lives on the row, so this scans for a cluster whose own centroid
+ * is within a small tolerance of the point.
+ *
+ * The parentheses around `(coords[0] ?? 0)` are load-bearing. Without them the
+ * expression parses as `coords[0] ?? (0 - point.lon)` — `??` binds looser than
+ * `-` — which evaluates to the raw longitude, about 72.8, and the comparison
+ * against 0.02 is never true. That silently disabled the whole spiderfy step of
+ * the card coupling, in exactly the dense neighbourhoods it exists for, and
+ * nothing errored.
+ */
+function clusterAt(
   map: ReturnType<MapRef["getMap"]>,
   point: GeoPoint,
 ): number | null {
@@ -433,9 +431,11 @@ function findClusterSync(
   for (const feature of features) {
     const clusterId = feature.properties?.cluster_id;
     if (typeof clusterId !== "number") continue;
-    const coords = (feature.geometry as GeoJSON.Point | undefined)?.coordinates;
-    if (!coords) continue;
-    if (Math.abs((coords[0] ?? 0) - point.lon) < 0.02 && Math.abs((coords[1] ?? 0) - point.lat) < 0.02) {
+    const geometry = feature.geometry as GeoJSON.Point | undefined;
+    const lon = geometry?.coordinates?.[0];
+    const lat = geometry?.coordinates?.[1];
+    if (typeof lon !== "number" || typeof lat !== "number") continue;
+    if (Math.abs(lon - point.lon) < 0.02 && Math.abs(lat - point.lat) < 0.02) {
       return clusterId;
     }
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Send } from "lucide-react";
 
 import { DialogueDecision, type DiscoveryContext } from "@/contracts";
@@ -55,6 +55,10 @@ export function ChatSidecar({ open, onOpenChange, context, onDecision }: ChatSid
   const [busy, setBusy] = useState(false);
   const [degraded, setDegraded] = useState(false);
   const [gate, setGate] = useState<{ confidence: number; suggestions: string[] } | null>(null);
+  // Per instance rather than a hardcoded "chat-input": the sheet is a
+  // singleton today, but a duplicate id would cross-wire the label to the
+  // wrong field the moment a second one is ever mounted.
+  const inputId = useId();
   const listRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -177,7 +181,7 @@ export function ChatSidecar({ open, onOpenChange, context, onDecision }: ChatSid
       */}
       <p className="mb-3 rounded-sm bg-accent-soft px-2 py-1.5 text-meta-sm text-ink">
         This changes what we know about you. The plan is re-solved from scratch
-        each time, so the ranking is never the model's to change.
+        each time, so the ranking is never the model&rsquo;s to change.
       </p>
 
       <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto" aria-live="polite">
@@ -236,11 +240,11 @@ export function ChatSidecar({ open, onOpenChange, context, onDecision }: ChatSid
           void send(input);
         }}
       >
-        <label htmlFor="chat-input" className="sr-only">
+        <label htmlFor={inputId} className="sr-only">
           What changed
         </label>
         <input
-          id="chat-input"
+          id={inputId}
           value={input}
           onChange={(event) => setInput(event.target.value)}
           disabled={busy}

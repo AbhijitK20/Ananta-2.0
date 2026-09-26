@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Scale, Ban } from "lucide-react";
 
 import type { PlanStop, Rejection, ScoreBreakdown } from "@/contracts";
@@ -49,6 +49,16 @@ export function WhyLedger({
   className,
 }: WhyLedgerProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
+  // Generated per instance. A hardcoded id here means two ledgers on one page
+  // emit duplicate DOM ids, and `aria-controls` then points at the first
+  // match — so the second ledger's toggle would announce and control the
+  // first one's panel.
+  const breakdownId = useId();
+  // Section heading ids back `aria-labelledby`. Also per instance: two ledgers
+  // on one page would otherwise duplicate these ids and both sections would be
+  // labelled by the first heading found.
+  const whyThisHeadingId = useId();
+  const whyNotHeadingId = useId();
   const hasWhyThis = Boolean(score) || (why && why.length > 0);
   const hasWhyNot = Boolean(rejections && rejections.length > 0);
 
@@ -57,9 +67,9 @@ export function WhyLedger({
   return (
     <div className={cn("min-w-0", className)}>
       {hasWhyThis ? (
-        <section aria-labelledby="why-this-heading" className="min-w-0">
+        <section aria-labelledby={whyThisHeadingId} className="min-w-0">
           <h3
-            id="why-this-heading"
+            id={whyThisHeadingId}
             className="flex items-center gap-1.5 text-caps text-ink-muted"
           >
             <Scale aria-hidden className="size-3.5" strokeWidth={2} />
@@ -88,7 +98,7 @@ export function WhyLedger({
                 type="button"
                 onClick={() => setShowBreakdown((open) => !open)}
                 aria-expanded={showBreakdown}
-                aria-controls="why-this-breakdown"
+                aria-controls={breakdownId}
                 className={cn(
                   "mt-2 inline-flex min-h-9 items-center rounded-md px-2 text-meta",
                   "text-ink-muted transition-colors duration-[var(--dur-fast)]",
@@ -111,7 +121,7 @@ export function WhyLedger({
                 )}
               >
                 <div className="overflow-hidden" inert={!showBreakdown}>
-                  <div id="why-this-breakdown" className="pt-1">
+                  <div id={breakdownId} className="pt-1">
                     <ScoreBreakdownList score={score} />
                   </div>
                 </div>
@@ -124,8 +134,8 @@ export function WhyLedger({
       {hasWhyThis && hasWhyNot ? <hr className="my-3 border-0 border-t border-rule" /> : null}
 
       {hasWhyNot ? (
-        <section aria-labelledby="why-not-heading" className="min-w-0">
-          <h3 id="why-not-heading" className="flex items-center gap-1.5 text-caps text-ink-muted">
+        <section aria-labelledby={whyNotHeadingId} className="min-w-0">
+          <h3 id={whyNotHeadingId} className="flex items-center gap-1.5 text-caps text-ink-muted">
             <Ban aria-hidden className="size-3.5" strokeWidth={2} />
             Why not that
           </h3>
@@ -204,6 +214,9 @@ export function LearnedWeights({
   className,
 }: LearnedWeightsProps) {
   const entries = Object.entries(weights).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+  // Per instance, so two panels showing the same weight key do not share a
+  // label's `for` target and silently cross-wire their sliders.
+  const idPrefix = useId();
 
   return (
     <div className={cn("min-w-0", className)}>
@@ -237,13 +250,13 @@ export function LearnedWeights({
           const label = WEIGHT_LABELS[key] ?? key;
           return (
             <li key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-              <label htmlFor={`weight-${key}`} className="min-w-0">
+              <label htmlFor={`${idPrefix}-weight-${key}`} className="min-w-0">
                 <span className="block truncate text-body text-ink">{label}</span>
                 <span className="text-meta-sm text-ink-muted">{key}</span>
               </label>
               {onEdit ? (
                 <input
-                  id={`weight-${key}`}
+                  id={`${idPrefix}-weight-${key}`}
                   type="range"
                   min={-1}
                   max={1}

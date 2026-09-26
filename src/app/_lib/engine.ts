@@ -158,18 +158,36 @@ export async function discover(context: DiscoveryContext): Promise<DiscoverResul
   const engine = await loadEngine();
 
   if (engine.ready) {
-    const { retrieve, filterFeasible, score, pack, validate } = engine.engine;
+    const { retrieve, filterFeasible, pack, validate } = engine.engine;
     const candidates = retrieve({ context, catalogue: FIXTURE_EXPERIENCES });
     const feasible = filterFeasible(context, candidates);
     const survivors = feasible.passed
       .map((id) => FIXTURE_EXPERIENCES.find((item) => item.id === id))
       .filter((item): item is Experience => item !== undefined);
 
-    const weights = { version: "wp_1.2.0", weights: {}, source: "prior" as const };
-    // The packer needs scored items to order by; the engine's `score` returns
-    // breakdowns, and the catalogue rows are the items. Passed straight
-    // through, never re-ranked here.
-    void score;
+    /*
+      NOTE ON `score`, for the Day 1 standup — two contract observations, both
+      of which a previous version of this file hid behind a `void score`.
+
+      1. `score` is not called here, and cannot be. The published signature is
+         `pack(ctx, items): Plan` — there is nowhere to hand precomputed
+         breakdowns to it. Since `PlanStop.score` is required by the contract,
+         `pack` must therefore score internally, so calling `score` here as well
+         would compute the same numbers twice and risk the two copies drifting.
+         One number, computed once, in one place.
+
+      2. That leaves a real gap. `score(ctx, items, weights: WeightProfile)` takes
+         a weight profile, and the whole bandit stream exists to learn one, but
+         `pack(ctx, items)` has no way to receive it. So on the published API a
+         learned weight profile cannot reach the plan that a traveller sees. It
+         probably wants to be `pack(ctx, items, weights)`. Worth raising before
+         the engine is written rather than after.
+
+      There is a related absence on the read side: the UI needs a
+      WeightProfile to render "what I learned about you", and no published
+      function returns one — `observe(profile, event)` takes a profile, so
+      something has to own it, and nothing currently says what.
+    */
 
     const plan = pack(context, survivors);
     return { plan, source: "engine", validation: validate(plan) };

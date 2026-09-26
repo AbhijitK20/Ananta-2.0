@@ -646,10 +646,6 @@ export const FIXTURE_WEIGHTS: WeightProfile = WeightProfile.parse({
    LOOKUPS
    ========================================================================== */
 
-export const FIXTURE_BY_ID: ReadonlyMap<string, Experience> = new Map(
-  FIXTURE_EXPERIENCES.map((item) => [item.id, item]),
-);
-
 /** The six "reality changed" triggers from docs/FEATURES.md §3. */
 export const CONTEXT_TRIGGERS = [
   { key: "rain", label: "It started raining", detail: "Outdoor loses, indoor wins" },

@@ -91,6 +91,19 @@ function useFocusReturn(
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
+    /*
+      Resolve the return target NOW, while the trigger is certainly still the
+      element that opened this overlay.
+
+      Reading `returnTo.current` inside the cleanup instead is a real bug: the
+      ref is read at cleanup time, by which point the trigger may have
+      unmounted and something else may occupy the ref — so focus lands on an
+      unrelated element, or on nothing, and a keyboard user is dropped at the
+      top of the document. The fallback to `previouslyFocused` is captured for
+      the same reason.
+    */
+    const returnTarget = returnTo?.current ?? previouslyFocused;
+
     // Prefer the first focusable control, fall back to the container itself so
     // the dialog is never left with focus on the inert page behind it.
     const first = focusableWithin(container)[0];
@@ -98,7 +111,7 @@ function useFocusReturn(
 
     if (!trap) {
       return () => {
-        (returnTo?.current ?? previouslyFocused)?.focus({ preventScroll: true });
+        returnTarget?.focus({ preventScroll: true });
       };
     }
 
@@ -125,7 +138,7 @@ function useFocusReturn(
     container.addEventListener("keydown", onKeyDown);
     return () => {
       container.removeEventListener("keydown", onKeyDown);
-      (returnTo?.current ?? previouslyFocused)?.focus({ preventScroll: true });
+      returnTarget?.focus({ preventScroll: true });
     };
   }, [active, containerRef, returnTo, trap]);
 }

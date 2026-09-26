@@ -7,7 +7,6 @@ import type { Experience, Fit } from "@/contracts";
 import { cn } from "../cn";
 import { Badge, FactPill } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { ControlledDisclosure } from "../ui/Disclosure";
 import { categoryLabel, metresToDistance, minorToRupees, ratingToDisplay } from "./format";
 import { FitMeter } from "./FitMeter";
 
@@ -176,17 +175,27 @@ export function ResultCard({
         >
           {primaryActionLabel}
         </Button>
+        {/*
+          A plain button, NOT a disclosure.
+
+          This was previously a ControlledDisclosure with `open={false}`
+          hardcoded, which is a real bug and not a style preference: the control
+          rendered `aria-expanded="false"` and an `aria-controls` pointing at a
+          panel, and clicking it could never change that state — the boolean
+          `onOpenChange` received was discarded. A screen reader announced
+          "collapsed" and activating it produced no expansion, and the panel's
+          only content ("Open the full ledger…") was permanently inert and never
+          visible. A control that claims to be expandable and is not is worse
+          than no control, because it teaches the user that aria-expanded is
+          noise.
+
+          What it actually does is open the ledger in a sheet, owned by the
+          parent, so it is a button that says so.
+        */}
         {onSelect ? (
-          <ControlledDisclosure
-            open={false}
-            onOpenChange={() => onSelect(experience)}
-            summary="Why this, and why not the others"
-            className="flex-1 border-t-0"
-          >
-            <p className="text-meta-sm text-ink-muted">
-              Open the full ledger for this recommendation.
-            </p>
-          </ControlledDisclosure>
+          <Button variant="ghost" onClick={() => onSelect(experience)} className="px-2">
+            Why this, and why not the others
+          </Button>
         ) : null}
       </div>
     </article>

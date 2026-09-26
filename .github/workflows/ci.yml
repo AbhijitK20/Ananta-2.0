@@ -56,4 +56,8 @@ jobs:
           node-version: "22"
       - run: npm install --no-package-lock
       - run: npm install-scripts approve unrs-resolver || true
-      - run: npx next lint
+      # The ESLint CLI, not `next lint`. `next lint` is deprecated in Next 16
+      # and interactively prompts when it finds no config, so as a CI step it
+      # would hang the job rather than pass or fail it.
+      - name: Lint
+        run: npx eslint .

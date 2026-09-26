@@ -11,7 +11,6 @@ import {
   minutesToClock,
   ratingToDisplay,
   TravelConnector,
-  WhyLedger,
 } from "@/components/fit";
 import { PlanStressRadar, TimeBudgetBar } from "@/components/fit";
 
@@ -76,14 +75,12 @@ export function PlanTimeline({
 
         {plan.stops.map((stop, index) => {
           const experience = experiences.get(stop.experienceId);
-          const leg = legBefore(index);
           const nextStop = plan.stops[index + 1];
           // The connector AFTER this stop is the leg whose destination is the
           // following stop, which is the same lookup `legBefore` does at the
           // next index.
           const nextLeg = nextStop ? legBefore(index + 1) : null;
           const isLast = index === plan.stops.length - 1;
-          void leg;
 
           return (
             <li key={`${stop.experienceId}-${stop.order}`} className="min-w-0">
