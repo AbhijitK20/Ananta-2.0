@@ -1,0 +1,52 @@
+# TripFit reference-repo manifest
+#
+# Columns (TAB separated):
+#   tier      adopt | patterns | related | rejected
+#   dir       folder name under research/<tier>/
+#   url       https git URL, or "alias:<tier>/<dir>" to point at another clone,
+#             or "raw:<url>" to fetch a single file instead of cloning
+#   purpose   why we have it
+#   sparse    comma-separated git sparse-checkout include patterns (root-anchored),
+#             "-" to check out everything, "-" with url=raw:<...> to ignore
+#
+# Clones are shallow (--depth 1). Rows with a `sparse` pattern also use a
+# blobless partial clone (--filter=blob:none) so we skip datasets, docs sites,
+# test fixtures and logs we will never read. See fetch.sh.
+#
+#   tier<TAB>dir<TAB>url<TAB>purpose<TAB>sparse
+
+adopt	shadcn-ui	https://github.com/shadcn-ui/ui.git	UI component layer (Radix + Tailwind). Installed as a package; cloned to read component composition and the registry pattern.	/packages/ /templates/ /registry.json
+adopt	drizzle-orm	https://github.com/drizzle-team/drizzle-orm.git	ORM. Installed. Reference for SQLite driver internals and schema authoring conventions.	-
+adopt	vercel-ai	https://github.com/vercel/ai.git	AI SDK. Installed. Reference for zod-schema structured output, streaming, and multi-provider fallback wiring.	/packages/ /content/
+adopt	maplibre-gl-js	https://github.com/maplibre/maplibre-gl-js.git	Map renderer. Installed. Reference for style spec, layer expressions, raster/vector source setup.	/src/
+adopt	planetiler	https://github.com/onthegomap/planetiler.git	OSM to vector tilesets in Java. Optional path to self-hosting our tiles. Reference for the OSM tag schema our harvest should target.	/planetiler-core/
+adopt	opening-hours-php	https://github.com/spatie/opening-hours.git	Canonical opening-hours library (the npm `opening_hours` package is a port). Reference for correct OSM opening_hours semantics: exceptions, week specs, holidays, overnight spans.	-
+adopt	better-auth	https://github.com/better-auth/better-auth.git	Auth. Installed. Reference for the Drizzle/SQLite adapter and session handling.	/packages/
+adopt	turf	https://github.com/turfjs/turf.git	Geo operations. Installed. Reference for distance, bbox, along-line and buffer implementations.	/packages/
+adopt	faker	https://github.com/faker-js/faker.git	Deterministic seed-data generation for reviews and provider profiles.	-
+adopt	nextjs-boilerplate	https://github.com/ixartz/Next-js-Boilerplate.git	Repo hygiene reference: layered src layout, env validation, ESLint/Prettier, Vitest, Playwright, CI wiring. Adopt the structure, not the code.	/src/ /tests/
+adopt	openrouteservice-js	https://github.com/GIScience/openrouteservice-js.git	Routing client. Reference for the provider-adapter + fallback-chain pattern and isochrone request shapes.	-
+adopt	routingpy	https://github.com/routingpy/routingpy.git	Provider-agnostic routing facade. Reference for the adapter interface our travel.ts mirrors.	-
+adopt	fastapi-fullstack-template	https://github.com/fastapi/full-stack-fastapi-template.git	Proven full-stack layout and auth-shell conventions. Layout patterns only.	/frontend/src/ /backend/app/
+
+patterns	medusa	https://github.com/medusajs/medusa.git	Durable workflow/step engine. We borrow the idempotent-step + compensation pattern for the booking state machine and availability decrements. NOT installed.	/packages/core/ /packages/modules/ /packages/framework/
+patterns	pyvrp	https://github.com/PyVRP/PyVRP.git	State-of-the-art VRP solver. Reference for how time windows, capacity and precedence are modelled. Validates our packer formulation. NOT installed.	-
+patterns	galton	https://github.com/urbica/galton.git	Lightweight Node isochrone server. Reference for travel-time-contour computation.	-
+patterns	osrm-isochrone	https://github.com/mapbox/osrm-isochrone.git	Drivetime isochrones from OSM via OSRM. Reference for isochrone generation.	-
+patterns	docker-valhalla	https://github.com/nilsnolde/docker-valhalla.git	Valhalla in Docker. Multimodal routing INCLUDING transit - the honest fix for Mumbai train-vs-car. Optional stretch. NOT installed.	-
+
+related	xrec	https://github.com/HKUDS/XRec.git	EMNLP 2024. LLMs for explainable recommendation. Academic backing for our why-ledger and provenance labels. CITED, not installed.	/explainer/ /generation/ /evaluation/ /process/
+related	crslab	https://github.com/RUCAIBox/CRSLab.git	Conversational recommender toolkit. Source of the user-simulator eval idea and CRS metrics. CITED, not installed.	/crslab/ /docs/ /tests/
+related	crs-papers	https://github.com/Zilize/CRSPapers.git	Conversational recommender paper list. Related-work slide. CITED, not installed.	-
+related	recbole	https://github.com/RUCAIBox/RecBole.git	Standard RecSys library. Source of Recall@K / NDCG@K / MRR metric methodology for our eval table. CITED, not installed.	/recbole/ /docs/
+related	recsys-datasets	https://github.com/RUCAIBox/RecSysDatasets.git	Public RecSys datasets. Reference for benchmark design in our eval harness. CITED, not installed.	-
+related	pepler	https://github.com/lileipisces/PEPLER.git	TOIS 2023. Personalized prompt learning for explainable recommendation. CITED, not installed.	-
+related	pgpr	https://github.com/orcax/PGPR.git	Explainable recommendation via knowledge-graph reasoning. CITED, not installed.	/*.py
+related	awesome-recsys-papers	raw:https://raw.githubusercontent.com/guyulongcs/Awesome-Deep-Learning-Papers-for-Search-Recommendation-Advertising/master/README.md	Survey list. Positioning slide for the deck. The repo is 1.16 GB of archived media, so we take the README only. CITED, not installed.	-
+
+rejected	tf-ranking	https://github.com/tensorflow/ranking.git	REJECTED: learning-to-rank needs training data we do not have. Interpretable features + a contextual bandit are more honest and demo better.	/
+rejected	allrank	https://github.com/allegro/allRank.git	REJECTED: same reason as tf-ranking, plus a PyTorch dependency we cannot justify in a 1-week TypeScript build.	/
+rejected	ptranking	https://github.com/wildltr/ptranking.git	REJECTED: same reason. Kept so the team can see we evaluated the LTR option and why we declined it.	/
+rejected	google-maps-scraper	https://github.com/worldscraping/google-maps-scraper.git	REJECTED ON COMPLIANCE GROUNDS: scrapes Google Maps in breach of their ToS. It would have filled our ratings gap, but we do not use it. Our equivalent is provider-submitted data plus clearly-labelled LLM inference. Cloned so the whole team can see exactly what we declined and why.	/
+rejected	medusa-as-dep	alias:patterns/medusa	POINTER: we borrow Medusa's workflow pattern but do not install it (needs its own server + Postgres, and e-commerce is the wrong domain shape for bookable experiences).	-
+rejected	recbole-as-dep	alias:related/recbole	POINTER: we borrow RecBole's metric methodology but do not install it (Python + ML deps, and we have a 2-day TypeScript deliverable).	-
