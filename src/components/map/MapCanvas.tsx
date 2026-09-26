@@ -33,8 +33,56 @@ import { cn } from "../cn";
  *    FullMap.svelte:313-352 says so in a comment worth reading).
  */
 
-/** OpenFreeMap. Keyless, vector, no usage cap we have to reason about. */
-const STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+  /**
+   * The basemap, as a style we own.
+   *
+   * This used to be `https://tiles.openfreemap.org/styles/liberty`, and that
+   * style's own assets are broken: it requests a `Geist Mono Regular` glyph
+   * range that 404s, so MapLibre falls back to local rendering and logs an
+   * `AJAXError` for every codepoint it draws, and it references fourteen sprite
+   * images (`office`, `atm`, `gate`, `bollard`, `swimming_pool`, `sports_centre`,
+   * `toll_booth`, `horse_racing`, `recycling`, `lift_gate`,
+   * `motorcycle_parking`, `yoga`, `running`, `ferry_terminal`) that are not in
+   * its sprite sheet, so each one logs `could not be loaded`. That is roughly
+   * thirty console errors on page load, none of them ours, all of them visible
+   * to anyone who opens devtools — and none of them fixable from our side,
+   * because they belong to a third party we do not control.
+   *
+   * We do not need any of it. Every layer we draw is a `circle` over a GeoJSON
+   * source, plus one `text-field` for cluster counts. We need a floor and
+   * nothing else: no labels, no icons, no glyphs, no sprite. A light raster
+   * basemap gives us that in one layer, renders faster than a full vector style
+   * with thousands of layers we immediately cover with circles, and is visually
+   * calmer — which is the other half of the brief.
+   *
+   * CARTO's Positron is keyless, needs no account, and its tiles are raster, so
+   * there is no glyph or sprite request to fail. OpenFreeMap stays useful for
+   * the GeoJSON data; only the basemap moved.
+   *
+   * `glyphs` is the one thing the style still needs, because the cluster-count
+   * layer is a symbol and a symbol needs a font. MapLibre only fetches glyphs if
+   * the style declares where they live, so this is declared explicitly against
+   * the OpenMapTiles font server (keyless, verified 200) rather than inherited
+   * from somebody else's style and hoped for. Both endpoints are third-party
+   * and either can be swapped in one place.
+   */
+  const BASEMAP_STYLE = {
+    version: 8 as const,
+    glyphs: "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
+    sources: {
+      basemap: {
+        type: "raster" as const,
+        tiles: ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
+        tileSize: 256,
+        maxzoom: 20,
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+      },
+    },
+    layers: [
+      { id: "basemap", type: "raster" as const, source: "basemap", minzoom: 0, maxzoom: 22 },
+    ],
+  };
 
 /** Mumbai. Overridden by `initialCentre` when the caller has a real context. */
 const FALLBACK_CENTRE: GeoPoint = { lat: 18.9388, lon: 72.8354 };
@@ -110,8 +158,9 @@ export function MapCanvas({
         // ref late, but it now passes the raw map only as a last resort and the
         // consumers guard for a missing `.getMap`.
         ref={mapRef}
-        // Keyless style. No token, no account, nothing to leak.
-        mapStyle={STYLE_URL}
+        // A style object rather than a URL, so there is no third-party fetch and
+        // no broken-asset fallback to debug. See BASEMAP_STYLE.
+        mapStyle={BASEMAP_STYLE}
         initialViewState={{
           longitude: initialCentre.lon,
           latitude: initialCentre.lat,

@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MapRef } from "react-map-gl/maplibre";
-import type { GeoJSONSource, MapLayerMouseEvent } from "maplibre-gl";
+import type { ExpressionSpecification, GeoJSONSource, MapLayerMouseEvent } from "maplibre-gl";
 
 import type { Experience, GeoPoint, Plan } from "@/contracts";
 
@@ -72,6 +72,34 @@ type PaintTarget = {
  */
 const MAP_FALLBACK_INK = "#17150f";
 
+/**
+ * `point_count` as a number, always.
+ *
+ * The property only exists on clustered features. On an unclustered point
+ * `["get", "point_count"]` evaluates to `null`, and `step` declares its first
+ * argument as a number, so MapLibre threw
+ * `Expected value to be of type number, but found null instead` — once per
+ * unclustered feature, which on this catalogue is thousands.
+ *
+ * `coalesce` is the fix rather than a filter: the cluster layers still contain
+ * unclustered points by design, because MapLibre renders both from one source,
+ * and dropping them would change which circles are painted. Defaulting the count
+ * to zero gives the documented behaviour instead — a lone point takes the base
+ * step — and keeps the expression total over every feature it is evaluated on.
+ */
+const COUNT_EXPR: ExpressionSpecification = ["coalesce", ["get", "point_count"], 0];
+
+/**
+ * The one font this map is allowed to ask for.
+ *
+ * It must exist on the `glyphs` endpoint declared in MapCanvas's
+ * `BASEMAP_STYLE`, or every cluster count logs a 404 and MapLibre falls back to
+ * local rendering. Single source of truth on purpose: the font name appearing in
+ * two files is how "Geist Mono Regular" ended up requested from a server that
+ * does not have it.
+ */
+const CLUSTER_FONT = "Noto Sans Regular";
+
 function mapToken(name: string): string {
   if (typeof document === "undefined") return MAP_FALLBACK_INK;
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -103,7 +131,9 @@ export function applyMapPalette(map: PaintTarget): void {
     if (map.getLayer(layer)) map.setPaintProperty(layer, name, value);
   };
 
-  set("cluster-circles", "circle-color", ["step", ["get", "point_count"], p.accent, 10, p.info, 30, p.accent]);
+  set("cluster-circles", "circle-color", [
+    "step", COUNT_EXPR, p.accent, 10, p.info, 30, p.accent,
+  ]);
   set("cluster-circles", "circle-stroke-color", p.surface);
   set("cluster-count", "text-color", p.onAccent);
   set("unclustered-point", "circle-color", ["case", ["get", "selected"], p.accent, p.fit]);
@@ -210,8 +240,8 @@ export function ClusterLayer({
         // circle at ALL zooms: one instanced quad per point, no placement pass.
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": ["step", ["get", "point_count"], mapToken("--accent"), 10, mapToken("--info"), 30, mapToken("--accent")],
-          "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 30, 26],
+          "circle-color": ["step", COUNT_EXPR, mapToken("--accent"), 10, mapToken("--info"), 30, mapToken("--accent")],
+          "circle-radius": ["step", COUNT_EXPR, 16, 10, 20, 30, 26],
           "circle-stroke-width": 2,
           "circle-stroke-color": mapToken("--surface"),
         },
@@ -225,11 +255,22 @@ export function ClusterLayer({
         source: CLUSTERED_SOURCE,
         filter: ["has", "point_count"],
         layout: {
-          // HTML counts, not glyphs: raster basemaps and blocked glyph
-          // endpoints make glyph clusters unreliable.
-          "text-field": ["get", "point_count_abbreviated"],
+          /*
+            A symbol layer, so it needs a font, so it needs glyphs. The comment
+            that used to sit here said "HTML counts, not glyphs" while the code
+            two lines below asked for `["Geist Mono Regular"]` — the exact font
+            that 404s, and the reason the console filled with one AJAXError per
+            codepoint MapLibre tried to draw.
+
+            The font is now the single constant that the declared `glyphs`
+            endpoint in MapCanvas actually serves, and the count is wrapped in
+            `to-string` because `text-field` wants a string and the property is
+            a number. Being explicit means the type is right rather than
+            accidentally right through coercion.
+          */
+          "text-field": ["to-string", ["get", "point_count_abbreviated"]],
           "text-size": 12,
-          "text-font": ["Geist Mono Regular"],
+          "text-font": [CLUSTER_FONT],
           "text-allow-overlap": true,
         },
         paint: { "text-color": mapToken("--on-accent") },
