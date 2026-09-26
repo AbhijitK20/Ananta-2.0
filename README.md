@@ -87,6 +87,7 @@ enrichment, and nothing else. That is why the eval suite means something and why
 | [`docs/FEATURES.md`](docs/FEATURES.md) | Feature-by-feature acceptance criteria |
 | [`docs/EVAL_SPEC.md`](docs/EVAL_SPEC.md) | The 28 scenarios and the metrics |
 | [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | The 3-minute script, with fallbacks |
+| [`docs/PRESENTATION.md`](docs/PRESENTATION.md) | **Internal round prep** — pitch, stack, Q&A, phrases to avoid |
 
 ## Team
 
