@@ -175,7 +175,7 @@ export function ringAreaSqm(ring: readonly GeoPoint[]): number {
     if (pi === undefined || pj === undefined) continue;
     acc += (pj.lon - pi.lon) * ((pi.lat + pj.lat) / 2);
   }
-  return Math.abs((acc * mPerDegLon * M_PER_DEG_LAT) / 2);
+  return Math.abs(acc * mPerDegLon * M_PER_DEG_LAT);
 }
 
 /** Total area of a GeoJSON Polygon, exterior minus holes, square metres. */

@@ -71,6 +71,22 @@ export class CityClock {
 /** Asia/Kolkata has no DST. India has used +05:30 since 1945. */
 export const MUMBAI = new CityClock("Asia/Kolkata", 330);
 
+/**
+ * A deterministic, timezone-free ISO timestamp for fixtures and defaults.
+ *
+ * `updatedAt` is NOT part of the engine's reasoning, but a row still needs a
+ * value for it. Writing `new Date(0).toISOString()` in engine code puts a Date
+ * back inside the engine, which is exactly what tests/boundary.test.ts exists
+ * to prevent. Naming the sentinel keeps the guard absolute and makes the intent
+ * ("this is a constant, not a clock reading") obvious at the call site.
+ */
+export const EPOCH_ISO = "1970-01-01T00:00:00.000Z";
+
+/** Today's date as an ISO string. Scripts and the UI only, never the engine. */
+export function nowIso(): string {
+  return new Date().toISOString();
+}
+
 export function assertMinutes(minutes: number, context = ""): asserts minutes is Minutes {
   if (!Number.isInteger(minutes)) {
     throw new Error(`${context} minutes must be an integer, got ${minutes}`);
@@ -106,28 +122,71 @@ export function bucketOf(minutes: Minutes): TimeBucket {
   return "night";
 }
 
-/** Does [start, end) fully contain [winStart, winEnd)? Handles midnight wrap. */
-export function windowContains(
+/**
+ * Do two intervals overlap at all?
+ *
+ * A window MAY wrap midnight, expressed the same way as an interval: start
+ * later than end, e.g. 23:00 -> 01:00 for a night out. The caller is
+ * responsible for deciding whether such a window is even legal for its use.
+ */
+export function windowsOverlap(
+  start: Minutes,
+  end: Minutes,
+  otherStart: Minutes,
+  otherEnd: Minutes,
+): boolean {
+  if (otherEnd === otherStart) return false;
+  const parts = (s: Minutes, e: Minutes): [number, number][] =>
+    s <= e ? [[s, e]] : [[s, MINUTES_PER_DAY], [0, e]];
+  for (const [as, ae] of parts(start, end)) {
+    for (const [bs, be] of parts(otherStart, otherEnd)) {
+      if (as < be && bs < ae) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Is [winStart, winEnd) FULLY inside [start, end)?
+ *
+ * This is the check the feasibility gate actually needs, and it is stricter
+ * than overlap on purpose: a traveller who arrives with 60 minutes left cannot
+ * be sent to a shop that shuts in 30, however good the rest of the fit is.
+ *
+ * Partial overlap is a rejection, not a pass. See engine/hours.ts
+ * `isOpenDuring`, which reports the covered minutes so the Rejection can quote
+ * the real shortfall.
+ */
+export function windowFitsWithin(
   start: Minutes,
   end: Minutes,
   winStart: Minutes,
   winEnd: Minutes,
 ): boolean {
-  if (winEnd <= winStart) throw new Error("windowContains: window must be non-empty");
-  const overlaps = (a1: Minutes, a2: Minutes, b1: Minutes, b2: Minutes) =>
-    a1 < b2 && b1 < a2;
-  if (start <= end) {
-    return overlaps(start, end, winStart, winEnd);
+  if (winEnd === winStart) return false;
+  const parts = (s: Minutes, e: Minutes): [number, number][] =>
+    s <= e ? [[s, e]] : [[s, MINUTES_PER_DAY], [0, e]];
+  for (const [ws, we] of parts(winStart, winEnd)) {
+    let covered = false;
+    for (const [as, ae] of parts(start, end)) {
+      if (as <= ws && we <= ae) {
+        covered = true;
+        break;
+      }
+    }
+    if (!covered) return false;
   }
-  // The interval wraps past midnight, e.g. 22:00-02:00 for a night market.
-  return overlaps(start, MINUTES_PER_DAY, winStart, winEnd) ||
-    overlaps(0, end, winStart, winEnd);
+  return true;
+}
+
+/** Length of a possibly-wrapping window, in minutes. */
+export function windowLength(winStart: Minutes, winEnd: Minutes): number {
+  return winEnd >= winStart ? winEnd - winStart : winEnd - winStart + MINUTES_PER_DAY;
 }
 
 /** Duration of [start, end) in minutes, accounting for a midnight wrap. */
 export function spanMinutes(start: Minutes, end: Minutes): number {
-  const raw = end - start;
-  return raw >= 0 ? raw : raw + MINUTES_PER_DAY;
+  return windowLength(start, end);
 }
 
 export function formatDuration(minutes: number): string {

@@ -47,11 +47,11 @@ describe("haversineMetres", () => {
   });
 
   it("matches the known Mumbai to Pune great-circle distance", () => {
-    // Pune (18.5203, 73.8567) is ~118 km from Bandra West by great circle.
+    // Bandra West to Pune (18.5203, 73.8567) is ~123.6 km by great circle.
     const pune = { lat: 18.5203, lon: 73.8567 };
     const km = haversineMetres(BANDRA, pune) / 1000;
-    expect(km).toBeGreaterThan(113);
-    expect(km).toBeLessThan(123);
+    expect(km).toBeGreaterThan(118);
+    expect(km).toBeLessThan(128);
   });
 
   it("is symmetric", () => {

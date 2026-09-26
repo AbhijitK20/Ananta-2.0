@@ -54,7 +54,7 @@ import {
   isoWeekdayName,
   type Weekday,
 } from "@/lib/time";
-import { describe, isOpenDuring } from "./hours";
+import { describeHours, isOpenDuring } from "./hours";
 
 /**
  * A catalogue row plus the travel facts the gate needs. `retrieve.ts`
@@ -522,34 +522,38 @@ function checkHours(
       ? isOpenDuring(h, ((opts.weekday + 1) % 7) as Weekday, 0, overflow)
       : null;
 
-  if (head.status === "absent" || head.status === "unparsable") {
+  if (head.unknown || (tail?.unknown ?? false)) {
+    // `unknown` is NOT the same as `closed`. It means the spec could not be
+    // read, so we decline to promise rather than assert either way. Passing the
+    // item is the default because a curator's "PH off" typo should not delete a
+    // real venue; the UI renders the "hours unverified" badge from `status`.
     if (!opts.strictHours) return null;
     return reject(
       id,
       "hours_unverified",
-      `We couldn't verify ${name}'s opening hours, so we won't promise it fits.`,
+      `We couldn't verify ${name}'s opening hours, so we won't promise it fits your window.`,
     );
   }
 
-  const headOk = head.openForWholeVisit;
-  const tailOk = tail === null || tail.openForWholeVisit;
+  const headOk = head.open;
+  const tailOk = tail === null || tail.open;
   if (headOk && tailOk) return null;
 
-  const openFor = head.openMinutesInVisit + (tail?.openMinutesInVisit ?? 0);
+  const covered = head.coveredMin + (tail?.coveredMin ?? 0);
 
-  if (openFor === 0) {
+  if (covered === 0) {
     return reject(
       id,
       "closed_now",
-      `${name} is closed on ${dayName} (${describe(h, opts.weekday)}).`,
+      `${name} is closed on ${dayName} (${describeHours(h, opts.weekday)}).`,
     );
   }
 
   return reject(
     id,
     "closed_during_window",
-    `${name} is open for ${formatDuration(openFor)} on ${dayName}, but you need ${formatDuration(stay)} there, so you'd miss part of the visit.`,
-    { shortfall: stay - openFor, unit: "minutes", relaxable: true },
+    `${name} is open for ${formatDuration(covered)} on ${dayName}, but you need ${formatDuration(stay)} there, so you'd miss part of the visit.`,
+    { shortfall: stay - covered, unit: "minutes", relaxable: true },
   );
 }
 
@@ -681,7 +685,7 @@ export function explainFeasible(
   add(
     "Opening hours",
     checkHours(c, ctx, opts),
-    `${describe(exp.hours, opts.weekday)} on ${isoWeekdayName(opts.weekday)}`,
+    `${describeHours(exp.hours, opts.weekday)} on ${isoWeekdayName(opts.weekday)}`,
   );
 
   const buffer = bufferFor(c.travelMin, ctx.travelMode, opts);

@@ -201,8 +201,9 @@ describe("hours: week expansion and timezone independence", () => {
   });
 
   it("describes a schedule readably for the seed log", () => {
-    expect(describeHours(shop, MON)).toBe("09:00-18:00");
-    expect(describeHours(shop, SAT)).toMatch(/closed/);
+    const weekdayShop = parseHours("Mo-Fr 09:00-18:00");
+    expect(describeHours(weekdayShop, MON)).toBe("09:00-18:00");
+    expect(describeHours(weekdayShop, SAT)).toMatch(/closed/);
     expect(describeHours(parseHours(null))).toBe("absent");
   });
 });

@@ -76,18 +76,48 @@ export function detectUnsupported(raw: string): string | undefined {
  * the Date in local terms we control exactly what it sees, independent of the
  * machine's timezone.
  */
+/**
+ * 2026-01-05 is a Monday, which anchors weekday 0. Exposed so tests can assert
+ * the anchor rather than assume it.
+ */
+const MONDAY_ANCHOR_UTC = Date.UTC(2026, 0, 5);
+
+/**
+ * A Date at a given CITY-LOCAL time, addressed by an integer day offset from
+ * Monday 2026-01-05. The offset is a plain integer so it may be negative or
+ * greater than 6, which is what lets us probe the day before and the day after
+ * a target weekday without the dates coming out in reverse order.
+ *
+ * The Date is built from UTC parts and then re-expressed in system-local terms.
+ * That double step is deliberate: the npm port reads naive local components via
+ * getHours()/getDay(), so this pins what it sees to Mumbai wall-clock time no
+ * matter what timezone the host is in. A UTC deploy therefore still evaluates a
+ * Colaba shop's hours against 09:00 IST rather than 09:00 UTC.
+ */
+function wallClockDateAtOffset(dayOffset: number, minutes: number): Date {
+  const utc = new Date(MONDAY_ANCHOR_UTC + dayOffset * 86_400_000);
+  return new Date(
+    utc.getUTCFullYear(),
+    utc.getUTCMonth(),
+    utc.getUTCDate(),
+    Math.floor(minutes / 60),
+    minutes % 60,
+    0,
+    0,
+  );
+}
+
+/**
+ * The public form: a Date whose system-local wall clock is the given weekday
+ * (0 = Monday) at the given minutes-from-midnight.
+ */
 export function wallClockDate(
   weekday: Weekday,
   minutes: number,
   clock: CityClock = MUMBAI,
-  baseYear = 2026,
 ): Date {
-  // 2026-01-05 is a Monday, so weekday 0 maps to day 5 of that month.
-  const dayOfMonth = 5 + weekday;
-  const d = new Date(baseYear, 0, dayOfMonth, 0, 0, 0, 0);
-  d.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
   void clock;
-  return d;
+  return wallClockDateAtOffset(weekday, minutes);
 }
 
 function toMinutes(date: Date): Minutes {
@@ -162,8 +192,12 @@ export function intervalsForWeekday(
     };
   }
 
-  const from = wallClockDate(((weekday + 6) % 7) as Weekday, 0, clock);
-  const to = wallClockDate(((weekday + 1) % 7) as Weekday, 0, clock);
+  // Probe the day before through the day after, in chronological order. The
+  // previous day matters because a venue open 22:00-02:00 is open at 01:00
+  // thanks to the PREVIOUS day's rule, and dropping that would silently lose
+  // every night market in the catalogue.
+  const from = wallClockDateAtOffset(weekday - 1, 0);
+  const to = wallClockDateAtOffset(weekday + 1, 0);
 
   let raw: ReturnType<typeof oh.getOpenIntervals>;
   try {
@@ -176,22 +210,35 @@ export function intervalsForWeekday(
     };
   }
 
-  const dayStart = toMinutes(from);
-  const dayEnd = toMinutes(to);
-  const intervals: Interval[] = [];
+  /**
+   * The probe window runs [0, 2 days) measured from `from`, so the TARGET day
+   * occupies [1440, 2880) in that frame. Clipping to [0, 1440) instead would
+   * hand back the previous day's interval — which is how a Mo-Fr 09:00-18:00
+   * shop ends up looking open on Saturday.
+   */
+  const TARGET_START = MINUTES_PER_DAY;
+  const TARGET_END = MINUTES_PER_DAY * 2;
 
+  /** Whole days between `from` and `date`, then wall-clock minutes within it. */
+  const minutesSinceFrom = (date: Date): number => {
+    const fromDay = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
+    const dateDay = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+    const dayDiff = Math.round((dateDay - fromDay) / 86_400_000);
+    return dayDiff * MINUTES_PER_DAY + toMinutes(date);
+  };
+
+  const intervals: Interval[] = [];
   for (const [start, end, unknown] of raw) {
     if (end === undefined) continue;
-    const s = toMinutes(start);
-    const e = toMinutes(end);
-    // Clip to the target day. A 24/7 rule yields one interval spanning all
-    // three probe days, and without clipping it would produce nonsense here.
-    const clippedStart = Math.max(s, dayStart);
-    const clippedEnd = Math.min(e, dayEnd);
+    const s = minutesSinceFrom(start);
+    const e = minutesSinceFrom(end);
+    const clippedStart = Math.max(s, TARGET_START);
+    const clippedEnd = Math.min(e, TARGET_END);
     if (clippedEnd <= clippedStart) continue;
     intervals.push({
-      startMin: clippedStart as Minutes,
-      endMin: clippedEnd as Minutes,
+      // Shift back into local wall-clock minutes of the target day.
+      startMin: (clippedStart - TARGET_START) as Minutes,
+      endMin: (clippedEnd - TARGET_START) as Minutes,
       known: !unknown,
     });
   }

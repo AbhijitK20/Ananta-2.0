@@ -5,7 +5,9 @@ import {
   MUMBAI,
   parseClock,
   bucketOf,
-  windowContains,
+  windowsOverlap,
+  windowFitsWithin,
+  windowLength,
   spanMinutes,
   formatDuration,
   weekdayOf,
@@ -63,27 +65,44 @@ describe("time: integer minutes from local midnight", () => {
     expect(bucketOf(22 * 60)).toBe("night");
   });
 
-  it("detects full-window containment", () => {
-    // A 09:00-18:00 venue satisfies a 10:00-13:00 visit.
-    expect(windowContains(9 * 60, 18 * 60, 10 * 60, 13 * 60)).toBe(true);
-    // A 60-minute budget against a shop that shuts at 18:00, arriving 17:30.
-    expect(windowContains(9 * 60, 18 * 60, 17 * 60 + 30, 18 * 60 + 30)).toBe(false);
+  it("detects overlap, which is weaker than containment", () => {
+    // Overlap is NOT sufficient for the gate. A 17:30 arrival with 60 minutes
+    // left overlaps a 09:00-18:00 shop but is not served by it.
+    expect(windowsOverlap(9 * 60, 18 * 60, 10 * 60, 13 * 60)).toBe(true);
+    expect(windowsOverlap(9 * 60, 18 * 60, 17 * 60 + 30, 18 * 60 + 30)).toBe(true);
+    expect(windowsOverlap(9 * 60, 18 * 60, 19 * 60, 20 * 60)).toBe(false);
   });
 
-  it("handles an interval that wraps past midnight", () => {
-    // 22:00-02:00 night market. Partial overlap counts.
-    expect(windowContains(22 * 60, 2 * 60, 23 * 60, 60)).toBe(true);
-    expect(windowContains(22 * 60, 2 * 60, 1 * 60, 3 * 60)).toBe(true);
-    expect(windowContains(22 * 60, 2 * 60, 3 * 60, 4 * 60)).toBe(false);
+  it("requires FULL containment, rejecting a late arrival", () => {
+    // This is the assertion the gate depends on.
+    expect(windowFitsWithin(9 * 60, 18 * 60, 10 * 60, 13 * 60)).toBe(true);
+    expect(windowFitsWithin(9 * 60, 18 * 60, 17 * 60 + 30, 18 * 60 + 30)).toBe(false);
+    expect(windowFitsWithin(9 * 60, 18 * 60, 8 * 60, 13 * 60)).toBe(false);
+  });
+
+  it("treats an empty window as fitting nothing", () => {
+    expect(windowFitsWithin(0, 1440, 600, 600)).toBe(false);
+    expect(windowsOverlap(0, 1440, 600, 600)).toBe(false);
+  });
+
+  it("handles a window that wraps past midnight", () => {
+    // A night-out plan starting 23:00 and ending 01:00. Both halves must be
+    // covered by the venue, not just the first.
+    expect(windowFitsWithin(22 * 60, 2 * 60, 23 * 60, 60)).toBe(true);
+    expect(windowFitsWithin(22 * 60, 2 * 60, 23 * 60, 3 * 60)).toBe(false); // runs 1h past the 02:00 close
+    expect(windowsOverlap(22 * 60, 2 * 60, 1 * 60, 3 * 60)).toBe(true);
+    expect(windowsOverlap(22 * 60, 2 * 60, 3 * 60, 4 * 60)).toBe(false);
+  });
+
+  it("measures the length of a wrapping window", () => {
+    expect(windowLength(9 * 60, 18 * 60)).toBe(540);
+    expect(windowLength(23 * 60, 60)).toBe(120);
+    expect(windowLength(22 * 60, 2 * 60)).toBe(240);
   });
 
   it("measures the span of a wrapping interval", () => {
     expect(spanMinutes(9 * 60, 18 * 60)).toBe(540);
     expect(spanMinutes(22 * 60, 2 * 60)).toBe(240);
-  });
-
-  it("rejects an empty window instead of returning true", () => {
-    expect(() => windowContains(0, 60, 100, 100)).toThrow(/non-empty/);
   });
 
   it("formats durations the way a human would say them", () => {

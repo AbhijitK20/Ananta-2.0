@@ -82,9 +82,16 @@ describe("money: integer minor units only", () => {
   });
 
   it("never converts currency implicitly", () => {
+    // INR is the only supported currency in v1, so a USD amount is rejected at
+    // the guard rather than silently added to a rupee total.
     const usd = { minor: 1000, currency: "USD" };
-    expect(() => addMoney(inr(10), usd as never)).toThrow(/currency mismatch/);
-    expect(() => compareMoney(inr(10), usd as never)).toThrow(/No implicit conversion/);
+    expect(() => addMoney(inr(10), usd as never)).toThrow(MoneyError);
+    expect(() => addMoney(inr(10), usd as never)).toThrow(/Unsupported currency/);
+    expect(() => compareMoney(inr(10), usd as never)).toThrow(MoneyError);
+  });
+
+  it("explains which currencies it supports", () => {
+    expect(() => addMoney(inr(10), { minor: 1000, currency: "USD" } as never)).toThrow(/INR/);
   });
 
   it("compares by minor units", () => {
