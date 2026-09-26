@@ -21,7 +21,14 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import type { Experience, Fit, Plan, Rejection, ScoreBreakdown } from "@/contracts";
+import type {
+  DiscoveryContext,
+  Experience,
+  Fit,
+  Plan,
+  Rejection,
+  ScoreBreakdown,
+} from "@/contracts";
 import { ResultCard } from "@/components/fit";
 import { Button } from "@/components/ui/Button";
 import { MapPanel } from "./MapPanel";
@@ -31,6 +38,7 @@ const VISIBLE_STEPS = 24;
 const VISIBLE_INCREMENT = 48;
 
 export interface ResultsSurfaceProps {
+  context: DiscoveryContext;
   experiences: ReadonlyArray<Experience>;
   fits: Record<string, Fit>;
   scores: Record<string, ScoreBreakdown>;
@@ -41,6 +49,7 @@ export interface ResultsSurfaceProps {
 }
 
 export function ResultsSurface({
+  context,
   experiences,
   fits,
   scores,
@@ -158,6 +167,7 @@ export function ResultsSurface({
                 <ResultCard
                   experience={experience}
                   fit={fit}
+                  accessNeeds={context.accessNeeds}
                   blockingReason={rejection?.message}
                   selected={selectedId === experience.id}
                   primaryActionLabel={isPlanned ? "In the plan" : "Add to plan"}

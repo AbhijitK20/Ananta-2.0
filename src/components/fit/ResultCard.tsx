@@ -1,11 +1,11 @@
 "use client";
 
-import { Clock, MapPin, Wallet, Star, Sparkles } from "lucide-react";
+import { Clock, MapPin, Wallet, Star } from "lucide-react";
 
-import type { Experience, Fit } from "@/contracts";
+import type { AccessNeed, Experience, Fit } from "@/contracts";
 
 import { cn } from "../cn";
-import { Badge, FactPill } from "../ui/Badge";
+import { FactPill } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { categoryLabel, metresToDistance, minorToRupees, ratingToDisplay } from "./format";
 import { FitMeter } from "./FitMeter";
@@ -19,7 +19,7 @@ import { FitMeter } from "./FitMeter";
  *   3. Duration/price/distance   --font-data, tabular-nums
  *   4. Rating 4.6 (312) Bayesian-smoothed, raw count shown
  *   5. Blurb            two lines max
- *   6. Provenance badges  `inferred` gets a warn "AI-inferred" pill
+ *   6. Provenance         only price and hours, because only those mislead
  *   7. Accessibility   yes/no pills, glyph AND word
  *   8. Primary action
  *
@@ -34,6 +34,11 @@ import { FitMeter } from "./FitMeter";
 export interface ResultCardProps {
   experience: Experience;
   fit: Fit;
+  /**
+   * The access needs the traveller declared. An unknown is only worth printing
+   * for a need someone actually has — see `AccessRow`.
+   */
+  accessNeeds?: ReadonlyArray<AccessNeed>;
   /** The blocking reason, when `fit.verdict` is `does_not_fit`. */
   blockingReason?: string;
   /** Straight-line or routed distance from the traveller. */
@@ -70,6 +75,7 @@ const ACCESS_ROWS = [
 export function ResultCard({
   experience,
   fit,
+  accessNeeds = [],
   blockingReason,
   distanceMetres,
   onPrimaryAction,
@@ -80,9 +86,13 @@ export function ResultCard({
   className,
 }: ResultCardProps) {
   const doesNotFit = fit.verdict === "does_not_fit";
-  const inferredFields = Object.entries(experience.provenance)
-    .filter(([, provenance]) => provenance === "inferred")
-    .map(([field]) => field);
+  /*
+    Only the two inferred fields a traveller would actually be misled by. See
+    where they render. The full per-field set stays on /why.
+   */
+  const actionableInferred = (["pricePerPerson", "hours"] as const).filter(
+    (field) => experience.provenance[field] === "inferred",
+  );
 
   return (
     <article
@@ -186,23 +196,37 @@ export function ResultCard({
         <p className="mt-2 line-clamp-2 text-body text-ink-muted">{experience.blurb}</p>
       ) : null}
 
-      {/* 6. Provenance badges. `inferred` is always visible. */}
-      {inferredFields.length > 0 ? (
-        <div className="mt-2.5 flex flex-wrap gap-1.5">
-          <Badge tone="warn" icon={<Sparkles aria-hidden className="size-3" strokeWidth={2} />}>
-            AI-inferred
-          </Badge>
-          <span className="self-center text-meta-sm text-ink-muted">
-            {inferredFields.length === 1
-              ? `${inferredFields[0]} was inferred`
-              : `${inferredFields.length} fields inferred`}
-          </span>
-        </div>
+      {/*
+        6. Provenance, but only the part anyone would act on.
+
+        This was an "AI-inferred" badge plus "5 fields inferred", and it was on
+        every single card. OpenStreetMap has no duration, no price and no
+        kid-friendly flag, so all 4,596 rows carry at least one inferred field
+        and 4,596 of 4,596 showed the badge. A marker on 100% of items carries no
+        information — it is decoration shaped like a warning, and it teaches the
+        eye to skip the badge, which is the opposite of what a trust signal is
+        for. The audit called this out too: a badge with no source and no
+        confidence undermines the honesty it is claiming.
+
+        So it names only the fields where being wrong changes what a traveller
+        does. `durationMin` and `kidFriendly` are planning conveniences; a loose
+        duration costs a slightly loose itinerary. A guessed `price` costs a
+        budget surprise and a guessed `hours` means a closed museum, so those two
+        are worth saying out loud. The full per-field provenance is one click away
+        on /why, which is where detail belongs.
+      */}
+      {actionableInferred.length > 0 ? (
+        <p className="mt-2.5 text-meta-sm text-ink-muted">
+          {actionableInferred
+            .map((field) => (field === "pricePerPerson" ? "Price" : "Opening hours"))
+            .join(" and ")}{" "}
+          {actionableInferred.length === 1 ? "is" : "are"} not from a source
+        </p>
       ) : null}
 
       {/* 7. Accessibility. Yes/no/unknown with a glyph AND a word. */}
       <div className="mt-2.5">
-        <AccessRow experience={experience} />
+        <AccessRow experience={experience} accessNeeds={accessNeeds} />
       </div>
 
       {/* 8. Primary action. */}
@@ -270,21 +294,49 @@ export function ResultCard({
  * `wheelchair` tag is 3-state — a provider who has not been surveyed has not
  * said no.
  */
-function AccessRow({ experience }: { experience: Experience }) {
+/**
+ * Accessibility, and only the parts of it that mean something here.
+ *
+ * This used to render all five fields on every card, known first and unknown
+ * after, which is defensible in a vacuum and unusable in bulk. OpenStreetMap
+ * populates `stepFree` on 4% of rows and the other four on none, so across the
+ * catalogue that is 169 real facts in 22,980 slots: 99% of the pills on a screen
+ * of 24 cards rendered "unknown", which is 116 meaningless question marks
+ * competing with the name of the place. Tri-state honesty is right — `null` means
+ * unsurveyed, not false — but printing every null on every card is how honesty
+ * becomes noise.
+ *
+ * So: render what is known, and render an unknown only for a need the traveller
+ * actually declared. A traveller who needs step-free genuinely needs to know
+ * that step-free is unsurveyed for this place; nobody needs to be told that the
+ * hearing loop is unsurveyed. When nothing is known and nothing was asked for,
+ * the row disappears rather than filling the gap.
+ */
+function AccessRow({
+  experience,
+  accessNeeds,
+}: {
+  experience: Experience;
+  accessNeeds: ReadonlyArray<AccessNeed>;
+}) {
+  const declared = new Set<string>(accessNeeds);
   const rows = ACCESS_ROWS.map((row) => ({
     ...row,
     value: experience.accessibility[row.key],
-  }));
-  const known = rows.filter((row) => row.value !== null);
-  const unknown = rows.filter((row) => row.value === null);
-  const all = [...known, ...unknown];
+  })).filter((row) => row.value !== null || declared.has(row.need));
+
+  if (rows.length === 0) return null;
 
   return (
     <ul className="flex flex-wrap gap-1.5">
-      {all.map((row) => (
+      {rows.map((row) => (
         <li key={row.key}>
           <FactPill value={row.value}>
-            {row.value === null ? `${row.label} unknown` : row.value ? row.label : `Not ${row.label.toLowerCase()}`}
+            {row.value === null
+              ? `${row.label} not surveyed`
+              : row.value
+                ? row.label
+                : `Not ${row.label.toLowerCase()}`}
           </FactPill>
         </li>
       ))}

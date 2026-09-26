@@ -41,6 +41,7 @@ export default async function Page({
         rowCount={discovery.rowCount}
       />
       <ResultsSurface
+        context={discovery.context}
         experiences={discovery.experiences}
         fits={discovery.fits}
         scores={discovery.scores}
