@@ -16,14 +16,12 @@
 import { describe, expect, it } from "vitest";
 import { DiscoveryContext, type Plan } from "../../../contracts";
 import { parseIntent } from "../../../llm";
-import {
-  type ContextSeed,
-  type DiscoverySession,
-  createSession,
-  discover,
-  handleChat,
-  mockIntentParser,
-} from "..";
+// Imported from the modules themselves rather than the barrel: this folder is shared
+// with features that are being written in parallel, and a syntax error in one of
+// theirs must not be able to stop these tests from running.
+import { mockIntentParser, handleChat } from "../chat";
+import type { ContextSeed } from "../context";
+import { createSession, discover, type DiscoverySession } from "../replanner";
 import { WEIGHTS, exp } from "./fixtures";
 import { referenceEngine, type ReferenceEngine } from "./referenceEngine";
 
@@ -347,7 +345,94 @@ describe("wired the way the app wires it", () => {
   });
 });
 
-describe("the loop's guards", () => {  it("still acts when the model is unreachable, because the floor reads the sentence", async () => {
+describe("taking a change back, through the real planner", () => {
+  it("puts the plan back the way it was", async () => {
+    // ₹1,500 is chosen because the cut to ₹1,050 lands BETWEEN two stops, so the
+    // planner has to drop one. A budget the cut does not bite would prove nothing.
+    const { engine, session, plan: before } = live({ availableMin: 240, budgetMinor: 150000 });
+    const cut = await handleChat(engine, offline(), session, "Make it cheaper.");
+    expect(cut.acted).toBe(true);
+    const cheaper = (cut.replan as { plan: Plan }).plan;
+    expect(cheaper.totalCost.minor).toBeLessThan(before.totalCost.minor);
+    expect(cut.record).not.toBeNull();
+
+    // The surface hands the record back, exactly as the sidecar would.
+    const undo = await handleChat(engine, offline(), sessionAfter(cut), "actually never mind", cut.record);
+
+    expect(undo.acted).toBe(true);
+    expect(undo.state.ctx.budget?.minor).toBe(150000);
+    // The plan is re-solved against the restored context, not merely re-worded.
+    const restored = (undo.replan as { plan: Plan }).plan;
+    expect(restored).not.toBe(cheaper);
+    expect(restored.totalCost.minor).toBe(before.totalCost.minor);
+    expect(ids(restored)).toEqual(ids(before));
+    expect(undo.reply).toContain("Took that back");
+    // The intent the traveller started with was never touched by any of it.
+    expect(undo.state.ctx.original).toEqual(session.intent.original);
+    expect(engine.calls.replan).toBe(2);
+  });
+
+  it("puts back a rain that has not happened yet", async () => {
+    const { engine, session, plan: before } = live({ availableMin: 240, budgetMinor: 200000 });
+    const rained = await handleChat(engine, offline(), session, "It started raining.");
+    const wet = (rained.replan as { plan: Plan }).plan;
+    expect(ids(wet)).not.toEqual(ids(before));
+
+    const undo = await handleChat(engine, offline(), sessionAfter(rained), "undo that", rained.record);
+    expect(undo.state.ctx.weather.condition).toBe("clear");
+    const dry = (undo.replan as { plan: Plan }).plan;
+    expect(ids(dry)).toEqual(ids(before));
+  });
+});
+
+describe("dropping a place, through the real planner", () => {
+  it("takes the named place out of the plan and says why", async () => {
+    const { engine, session, plan: before } = live({ availableMin: 240, budgetMinor: 200000 });
+    const outcome = await handleChat(engine, offline(), session, "drop the Colaba Market");
+
+    expect(outcome.acted).toBe(true);
+    expect(outcome.state.ctx.excludedIds).toEqual(["market"]);
+    const after = (outcome.replan as { plan: Plan }).plan;
+    expect(after).not.toBe(before);
+    expect(ids(after)).not.toContain("market");
+    expect(ids(before)).toContain("market");
+    // The engine explains the drop with its own rejection, and the reply names it.
+    expect(after.rejected.some((entry) => entry.experienceId === "market" && entry.code === "excluded_by_traveller")).toBe(true);
+    expect(outcome.reply).toContain("Colaba Market");
+  });
+
+  it("understands 'the first one', which is how people point at a plan", async () => {
+    const { engine, session, plan: before } = live({ availableMin: 240, budgetMinor: 200000 });
+    const first = ids(before)[0];
+    expect(first).toBeDefined();
+
+    const outcome = await handleChat(engine, offline(), session, "skip the first place, we don't want it");
+    expect(outcome.state.ctx.excludedIds).toEqual([first]);
+    const after = (outcome.replan as { plan: Plan }).plan;
+    expect(ids(after)).not.toContain(first);
+    expect(outcome.reply).toContain(named(first as string));
+  });
+
+  it("does not exclude anything when the traveller is vague", async () => {
+    const { engine, session } = live({ availableMin: 240, budgetMinor: 200000 });
+    const outcome = await handleChat(engine, offline(), session, "drop the tea and the art and the market please");
+    // Three plausible places is a traveller changing their mind, not a rejection, so
+    // nothing is excluded even though the sentence asked for something.
+    expect(outcome.state.ctx.excludedIds).toEqual([]);
+  });
+
+  it("keeps the first place when the traveller says to keep it", async () => {
+    const { engine, session, plan: before } = live({ availableMin: 240, budgetMinor: 200000 });
+    const outcome = await handleChat(engine, offline(), session, "keep the first place, that's the one");
+    // "Keep" is the opposite instruction. Reading it as a rejection is the worst bug
+    // this feature could have, so the safe direction is to leave the plan alone.
+    expect(outcome.state.ctx.excludedIds).toEqual([]);
+    expect(session.plan).toBe(before);
+  });
+});
+
+describe("the loop's guards", () => {
+  it("still acts when the model is unreachable, because the floor reads the sentence", async () => {
     const { engine, session } = live({ availableMin: 240, budgetMinor: 200000 });
     const unreachable = {
       parseIntent: async (): Promise<never> => {
