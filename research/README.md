@@ -20,14 +20,78 @@ Building that honestly requires answering questions we should not answer by
 guesswork, so each repo below is pinned to a commit and annotated with the
 specific thing we take from it — or the specific reason we rejected it.
 
-## The four tiers
+## The seven tiers
 
 | Tier | Meaning |
 |---|---|
 | `adopt/` | Installed as an npm dependency. Cloned so we can read how it's built. |
+| `systems/` | **Published, code-released research solving this exact problem.** The strongest tier. Read before designing anything they already solved; cite in the deck. |
+| `domain/` | Travel/hospitality product references. Not installed. Answer "what does a real travel product actually do?" |
+| `data/` | POI data semantics, geocoding and retrieval. Decides what we can honestly store, query and rank. |
 | `patterns/` | **Not installed.** We take an architectural idea, not the code. |
+| `peer/` | Hackathon and AI travel-planner projects. Mostly small and low-star — read for techniques and for the competitive landscape, not as engineering exemplars. |
 | `related/` | **Not installed.** Prior work. Cited in the deck; proves we know the field. |
 | `rejected/` | Evaluated and declined. Cloned so nobody re-litigates it mid-build. |
+
+## `systems/` — the tier that matters most
+
+Cloned from the repo list in `ATHITI_MASTERPLAN_V2.md`, every URL verified against
+the GitHub API:
+
+| System | What it gives us |
+|---|---|
+| `systems/itinera` | arXiv 2402.07204, **deployed in production at TuTu with thousands of real users.** Request decomposition (granularity × specificity × attitude) + cluster-then-route. Source of our soft-constraint field schema. GPL-3.0. |
+| `systems/uguiderag` | ACM SIGSPATIAL 2025. Landscape / Activity / Atmosphere extraction with per-dimension retrieval instead of one blended embedding. |
+| `systems/tripweaver` | LLM + Z3 planner. `z3_temporal_scheduler_with_relaxation.py` is 888 lines. **Read the Z3 finding below before adopting it.** |
+| `systems/tripcraft` | ACL 2025 Main benchmark (Microsoft + IIT Bhubaneswar). Source of the five continuous eval metrics. |
+| `systems/ai-tour-meeting` | NTT Research. Persona-simulated group consensus instead of averaging preference vectors. |
+| `systems/nomadnote` | "Trip Stress Radar" — overload / rain-risk / anchor-pressure / transit-complexity 0-100. |
+| `systems/jauntai` | Multi-agent + domain guardrails + human-in-the-loop approval. Reference for an input-safety layer. |
+| `systems/inkle` | Shipped evidence that a staged pipeline (Places → Route → Cost → Synthesizer) is implementable. |
+| `systems/tourwise` | ML crowd "Busyness Index" folded into scoring. Method source for a `crowd_fit` feature. Cite-only; its code fetch is partial. |
+| `systems/routemind-pritesh` | The masterplan flags this as modest-scope. Kept as a counter-example, not an authority. |
+| `systems/tourism-spot-baseline` | Academic CF recommender. Baseline-quality comparison only. GPL-3.0. |
+
+## Z3 finding — measured, not assumed
+
+The masterplan proposes replacing hand-rolled constraint assertions with a **Z3 SMT
+solver**, and claims this yields an *unsat core* from which minimal relaxation is
+derived algorithmically. I checked both halves of that claim.
+
+**The unsat-core half is not what the reference code does.** Reading
+`systems/tripweaver/z3_temporal_scheduler_with_relaxation.py`, the actual technique
+is **penalty-based soft constraints under `Optimize`**:
+
+```
+early_start_penalty >= 0
+early_start_penalty >= preffered_start_time - s_start
+...
+opt.minimize(Sum([...early_start_penalties, ...short_sleep_penalties]))
+opt.maximize(meal_score)
+opt.maximize(attr_score)
+```
+
+That is not worse for us — it is arguably better. You need no unsat core at all: the
+solver always returns a plan, and the per-constraint penalty values tell you
+**exactly which constraints it violated and by how much**. Those violation
+magnitudes *are* the relaxation ladder, obtained for free.
+
+**The tooling half decides the stack.** Checked directly on this machine:
+
+| Option | Result |
+|---|---|
+| Python `z3-solver` | **5.1.0.0** — mature, documented, pure `pip install` |
+| npm `z3-solver` | Installs and loads on Node 24, and *is* official (maintained by the Z3 authors, `bakkot`/`levnach`). But its Node/CommonJS surface is unusable as shipped: `init()` returns an emscripten module whose high-level `Context` is empty, and the low-level `Z3_*` namespace exposes zero callable functions. Needs a spike. |
+| OR-Tools for Node | **Does not exist.** `ortools` and `node-ortools` are both absent from npm. Python `ortools` is 9.15. |
+
+**Recommendation: adopt the penalty-minimisation technique, skip the solver.** Our
+constraint set (time budget, price, opening hours, capacity, group size,
+accessibility, travel time) is a filter-and-rank problem within one neighbourhood
+over 2–4 hours — not a multi-day, multi-city scheduling CSP. A feasibility gate plus
+a weighted-penalty objective inside our beam search gives equivalent relaxation
+behaviour in ~150 lines of TypeScript, keeps the whole system in one language, and
+is far easier to explain live. Revisit Z3 only if scope grows to multi-day
+itineraries.
 
 ## The five ideas that actually changed the build
 
@@ -56,16 +120,22 @@ If you are picking up this project cold, read in this order:
 
 | # | Read | For |
 |---|---|---|
-| 1 | `adopt/nextjs-boilerplate/src` | How we lay out the repo, validate env, wire lint/CI |
-| 2 | `adopt/shadcn-ui/packages` + `templates` | The UI layer we will be assembling |
-| 3 | `adopt/vercel-ai/content/docs` | Structured output, streaming, provider fallback |
-| 4 | `adopt/maplibre-gl-js/src` | Style spec and source setup for our vector map |
-| 5 | `patterns/pyvrp/pyvrp` | `Model.py`, `PenaltyManager.py` — how time windows, capacity and precedence are actually modelled. Read this before writing `packer.ts` |
-| 6 | `patterns/medusa/packages/core/utils/src` | The workflow/step primitives we copy conceptually into our booking state machine |
-| 7 | `related/xrec/explainer` | Feature-grounded explanation generation |
-| 8 | `related/recbole/recbole/evaluator/metrics.py` | The metric definitions our eval harness will mirror |
-| 9 | `adopt/opening-hours-php` | Correct OSM `opening_hours` semantics before we wrap it |
-| 10 | `adopt/routingpy` | The provider-adapter shape our `travel.ts` follows |
+| 1 | `ATHITI_MASTERPLAN_V2.md` (same folder) | The product thesis and the v4 upgrades. v3, which it supersedes, is 90 KB at `../travel-like-local/Local-Experiences-Masterplan.md` |
+| 2 | `adopt/nextjs-boilerplate/src` | How we lay out the repo, validate env, wire lint/CI |
+| 3 | `systems/itinera/main.py` | Request decomposition and cluster-then-route, validated in production |
+| 4 | `systems/tripweaver/z3_temporal_scheduler_with_relaxation.py` | Penalty-based soft constraints. Read the 30 lines around `opt.minimize(total_penalty)` |
+| 5 | `patterns/pyvrp/pyvrp` | `Model.py`, `PenaltyManager.py` — how time windows, capacity and precedence are modelled. Read before writing `packer.ts` |
+| 6 | `patterns/medusa/packages/core/utils/src` | Workflow/step primitives we copy conceptually into the booking state machine |
+| 7 | `data/id-tagging-schema/data/fields` | The tag semantics our zod schemas must match |
+| 8 | `systems/uguiderag/Code` | Landscape/Activity/Atmosphere extraction |
+| 9 | `systems/tripcraft/evaluation` | The five continuous metrics our eval harness will mirror |
+| 10 | `domain/pretix/src/pretix/base` | Capacity, availability and order state machines for the provider side |
+| 11 | `adopt/vercel-ai/content/docs` | Structured output, streaming, provider fallback |
+| 12 | `adopt/maplibre-gl-js/src` | Style spec and source setup for our vector map |
+| 13 | `related/recbole/recbole/evaluator/metrics.py` | Standard RecSys metric definitions |
+| 14 | `adopt/opening-hours-php` | Correct OSM `opening_hours` semantics before we wrap it |
+| 15 | `adopt/routingpy` | The provider-adapter shape our `travel.ts` follows |
+| 16 | `peer/plan-it` | Someone else's deterministic-engine + optional-AI split, for comparison |
 
 ## Rejected, and why
 

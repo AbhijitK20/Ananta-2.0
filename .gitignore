@@ -31,8 +31,26 @@ research/adopt/
 research/patterns/
 research/related/
 research/rejected/
+research/domain/
+research/data/
+research/systems/
+research/peer/
 research/.results
 research/.worker.sh
+
+# third-party clones dropped at the repo root by hand — see research/README.md
+/TREK/
+/AdventureLog/
+/ai-travel-planner/
+/ai-travelassistant/
+/Tourism-Recommendation/
+/Tourism-Recommendation-System/
+/NomadNote/
+/JauntAI/
+/inkle/
+/Plan-It/
+/RouteMind/
+/FloatTrip/
 
 # logs
 *.log
