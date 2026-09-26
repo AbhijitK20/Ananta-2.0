@@ -49,7 +49,7 @@ import {
   type ScoreBreakdown,
 } from "../../contracts";
 
-import { auditLedger, explainOne, explainPlan, ledgerSummary, outcomeLabel } from "./index";
+import { explainPlan } from "./index";
 import type { Explanation, ExplanationLedger } from "./index";
 
 const AT = "2026-01-01T00:00:00.000Z";

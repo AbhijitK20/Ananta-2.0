@@ -306,16 +306,16 @@ export function exclusionNote(places: readonly NamedPlace[]): string {
 const MUTATION_CUE = /\b(avoid|skip|drop|remove|cancel|exclude|leave out|without|rather not|not|no)\b/;
 const PLACE_WORD = /\b(place|places|stop|stops|one|ones|spot|spots|option|options)\b/;
 const ORDINALS: Record<string, (length: number) => number> = {
-  first: (n) => 0,
-  "1st": (n) => 0,
-  second: (n) => 1,
-  "2nd": (n) => 1,
-  third: (n) => 2,
-  "3rd": (n) => 2,
-  fourth: (n) => 3,
-  "4th": (n) => 3,
-  fifth: (n) => 4,
-  "5th": (n) => 4,
+  first: (_length) => 0,
+  "1st": (_length) => 0,
+  second: (_length) => 1,
+  "2nd": (_length) => 1,
+  third: (_length) => 2,
+  "3rd": (_length) => 2,
+  fourth: (_length) => 3,
+  "4th": (_length) => 3,
+  fifth: (_length) => 4,
+  "5th": (_length) => 4,
   last: (n) => n - 1,
   final: (n) => n - 1,
 };

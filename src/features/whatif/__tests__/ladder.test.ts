@@ -303,8 +303,6 @@ describe("what-if ladder: time and walk", () => {
 
 describe("what-if gates: every crossing", () => {
   const before = fakePlan(["market", "chaat"], ["gallery", "fort"]);
-  const kinds = (b: Plan, a: Plan): Record<string, string> =>
-    Object.fromEntries(gateChanges(b, a, CATALOGUE_MAP).map((c) => [c.id, c.kind]));
 
   it("unlocks what was blocked and now planned", () => {
     const after = fakePlan(["market", "chaat", "gallery"], ["fort"]);

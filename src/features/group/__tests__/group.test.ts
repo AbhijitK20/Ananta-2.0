@@ -24,7 +24,6 @@ import { referenceEngine } from "../../discovery/__tests__/referenceEngine";
 import { INDOOR_TOKEN, WALK_TOKENS, createContext } from "../../discovery/context";
 import type { EnginePort } from "../../discovery/engine";
 import {
-  INTEREST_SLOTS,
   MAX_ROUNDS,
   aggregateGroup,
   planForGroup,
@@ -802,6 +801,10 @@ describe("a group that already has a plan", () => {
     expect(after.conflicts.length).toBeGreaterThan(0);
     expect(after.ask.length).toBeGreaterThan(0);
     expect(after.ask[0]?.op.kind).toBe("set_time");
+    // The test is named "keeps the previous plan", so assert it. `before` was
+    // captured for exactly this and then never checked, which is why the lint
+    // gate flagged it: the test passed without ever verifying its own name.
+    expect(group.outcome.plan).toBe(before);
   });
 
   it("refuses to re-solve an answer that changes nothing the planner reads", () => {

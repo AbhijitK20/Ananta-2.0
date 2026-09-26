@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { Rejection as RejectionSchema, type Plan, type Rejection } from "../../contracts";
+import { Rejection as RejectionSchema, type Plan } from "../../contracts";
 
 import { auditLedger, explainOne, explainPlan, ledgerSummary, outcomeLabel, scoreCandidates } from "./index";
 import type { ExplanationLedger } from "./index";
@@ -215,7 +215,6 @@ describe("the audit holds the ledger to the data", () => {
   });
 
   it("catches a claim edited away from the numbers", () => {
-    const price = need("exp_pottery_02");
     const forged: ExplanationLedger = {
       ...LEDGER,
       explanations: LEDGER.explanations.map((item) =>
