@@ -20,9 +20,8 @@ import {
   type Experience,
   type Slot,
 } from "../../../contracts";
-import { createContext } from "../context";
-import {
-  ASSUMED_CALENDAR,
+  import {
+    ASSUMED_CALENDAR,
   type Facts,
   check,
   deriveSlotAvailability,

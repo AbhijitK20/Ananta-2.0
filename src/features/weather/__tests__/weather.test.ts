@@ -30,18 +30,15 @@ import {
   assess,
   fixedSource,
   openMeteoSource,
-  profile,
-  profileFor,
-  resolveWeather,
-  withWeather,
-} from "..";
-import { DEFAULT_WEIGHTS, planner } from "./planner";
-import {
-  BRITANNIA,
-  CATALOGUE,
-  COLABA,
-  DISPENSARY,
-  FILM_WALK,
+    profile,
+    profileFor,
+    resolveWeather,
+  } from "..";
+  import { DEFAULT_WEIGHTS, planner } from "./planner";
+  import {
+    BRITANNIA,
+    CATALOGUE,
+    FILM_WALK,
   GATEWAY,
   JAZZ,
   PROMENADE,

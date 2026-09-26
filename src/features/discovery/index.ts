@@ -179,7 +179,20 @@ export {
   type TripState,
 } from "./repair";
 
-// The eight conditions from FEATURES §3, and where each one is actually reachable.
+// The repair conditions, and where each one is actually reachable.
+//
+// History, because it is the reason this comment is longer than the code: this
+// block was added in 65ebfcb while `./triggers` did not exist, which broke
+// `tsc`, failed `next build`, and failed the Vercel Production deployment for
+// 262b0ac. The barrel was promising fifteen symbols across two modules that had
+// not been written, and no caller imported any of them. The export list was
+// trimmed to what existed, which unblocked the build.
+//
+// `./triggers` and the five trip-health symbols in `./repair` have since been
+// written, so the full list is restored. The lesson worth keeping is not "trim
+// the barrel" but "do not commit a re-export in the same change as the module
+// it re-exports, in separate commits" — the gap is invisible in review and only
+// surfaces as a red build and a failed deploy.
 export {
   ALL_CONDITION_IDS,
   CONDITIONS,

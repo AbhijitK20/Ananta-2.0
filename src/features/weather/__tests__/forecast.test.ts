@@ -39,7 +39,7 @@ import {
   type Window,
 } from "..";
 import { DEFAULT_WEIGHTS, planner } from "./planner";
-import { BRITANNIA, CATALOGUE, CATALOGUE_INDEX, COLABA, PROMENADE, TULIP, ctxOf, exp } from "./fixtures";
+import { BRITANNIA, CATALOGUE, CATALOGUE_INDEX, COLABA, PROMENADE, TULIP, exp } from "./fixtures";
 
 const sky = (condition: string, tempC: number) =>
   ({ condition, tempC, source: "simulated" }) as Parameters<typeof profile>[0];

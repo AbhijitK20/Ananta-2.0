@@ -287,7 +287,7 @@ export function loadBudget(ctx: DiscoveryContext): LoadBudget {
   const tolerance = toleranceOf(ctx);
   const table = TOLERANCE[tolerance];
   const { factor, basis } = partyLoad(ctx);
-  const { factor: sky, basis: skyBasis } = weatherLoad(ctx);
+  const { basis: skyBasis } = weatherLoad(ctx);
   const walkCapM = walkCapOf(ctx);
 
   // A window is a hard ceiling on its own: 45 minutes cannot hold a day's walking.
