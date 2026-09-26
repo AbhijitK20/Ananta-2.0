@@ -19,6 +19,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { CONTRACT_VERSION, DialogueDecision } from "../contracts";
+import { InferenceSchema } from "./enrich";
 import { NLU_PATCH_SCHEMA } from "./nlu";
 
 const ROOT = join(__dirname, "..", "..");
@@ -109,5 +110,52 @@ describe("the contract itself", () => {
     expect(Object.keys(mirror.properties).sort()).toEqual(
       Object.keys(contract.properties.contextPatch.properties).sort(),
     );
+  });
+});
+
+/**
+ * `@ai-sdk/provider-utils` serialises our zod schema with `io: "input"`, so an
+ * optional or defaulted property is left out of `required` — and the provider is
+ * asked for that schema with `strict: true`. OpenAI's strict mode rejects any
+ * object that does not list every property in `required`, so a single
+ * `.optional()` here costs a 400 on EVERY structured call, which `runChain` does
+ * not retry. The whole LLM path dies quietly and the deterministic floor covers
+ * for it, so nothing looks broken.
+ *
+ * This renders the schemas exactly the way the SDK does and fails on the first
+ * property that is not required.
+ */
+type JsonNode = {
+  type?: string;
+  properties?: Record<string, JsonNode>;
+  required?: string[];
+  items?: JsonNode;
+  anyOf?: JsonNode[];
+  additionalProperties?: JsonNode | boolean;
+};
+
+function unrequiredProperties(node: JsonNode, path = "$"): string[] {
+  if (node.properties) {
+    const required = new Set(node.required ?? []);
+    const missing = Object.keys(node.properties)
+      .filter((key) => !required.has(key))
+      .map((key) => `${path}.${key}`);
+    for (const [key, child] of Object.entries(node.properties)) {
+      missing.push(...unrequiredProperties(child, `${path}.${key}`));
+    }
+    return missing;
+  }
+  if (node.items) return unrequiredProperties(node.items, `${path}[]`);
+  if (node.anyOf) return node.anyOf.flatMap((child, i) => unrequiredProperties(child, `${path}|${i}`));
+  return [];
+}
+
+const strictUnsafe = (schema: z.ZodType): string[] =>
+  unrequiredProperties(z.toJSONSchema(schema, { target: "draft-7", io: "input" }) as JsonNode);
+
+describe("the model-facing schemas", () => {
+  it("are strict-compatible: every property is required", () => {
+    expect({ nlu: strictUnsafe(NLU_PATCH_SCHEMA) }).toEqual({ nlu: [] });
+    expect({ enrich: strictUnsafe(InferenceSchema) }).toEqual({ enrich: [] });
   });
 });

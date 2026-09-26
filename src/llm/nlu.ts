@@ -32,6 +32,7 @@ import {
   LIMITS,
   capProse,
   capSuggestions,
+  dtoToPatch,
   guardTrip,
   isEmptyPatch,
   mergePatch,
@@ -52,25 +53,30 @@ import { log } from "./log";
  * `boundary.test.ts` can assert the restatement has not drifted — a widened
  * contract must fail the build here rather than quietly widen what a model can
  * put into a traveller's context.
+ *
+ * Every field is REQUIRED and nullable, and that is not a style choice.
+ * `Output.object` ships this to a strict `json_schema`, and strict rejects any
+ * object that does not list all of its properties in `required`: an optional
+ * property would come back as a 400 from the provider on every single call.
+ * `null` is how the model says "no change", and `dtoToPatch` turns that back
+ * into an absent key before the patch is sanitised.
  */
-export const NLU_PATCH_SCHEMA = z
-  .object({
-    availableMin: z.number().int().positive().optional(),
-    budgetMinor: z.number().int().nonnegative().nullable().optional(),
-    partySize: z.number().int().positive().optional(),
-    accessNeeds: z.array(z.enum(["wheelchair", "stroller", "lowStairs", "hearingLoop", "restroom"])).optional(),
-    interests: z.array(z.string()).optional(),
-    avoid: z.array(z.string()).optional(),
-    indoorOnly: z.boolean().optional(),
-    mood: z.string().optional(),
-  })
-  .default({});
+export const NLU_PATCH_SCHEMA = z.object({
+  availableMin: z.number().int().positive().nullable(),
+  budgetMinor: z.number().int().nonnegative().nullable(),
+  partySize: z.number().int().positive().nullable(),
+  accessNeeds: z.array(z.enum(["wheelchair", "stroller", "lowStairs", "hearingLoop", "restroom"])).nullable(),
+  interests: z.array(z.string()).nullable(),
+  avoid: z.array(z.string()).nullable(),
+  indoorOnly: z.boolean().nullable(),
+  mood: z.string().nullable(),
+});
 
 const DecisionSchema = z.object({
   contextPatch: NLU_PATCH_SCHEMA,
   reply: z.string().min(1).max(LIMITS.replyChars),
   confidence: z.number().min(0).max(1),
-  suggestions: z.array(z.string()).max(LIMITS.suggestionItems).default([]),
+  suggestions: z.array(z.string()).max(LIMITS.suggestionItems),
 });
 
 const CONFIDENCE_GATE = 0.5;
@@ -391,8 +397,16 @@ function parseBudgetSignals(text: string, sig: Signals, hasBudget: boolean): voi
 }
 
 function parsePartySignals(text: string, sig: Signals): void {
-  const solo = /\b(just me|alone|by myself|solo|on my own|on my own)\b/i.test(text);
-  const couple = /\b(couple|two of us|both of us|me and my (?:wife|husband|partner|girlfriend|boyfriend)|date)\b/i.test(text);
+  const solo = /\b(just me|alone|by myself|solo|on my own)\b/i.test(text);
+  // `couple` is only a party when it counts PEOPLE. "I have a couple of hours"
+  // matched bare `couple` and set the group to two, which then overwrote the real
+  // party size in the floor patch — wrong budget-per-person and wrong capacity.
+  // So `couple` must not be followed by "of", and bare `date` is dropped for
+  // "date night" / "on a date", which cannot mean the calendar.
+  const couple =
+    /\b((?:a |we(?:'re| are) a )couple(?! of)|two of us|both of us|me and my (?:wife|husband|partner|girlfriend|boyfriend)|date night|on a date)\b/i.test(
+      text,
+    );
   const counted =
     /\b(?:party|group|table|family)\s+of\s+(\d{1,2})\b/i.exec(text) ??
     /\b(\d{1,2})\s*(?:of us|people|persons?|adults?|pax|folks|travell?ers?|guests?|friends?)\b/i.exec(text) ??
@@ -816,7 +830,7 @@ export async function parseIntentDetailed(text: string, ctx: DiscoveryContext): 
   // the patch and the reply becomes a question. The gate is Plan-It's, and it is
   // the cheapest confidence control that exists — a number the model reports
   // about itself, checked before anything it said is applied.
-  const patch = belowGate ? floor : mergePatch(floor, sanitizePatch(result.value.contextPatch));
+  const patch = belowGate ? floor : mergePatch(floor, sanitizePatch(dtoToPatch(result.value.contextPatch)));
   const source: ParseIntentResult["source"] = belowGate
     ? "deterministic"
     : isEmptyPatch(floor)

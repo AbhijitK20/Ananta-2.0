@@ -51,6 +51,8 @@ export type ProviderState = {
   bookings: BookingRequest[];
 };
 
+const ORPHAN_LISTING = "Pick one of your own listings first.";
+
 export class ProviderStore {
   readonly today: string;
   private listings: Experience[];
@@ -77,22 +79,36 @@ export class ProviderStore {
     return new Date(base).toISOString();
   }
 
+  /**
+   * A boundary, not a view. Shallow-cloning the arrays would hand the caller the
+   * store's own booking/slot/listing objects, so `state.bookings[0].state = "x"`
+   * would skip `applyTransition` and the capacity guard entirely.
+   * `structuredClone` is stdlib and every field here is plain JSON data.
+   */
   snapshot(): ProviderState {
-    return {
+    return structuredClone({
       provider: this.provider,
-      listings: [...this.listings],
-      slots: [...this.slots],
-      blocks: [...this.blocks],
-      bookings: [...this.bookings],
-    };
+      listings: this.listings,
+      slots: this.slots,
+      blocks: this.blocks,
+      bookings: this.bookings,
+    });
   }
 
   allListings(): Experience[] {
     return [...this.listings].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
+  /**
+   * This provider's listing, or nothing. Ownership lives HERE so every mutation
+   * that resolves an id inherits it: a caller who passes another provider's id
+   * gets `undefined` and is refused, instead of having the row rewritten with
+   * our `providerId` and quietly taken over.
+   */
   listing(id: string): Experience | undefined {
-    return this.listings.find((listing) => listing.id === id);
+    return this.listings.find(
+      (listing) => listing.id === id && listing.providerId === this.provider.id,
+    );
   }
 
   /** `id === null` creates. Anything else edits in place, keeping OSM data. */
@@ -135,22 +151,30 @@ export class ProviderStore {
 
   addSlot(draft: SlotDraft): Result<DatedSlot, SlotErrors> {
     const experience = this.listing(draft.experienceId);
-    const errors = validateSlotDraft(draft, {
+    // A slot with no listing behind it builds with `providerId: "unassigned"` and
+    // a zero price, so it can never be tied back to anything. Refuse before build.
+    if (!experience) return fail({ experienceId: ORPHAN_LISTING });
+    const ctx = {
       today: this.today,
       experience,
       slots: this.slots,
       blocks: this.blocks,
-    });
+    };
+    const errors = validateSlotDraft(draft, ctx);
     if (Object.keys(errors).length > 0) return fail(errors);
-    const dated = buildSlot(draft, { today: this.today, experience, slots: this.slots, blocks: this.blocks }, `slot-${this.slots.length + 1}`);
+    const dated = buildSlot(draft, ctx, `slot-${this.slots.length + 1}`);
     this.slots = [...this.slots, dated];
     return ok(dated);
   }
 
   addBlock(draft: BlockDraft): Result<AvailabilityBlock, SlotErrors> {
+    const experience = this.listing(draft.experienceId);
+    // Same orphan hole as `addSlot`: an unknown id validated as a non-empty
+    // string, so the block was persisted for an experience nobody owns.
+    if (!experience) return fail({ experienceId: ORPHAN_LISTING });
     const errors = validateBlockDraft(draft, {
       today: this.today,
-      experience: this.listing(draft.experienceId),
+      experience,
       slots: this.slots,
       blocks: this.blocks,
     });
@@ -165,13 +189,22 @@ export class ProviderStore {
     return slotViews(slots, this.blocks, this.bookings);
   }
 
+  /**
+   * A request is this provider's business if it points at one of their slots or
+   * one of their listings. ONE predicate, used by both the inbox and the mutation
+   * path — filtering only in `requests()` leaves `confirm(id)` callable on a
+   * request the provider was never shown.
+   */
+  private owns(request: BookingRequest): boolean {
+    return (
+      this.slots.some((dated) => dated.slot.id === request.slotId) ||
+      this.listings.some((listing) => listing.id === request.experienceId)
+    );
+  }
+
   /** Requests that belong to this provider, via the slot or the experience. */
   requests(): RequestView[] {
-    const listingIds = new Set(this.listings.map((listing) => listing.id));
-    const slotIds = new Set(this.slots.map((dated) => dated.slot.id));
-    const mine = this.bookings.filter(
-      (request) => slotIds.has(request.slotId) || listingIds.has(request.experienceId),
-    );
+    const mine = this.bookings.filter((request) => this.owns(request));
     return requestViews(mine, this.slots, this.blocks, this.today, this.listings, this.bookings);
   }
 
@@ -185,6 +218,9 @@ export class ProviderStore {
     const request = this.bookings[index];
     if (index < 0 || !request) {
       return fail({ code: "not_found", message: "That request no longer exists." });
+    }
+    if (!this.owns(request)) {
+      return fail({ code: "not_found", message: "That request is not in your inbox." });
     }
     const decision = decide(
       // `this.bookings`, NOT the provider-filtered inbox view: `committed` has to

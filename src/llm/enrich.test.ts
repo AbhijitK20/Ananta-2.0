@@ -125,6 +125,9 @@ describe("inference validation", () => {
     const v = validateInference({ ...GOOD, category: "gastro_temple" }, BLOB);
     if ("error" in v) throw new Error("unexpected");
     expect(v.rejections.some((r) => "code" in r && r.code === "UNKNOWN_CATEGORY")).toBe(true);
+    // The rejection has to name the field, or the accepted loop below never skips
+    // it and the raw string is written into `Experience.category`.
+    expect(v.accepted).not.toContain("category");
   });
 
   it("rejects output that does not match the schema at all", () => {

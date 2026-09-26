@@ -23,13 +23,19 @@ export type LogSink = (
   props: Record<string, unknown>,
 ) => void;
 
-const SECRET_KEYS = /^(api[-_]?key|authorization|token|secret|password|cookie)$/i;
+// Unanchored: the key is often a compound (`x-api-key`, `OPENROUTER_API_KEY`,
+// `sessionToken`), and a credential whose NAME slipped past is just as leaked as
+// one whose value did.
+const SECRET_KEYS = /(api[-_]?key|authorization|token|secret|password|cookie)/i;
 
 /** Values that look like credentials, wherever they appear. */
 const SECRET_VALUE = /(sk-or-v1-[A-Za-z0-9_-]{8,}|sk-[A-Za-z0-9]{16,}|Bearer\s+[A-Za-z0-9._-]{8,})/g;
 
 function scrubString(value: string): string {
-  return value.length > 500 ? `${value.slice(0, 500)}…` : value.replace(SECRET_VALUE, "[redacted]");
+  // Redact BEFORE capping. The other order returns the first 500 characters of a
+  // long value untouched, and a key in that prefix reaches the sink verbatim.
+  const scrubbed = value.replace(SECRET_VALUE, "[redacted]");
+  return scrubbed.length > 500 ? `${scrubbed.slice(0, 500)}…` : scrubbed;
 }
 
 export function redact(value: unknown, depth = 0): unknown {

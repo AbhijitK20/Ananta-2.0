@@ -56,6 +56,41 @@ export function valid(content: unknown): FakeReply {
   return chatCompletion(JSON.stringify(content));
 }
 
+/**
+ * A strict-mode endpoint forces every property of `NLU_PATCH_SCHEMA` to be
+ * present, with `null` for "no change". Fixtures that are meant to PARSE have to
+ * look like that; fixtures meant to be rejected pass their own object.
+ */
+export function strictPatch(patch: Record<string, unknown>): Record<string, unknown> {
+  return {
+    availableMin: null,
+    budgetMinor: null,
+    partySize: null,
+    accessNeeds: null,
+    interests: null,
+    avoid: null,
+    indoorOnly: null,
+    mood: null,
+    ...patch,
+  };
+}
+
+/** The `InferenceSchema` equivalent, for `enrich.test.ts`. */
+export function strictInference(inference: Record<string, unknown>): Record<string, unknown> {
+  return {
+    duration_min: null,
+    price_minor: null,
+    indoor: "unknown",
+    category: null,
+    kid_friendly: null,
+    step_free: null,
+    tags: [],
+    evidence: [],
+    abstain_reason: null,
+    ...inference,
+  };
+}
+
 export async function startFakeOpenRouter(replies: FakeReply[] | (() => FakeReply)): Promise<FakeOpenRouter> {
   const requests: unknown[] = [];
   let i = 0;

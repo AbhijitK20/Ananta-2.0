@@ -518,17 +518,41 @@ describe("chat sidecar", () => {
     expect(outcome.replan?.ok).toBe(true);
   });
 
-  it("asks instead of acting below the confidence gate", async () => {
+  it("asks instead of acting on a model it does not trust", async () => {
     const { engine, session } = started();
     const parser = mockIntentParser({
-      stairs: { contextPatch: { accessNeeds: ["wheelchair"] }, reply: "Stairs, or a step-free route?", confidence: 0.2 },
+      lift: { contextPatch: { accessNeeds: ["wheelchair"] }, reply: "Stairs, or a step-free route?", confidence: 0.2 },
     });
-    const outcome = await handleChat(engine, parser, session, "my aunt cannot do stairs");
+    // The gate applies to the MODEL. The deterministic floor is not a guess and is
+    // not gated, which is what `docs/FEATURES.md` §7 asks for when the model is
+    // unsure, so this phrase has to carry no floor signal of its own.
+    const outcome = await handleChat(engine, parser, session, "the lift thing again");
     expect(CONFIDENCE_GATE).toBe(0.5);
     expect(outcome.acted).toBe(false);
     expect(outcome.needsClarification).toBe(true);
     expect(outcome.replan).toBeNull();
+    expect(outcome.reply).toBe("Stairs, or a step-free route?");
     expect(outcome.state.ctx.accessNeeds).toEqual([]);
+  });
+
+  it("still acts on a sentence the model could not read, because the floor can", async () => {
+    const { session, initial } = started();
+    const parser = mockIntentParser({
+      stairs: { contextPatch: { accessNeeds: ["wheelchair"] }, reply: "Not sure.", confidence: 0.2 },
+    });
+    const next = plan(session.state.ctx, [{ id: "craft", order: 0, arriveMin: 610 }], {
+      rejected: [rejection("market", "not_step_free", "No step-free way in."), rejection("cafe", "not_step_free", "No step-free way in.")],
+    });
+    const solver = fakeEngine({ initial, replans: [replanResult(next, change())], catalogue: CATALOGUE });
+
+    const outcome = await handleChat(solver, parser, session, "my aunt cannot do stairs");
+    // The 0.2-confidence wheelchair patch is dropped; the deterministic read of
+    // the same sentence is not, and it is the one that changes the plan.
+    expect(outcome.acted).toBe(true);
+    expect(outcome.degraded).toBe(true);
+    // Step-free from the sentence, low stairs and a toilet from "my aunt".
+    expect(outcome.state.ctx.accessNeeds).toEqual(expect.arrayContaining(["wheelchair", "lowStairs", "restroom"]));
+    expect(outcome.state.ctx.partyType).toBe("older_adults");
   });
 
   it("treats a question as a question", async () => {
@@ -554,18 +578,25 @@ describe("chat sidecar", () => {
     expect(session.state.ctx.partySize).toBe(2);
   });
 
-  it("keeps the plan when the model is unreachable", async () => {
-    const { engine, session } = started();
+  it("keeps planning when the model is unreachable, because the floor reads it", async () => {
+    const { session, initial } = started();
     const broken = {
       async parseIntent(): Promise<never> {
         throw new Error("rate limited");
       },
     };
-    const outcome = await handleChat(engine, broken, session, "make it cheaper");
-    expect(outcome.acted).toBe(false);
-    expect(outcome.replan).toBeNull();
-    expect(outcome.reply).toContain("nothing changed");
-    expect(outcome.state.ctx.budget?.minor).toBe(150000);
+    // `docs/FEATURES.md` §7: a model that times out hands over to the
+    // deterministic parser, which produces the same `DiscoveryContext`.
+    const next = plan(session.state.ctx, [{ id: "cafe", order: 0, arriveMin: 610 }], {
+      rejected: [rejection("market", "over_budget", "Over budget by ₹135.")],
+    });
+    const solver = fakeEngine({ initial, replans: [replanResult(next, change())], catalogue: CATALOGUE });
+
+    const outcome = await handleChat(solver, broken, session, "make it cheaper");
+    expect(outcome.acted).toBe(true);
+    expect(outcome.degraded).toBe(true);
+    expect(outcome.replan?.ok).toBe(true);
+    expect(outcome.state.ctx.budget?.minor).toBe(105000);
   });
 
   it("maps every patch field the contract allows onto the editor", () => {
