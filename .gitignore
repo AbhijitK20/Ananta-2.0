@@ -86,3 +86,11 @@ test-results/
 # graphify knowledge-graph cache (regenerable; the teammate's plugin writes here)
 graphify-out/
 research/graphify-out/
+
+# next-scaffold output that is regenerable
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# local data build artefacts (regenerate with npm run db:harvest / db:embed)
+data/reference/
+data/local/
