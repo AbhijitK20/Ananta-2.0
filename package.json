@@ -14,6 +14,7 @@
     "copy:lint": "tsx scripts/copy-lint.ts",
     "db:embed": "tsx scripts/embed.ts",
     "db:harvest": "tsx scripts/harvest-osm.ts",
+    "db:project": "tsx scripts/osm-project.ts",
     "db:seed": "tsx scripts/seed.ts",
     "dev": "next dev",
     "eval": "tsx scripts/eval.ts",

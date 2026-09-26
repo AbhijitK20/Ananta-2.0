@@ -518,9 +518,17 @@ function walkClock(
     const depart = start + exp.durationMin;
 
     // Hard budget checks, cheapest first. Nothing gets a pass it has not earned.
-    if (depart > windowEnd) break;
-    if (cost.minor + partyPrice(exp, ctx.partySize) > (ctx.budget?.minor ?? Number.POSITIVE_INFINITY)) break;
-    if (exp.capacity !== null && exp.capacity < ctx.partySize) break;
+    //
+    // These `continue`, they do not `break`. Candidates arrive in score order, not
+    // duration order, so the first one that overflows the window is usually the
+    // longest one — and `break` abandoned the whole rest of the list with it. A
+    // 180-minute "adventure" ranked above a 30-minute "street_food" would end
+    // packing entirely, stranding every shorter place that still fitted. The
+    // symptom was a 3-hour window producing a 1-stop plan and leaving 46 minutes
+    // unused, with 110 feasible candidates sitting right there.
+    if (depart > windowEnd) continue;
+    if (cost.minor + partyPrice(exp, ctx.partySize) > (ctx.budget?.minor ?? Number.POSITIVE_INFINITY)) continue;
+    if (exp.capacity !== null && exp.capacity < ctx.partySize) continue;
 
     const stopCost = exp.pricePerPerson;
     if (stopCost !== null) {
