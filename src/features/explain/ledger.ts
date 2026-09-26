@@ -230,10 +230,16 @@ export function explainSwaps(
       },
     ];
 
-    // The blocking constraint of the stop that left, carried across verbatim. This
-    // is the sentence that answers "why did I lose that one", and the gate wrote it,
-    // not this file.
-    if (removed?.blocking) evidence.push(removed.blocking);
+    // The constraint that killed the stop that left, carried across verbatim.
+    //
+    // Read from the ledger where the stop did NOT make it, not the one where it
+    // did. A stop that was swapped out was still `selected` in the previous plan,
+    // so its rejection only exists in the new one — looking in `before` finds
+    // nothing and reports a swap with no stated cause, which is the one answer a
+    // traveller would not accept. The `before` ledger is the fallback for a stop
+    // that vanished from the data entirely.
+    const fate = swap.removedId === null ? null : (after.byId.get(swap.removedId) ?? before.byId.get(swap.removedId) ?? null);
+    if (fate?.blocking) evidence.push(fate.blocking);
     // And the caveat on the stop that arrived, if it has one, so a swap is never
     // presented to the traveller as a straight upgrade.
     const caveat = added?.evidence.find((item) => item.polarity === "opposes");

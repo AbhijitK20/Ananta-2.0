@@ -26,6 +26,7 @@ import type { Rejection } from "../../contracts";
 
 import { explainSwaps, ledgerSummary, outcomeLabel, swapCost, whyLedgerProps, type WhyLedgerProps } from "./index";
 import { CTX, LEDGER, OPTS, PLAN, REJECTIONS, SCORE_SHORE, need, rejectionsById } from "./scenario.fixtures";
+import { explainPlan } from "./index";
 
 /** Every prop `WhyLedger` accepts, from its own declaration. */
 const PROP_NAMES = ["score", "why", "rejections", "rejectionNames", "rejectionActions", "className"] as const;
@@ -219,11 +220,27 @@ describe("why the plan changed under the traveller", () => {
   });
 
   it("carries the caveat on the stop that arrived, so it is not sold as a clean win", () => {
+    // The shore walk has no failing check and no negative term, so there is no
+    // caveat to carry and none is invented to fill the slot.
     const [swap] = explainSwaps(SWAPS, LEDGER, after);
-    const caveat = swap?.evidence.find((item) => item.polarity === "opposes" && item.key !== "swap:score_delta");
-    expect(caveat?.key).toBe("filter:weather_unsafe");
+    expect(swap?.added?.evidence.some((item) => item.polarity === "opposes")).toBe(false);
+    expect(swap?.evidence.map((item) => item.key)).toEqual(["swap:score_delta", "filter:weather_unsafe"]);
+
+    // And when the arrival DOES have a caveat, the most important one is carried.
+    // The pottery stop fails its budget twice over — a negative `price` term and a
+    // failed `checks[]` entry — and the ledger's own order puts the score term
+    // first, so that is the one a swap panel should lead with. Carrying all of them
+    // would duplicate the explanation the traveller can already open.
+    const [withCaveat] = explainSwaps(
+      [{ removedId: "exp_market_01", addedId: "exp_pottery_02", reason: "Craft over browsing.", scoreDelta: 0 }],
+      LEDGER,
+      LEDGER,
+    );
+    const caveat = withCaveat?.evidence.find((item) => item.polarity === "opposes" && item.key !== "swap:score_delta");
+    expect(caveat?.key).toBe("score:price");
+    expect(caveat?.claim).toBe("₹300 over your limit for four");
     // Capped, so a panel cannot be handed twenty lines per swap.
-    expect(swap?.evidence.length).toBeLessThanOrEqual(3);
+    expect(withCaveat?.evidence.length).toBeLessThanOrEqual(3);
   });
 
   it("classifies a one-sided change honestly", () => {
