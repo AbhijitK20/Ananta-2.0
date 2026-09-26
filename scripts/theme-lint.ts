@@ -207,6 +207,28 @@ function lineAndColumn(source: string, index: number): { line: number; column: n
 }
 
 /**
+ * Places a token value MUST be duplicated as a literal.
+ *
+ * Next's `viewport.themeColor` is read by the browser to paint the browser
+ * chrome, outside the document and outside CSS, so a custom property cannot
+ * reach it. That is the only exception in the app, and it is enumerated rather
+ * than exempted by file so a new hex anywhere else still fails.
+ *
+ * Each entry is checked against tokens.css at lint time, so the duplicated
+ * value cannot drift from the token it mirrors: change the token and this
+ * becomes a lint error until the literal is updated with it.
+ */
+const LITERAL_EXCEPTIONS: ReadonlyArray<{ file: string; reason: string }> = [
+  {
+    file: "src/app/layout.tsx",
+    reason:
+      "viewport.themeColor is read by the browser for the browser chrome, outside the document, so a CSS custom property cannot reach it.",
+  },
+];
+
+const exceptionFor = (rel: string) => LITERAL_EXCEPTIONS.find((entry) => entry.file === rel);
+
+/**
  * HEX_RE already constrains the match to hex digits, so `#root`, `#app` and
  * `#main` never match in the first place — `r`, `o`, `t` are not hex digits.
  * The only remaining ambiguity is a short all-numeric run, which is either a
@@ -229,6 +251,13 @@ function lintFile(path: string): Violation[] {
   const source = readFileSync(path, "utf8");
   const out: Violation[] = [];
 
+  // Read once per file, only when an exception applies, so the drift check
+  // costs nothing on the 99% of files with no exception.
+  const exception = exceptionFor(rel);
+  const tokenSource = exception
+    ? readFileSync(join(ROOT, TOKENS_FILE), "utf8").toLowerCase()
+    : "";
+
   const push = (index: number, rule: string, message: string) => {
     const { line, column } = lineAndColumn(source, index);
     out.push({ file: rel, line, column, rule, message, excerpt: excerptAt(source, index) });
@@ -239,11 +268,19 @@ function lintFile(path: string): Violation[] {
     for (const m of source.matchAll(HEX_RE)) {
       const index = m.index ?? 0;
       if (!isHexMatch(m[0], source, index)) continue;
+      // An enumerated exception still has to match the token it mirrors, so a
+      // duplicated value cannot quietly drift from tokens.css.
+      const exception = exceptionFor(rel);
+      if (exception && tokenSource.includes(m[0].toLowerCase())) continue;
       push(
         index,
         "no-hex-outside-tokens",
         `Colour literal \`${m[0]}\` outside ${TOKENS_FILE}. Use a semantic token, ` +
-          `e.g. var(--accent), var(--alarm), var(--fit).`,
+          `e.g. var(--accent), var(--alarm), var(--fit).` +
+          (exception
+            ? ` This file has a documented exception (${exception.reason}) but ` +
+              `\`${m[0]}\` is not a value in ${TOKENS_FILE}, so it has drifted.`
+            : ""),
       );
     }
     for (const m of source.matchAll(FN_COLOR_RE)) {
