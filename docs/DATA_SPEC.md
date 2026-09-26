@@ -74,7 +74,17 @@ check_date: z.string()          // drives the "hours unverified" badge
 ```
 
 `craft` is a closed 56-value list. `typeCombo` vocabularies live in the preset
-files, which are not in our sparse checkout — fetch them if you need them.
+files — **those are now extracted for you**, so do not go hunting:
+
+| Artefact | Size | What it gives you |
+|---|---|---|
+| `data/reference/osm-tagging-schema/preset-checklists.json` | 757 KB | per-category tag co-occurrence, the input to the Overpass harvest |
+| `data/reference/osm-tagging-schema/constraint-field-coverage.json` | 535 KB | which constraint-bearing fields actually exist, and how often |
+| `data/reference/isochrones/bandra-west-mumbai/` | ~1 MB | **real pre-computed isochrone polygons + travel-time matrices**, auto and pedestrian, 5/10/15/20/30 min, for Bandra West and Pali Hill |
+
+The isochrones are not documentation — they are production data. Use them so
+the demo never calls Valhalla, and add more origins with the same call
+pattern as you cover the city.
 
 ## 3. The Overpass harvest
 

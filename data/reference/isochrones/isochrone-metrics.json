@@ -1,0 +1,206 @@
+{
+  "note": "Measured from live valhalla1.openstreetmap.de isochrones, Bandra West Mumbai. area_km2 is a planar shoelace approximation (~1% error at this scale); max/mean_crowflies_km are straight-line distances from the hub to the contour, NOT walking distance.",
+  "area_method": "planar shoelace on lat/lon scaled by 111320 m/deg lat and 111320*cos(19.06) m/deg lon",
+  "rows": [
+    {
+      "file": "lands_end_auto_10min.geojson",
+      "hub": "lands_end",
+      "costing": "auto",
+      "minutes": 10,
+      "area_km2": 1.4498,
+      "max_crowflies_km": 1.558,
+      "mean_crowflies_km": 0.953,
+      "vertices": 43
+    },
+    {
+      "file": "lands_end_auto_15min.geojson",
+      "hub": "lands_end",
+      "costing": "auto",
+      "minutes": 15,
+      "area_km2": 5.0313,
+      "max_crowflies_km": 2.988,
+      "mean_crowflies_km": 1.676,
+      "vertices": 103
+    },
+    {
+      "file": "lands_end_auto_20min.geojson",
+      "hub": "lands_end",
+      "costing": "auto",
+      "minutes": 20,
+      "area_km2": 16.967,
+      "max_crowflies_km": 6.389,
+      "mean_crowflies_km": 3.106,
+      "vertices": 111
+    },
+    {
+      "file": "lands_end_auto_30min.geojson",
+      "hub": "lands_end",
+      "costing": "auto",
+      "minutes": 30,
+      "area_km2": 66.7487,
+      "max_crowflies_km": 11.146,
+      "mean_crowflies_km": 6.508,
+      "vertices": 207
+    },
+    {
+      "file": "lands_end_auto_5min.geojson",
+      "hub": "lands_end",
+      "costing": "auto",
+      "minutes": 5,
+      "area_km2": 0.1635,
+      "max_crowflies_km": 0.558,
+      "mean_crowflies_km": 0.351,
+      "vertices": 12
+    },
+    {
+      "file": "lands_end_pedestrian_10min.geojson",
+      "hub": "lands_end",
+      "costing": "pedestrian",
+      "minutes": 10,
+      "area_km2": 0.4636,
+      "max_crowflies_km": 0.75,
+      "mean_crowflies_km": 0.441,
+      "vertices": 21
+    },
+    {
+      "file": "lands_end_pedestrian_15min.geojson",
+      "hub": "lands_end",
+      "costing": "pedestrian",
+      "minutes": 15,
+      "area_km2": 1.2702,
+      "max_crowflies_km": 1.153,
+      "mean_crowflies_km": 0.699,
+      "vertices": 32
+    },
+    {
+      "file": "lands_end_pedestrian_20min.geojson",
+      "hub": "lands_end",
+      "costing": "pedestrian",
+      "minutes": 20,
+      "area_km2": 2.2468,
+      "max_crowflies_km": 1.502,
+      "mean_crowflies_km": 0.921,
+      "vertices": 39
+    },
+    {
+      "file": "lands_end_pedestrian_30min.geojson",
+      "hub": "lands_end",
+      "costing": "pedestrian",
+      "minutes": 30,
+      "area_km2": 4.2704,
+      "max_crowflies_km": 2.173,
+      "mean_crowflies_km": 1.283,
+      "vertices": 55
+    },
+    {
+      "file": "lands_end_pedestrian_5min.geojson",
+      "hub": "lands_end",
+      "costing": "pedestrian",
+      "minutes": 5,
+      "area_km2": 0.1233,
+      "max_crowflies_km": 0.38,
+      "mean_crowflies_km": 0.24,
+      "vertices": 12
+    },
+    {
+      "file": "pali_hill_auto_10min.geojson",
+      "hub": "pali_hill",
+      "costing": "auto",
+      "minutes": 10,
+      "area_km2": 6.0506,
+      "max_crowflies_km": 2.446,
+      "mean_crowflies_km": 1.589,
+      "vertices": 107
+    },
+    {
+      "file": "pali_hill_auto_15min.geojson",
+      "hub": "pali_hill",
+      "costing": "auto",
+      "minutes": 15,
+      "area_km2": 17.5071,
+      "max_crowflies_km": 6.15,
+      "mean_crowflies_km": 3.09,
+      "vertices": 250
+    },
+    {
+      "file": "pali_hill_auto_20min.geojson",
+      "hub": "pali_hill",
+      "costing": "auto",
+      "minutes": 20,
+      "area_km2": 39.627,
+      "max_crowflies_km": 9.163,
+      "mean_crowflies_km": 4.523,
+      "vertices": 176
+    },
+    {
+      "file": "pali_hill_auto_30min.geojson",
+      "hub": "pali_hill",
+      "costing": "auto",
+      "minutes": 30,
+      "area_km2": 103.789,
+      "max_crowflies_km": 13.581,
+      "mean_crowflies_km": 7.118,
+      "vertices": 266
+    },
+    {
+      "file": "pali_hill_auto_5min.geojson",
+      "hub": "pali_hill",
+      "costing": "auto",
+      "minutes": 5,
+      "area_km2": 1.3571,
+      "max_crowflies_km": 1.183,
+      "mean_crowflies_km": 0.732,
+      "vertices": 29
+    },
+    {
+      "file": "pali_hill_pedestrian_10min.geojson",
+      "hub": "pali_hill",
+      "costing": "pedestrian",
+      "minutes": 10,
+      "area_km2": 1.4347,
+      "max_crowflies_km": 0.84,
+      "mean_crowflies_km": 0.701,
+      "vertices": 22
+    },
+    {
+      "file": "pali_hill_pedestrian_15min.geojson",
+      "hub": "pali_hill",
+      "costing": "pedestrian",
+      "minutes": 15,
+      "area_km2": 3.004,
+      "max_crowflies_km": 1.253,
+      "mean_crowflies_km": 0.99,
+      "vertices": 41
+    },
+    {
+      "file": "pali_hill_pedestrian_20min.geojson",
+      "hub": "pali_hill",
+      "costing": "pedestrian",
+      "minutes": 20,
+      "area_km2": 4.7878,
+      "max_crowflies_km": 1.666,
+      "mean_crowflies_km": 1.227,
+      "vertices": 57
+    },
+    {
+      "file": "pali_hill_pedestrian_30min.geojson",
+      "hub": "pali_hill",
+      "costing": "pedestrian",
+      "minutes": 30,
+      "area_km2": 8.8521,
+      "max_crowflies_km": 2.468,
+      "mean_crowflies_km": 1.701,
+      "vertices": 112
+    },
+    {
+      "file": "pali_hill_pedestrian_5min.geojson",
+      "hub": "pali_hill",
+      "costing": "pedestrian",
+      "minutes": 5,
+      "area_km2": 0.4035,
+      "max_crowflies_km": 0.467,
+      "mean_crowflies_km": 0.402,
+      "vertices": 9
+    }
+  ]
+}
