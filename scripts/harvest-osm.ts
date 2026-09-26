@@ -62,40 +62,82 @@ const MIRRORS = [
   "https://overpass.osm.ch/api/interpreter",
 ] as const;
 
-/** Verbatim: Overpass asks for ~10s of work and 1GB, and punishing that is rude. */
-const OVERPASS_SETTINGS = "[out:json][timeout:180]";
+/**
+ * Verbatim: Overpass asks for ~10s of work and 1GB, and punishing that is rude.
+ *
+ * The trailing `;` is REQUIRED and is easy to lose. Without it the interpreter
+ * fails with `line 1: parse error: ';' expected`, HTTP 400. It was missing here
+ * until 2026-09-26, which is why this harvester had never once completed a
+ * live fetch despite having a comprehensive test suite.
+ */
+const OVERPASS_SETTINGS = "[out:json][timeout:180];";
 
 /**
- * What we ask for. Only tags that survive our own 3-state and open-vocabulary
- * rules, and deliberately NOT `duration`, because OSM has it 1% of the time and
- * a scraped duration that is wrong is worse than no duration at all.
+ * What we ask for, transcribed from research/findings/04-data-retrieval.md §3.5
+ * ("The production Overpass QL template"). Three deliberate departures, all
+ * verified against a live probe on 2026-09-26:
+ *
+ * 1. `nwr` not `node`/`way`/`relation`. The probe returned 359 elements in one
+ *    Bandra West cell: 283 node, 75 way, 1 relation. A `node`-only query throws
+ *    away 21% of the city, because malls, temples and market sheds are mapped as
+ *    ways. `nwr` is exactly equivalent to the three statements written out by
+ *    hand, and it is what the research template uses.
+ *
+ * 2. `["name"]` on every statement. The research calls this out explicitly: a
+ *    cheap existence check "cuts our 9% nameless features at the source". A row
+ *    we cannot name is not a row the map can render usefully, so we never pay to
+ *    transfer it. Kept OFF the deliberately-vocabulary-free statements where
+ *    the parent value already implies a real place, and off `cuisine`/`craft`
+ *    hygiene queries (those select by a tag that only named places carry).
+ *
+ * 3. `duration` is still not requested. The original comment was right: OSM has
+ *    it ~1% of the time and a wrong duration is worse than none. The projector
+ *    infers it from category instead and marks it `inferred` so the UI badges it.
  *
  * `out center` gives a way's centroid as `center`, which is what we need to place
  * a polygon on the map; a bare `out body` would give only the node IDs.
  */
 function selectStatements(bboxLiteral: string): string {
   return [
-    `node["amenity"~"restaurant|cafe|fast_food|bar|pub|ice_cream"](${bboxLiteral});`,
-    `node["shop"~"marketplace|bakery|confectionery"](${bboxLiteral});`,
-    `node["tourism"~"attraction|museum|gallery|viewpoint|artwork|zoo"](${bboxLiteral});`,
-    `node["leisure"~"park|garden"](${bboxLiteral});`,
-    `node["natural"~"beach"](${bboxLiteral});`,
-    `node["historic"](${bboxLiteral});`,
-    `node["place_of_worship"](${bboxLiteral});`,
-    `node["craft"](${bboxLiteral});`,
-    `node["office"="tourism"](${bboxLiteral});`,
-    `way["amenity"~"restaurant|cafe|marketplace"](${bboxLiteral});`,
-    `way["tourism"~"attraction|museum|gallery|viewpoint"](${bboxLiteral});`,
-    `way["historic"](${bboxLiteral});`,
-    `way["leisure"~"park|garden"](${bboxLiteral});`,
-    `relation["tourism"="attraction"](${bboxLiteral});`,
-    "out center tags;",
+    // A. EAT / DRINK
+    `nwr["amenity"~"^(restaurant|cafe|fast_food|bar|pub|ice_cream|food_court|biergarten)$"]["name"](${bboxLiteral});`,
+    `nwr["cuisine"](${bboxLiteral});`,
+    `nwr["shop"~"^(bakery|confectionery|tea|juice)$"]["name"](${bboxLiteral});`,
+    // B. SEE / DO
+    `nwr["tourism"~"^(attraction|museum|gallery|viewpoint|artwork|theme_park|zoo|aquarium)$"]["name"](${bboxLiteral});`,
+    `nwr["historic"](${bboxLiteral});`,
+    `nwr["amenity"~"^(theatre|cinema|nightclub|casino|public_bath|planetarium)$"]["name"](${bboxLiteral});`,
+    `nwr["leisure"~"^(park|garden|pitch|playground|bird_park|nature_reserve|golf_course|sports_centre|marina|slipway|water_park)$"]["name"](${bboxLiteral});`,
+    `nwr["natural"~"^(beach|peak|hill|waterfall|cave_entrance|rock|spring)$"]["name"](${bboxLiteral});`,
+    `nwr["man_made"~"^(pier|breakwater|lighthouse|tower|obelisk)$"]["name"](${bboxLiteral});`,
+    // C. MAKE / SHOP — the long tail, and the group the old query missed entirely
+    // except for a lone `craft`. §2.3: "under-mapped AND under-modelled".
+    `nwr["craft"](${bboxLiteral});`,
+    `nwr["shop"~"^(craft|bicycle|kayak|surfboard|books|record_shop|antiques|art|charity|second_hand|electronics|mobile_phone|computer|boutique|jewelry|department_store|garden_centre)$"]["name"](${bboxLiteral});`,
+    `nwr["amenity"~"^(marketplace|arts_centre|social_centre|swimming_pool|diving|boat_rental)$"]["name"](${bboxLiteral});`,
+    `nwr["office"~"^(company|government|coworking|tourism)$"]["name"](${bboxLiteral});`,
+    // D. SPIRITUAL / COMMUNITY — 41 place_of_worship in one Bandra cell alone,
+    // so this is not a niche, it is the single densest category in the city.
+    `nwr["amenity"~"^(place_of_worship|grave_yard|shrine|drinking_water|fountain|toilets)$"]["name"](${bboxLiteral});`,
+    `nwr["amenity"~"^(cafe|restaurant|fast_food)$"]["cuisine"~"^(vegan|vegetarian)$"](${bboxLiteral});`,
   ].join("\n  ");
 }
 
 function buildQuery(bbox: [number, number, number, number]): string {
-  const literal = bbox.map((v) => v.toFixed(6)).join(",");
-  return `${OVERPASS_SETTINGS}\n  ${selectStatements(literal)}\n`;
+  // Overpass bbox order is (south, west, north, east) — the same order the
+  // research template documents: "bbox order: (S, W, N, E)".
+  //
+  // We receive the manifest bbox in (W, S, E, N) order, which is the order
+  // GeoJSON polygons and the rest of our code use, so it is transposed here at
+  // the boundary. Getting this wrong is silent: the query still parses and
+  // returns HTTP 200 with `elements: []`, so a transposed bbox looks exactly
+  // like "this city has no restaurants". It was wrong here until 2026-09-26.
+  const [W, S, E, N] = bbox;
+  const literal = [S, W, N, E].map((v) => v.toFixed(6)).join(",");
+  // Every select statement is unioned, then output ONCE at the end. An `out`
+  // inside the union is a parse error; so is an `out` per statement, which
+  // would re-emit the whole union once per statement.
+  return `${OVERPASS_SETTINGS}\n(\n${selectStatements(literal)}\n);\nout center tags;\n`;
 }
 
 /** 6dp, then trailing zeros trimmed. The cache-key rule. */
