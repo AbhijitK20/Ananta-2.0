@@ -49,6 +49,12 @@
   /* Focus ring. Derived from accent so it can never drift from the brand. */
   --raw-focus: #0e4f4a;
 
+  /* Mask solid. CSS alpha masking reads ONLY the alpha channel, so this colour
+     is arbitrary — it means "opaque, show this". It exists as a token so
+     mask gradients can punch real holes without a hex literal at the call
+     site, which theme:lint would (correctly) reject. */
+  --raw-mask-solid: #000;
+
   /* ---------------------------------------------------------------------
      1b. RAW — dark
      Canvas darkens, ink inverts, and the three semantic hues LIGHTEN so they
@@ -102,6 +108,7 @@
   --shadow-2: var(--raw-shadow-2);
   --scrim: var(--raw-scrim);
   --focus: var(--raw-focus);
+  --mask-solid: var(--raw-mask-solid);
 
   /* Inverse pair, for the one place we put light type on a dark fill. */
   --ink-inverse: var(--raw-surface);

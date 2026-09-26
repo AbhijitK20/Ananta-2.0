@@ -133,12 +133,14 @@ const KNOWN_TOKENS = new Set([
   "raw-canvas-dark", "raw-ink-muted-dark", "raw-ink-faint-dark", "raw-rule-dark",
   "raw-accent-dark", "raw-accent-soft-dark", "raw-alarm-dark", "raw-alarm-soft-dark",
   "raw-fit-dark", "raw-fit-soft-dark", "raw-warn-dark", "raw-warn-soft-dark",
-  "raw-info-dark", "raw-info-soft-dark", "raw-shadow-1", "raw-shadow-2", "raw-scrim",
+  "raw-info-dark", "raw-info-soft-dark",   "raw-shadow-1", "raw-shadow-2", "raw-scrim",
   "raw-focus", "raw-shadow-1-dark", "raw-shadow-2-dark", "raw-scrim-dark", "raw-focus-dark",
+  "raw-mask-solid",
   // semantic colour
   "canvas", "surface", "ink", "ink-muted", "ink-faint", "rule", "accent", "accent-soft",
   "alarm", "alarm-soft", "fit", "fit-soft", "warn", "warn-soft", "info", "info-soft",
   "shadow-1", "shadow-2", "scrim", "focus", "ink-inverse", "on-accent", "on-alarm", "on-fit",
+  "mask-solid",
   // type
   "font-display", "font-ui", "font-data", "fs-root", "fs-scale-body", "fs-scale-meta",
   "fs-scale-display", "fs-scale-num", "fs-body", "fs-body-lg", "fs-meta", "fs-meta-sm",
