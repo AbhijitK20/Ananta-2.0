@@ -25,8 +25,7 @@ import type {
   Money,
   Plan,
   PlanStop,
-  TravelLeg,
-} from "../../contracts";
+  } from "../../contracts";
 import type { EnginePort, TravelMode } from "./engine";
 
 export function indexCatalogue(
@@ -132,22 +131,6 @@ function removalReason(id: string, after: Plan, change: ContextChange): string {
 
 function additionReason(stop: PlanStop, change: ContextChange): string {
   return stop.why[0] ?? `Added after: ${change.narrative}`;
-}
-
-/**
- * `DiscoveryContext.travelMode` is a PREFERENCE and includes `"any"`, which is
- * its own default. `travelBetween` takes a concrete leg mode and has no `"any"`.
- * Handing it the preference verbatim is both a type error and a runtime hazard
- * on the single most common path in the product, so the translation happens here,
- * once, at the boundary.
- *
- * `"any"` resolves to `"auto"`: the router returns its fastest option and the leg
- * it produces is already flagged `estimated: true`, so nothing here claims more
- * than it knows. A wrong guess costs one number in the "you saved N minutes"
- * line of the swap diff.
- */
-function legMode(preference: DiscoveryContext["travelMode"]): TravelLeg["mode"] {
-  return preference === "any" ? "auto" : preference;
 }
 
 /**

@@ -6,7 +6,7 @@
  *   - Every count comes from a row. Nothing is modelled, smoothed, or guessed.
  *   - The dataset badge is data, not decoration: a demo source says so.
  */
-import type { BookingRequest, Experience, Interaction, Provider, UnmetDemand } from "../../contracts";
+import type { BookingRequest, Experience, Interaction, UnmetDemand } from "../../contracts";
 import {
   MIN_SAMPLE,
   WINDOW_DAYS,

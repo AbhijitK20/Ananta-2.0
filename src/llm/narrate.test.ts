@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { resetBreakers } from "./client";
-import { chatCompletion, startFakeOpenRouter, valid, type FakeOpenRouter } from "./fake-openrouter";
+import { chatCompletion, startFakeOpenRouter, type FakeOpenRouter } from "./fake-openrouter";
 import { LABELS, context, plan } from "./fixtures";
 import { unsupportedFigures } from "./guardrails";
 import { buildFactSheet, deterministicNarration, narrate, narrateDetailed } from "./narrate";

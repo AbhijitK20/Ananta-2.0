@@ -11,28 +11,19 @@ marked.
 
 ## D1. Name — LOCKED
 
-**Ananta.** That is the product name, in every document, on every screen, and in
-the deck. The repository is `Travel-buddy`; that is a URL, not a brand.
+**TravelBuddy**, codename **Ananta**.
 
-The name churned during research, and the fix is to stop reusing retired names as
-if they were current:
+The docs have churned through four names for one product: TripFit (my working
+name), ATHITI (masterplan v4), TravelBuddy / Ananta (the definitive masterplan),
+and the repo is `Travel_buddy`. We are standardising on **TravelBuddy** because
+`TRAVELBUDDY_MASTERPLAN_FINAL.md` is the baseline doc and it self-describes as
+"the single baseline for any further architecture, coding plan, database design,
+API design, UI plan, or implementation prompt".
 
-| Name | Status |
-|---|---|
-| **Ananta** | the product |
-| TravelBuddy | retired — the repository name only |
-| ATHITI | the **research** codename, so `research/` stays navigable |
-| TripFit | retired — a working name that never shipped |
+`ATHITI` stays as the *research* codename so the existing docs in `research/`
+remain navigable. Add the mapping to every doc header:
 
-Every document header reads:
-
-> Ananta — research codename ATHITI
-
-**Do not introduce a new name for a new concept.** The product vocabulary is fixed
-and listed in [`FEATURES.md`](FEATURES.md) § Terminology: Ananta,
-`DiscoveryContext`, `DialogueDecision`, `Experience`, `Plan`, Replan, Unmet Demand,
-Provider Opportunity. A screen that needs a new idea gets a new *label*, not a new
-product noun.
+> TravelBuddy (Ananta) — research codename ATHITI
 
 ## D2. Stack — one language — LOCKED
 
@@ -63,12 +54,11 @@ plus an OSM spine, and `node:sqlite` gives us FTS5 with `bm25()`, `json1`,
 ## D3. React pinned to 19.2 — LOCKED
 
 `@ai-sdk/react@4.0.119` declares
-`"react": "^18 || ~19.0.1 || ~19.1.2 || ~19.2.1"` — four disjoint allow-lists, so
-React **19.0.0 exactly** and **19.3+** are both excluded. `package.json` pins
-**19.2.0**.
+`"react": "^18 || ~19.0.1 || ~19.1.2 || ~19.2.1"` — four disjoint allow-lists.
+React **19.0.0 exactly** and **19.3+** are both excluded. We are on 19.3.0.
 
-We do not use `@ai-sdk/react` at all (we stream raw SSE), but pinning anyway keeps
-the door open.
+Pin **19.2.0**. We do not use `@ai-sdk/react` at all (we stream raw SSE), but
+pinning anyway keeps the door open.
 
 **Revisit if:** the SDK ships a wider peer range.
 
@@ -90,7 +80,7 @@ no payments and no commission.** Rationale:
 - A request/accept loop is ~1.5 person-days and is genuinely demo-able.
 - Payments, payouts and refunds are ~4 person-days and are worth nothing to a
   judge.
-- The half that actually differentiates us is the **Unmet Demand → Provider Opportunity**, which
+- The half that actually differentiates us is the **unmet-demand feed**, which
   costs almost nothing and is what the PS means by "reach the right customers".
 
 Scope: provider listing editor, availability slots, booking request inbox,
@@ -123,35 +113,19 @@ swapping in a model changes one file.
 
 ## D6. Curated data is the catalogue — LOCKED
 
-Measured, not assumed, and the measurement is **committed to the repo** so anyone
-can re-derive it. From `data/reference/osm-tagging-schema/`, across **1,739 iD
-presets** in the real tagging schema:
-
-| Gate field | Presets | Coverage |
-|---|---:|---:|
-| `opening_hours` | 154 | **8.9%** |
-| `wheelchair` | 108 | **6.2%** |
-| `fee` | 71 | 4.1% |
-| `diet:vegetarian` | 0 | **0.0%** |
-| `wheelchair:description` | 0 | **0.0%** |
-
-**1,468 of 1,739 (84.4%) carry no gate field at all**, and OSM has no ratings to
-offer either.
+Measured, not assumed: an Overpass query over a Bandra West Mumbai bbox returns
+199 POIs. 91% have `name`, but only **16%** have `opening_hours`, **1%**
+`wheelchair`, **0%** `fee`, and OSM has no ratings at all.
 
 So: OSM is a **spatial backbone** (real coordinates, names, categories), and a
-curated layer of ~250 Mumbai + Navi Mumbai records carries the fields the problem
-statement actually grades on — duration, price, capacity, group fit,
-accessibility, kid-friendliness.
+curated layer of ~250 Mumbai + Navi Mumbai records carries the fields the PS
+actually grades on — duration, price, capacity, group fit, accessibility,
+kid-friendliness.
 
-The second consequence is a schema one: **absent is `unknown`, never `fail`.** A
-gate that vetoes on a missing field deletes most of the catalogue before ranking
-starts, and a gate that asserts an unverified `wheelchair=yes` is exactly the
-hallucination the provenance layer exists to prevent. That is why `Accessibility`
-is a union of tri-state booleans.
-
-**No Google Maps scraping.** It would fill the ratings gap, and it is why we have a
-`rejected/` tier in `research/`. It breaches their ToS. We use provider-submitted
-data (what a real marketplace has) plus clearly-labelled LLM inference.
+**No Google Maps scraping.** It would fill the ratings gap, and it is the reason
+we have a `rejected/` tier in `research/`. It breaches their ToS. We use
+provider-submitted data (what a real marketplace has) plus clearly-labelled LLM
+inference.
 
 ## D7. Provenance is visible — LOCKED
 
@@ -166,93 +140,52 @@ attributed**.
 
 ## D8. The LLM never decides — LOCKED
 
-Masterplan principle 1, and the thing most of the reference set gets wrong.
-
-The evidence, stated at the strength it actually holds
-(`research/findings/05-llm-integration.md` §11): of the ten projects scored, three
-keep the LLM out of the decision path — FloatTrip, Plan-It and XRec. The
-containment mechanisms differ. Plan-It gates on `confidence >= 0.5` and has two
-dead fields. XRec freezes the LLM and conditions it on frozen embeddings, so it
-architecturally cannot touch the ranking. **FloatTrip is the closest to our design
-and the strongest single artifact in the corpus**: its `planner` node does author
-day order from prose, so "LLM-free" is *not* true of it — but it pairs that with
-`validate_solution` re-deriving the objective, a closed-pool whitelist in
-`candidate_builder`, one repair round then hard-fail, and
-`test_architecture_boundaries.py` as a structural gate.
-
-So the honest claim is not "nobody does this". It is: **the failure mode is
-consistent, and it is always the same one.** Let the model write the *ordering*,
-then try to catch it with a prompt. Prompt-level containment is what leaks.
+Masterplan principle 1, and the thing every reference repo gets wrong. The
+evidence: FloatTrip is the only repo that keeps the LLM out of the route, and it
+is the only one with an independent validator. Every repo that leaked let the
+model write the **ordering**, then tried to catch it with a prompt. None has a
+validator.
 
 Our version, in contracts:
 - `DialogueDecision` is the **only** model output permitted to affect chat
-  actions, and it may only emit a patch to `DiscoveryContext`. It is `.strict()`
-  with eight permitted keys, so it cannot express a recommendation at all.
+  actions, and it may only emit a patch to `DiscoveryContext`.
 - A `confidence >= 0.5` gate below which we ask instead of act.
 - `ValidationResult` recomputes the objective independently and rejects on
   `objectiveDelta > 1e-6`.
 - A test makes an LLM import in `src/engine/` a **build failure**.
-- The eval suite must pass with `LLM=off`.
 
 ## D9. Clusters before routes — LOCKED
 
 The packer is **cluster-then-route**, not TSP on the raw shortlist. Maximum-clique
 peeling on a radius graph (Bron–Kerbosch), which is diameter-bounded, needs no
-`k`, and has no empty-cluster problem. The approach follows ITINERA, which the
-paper reports as deployed in production; we take the technique, and we verify the
-rest ourselves.
+`k`, and has no empty-cluster problem. From ITINERA, which is validated in
+production at TuTu with thousands of real users.
 
 Dropped: DBSCAN, k-means, and PuLP/CBC exact TSP.
 
 ## D10. Travel time, not radius — LOCKED
 
-A 3 km crow-flies filter is actively wrong in Mumbai, in both directions at once.
-Measured from 20 committed isochrone polygons in `data/reference/isochrones/`
-(Bandra West, pedestrian and auto, 5/10/15/20/30 min):
+A 3 km crow-flies filter is actively wrong in Mumbai. Isochrones first, radius as
+fallback. Keyless sources verified live: `valhalla1.openstreetmap.de/isochrone`
+returned a real 15-minute polygon over Mumbai in 0.89 s, and
+`routing.openstreetmap.de` serves `routed-car` and `routed-foot` (its *default*
+profile is bike — always set it).
 
-- Too permissive on foot — a 3 km disc is 28.27 km², **3.2× the entire true
-  30-minute walking area** of 8.85 km².
-- Too restrictive by car — it **excludes 73% of the true 30-minute driving area**
-  of 103.79 km².
-- The two costings differ by **11.7× in area at the same budget**, so no single
-  radius can be correct for both.
-- The contour is not circular: 30-minute walking reach covers 8.85 km² against
-  19.1 km² for a circle of its own 2.47 km radius — **46% of the circumscribed
-  disc**.
-
-Isochrones first, radius as fallback.
-
-**Endpoint status, measured on this host** (`data/reference/README.md` §"Endpoint
-status checked on this host"):
-
-| Endpoint | Status |
-|---|---|
-| `valhalla1.openstreetmap.de` | working — `/status` advertises `isochrone` and `sources_to_targets`. The only free isochrone source confirmed live, and the polygons are committed. |
-| `routing.openstreetmap.de` | **404 on all OSRM paths** from here. The committed matrices came from Valhalla instead. Do not plan around OSRM. |
-| `overpass-api.de` + 3 mirrors | **unreachable** from here, on IPv4 and IPv6. Live POI harvest is blocked on this host, which is why the seed dataset is hand-authored. |
-
-Two consequences we accept rather than hide: routing needs a haversine fallback
-behind the facade, and Overpass reachability is a build-environment risk, not a
-runtime one, because the snapshot ships.
-
-OSRM free-flow is not Mumbai either, so we apply a **documented congestion
-multiplier** selected by IST clock and label the estimate as an estimate.
+OSRM is free-flow, which understates Mumbai peak by 3–5×, so we apply a
+**documented congestion multiplier** selected by IST clock and label the estimate
+as an estimate.
 
 ---
 
 ## Open, with checkpoints
 
-A day-based checkpoint is the only forcing function a three-way split has. Keep
-the column; "the demo spine" is a component, not a moment, and nothing happens at
-a component.
-
-| # | Question | Blocks | Checkpoint |
-|---|---|---|---|
-| O1 | Does the provider side ship, or become stretch? (D4 is "ship, lightweight") | the demo spine | Day 3 standup |
-| O2 | Do we self-host routing, or stay on public keyless endpoints? Given the 404s in D10, self-hosting Valhalla is the obvious answer | the routing facade | Day 2 |
-| O3 | Embeddings — ship, or leave behind the `Embedder` interface? | Phase 4 of the roadmap | Day 4 |
-| O4 | Deploy target. No deployment CLI or credentials are available in the build environment | a live URL for the demo | Day 2 — needs an account from Abhijit |
-| O5 | Second city, or deepen Mumbai? (Navi Mumbai is the obvious one — ferry corridors, planned-city grid, very different from island Mumbai) | the multi-city claim | Day 5 |
+| # | Question | Decide by |
+|---|---|---|
+| O1 | Does the provider side ship, or become stretch? (D4 is "ship, lightweight") | Day 3 standup |
+| O2 | Do we self-host any routing, or stay fully on public keyless endpoints? | Day 2 |
+| O3 | Embeddings — ship, or leave behind the `Embedder` interface? | Day 4 |
+| O4 | Deploy target. No `vercel`/`flyctl`/`railway` CLI and no creds on this machine. | Day 2 — needs an account from Abhijit |
+| O5 | Second city, or deepen Mumbai? (Navi Mumbai is the obvious one — ferry corridors, planned-city grid, very different from island Mumbai) | Day 5 |
 
 ## Corrections we are carrying forward
 

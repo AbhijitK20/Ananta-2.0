@@ -1,7 +1,10 @@
-# DATA SPEC
+# DATA SPEC + ML PLAN — for Abhijit
 
-> The data layers, the OSM tag semantics, and the harvest. If the engine is
-> wrong, the UI polishes a lie — so this document is where the honesty lives.
+> Your files. `src/data/`, `src/engine/`, `src/db/`, `scripts/`, `tests/`.
+> Nobody else writes in these.
+
+You own the thing that makes the product true. If the engine is wrong, the UI
+polishes a lie.
 
 ---
 
@@ -9,35 +12,22 @@
 
 ## 1. The measurement that shapes everything
 
-Committed and re-derivable, from
-`data/reference/osm-tagging-schema/constraint-field-coverage.json`: across
-**1,739 iD presets** in the real tagging schema, here is how often a field the
-feasibility gate needs is even *defined*.
+An Overpass query over a Bandra West Mumbai bbox returns **199 POIs**:
 
-| Gate field | Presets | Coverage |
-|---|---:|---:|
-| `opening_hours` | 154 | **8.9%** |
-| `wheelchair` | 108 | **6.2%** |
-| `fee` | 71 | 4.1% |
-| `smoking` | 47 | 2.7% |
-| `capacity` | 36 | 2.1% |
-| `diet:vegetarian` | 0 | **0.0%** |
-| `wheelchair:description` | 0 | **0.0%** |
-| ratings | — | **none — OSM has no ratings** |
+| Tag | Coverage |
+|---|---|
+| `name` | 91% |
+| `cuisine` | 39% |
+| `opening_hours` | **16%** |
+| `phone` | 15% |
+| `website` | 11% |
+| `wheelchair` | **1%** |
+| `fee` | **0%** |
+| ratings | **none — OSM has no ratings** |
 
-**1,468 of 1,739 presets (84.4%) carry no gate field at all.**
-
-**Two conclusions, and the second one is a schema constraint, not a footnote.**
-
-1. **OSM is a spatial backbone, not a catalogue.** Real coordinates, names,
-   categories, addresses. It cannot supply a single factor the problem statement
-   grades on. Hence three layers.
-2. **Absent is `unknown`, never `fail`.** A gate that vetoes on a missing field
-   deletes most of the catalogue before ranking starts, and a gate that asserts an
-   unverified `wheelchair=yes` is exactly the hallucination the provenance layer
-   exists to prevent. `diet:vegetarian` and `wheelchair:description` cannot be
-   hard filters at all — at 0% they can only be soft, relaxable, or inferred and
-   visibly labelled.
+**Conclusion: OSM is a spatial backbone, not a catalogue.** It gives real
+coordinates, names, categories, addresses. It cannot supply a single factor the
+PS grades on. Hence three layers.
 
 | Layer | Volume | Contents | Provenance |
 |---|---|---|---|
@@ -48,8 +38,7 @@ feasibility gate needs is even *defined*.
 
 ## 2. Tag semantics — match the schema, not your intuition
 
-Source of truth: the iD tagging schema itself, extracted to
-`data/reference/osm-tagging-schema/`. Full findings in
+Source of truth: `data/id-tagging-schema/data/fields/`. Full extraction in
 `research/findings/04-data-retrieval.md` §1.
 
 **Zod rules for `src/contracts`:**
@@ -85,19 +74,17 @@ check_date: z.string()          // drives the "hours unverified" badge
 ```
 
 `craft` is a closed 56-value list. `typeCombo` vocabularies live in the preset
-files — **and those are extracted and committed**, so do not go hunting:
+files — **those are now extracted for you**, so do not go hunting:
 
 | Artefact | Size | What it gives you |
 |---|---|---|
-| `data/reference/osm-tagging-schema/preset-checklists.json` | 794 KiB | per-preset `tags` / `addTags` / field union — the per-category tag checklist, and the input to the Overpass harvest |
-| `data/reference/osm-tagging-schema/constraint-field-coverage.json` | 561 KiB | which constraint-bearing fields exist, and how often — the table in §1 |
-| `data/reference/isochrones/bandra-west-mumbai/` | 198 KiB, 24 files | **real pre-computed isochrone polygons + travel-time matrices**, auto and pedestrian, 5/10/15/20/30 min, for Pali Hill and Land's End |
+| `data/reference/osm-tagging-schema/preset-checklists.json` | 757 KB | per-category tag co-occurrence, the input to the Overpass harvest |
+| `data/reference/osm-tagging-schema/constraint-field-coverage.json` | 535 KB | which constraint-bearing fields actually exist, and how often |
+| `data/reference/isochrones/bandra-west-mumbai/` | ~1 MB | **real pre-computed isochrone polygons + travel-time matrices**, auto and pedestrian, 5/10/15/20/30 min, for Bandra West and Pali Hill |
 
-The isochrones are not documentation — they are production data, and the only free
-isochrone source we could reach is already committed. Use them so the demo never
-calls Valhalla, and add more origins with the same call pattern as you cover the
-city. See `data/reference/README.md` §2 for the measured areas and the radius
-argument.
+The isochrones are not documentation — they are production data. Use them so
+the demo never calls Valhalla, and add more origins with the same call
+pattern as you cover the city.
 
 ## 3. The Overpass harvest
 
@@ -123,12 +110,9 @@ out center {{timeout}};
 
 **Client contract, all nine points matter:**
 
-1. **Mirrors with failover**: `overpass.kumi.systems`, `overpass.private.coffee`,
-   `maps.mail.ru/osm/tools/overpass`, then `overpass-api.de` — the main host is
-   flaky (we saw 406s). **Caveat we measured:** all four are unreachable from the
-   build host on both IPv4 and IPv6, so live POI harvest is blocked there. That is
-   why the seed dataset is hand-authored rather than harvested, and why the
-   fallback is not theoretical.
+1. **Three mirrors with failover**: `overpass.kumi.systems`,
+   `overpass.private.coffee`, `maps.mail.ru/osm/tools/overpass`, then
+   `overpass-api.de`. In that order — the main host is flaky (we saw 406s).
 2. **Round the bbox ring to 6 decimal places before hashing.** Load-bearing for
    cache-key stability (`_overpass.py:280`).
 3. **Never cache a `remark`** (`_http.py:56-58`). Overpass returns partial results
@@ -147,12 +131,12 @@ out center {{timeout}};
 `data/cities/mumbai/experiences.jsonl`, one `Experience` per line, schema from
 `src/contracts`.
 
-**Coverage target — ~250 records across these areas**, not split by who typed
-them:
+**Split:**
 
-| Areas |
-|---|
-| Colaba, Fort, Churchgate, Marine Drive, Kala Ghoda, Girgaon, Dadar, Matunga, Bandra, Juhu, Andheri, Powai, Chembur, Worli, Khar, Navi Mumbai |
+| Owner | Count | Areas |
+|---|---|---|
+| Abhijit | ~120 | Colaba, Fort, Churchgate, Marine Drive, Kala Ghoda, Girgaon, Dadar, Matunga |
+| Vishwesh | ~130 | Bandra, Juhu, Andheri, Powai, Chembur, Worli, Khar, Navi Mumbai |
 
 ```bash
 npm run db:seed          # loads JSONL into SQLite, builds the FTS5 index
@@ -167,26 +151,22 @@ record, the fields only a local knows:
 - `durationMin` — the single most valuable field. OSM has none.
 - `pricePerPerson` — for a *meal*, "what one person actually pays"
 - `capacity` — can they take 6 people at once?
-- `stepFree` / `kidFriendly` / `restroomOnSite` — the graded factors OSM misses
+- `stepFree` / `kidFriendly` / `restroomOnSite` — the PS factors OSM misses
 - `bestTimeOfDay` — when is this good, not just when is it open
 - `weatherSensitive` — monsoon matters: `rain`, `heat`, `wind`, `any`
 
 `provenance: { durationMin: 'curated' }` for each. If you guess, write
-`inferred` and a confidence. Do not launder a guess into a fact — Unmet Demand
-and every Provider Opportunity built on it are only worth anything while this
-table is honest.
+`inferred` and a confidence. Do not launder a guess into a fact — the provider
+opportunity feed is built on this table being honest.
 
 ### Mumbai-specific notes worth encoding
 
-- **Traffic invalidates free-flow routing.** A documented `congestionModel` per
-  corridor × time band, selected by IST clock, labelled an estimate. Peaks
-  08:00–11:00 and 17:00–21:00, lighter Sundays. The multipliers themselves are a
-  heuristic, and `CityManifest.congestionModel` says so in its own doc comment.
-- **Transit beats road across the island.** A corridor that is quick by train and
-  slow by car in traffic is the normal case, not the exception. Seed
-  `transitCorridors` for Western, Central, Harbour, Metro 1 / 2A / 2B / 3, and the
-  monorail. Until they are seeded, those legs fall back to a haversine estimate
-  and say so.
+- **Traffic invalidates free-flow routing.** OSRM understates peak by 3–5×.
+  A `congestionModel` per corridor × time band, selected by IST clock, labelled
+  an estimate. Peaks 08:00–11:00 and 17:00–21:00, lighter Sundays.
+- **Transit beats road across the island.** Bandra ↔ Colaba is 21 min by train
+  and 38 by car in traffic. Seed `transitCorridors` for Western, Central,
+  Harbour, Metro 1 / 2A / 2B / 3, and the monorail.
 - **The ferry is real** — Navi Mumbai ↔ South Mumbai waterfront.
 - **Monsoon is the demo's best friend.** Jun–Sep in `monsoonMonths` flips the
   weather gate, which flips recommendations, which is our best replan demo.
@@ -233,9 +213,9 @@ dataset for a model that predicts, for an arbitrary (context, experience) pair,
 whether it is feasible and *which constraint binds*.
 
 **Why it is worth it:** a learned model lets us pre-filter cheaply, estimate
-constraint-binding probability for Unmet Demand, and — most valuable — tell a
-traveller *"40 more minutes would fit 4 more options"* without re-running the
-whole gate.
+constraint-binding probability for the unmet-demand feed, and — most valuable —
+tell a traveller *"relaxing your time budget by 40 min would unlock 4 more
+options"* without re-running the whole gate.
 
 ```
 X  = [ travelMin, durationMin, bufferMin, availableMin, priceMinor, budgetMinor,
@@ -304,12 +284,12 @@ that beats nothing, and it is 40 lines.
 
 | Tempting | Why not |
 |---|---|
-| Learning-to-rank (LightGBM ranker, two-tower) | We have no training data. `tensorflow/ranking`, `allRank` and `ptranking` are all in our `rejected/` tier for exactly this |
+| Learning-to-rank (LightGBM ranker, two-tower) | We have no training data on day 1. `tensorflow/ranking`, `allRank` and `ptranking` are all in our `rejected/` tier for exactly this |
 | A matrix-factorisation recommender | Same cold-start problem, and we are a *fit* engine, not a taste engine |
-| A model that picks the itinerary | The architecture forbids it. Across the projects we scored, the consistent failure is letting a model write the *ordering* and then catching it with a prompt. The ones that hold pair it with a validator — see `DECISIONS.md` D8 |
+| A model that picks the itinerary | The whole architecture forbids it. Every repo that let a model order things leaked, and none had a validator |
 | Anything needing a GPU or a training data purchase | One week, three people, no budget |
 
-## Model governance
+## Model governance — write this down
 
 - Every model file is **versioned in git** with the seed and the data hash.
 - Training is a script, not a notebook: `npm run train:feasibility` is
