@@ -28,6 +28,7 @@ import { ChatSidecar } from "./ChatSidecar";
 import { MapPanel } from "./MapPanel";
 import { PlanTimeline } from "./PlanTimeline";
 import { RealityPanel } from "./RealityPanel";
+import { SiteHeader } from "./SiteHeader";
 
 export interface DiscoverySurfaceProps {
   initialPlan: Plan;
@@ -179,13 +180,13 @@ export function DiscoverySurface({
         {announcement}
       </p>
 
-      <header className="sticky top-0 z-sticky border-b border-rule bg-canvas">
-        <div className="mx-auto flex max-w-[90rem] flex-wrap items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-baseline gap-2">
-            <span className="text-display text-ink">TravelBuddy</span>
-            <span className="text-meta-sm text-ink-muted">plans that actually fit</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+      <SiteHeader
+        /*
+          Page-specific controls, so the global header never has to know about
+          the engine badge or the chat sidecar.
+        */
+        actions={
+          <>
             {/*
               The stub state, stated. If the engine is not wired yet this says
               so, because a demo that looks live and is not is worse than one
@@ -197,9 +198,9 @@ export function DiscoverySurface({
             <Button size="sm" onClick={() => setChatOpen(true)}>
               Ask in words
             </Button>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <main id="main" className="mx-auto max-w-[90rem] px-4 py-4">
         <div className="grid gap-4 lg:grid-cols-[19rem_minmax(0,1fr)_26rem]">

@@ -56,13 +56,29 @@ type PaintTarget = {
   setPaintProperty: (layer: string, name: string, value: unknown) => void;
 };
 
+/**
+ * The literal this file falls back to when a token cannot be resolved.
+ *
+ * MapLibre paint properties are not CSS: `circle-color` cannot read a custom
+ * property, so the value has to be a concrete colour string. That is why a
+ * literal appears here at all, and why this file is registered in
+ * `LITERAL_EXCEPTIONS` in scripts/theme-lint.ts.
+ *
+ * It is `--raw-ink`, NOT pure black. The design system is explicit that the ink
+ * is "warm carbon. Never pure black", and the pure-black fallback this replaced
+ * was the one place in the app that broke that rule. The value is duplicated rather than derived
+ * because there is nothing to derive it from when the stylesheet is unavailable
+ * -- and theme-lint checks it against tokens.css, so it cannot drift.
+ */
+const MAP_FALLBACK_INK = "#17150f";
+
 function mapToken(name: string): string {
-  if (typeof document === "undefined") return "#000000";
+  if (typeof document === "undefined") return MAP_FALLBACK_INK;
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   // An undefined token, or one whose own value is still a var() reference,
   // reaches MapLibre unparseable. Fall back rather than throw the layer away:
-  // a black circle is a cosmetic bug, a missing layer is a broken map.
-  if (!value || value.includes("var(")) return "#000000";
+  // a dark circle is a cosmetic bug, a missing layer is a broken map.
+  if (!value || value.includes("var(")) return MAP_FALLBACK_INK;
   return value;
 }
 

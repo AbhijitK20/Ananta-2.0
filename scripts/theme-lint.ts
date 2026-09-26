@@ -244,6 +244,11 @@ const LITERAL_EXCEPTIONS: ReadonlyArray<{ file: string; reason: string }> = [
     reason:
       "viewport.themeColor is read by the browser for the browser chrome, outside the document, so a CSS custom property cannot reach it.",
   },
+  {
+    file: "src/components/map/ClusterLayer.tsx",
+    reason:
+      "MapLibre paint properties are not CSS and cannot read a custom property, so the fallback used when a token is unavailable has to be a concrete colour. It is the --raw-ink value, not pure black, because the design system forbids pure black. Checked against tokens.css like the other entry, so it cannot drift.",
+  },
 ];
 
 const exceptionFor = (rel: string) => LITERAL_EXCEPTIONS.find((entry) => entry.file === rel);
