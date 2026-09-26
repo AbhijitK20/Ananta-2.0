@@ -1,18 +1,18 @@
 {
  "edinburgh": {
-  "src": "/places/_test.mp4",
+  "src": "/places/_test.webm",
   "provider": "ffmpeg-testsrc2",
   "licence": "CC0",
   "title": "TEST CLIP - not real footage"
  },
  "london": {
-  "src": "/places/_test.mp4",
+  "src": "/places/_test.webm",
   "provider": "ffmpeg-testsrc2",
   "licence": "CC0",
   "title": "TEST CLIP - not real footage"
  },
  "dublin": {
-  "src": "/places/_test.mp4",
+  "src": "/places/_test.webm",
   "provider": "ffmpeg-testsrc2",
   "licence": "CC0",
   "title": "TEST CLIP - not real footage"
