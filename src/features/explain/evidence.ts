@@ -1229,6 +1229,27 @@ export function auditLedger(
 ): LedgerAudit {
   const violations: LedgerViolation[] = [];
   const expected = explainPlan(plan, ctx, opts);
+
+  /*
+   * The tripwire, before anything else. Comparing a ledger built from one set of
+   * options against a plan described by a different set produces a drift violation
+   * for every single id, which reads like a catastrophic data problem and is
+   * actually a caller mistake. Saying so in one line is the difference between a
+   * five-minute diagnosis and an afternoon.
+   */
+  if (!deepEqual(ledger.source, expected.source)) {
+    return {
+      ok: false,
+      violations: [
+        {
+          code: "source_mismatch",
+          message: `This ledger was built from different data: it saw ${JSON.stringify(ledger.source)}, the audit was given ${JSON.stringify(expected.source)}.`,
+          experienceId: null,
+        },
+      ],
+    };
+  }
+
   const stopIds = new Set(plan.stops.map((stop) => stop.experienceId));
   const rejectedSet = new Set(plan.rejected.map((row) => row.experienceId));
   const scored = new Set([...Object.keys(opts.fits ?? {}), ...Object.keys(opts.scores ?? {})]);

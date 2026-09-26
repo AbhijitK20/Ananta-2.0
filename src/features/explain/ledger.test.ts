@@ -24,8 +24,8 @@ import { describe, expect, it } from "vitest";
 
 import type { Rejection } from "../../contracts";
 
-import { ledgerSummary, outcomeLabel, whyLedgerProps, type WhyLedgerProps } from "./index";
-import { LEDGER, PLAN, REJECTIONS, SCORE_SHORE, need, rejectionsById } from "./scenario.fixtures";
+import { explainSwaps, ledgerSummary, outcomeLabel, swapCost, whyLedgerProps, type WhyLedgerProps } from "./index";
+import { CTX, LEDGER, OPTS, PLAN, REJECTIONS, SCORE_SHORE, need, rejectionsById } from "./scenario.fixtures";
 
 /** Every prop `WhyLedger` accepts, from its own declaration. */
 const PROP_NAMES = ["score", "why", "rejections", "rejectionNames", "rejectionActions", "className"] as const;
@@ -156,5 +156,115 @@ describe("rejections are grouped the way the adapter needs them", () => {
     expect(map.get("exp_walk_03")?.map((row: Rejection) => row.code)).toEqual(["no_low_stairs", "over_budget"]);
     expect(map.get("exp_cafe_04")).toHaveLength(1);
     expect(map.get("exp_market_01")).toBeUndefined();
+  });
+});
+
+describe("why the plan changed under the traveller", () => {
+  /*
+   * The swap: rain starts, the pottery booking is dropped, and the free street
+   * walk takes its place. The previous plan is `LEDGER`; the new one is built here
+   * so both sides of the difference are real ledgers rather than two shapes.
+   */
+  const after = explainPlan(
+    {
+      ...PLAN,
+      stops: [PLAN.stops[0]].filter((stop): stop is NonNullable<typeof stop> => stop !== undefined),
+      legs: [],
+      totalMin: 75,
+      totalCost: { minor: 0, currency: "INR" },
+      utilisation: 75 / 180,
+      rejected: [
+        ...PLAN.rejected,
+        {
+          experienceId: "exp_pottery_02",
+          code: "weather_unsafe" as const,
+          message: "Heavy rain, and the studio is booked solid.",
+          shortfall: null,
+          unit: null,
+          relaxable: false,
+        },
+      ],
+    },
+    CTX,
+    OPTS,
+  );
+
+  const SWAPS = [
+    { removedId: "exp_pottery_02", addedId: "exp_shore_05", reason: "Indoors beat a wet street.", scoreDelta: -0.04 },
+  ];
+
+  it("reports the engine's own reason, the signed cost, and both sides", () => {
+    const [swap] = explainSwaps(SWAPS, LEDGER, after);
+    expect(swap?.reason).toBe("Indoors beat a wet street.");
+    expect(swap?.scoreDelta).toBe(-0.04);
+    expect(swap?.outcome).toBe("replaced");
+    expect(swap?.removed?.experienceId).toBe("exp_pottery_02");
+    expect(swap?.added?.experienceId).toBe("exp_shore_05");
+    expect(swap?.reasonDetail).toBe("Kumbharwada pottery session made way for Marine Drive shell museum walk.");
+  });
+
+  it("does not present a swap that scored worse as a straight upgrade", () => {
+    const [swap] = explainSwaps(SWAPS, LEDGER, after);
+    expect(swap?.evidence[0]?.key).toBe("swap:score_delta");
+    expect(swap?.evidence[0]?.claim).toBe("The swap cost 0.04 of score, and it was still the right call.");
+    expect(swap?.evidence[0]?.polarity).toBe("opposes");
+  });
+
+  it("carries across the constraint that killed the stop that left", () => {
+    const [swap] = explainSwaps(SWAPS, LEDGER, after);
+    // The new plan rejected the pottery stop for the weather, and that sentence is
+    // the gate's, not this file's.
+    const blocking = swap?.evidence.find((item) => item.key === "filter:weather_unsafe");
+    expect(blocking?.claim).toBe("Heavy rain, and the studio is booked solid.");
+  });
+
+  it("carries the caveat on the stop that arrived, so it is not sold as a clean win", () => {
+    const [swap] = explainSwaps(SWAPS, LEDGER, after);
+    const caveat = swap?.evidence.find((item) => item.polarity === "opposes" && item.key !== "swap:score_delta");
+    expect(caveat?.key).toBe("filter:weather_unsafe");
+    // Capped, so a panel cannot be handed twenty lines per swap.
+    expect(swap?.evidence.length).toBeLessThanOrEqual(3);
+  });
+
+  it("classifies a one-sided change honestly", () => {
+    const [addedOnly] = explainSwaps(
+      [{ removedId: null, addedId: "exp_shore_05", reason: "Fits what is left.", scoreDelta: 0.1 }],
+      LEDGER,
+      after,
+    );
+    expect(addedOnly?.outcome).toBe("added");
+    expect(addedOnly?.removed).toBeNull();
+
+    const [removedOnly] = explainSwaps(
+      [{ removedId: "exp_pottery_02", addedId: null, reason: "Booked solid.", scoreDelta: -0.64 }],
+      LEDGER,
+      after,
+    );
+    expect(removedOnly?.outcome).toBe("removed");
+    expect(removedOnly?.added).toBeNull();
+    expect(removedOnly?.reasonDetail).toContain("nothing replaced it");
+  });
+
+  it("yields null rather than a guess for a side it has no ledger for", () => {
+    const [swap] = explainSwaps(
+      [{ removedId: "exp_never_existed", addedId: "exp_shore_05", reason: "Better fit.", scoreDelta: 0 }],
+      LEDGER,
+      after,
+    );
+    expect(swap?.removed).toBeNull();
+    expect(swap?.added?.experienceId).toBe("exp_shore_05");
+  });
+
+  it("sums the score cost of a set of swaps, signed", () => {
+    const swaps = explainSwaps(
+      [
+        { removedId: "exp_pottery_02", addedId: "exp_shore_05", reason: "a", scoreDelta: -0.04 },
+        { removedId: null, addedId: "exp_cafe_04", reason: "b", scoreDelta: 0.12 },
+      ],
+      LEDGER,
+      after,
+    );
+    expect(swapCost(swaps)).toBe(0.08);
+    expect(swapCost([])).toBe(0);
   });
 });

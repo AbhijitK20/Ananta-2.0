@@ -8,6 +8,7 @@ import {
   CATALOGUE,
   FITS,
   SCORES,
+  SCORE_MARKET,
   CTX,
   FIT_SHORE,
   LEDGER,
@@ -424,12 +425,14 @@ describe("scoring the candidates the packer did not take", () => {
       CTX,
       [{ id: "exp_market_01" } as never, { id: "exp_shore_05" } as never],
       weights,
-      SCORES,
+      // Only the stop's own breakdown is already held, which is the real situation:
+      // the plan carries `PlanStop.score` for its stops and nothing for the rest.
+      { exp_market_01: SCORE_MARKET },
     );
 
     // The stop already had one, so only the un-packed candidate was asked about.
     expect(asked).toEqual([["exp_shore_05"]]);
-    expect(result.exp_market_01).toBe(SCORES.exp_market_01);
+    expect(result.exp_market_01).toBe(SCORE_MARKET);
     expect(result.exp_shore_05?.total).toBe(0.5);
   });
 
