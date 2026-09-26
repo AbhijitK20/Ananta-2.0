@@ -32,6 +32,7 @@ import {
   opportunitiesForProvider,
   type ProviderOpportunityRecord,
 } from "./engine";
+import { usableSlots, type Calendar } from "./slots";
 
 const catalogue = loadCatalogue();
 const TODAY = "2026-09-20";
@@ -282,3 +283,125 @@ describe("step 4 — supply arrives, and the opportunity answers", () => {
     );
   });
 });
+
+/**
+ * The second walk-through, and the one the spec's own headline describes.
+ *
+ * The provider above fixed their listing's FIELDS. A listing whose fields all
+ * pass and which has published no slot is still unserved demand, and the fix is a
+ * window. This block starts from the same real searches and a fresh store, and
+ * ends with a slot published through the provider's own availability model.
+ */
+describe("step 5 — the spec's own headline: a slot, not a field", () => {
+  // Its own store on purpose. Step 4 left the shared store holding a fixed
+  // listing, and a second unbookable listing would be a genuine (but confusing)
+  // second opportunity rather than the single one this block is about.
+  const fresh = new ProviderStore(provider, {}, TODAY);
+
+  const calendarOf = (): Calendar => ({
+    slots: fresh.availability().map((view) => view.dated),
+    blocks: [],
+    bookings: fresh.snapshot().bookings.map((request) => ({
+      slotId: request.slotId,
+      partySize: request.partySize,
+      state: request.state,
+    })),
+    horizonDays: 21,
+  });
+
+  const feedWithCalendar = (): ProviderOpportunityRecord[] =>
+    detectOpportunities(gaps, [...catalogue, ...fresh.allListings()], {
+      asOf: AS_OF,
+      providers: [provider],
+      datasetLabel: "content/experiences + real searches",
+      supply: calendarOf(),
+      unmetDemand: logged,
+    });
+
+  it("the real searches carry a real hour, and that hour is what gets recommended", () => {
+    // 05:30Z in the fixture is 11:00 in Mumbai. Read off the rows, not typed in.
+    expect(gaps[0]!.hourMin).toBe(11 * 60);
+    expect(gaps[0]!.hourBucket).toBe("morning");
+  });
+
+  it("once the fields pass, the only thing left wrong is that nothing is bookable", () => {
+    const saved = fresh.saveListing(null, draftFromExperience(catalogue.find((row) => row.id === "ban-ceramicist")!));
+    expect(saved.ok).toBe(true);
+    const cheapened = fresh.saveListing(saved.value.id, { ...draftFromExperience(saved.value), priceRupees: "700" });
+    expect(cheapened.ok).toBe(true);
+    const accessible = fresh.saveListing(saved.value.id, {
+      ...draftFromExperience(fresh.listing(saved.value.id)!),
+      strollerOk: "yes",
+      requiresBooking: false,
+      walkIn: true,
+    });
+    expect(accessible.ok).toBe(true);
+
+    const record = opportunitiesForProvider(feedWithCalendar(), provider.id)[0]!;
+    expect(record.missingSupply.field).toBe("slots");
+    expect(record.missingSupply.label).toBe("a bookable slot");
+    expect(record.kind).toBe("capacity_window");
+    expect(record.targetBlockers).toEqual([]);
+    expect(record.suggestedSlot).toMatchObject({ startMin: 11 * 60, endMin: 11 * 60 + 150, bucket: "morning" });
+    expect(record.contract.headline).toContain("you publish nothing they can book around 11:00");
+    expect(evidenceOf(record, "your bookable calendar for The ceramicist's kiln day")).toBe("nothing published at all");
+  });
+
+  it("publishing that one slot, through the provider's own model, closes the gap", () => {
+    const listing = fresh.allListings()[0]!;
+    const suggestion = opportunitiesForProvider(feedWithCalendar(), provider.id)[0]!.suggestedSlot!;
+    // Straight into `ProviderStore.addSlot`, so the slot is validated by the same
+    // rules the availability editor enforces: right length, no overlap, in future,
+    // and within the listing's own capacity. (A slot of 6 is correctly rejected
+    // here — the kiln bench seats 5 — which is the provider model doing its job.)
+    expect(listing.capacity).toBe(5);
+    const added = fresh.addSlot({
+      experienceId: listing.id,
+      date: suggestion.date,
+      start: minutesToHHMM(suggestion.startMin),
+      end: minutesToHHMM(suggestion.endMin),
+      capacity: "5",
+    });
+    expect(added.ok, added.ok ? "" : JSON.stringify(added.error)).toBe(true);
+
+    const records = feedWithCalendar();
+    expect(opportunitiesForProvider(records, provider.id)).toEqual([]);
+    expect(acquisitionGaps(records)).toEqual([]);
+    const met = opportunitiesForProvider(records, provider.id, { includeMet: true })[0]!;
+    expect(met.status).toBe("met");
+    expect(met.servedBy).toContain(listing.id);
+  });
+
+  it("and now the impact is measured, not predicted", () => {
+    // The seven real searches, re-run against today's listings AND slots. This is
+    // the only number the contract's `estimatedImpact` field ever gets, and it is
+    // a replay of demand that already happened, not a forecast.
+    const met = opportunitiesForProvider(feedWithCalendar(), provider.id, { includeMet: true })[0]!;
+    const impact = met.contract.estimatedImpact!;
+    expect(impact).toContain("7 of the 7 logged searches would now find something bookable");
+    expect(impact).toContain("Measured by re-running");
+    expect(met.measurement).toMatchObject({ total: 7, satisfied: 7, byTarget: 7 });
+  });
+
+  it("and the seven original traveller searches, re-run with the calendar, now book", () => {
+    // The traveller-side proof, this time including bookability. A listing that
+    // passes every field check but publishes nothing is still nothing to book.
+    const listing = fresh.allListings()[0]!;
+    for (const request of requests) {
+      const window = {
+        arriveMin: 11 * 60,
+        availableMin: request.ctx.availableMin,
+        partySize: request.ctx.partySize,
+      };
+      expect(usableSlots(listing, calendarOf(), TODAY, window)).toHaveLength(1);
+    }
+  });
+});
+
+function evidenceOf(record: ProviderOpportunityRecord, label: string): string | undefined {
+  return record.contract.evidence.find((row) => row.label === label)?.value;
+}
+
+function minutesToHHMM(minutes: number): string {
+  return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+}
