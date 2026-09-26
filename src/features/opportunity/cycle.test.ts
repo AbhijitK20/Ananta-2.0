@@ -325,17 +325,24 @@ describe("step 5 — the spec's own headline: a slot, not a field", () => {
   });
 
   it("once the fields pass, the only thing left wrong is that nothing is bookable", () => {
-    const saved = fresh.saveListing(null, draftFromExperience(catalogue.find((row) => row.id === "ban-ceramicist")!));
-    expect(saved.ok).toBe(true);
-    const cheapened = fresh.saveListing(saved.value.id, { ...draftFromExperience(saved.value), priceRupees: "700" });
-    expect(cheapened.ok).toBe(true);
-    const accessible = fresh.saveListing(saved.value.id, {
-      ...draftFromExperience(fresh.listing(saved.value.id)!),
+    const created = fresh.saveListing(null, draftFromExperience(catalogue.find((row) => row.id === "ban-ceramicist")!));
+    // Narrowed, not asserted-then-assumed: `expect(x.ok)` does not narrow a
+    // `Result`, and a test that reads `.value` off a failed save would throw
+    // instead of saying what went wrong.
+    if (!created.ok) throw new Error(`adopt failed: ${JSON.stringify(created.error)}`);
+    const id = created.value.id;
+
+    const cheapened = fresh.saveListing(id, { ...draftFromExperience(created.value), priceRupees: "700" });
+    if (!cheapened.ok) throw new Error(`price edit failed: ${JSON.stringify(cheapened.error)}`);
+
+    const listing = fresh.listing(id)!;
+    const accessible = fresh.saveListing(id, {
+      ...draftFromExperience(listing),
       strollerOk: "yes",
       requiresBooking: false,
       walkIn: true,
     });
-    expect(accessible.ok).toBe(true);
+    if (!accessible.ok) throw new Error(`access edit failed: ${JSON.stringify(accessible.error)}`);
 
     const record = opportunitiesForProvider(feedWithCalendar(), provider.id)[0]!;
     expect(record.missingSupply.field).toBe("slots");
@@ -362,7 +369,7 @@ describe("step 5 — the spec's own headline: a slot, not a field", () => {
       end: minutesToHHMM(suggestion.endMin),
       capacity: "5",
     });
-    expect(added.ok, added.ok ? "" : JSON.stringify(added.error)).toBe(true);
+    if (!added.ok) throw new Error(`addSlot failed: ${JSON.stringify(added.error)}`);
 
     const records = feedWithCalendar();
     expect(opportunitiesForProvider(records, provider.id)).toEqual([]);

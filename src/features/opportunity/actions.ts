@@ -16,6 +16,7 @@
  * not to a provider with a listing to edit. It is filtered out here and stays
  * available through `acquisitionGaps`.
  */
+import type { ProviderOpportunity } from "../../contracts";
 import { plural } from "./demand";
 import type { ProviderOpportunityRecord } from "./engine";
 
