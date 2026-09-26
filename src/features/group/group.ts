@@ -55,7 +55,6 @@ import {
   type Experience,
   type GeoPoint,
   type Plan,
-  type Rejection,
   type ScoreBreakdown,
   type WeatherNow,
   type WeightProfile,

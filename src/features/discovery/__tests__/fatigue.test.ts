@@ -13,7 +13,6 @@
 import { describe, expect, it } from "vitest";
 import {
   Plan as PlanSchema,
-  type ContextChange,
   type DiscoveryContext,
   type Experience,
   type FeasibleResult,
@@ -555,7 +554,7 @@ describe("travel load — construction", () => {
     // repair loop cannot help here, so only the gate can stop it — and the gate
     // is the last thing between a bad plan and a traveller.
     const seed = { ...SEED, prefs: { walking: "minimal" as const } };
-    const { session } = sessionFor(seed);
+    sessionFor(seed);
     const heavy = pack(ctxOf(), byScore(["mid_gallery", "near_market", "near_cafe"]));
     const engine = insistent(heavy);
     const fresh = createSession({ engine, seed, catalogue: CATALOGUE, weights: WEIGHTS });

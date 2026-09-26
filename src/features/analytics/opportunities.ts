@@ -15,7 +15,7 @@
  * contract reserves it for a measured effect, and we do not have one yet. A
  * dashboard of unmeasured predictions is worse than no dashboard.
  */
-import type { Experience, Provider, ProviderOpportunity, RejectionCode } from "../../contracts";
+import type { Experience, Provider, RejectionCode } from "../../contracts";
 import { MIN_SAMPLE, RADIUS_KM, WINDOW_DAYS, distanceKm, humanise } from "./aggregate";
 import { describeWindow, formatInr, formatMinutes, suggestedWindow, timeBucketLabel } from "./format";
 import type { ClaimTier, DemandCell, Opportunity, ProviderSuggestion, SuggestionKind, SupplyFix } from "./types";
@@ -35,15 +35,12 @@ export const MIN_CELL_FOR_OPPORTUNITY = 2;
 
 // --- what a rejection code points at --------------------------------------
 
-const ACCESS_KEYS = {
-  not_step_free: "stepFree",
-  not_stroller_ok: "strollerOk",
-  no_low_stairs: "lowStairs",
-  no_hearing_loop: "hearingLoop",
-  no_restroom: "restroomOnSite",
-} as const;
-
-type AccessKey = (typeof ACCESS_KEYS)[keyof typeof ACCESS_KEYS];
+type AccessKey =
+  | "stepFree"
+  | "strollerOk"
+  | "lowStairs"
+  | "hearingLoop"
+  | "restroomOnSite";
 
 const ACCESS_LABEL: Record<AccessKey, string> = {
   stepFree: "step-free access",

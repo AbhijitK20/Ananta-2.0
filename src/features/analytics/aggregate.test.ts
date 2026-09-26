@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from "vitest";
 import type { AccessNeed, RejectionCode, UnmetDemand } from "../../contracts";
+import { Category } from "../../contracts";
 import {
   MIN_SAMPLE,
   aggregateDemand,
@@ -146,6 +147,16 @@ describe("categoryIntent", () => {
     expect(intent.category).toBe("craft_workshop");
     expect(intent.tier).toBe("observed");
     expect(intent.matchedOn).toBe("craft_workshop");
+  });
+
+  it("returns a real Category, never the spaced string the traveller typed", () => {
+    // `"craft workshop"` matched the set and came back verbatim, which is not a
+    // `Category`. It then failed `listing.category === cell.category` and the
+    // search produced no opportunity at all.
+    const intent = categoryIntent(["craft workshop"]);
+    expect(intent.category).toBe("craft_workshop");
+    expect(intent.matchedOn).toBe("craft workshop");
+    expect(Category.options).toContain(intent.category);
   });
 
   it("reads free text as inferred, not as fact", () => {

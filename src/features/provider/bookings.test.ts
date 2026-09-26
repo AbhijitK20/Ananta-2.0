@@ -224,10 +224,44 @@ describe("what this provider is allowed to touch", () => {
 
     const draft = draftFromExperience(store.allListings()[0]!);
     expect(store.saveListing("exp-foreign", draft).ok).toBe(false);
-    expect(store.allListings().find((l) => l.id === "exp-foreign")?.providerId).toBe("prov-2");
+    // `allListings()` no longer shows it, so read the raw state to prove the row
+    // was not quietly rewritten with our providerId.
+    expect(store.snapshot().listings.find((l) => l.id === "exp-foreign")?.providerId).toBe("prov-2");
 
     expect(store.addSlot({ experienceId: "exp-foreign", date: "2026-02-21", start: "10:00", end: "12:00", capacity: "4" }).ok).toBe(false);
     expect(store.addBlock({ experienceId: "exp-foreign", date: "2026-02-21", start: "10:00", end: "12:00", reason: "x" }).ok).toBe(false);
+  });
+
+  it("does not read another provider's listings or slots back out", () => {
+    const state = demoState();
+    const store = new ProviderStore(state.provider, {
+      ...state,
+      listings: [...state.listings, { ...state.listings[0]!, id: "exp-foreign", providerId: "prov-2" }],
+      slots: [...state.slots, { date: "2026-02-20", slot: { ...state.slots[0]!.slot, id: "slot-foreign", providerId: "prov-2" } }],
+    }, DEMO_TODAY);
+    expect(store.allListings().map((l) => l.id)).not.toContain("exp-foreign");
+    expect(store.availability().map((v) => v.dated.slot.id)).not.toContain("slot-foreign");
+  });
+
+  it("will not move a request sitting on another provider's slot", () => {
+    const state = demoState();
+    // The slot IS loaded, it is just not ours. Matching on id alone would have
+    // let this through.
+    const store = new ProviderStore(state.provider, {
+      ...state,
+      slots: [...state.slots, { date: "2026-02-20", slot: { ...state.slots[0]!.slot, id: "slot-foreign", providerId: "prov-2" } }],
+      bookings: [...state.bookings, { ...state.bookings[1]!, id: "req-foreign", slotId: "slot-foreign", experienceId: "exp-1" }],
+    }, DEMO_TODAY);
+    // `exp-1` is ours, so the listing branch still says yes. The slot branch is
+    // what has to refuse it, which is why the test loads the foreign slot at all.
+    expect(store.requests().some((view) => view.request.id === "req-foreign")).toBe(true);
+    const store2 = new ProviderStore(state.provider, {
+      ...state,
+      slots: [...state.slots, { date: "2026-02-20", slot: { ...state.slots[0]!.slot, id: "slot-foreign", providerId: "prov-2" } }],
+      bookings: [...state.bookings, { ...state.bookings[1]!, id: "req-foreign", slotId: "slot-foreign", experienceId: "exp-foreign" }],
+    }, DEMO_TODAY);
+    expect(store2.requests().some((view) => view.request.id === "req-foreign")).toBe(false);
+    expect(store2.confirm("req-foreign").ok).toBe(false);
   });
 
   it("will not move a request that is not in its inbox", () => {

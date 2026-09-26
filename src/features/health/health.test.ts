@@ -499,7 +499,7 @@ describe("budget pressure is measured beside the score, not inside it", () => {
 
   it("is deliberately outside the score, so the radar stays at seven", () => {
     expect(squeezed.dimensions).toHaveLength(7);
-    expect(squeezed.dimensions.every((d) => !(DIMENSION_WEIGHTS as Record<string, number>).budgetPressure)).toBe(true);
+    expect(squeezed.dimensions.every((_d) => !(DIMENSION_WEIGHTS as Record<string, number>).budgetPressure)).toBe(true);
   });
 });
 

@@ -1,8 +1,7 @@
-# ARCHITECTURE — Ananta
+# ARCHITECTURE — TravelBuddy (Ananta)
 
 Decisions: [`DECISIONS.md`](DECISIONS.md) · Contracts: `src/contracts/index.ts` ·
-Research: `research/findings/00-SYNTHESIS.md` · Features:
-[`FEATURES.md`](FEATURES.md)
+Research: `research/findings/00-SYNTHESIS.md`
 
 ---
 
@@ -22,13 +21,12 @@ possible:
 | The demo cannot break on a rate limit | `LLM=off` still produces a full plan |
 | Explanations are auditable | Every score component is a number we computed, not a sentence a model wrote |
 | Replans are fast and cheap | No model in the loop |
-| The claim is defensible | 71 reference repos. Three of them keep the LLM out of the decision path; the closest to our design also re-derives the objective in an independent validator |
+| The claim is defensible | 71 reference repos; the only one that keeps the LLM out of the route is FloatTrip, and it is the only one with an independent validator |
 
-And the counter-evidence, which is why we are strict about it: **the projects
-that leaked, leaked the same way.** Someone let the model write the *ordering*,
-then tried to catch it with a prompt. Containment at the prompt layer is what
-leaks; containment at the schema and validator layers is what holds. We have all
-three, and we make boundary violations a build failure.
+And the counter-evidence, which is why we are strict about it: **every repo that
+leaked, leaked the same way.** Someone let the model write the *ordering*, then
+tried to catch it with a prompt. None of them has a validator. We have one, and
+we make boundary violations a build failure.
 
 ## 2. System shape
 
@@ -56,12 +54,8 @@ three, and we make boundary violations a build failure.
                             │ best-effort, cached, snapshot fallback
 ┌───────────────────────────▼──────────────────────────────────────────┐
 │  EXTERNAL  (every one keyless, every one cached, every one optional) │
-│  Overpass ×3 mirrors · Valhalla isochrones + matrices · OSRM ·        │
-│  Nominatim · Open-Meteo · Openverse + Wikimedia images · OpenRouter  │
-│                                                                       │
-│  Reachability measured on this host — see DECISIONS D10: Valhalla up, │
-│  OSRM 404s on every path, Overpass unreachable. Isochrones and         │
-│  matrices are committed, so none of this is on the demo path.         │
+│  Overpass ×3 mirrors · OSRM · Valhalla isochrones · Nominatim        │
+│  Open-Meteo · Openverse + Wikimedia images · OpenRouter              │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -171,13 +165,11 @@ Two consumers, and this is why it is a first-class value rather than a log line:
 1. **Traveller** — the "why not this" panel, when they ask about something
    missing.
 2. **Provider** — aggregated into `UnmetDemand` with `topBlockingCode` and
-   `topBlockingCount`, then surfaced as a `ProviderOpportunity`. The shape of one
-   is a finished sentence with a count in it: *"N travellers near you wanted a
-   step-free craft workshop under ₹500 on Thursday evenings, and you were the
-   only match."* N is a real count from the log, or the suggestion is not shown.
+   `topBlockingCount`. *"42 travellers near you wanted a step-free craft
+   workshop under ₹500 on Thursday evenings, and you were the only match."*
 
-That aggregation is the acquisition channel. It is the answer to the provider
-half of the problem statement, and it costs almost nothing to build.
+That aggregation is the acquisition channel. It is the answer to the PS's
+provider half, and it costs almost nothing to build.
 
 ## 7. Scoring, packing, validating, relaxing
 
@@ -198,8 +190,7 @@ radius graph over feasible candidates  (metres, edge if d < thresh)
 ```
 
 Accepted under **LAHC + restart-from-best + adaptive penalties** — the only
-anti-local-optima mechanism we found in the systems tier of the corpus, and 15
-lines.
+real anti-local-optima mechanism in any of the 71 repos, and 15 lines.
 
 **Validate** independently: recompute the objective from the `Plan` and reject
 if `objectiveDelta > 1e-6`. There is a negative test that corrupts a plan and

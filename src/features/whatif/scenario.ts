@@ -519,6 +519,8 @@ export function simulate(
     catalogue: session.catalogue,
     change: edit.change,
     travelMode: ctx.travelMode,
+    // Where the day starts, so a first-stop removal can price its inbound leg.
+    origin: ctx.origin.point,
   });
   const reality = buildRealityChanged({
     change: edit.change,
@@ -526,6 +528,11 @@ export function simulate(
     before: current,
     after: plan,
     nextCtx: ctx,
+    // The context `current` was ACTUALLY solved under: the live session context
+    // before the hypothetical edit. Not `intent` and not the edited `ctx`, for
+    // the reason reality.ts gives -- shaping the before-state with either of
+    // those reports a plan the traveller was never shown.
+    prevCtx: session.state.ctx,
     // The traveller's real creation-time ask, even in a trip that never happened.
     intent: session.intent,
     enginePreservedIntent: intentKept(ctx, plan),

@@ -37,7 +37,7 @@ export function ProviderDashboardView({
         <h2 style={{ margin: 0, fontFamily: "var(--font-display, Georgia, serif)", fontSize: 24, fontWeight: 400 }}>
           {dashboard.provider.name}
         </h2>
-        <p style={{ margin: "2px 0 0", fontSize: 12, color: "var(--ink-muted, #6F6A5E)" }}>
+        <p style={{ margin: "2px 0 0", fontSize: 12, color: "var(--ink-muted)" }}>
           {[...new Set(dashboard.listings.map((l) => l.neighbourhood))].sort().join(", ") || "No listings yet"}
           {" · "}
           {dashboard.listings.length} {dashboard.listings.length === 1 ? "listing" : "listings"}
@@ -162,14 +162,14 @@ export function ProviderDashboardView({
         <Panel title="Your listings" subtitle="What travellers saw, per listing">
           <ul style={{ listStyle: "none", margin: 0, padding: 0, fontSize: 12 }}>
             {dashboard.listings.map((l) => (
-              <li key={l.id} style={{ padding: "6px 0", borderBottom: "1px solid var(--rule, #E4E0D6)" }}>
+              <li key={l.id} style={{ padding: "6px 0", borderBottom: "1px solid var(--rule)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                   <span>{l.name}</span>
-                  <span style={{ fontFamily: "var(--font-data, monospace)", color: "var(--ink-muted, #6F6A5E)" }}>
+                  <span style={{ fontFamily: "var(--font-data, monospace)", color: "var(--ink-muted)" }}>
                     {l.impressions} / {l.fitViews} / {l.requests}
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: "var(--ink-faint, #9A948A)" }}>
+                <div style={{ fontSize: 11, color: "var(--ink-faint)" }}>
                   {formatMinutes(l.durationMin)}, {formatInr(l.priceMinor)}, {l.indoorOutdoor}
                   {l.kidFriendly === null ? ", kid-friendly unknown" : l.kidFriendly ? ", kid-friendly" : ""}
                   {l.unconfirmedAccess.length > 0 ? `, ${l.unconfirmedAccess.length} access fields unconfirmed` : ""}
@@ -187,8 +187,8 @@ function Dim({ title, dimension }: { title: string; dimension: DemandDimension }
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-        <span style={{ fontSize: 11, letterSpacing: "0.04em", color: "var(--ink-muted, #6F6A5E)" }}>{title}</span>
-        <span style={{ fontSize: 11, color: "var(--ink-faint, #9A948A)", fontFamily: "var(--font-data, monospace)" }}>
+        <span style={{ fontSize: 11, letterSpacing: "0.04em", color: "var(--ink-muted)" }}>{title}</span>
+        <span style={{ fontSize: 11, color: "var(--ink-faint)", fontFamily: "var(--font-data, monospace)" }}>
           {dimension.reliable ? `n=${dimension.n}` : `n=${dimension.n}, thin`}
         </span>
       </div>
@@ -201,14 +201,14 @@ function DatasetBanner({ dashboard }: { dashboard: ProviderDashboard }): ReactNo
   return (
     <div
       style={{
-        border: `1px solid ${dashboard.dataset.source === "demo" ? "var(--warn, #9A6B1F)" : "var(--rule, #E4E0D6)"}`,
+        border: `1px solid ${dashboard.dataset.source === "demo" ? "var(--warn)" : "var(--rule)"}`,
         borderRadius: 8,
         padding: "8px 12px",
         fontSize: 12,
-        color: "var(--ink-muted, #6F6A5E)",
+        color: "var(--ink-muted)",
       }}
     >
-      <strong style={{ color: "var(--ink, #17150F)" }}>
+      <strong style={{ color: "var(--ink)" }}>
         {dashboard.dataset.source === "demo" ? "Demo data" : "Live data"}: {dashboard.dataset.label}
       </strong>
       {dashboard.notes.map((note) => (
@@ -250,6 +250,6 @@ function metricCards(dashboard: ProviderDashboard): {
 
 function Empty({ children }: { children: ReactNode }): ReactNode {
   return (
-    <p style={{ margin: 0, fontSize: 12, color: "var(--ink-muted, #6F6A5E)", lineHeight: 1.5 }}>{children}</p>
+    <p style={{ margin: 0, fontSize: 12, color: "var(--ink-muted)", lineHeight: 1.5 }}>{children}</p>
   );
 }

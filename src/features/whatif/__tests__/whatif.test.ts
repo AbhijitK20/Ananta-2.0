@@ -410,8 +410,6 @@ export function scriptedPlanner(options: PlannerOptions = {}) {
 // Setup
 // ---------------------------------------------------------------------------
 
-const editor = () => createContext(SEED);
-
 const weights = {
   version: "scripted-1",
   weights: { interest: 1, proximity: 1, rating: 1 },

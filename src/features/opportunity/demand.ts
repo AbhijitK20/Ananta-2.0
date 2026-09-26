@@ -277,22 +277,6 @@ export interface SearchOutcome {
   demand: UnmetDemand | null;
 }
 
-const CONDITIONS = new Set<string>([
-  "clear",
-  "cloudy",
-  "light_rain",
-  "heavy_rain",
-  "storm",
-  "heat",
-  "wind",
-]);
-
-/** The logged weather is a free string; an unrecognised one is treated as dry. */
-function conditionOf(raw: string): DiscoveryContext["weather"]["condition"] {
-  const value = raw.trim().toLowerCase();
-  return CONDITIONS.has(value) ? (value as DiscoveryContext["weather"]["condition"]) : "clear";
-}
-
 /**
  * The binding constraint, per the contract: whichever code eliminated the most
  * candidates. Ties break on the code string, not on insertion order, so the

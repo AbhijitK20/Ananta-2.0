@@ -19,18 +19,18 @@ import type { ClaimTier, DemandDimension, Opportunity, TrendPoint } from "../typ
 
 /** Token names from docs/DESIGN_SYSTEM.md §2, with the documented hex fallback. */
 const TOKEN = {
-  canvas: "var(--canvas, #F6F4EF)",
-  surface: "var(--surface, #FFFDF8)",
-  ink: "var(--ink, #17150F)",
-  inkMuted: "var(--ink-muted, #6F6A5E)",
-  inkFaint: "var(--ink-faint, #9A948A)",
-  rule: "var(--rule, #E4E0D6)",
-  accent: "var(--accent, #0E4F4A)",
-  accentSoft: "var(--accent-soft, #D7E4E2)",
-  alarm: "var(--alarm, #B23A2E)",
-  fit: "var(--fit, #4A6B3A)",
-  warn: "var(--warn, #9A6B1F)",
-  info: "var(--info, #3D5A80)",
+  canvas: "var(--canvas)",
+  surface: "var(--surface)",
+  ink: "var(--ink)",
+  inkMuted: "var(--ink-muted)",
+  inkFaint: "var(--ink-faint)",
+  rule: "var(--rule)",
+  accent: "var(--accent)",
+  accentSoft: "var(--accent-soft)",
+  alarm: "var(--alarm)",
+  fit: "var(--fit)",
+  warn: "var(--warn)",
+  info: "var(--info)",
 } as const;
 
 const TIER_TONE: Record<ClaimTier, string> = {
@@ -45,7 +45,7 @@ const TIER_LABEL: Record<ClaimTier, string> = {
   suggested: "Suggested",
 };
 
-/** Warm carbon, never #000. Serif display, UI sans, mono figures. */
+/** Warm carbon, never pure black. Serif display, UI sans, mono figures. */
 const type = {
   display: "var(--font-display, Georgia, serif)",
   ui: "var(--font-ui, system-ui, sans-serif)",
@@ -390,7 +390,7 @@ export function DemandHeatGrid({
 const axisStyle: CSSProperties = {
   fontFamily: "var(--font-data, ui-monospace, monospace)",
   fontSize: 10,
-  color: "var(--ink-muted, #6F6A5E)",
+  color: "var(--ink-muted)",
   textAlign: "center",
   fontWeight: 400,
   padding: 2,
