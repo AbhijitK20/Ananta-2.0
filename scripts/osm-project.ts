@@ -69,6 +69,30 @@ interface OsmElement {
  * the catch-alls. `place_of_worship` is split by `religion` because a contract
  * category exists for each and lumping a mosque into `temple` is exactly the
  * kind of flattening that makes a planner feel wrong.
+ *
+ * Three mappings were wrong when this first shipped against a real 4,982-row
+ * catalogue, and all three were found by reading the output rather than the
+ * code. They are recorded because each looks defensible in the abstract and is
+ * obviously wrong in a list.
+ *
+ * - `craft=*` did NOT map to `craft_workshop`. The live tag distribution is 27
+ *   tailor, 12 electronics_repair, 11 shoemaker, 10 photographer, 8 caterer, 6
+ *   confectionery, 4 carpenter, 4 stonemason, 3 electrician, 3 optician, 2
+ *   cleaning, 2 key_cutter, 1 hvac. Those are trades and services a traveller
+ *   would never plan a trip around, and they put "Laptop SpeedUp" and "Kiran
+ *   Computer And Telecom Services" in a tourism feed. A workshop you can visit
+ *   is a curated claim, not an OSM tag, so `craft` now returns null and is
+ *   dropped. `handicraft` and `brewery` are the only genuinely visitable ones
+ *   and there are five of them; they can be curated in deliberately.
+ * - `office=*` did NOT map to `community_hosted`. Live values are 110
+ *   government, 73 company, 14 coworking, 1 courier — that is "Public
+ *   Distribution System Circle Office", "BMC S Ward Municipal Chowky" and the
+ *   Bureau of Civil Aviation Security appearing as things to do in Mumbai.
+ *   Municipal administration is not an experience. Now dropped.
+ * - `amenity=fast_food` is a chain outlet 118 times out of 468, because those
+ *   rows carry a `brand` tag. Domino's, KFC and McDonald's are not street food.
+ *   A branded fast_food outlet is a `restaurant`; an unbranded one is whatever a
+ *   person actually ate standing up, which is what `street_food` means.
  */
 function categorise(tags: Record<string, string>): Category | null {
   const amenity = tags.amenity;
@@ -77,12 +101,10 @@ function categorise(tags: Record<string, string>): Category | null {
   const leisure = tags.leisure;
   const natural = tags.natural;
   const historic = tags.historic;
-  const craft = tags.craft;
-  const office = tags.office;
 
   // eat / drink
   if (amenity === "restaurant") return tags.cuisine === "fast_food" ? "street_food" : "restaurant";
-  if (amenity === "fast_food") return "street_food";
+  if (amenity === "fast_food") return tags.brand ? "restaurant" : "street_food";
   if (amenity === "cafe") return "cafe";
   if (amenity === "bar" || amenity === "pub" || amenity === "nightclub") return "nightlife";
   if (amenity === "ice_cream") return "street_food";
@@ -119,7 +141,6 @@ function categorise(tags: Record<string, string>): Category | null {
   if (amenity === "fountain" || amenity === "drinking_water") return "hidden_place";
 
   // make / shop
-  if (craft) return "craft_workshop";
   if (shop === "marketplace" || amenity === "marketplace") return "market";
   if (shop === "books" || shop === "record_shop" || shop === "antiques" || shop === "art") return "shopping";
   if (
@@ -132,8 +153,10 @@ function categorise(tags: Record<string, string>): Category | null {
   ) {
     return "shopping";
   }
-  if (office === "tourism") return "community_hosted";
-  if (office === "government" || office === "company" || office === "coworking") return "community_hosted";
+  // `craft` and `office` deliberately return null. See the note above: `craft`
+  // is overwhelmingly trades and repair services, and `office` is municipal
+  // administration. Neither is an experience, and a tourism feed that lists a
+  // BMC ward office is worse than a shorter feed.
 
   // heritage
   if (historic) return "heritage_site";
@@ -253,6 +276,79 @@ function idOf(el: OsmElement): string {
   return `osm-${el.type}-${el.id}`;
 }
 
+/** Great-circle metres. Used only for the near-duplicate test. */
+function metresBetween(a: Experience, b: Experience): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(b.location.lat - a.location.lat);
+  const dLon = toRad(b.location.lon - a.location.lon);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.location.lat)) * Math.cos(toRad(b.location.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6_371_000 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+/**
+ * Name key for near-duplicate detection.
+ *
+ * Lowercased, accents stripped, punctuation and spacing removed. "Café meter
+ * on" and "cafe meter on" are one place; "Banana Leaf" in Bandra and "Banana
+ * Leaf" in Dadar are two, and the distance test below tells them apart.
+ */
+function nameKey(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+/**
+ * Whether a description is safe to render as app copy.
+ *
+ * OSM `description` is a free-text field that anyone can edit, and it carries
+ * whatever the last mapper typed. The first harvest rendered, verbatim and in
+ * the UI's own voice, "this park only for child and their parents. Student are
+ * not alloewd in this park." and "sid". Beyond looking broken, that is a
+ * production risk: a joke or a malicious edit becomes official copy from a
+ * travel product, attributed to nobody.
+ *
+ * So this is a conservative prose test, not a profanity filter. It keeps text
+ * that reads like a sentence and drops the rest. `blurb` and `description` both
+ * come through here, and a row whose description fails simply has none — the
+ * card renders without it, which is the correct outcome for missing data.
+ */
+function usableProse(text: string | undefined): string | null {
+  if (text === undefined) return null;
+  const trimmed = text.trim();
+  if (trimmed.length < 25) return null;
+  if (trimmed.length > 400) return null;
+  // Needs a few real words and a few vowels: "sid" and "cafe meter on" fail,
+  // "a quiet park beside the sea" passes.
+  const words = trimmed.split(/\s+/);
+  if (words.length < 5) return null;
+  const vowels = (trimmed.match(/[aeiouAEIOU]/g) ?? []).length;
+  if (vowels / trimmed.length < 0.28) return null;
+  // Mapper shorthand and machine paste, not prose.
+  if (/https?:\/\/|www\.|\{\{|\}\}|<\/?[a-z]+>|[|={}\[\]]/.test(trimmed)) return null;
+  // Shouting, or a run of punctuation standing in for words.
+  const letters = trimmed.replace(/[^a-zA-Z]/g, "");
+  if (letters.length > 0 && trimmed.length / letters.length > 2.2) return null;
+  /*
+    An address is not a description.
+    */
+  // Indian postcode, or the shop/plot/room numbering that fronts one.
+  if (/\b[4-9]\d{4}\b/.test(trimmed)) return null;
+  if (/\b(shop|plot|room|flat|bldg|building)\s*(no\.?|number)\b/i.test(trimmed)) return null;
+  if (/\b(nagar|colony|sector|road|street|lane|chawl|society)\b.*\d/i.test(trimmed)) return null;
+  // An Indian address pasted into `description` very often ends on a bare house
+  // or plot number with no postcode: "rafeek nager shivaji nager Govandi Mumbai
+  // 43". Nothing written as a sentence ends that way, and the alternative is
+  // shipping an address to a traveller as though it were a description of the
+  // place. Checked on the last token so "First floor." and "…400043" are safe.
+  if (/(?:^|\s)\d{1,6}$/.test(trimmed)) return null;
+  return trimmed;
+}
+
 function positionOf(el: OsmElement): { lat: number; lon: number } | null {
   if (typeof el.lat === "number" && typeof el.lon === "number") return { lat: el.lat, lon: el.lon };
   if (el.center && typeof el.center.lat === "number") return { lat: el.center.lat, lon: el.center.lon };
@@ -290,6 +386,7 @@ function project(el: OsmElement): { row: Experience } | { drop: string } {
   // the access gate treats correctly (unknown is not the same as accessible).
   const stepFree = tags.wheelchair === "yes" ? true : tags.wheelchair === "no" ? false : null;
   const price = priceOf(tags);
+  const prose = usableProse(tags.description);
 
   const row: Experience = {
     id: idOf(el),
@@ -321,8 +418,8 @@ function project(el: OsmElement): { row: Experience } | { drop: string } {
     // OSM carries no ratings. We emit the regional prior with count 0 so the
     // engine's shrinkage maths is well-defined and the UI shows no fake score.
     rating: { value: 3.8, count: 0, rawMean: null },
-    blurb: tags.description ? String(tags.description).slice(0, 160) : null,
-    description: tags.description ?? null,
+    blurb: prose ? prose.slice(0, 160) : null,
+    description: prose,
     keywords: [tags["name:hi"], tags["name:mr"], tags.cuisine, tags.shop, tags.craft, tags.historic].filter(
       (v): v is string => typeof v === "string" && v.length > 0,
     ),
@@ -342,7 +439,7 @@ function project(el: OsmElement): { row: Experience } | { drop: string } {
       rating: "derived",
       indoorOutdoor: "derived",
       kidFriendly: "inferred",
-      description: tags.description ? "osm" : "inferred",
+      description: prose ? "osm" : "inferred",
     },
     providerId: tags["operator:ref"] ?? null,
     neighbourhood: neighbourhoodOf(tags),
@@ -411,12 +508,65 @@ function main() {
     }
   }
 
+  /*
+    Near-duplicate pass.
+
+    Deduplicating on the OSM id is not enough. A temple mapped as a node and a
+    ways/relation for the same building, or a place re-surveyed a few metres
+    away, produces two ids and therefore two rows. The first catalogue had 324
+    names appearing more than once across 1,070 rows, including "Jain Derasar"
+    twice and "FR.JUSTIN DSOUZA GROUND" twice.
+
+    The test is a normalised name AND a distance, because name alone is wrong in
+    the other direction: "Banana Leaf" appears six times and every one of those
+    is a genuinely different branch. 150 m is tight enough that two branches in
+    different buildings survive and loose enough that a node/way pair for one
+    building collapses. When a pair collapses the survivor is the row with more
+    mapped detail, so we do not keep the emptier of two records of one place.
+  */
+  const byName = new Map<string, Experience[]>();
+  for (const row of rows) {
+    const key = nameKey(row.name);
+    const bucket = byName.get(key);
+    if (bucket) bucket.push(row);
+    else byName.set(key, [row]);
+  }
+
+  const NEAR_DUPLICATE_METRES = 150;
+  const richness = (r: Experience): number =>
+    (r.hours.status === "absent" ? 0 : 2) +
+    (r.pricePerPerson === null ? 0 : 1) +
+    (r.neighbourhood === null ? 0 : 1) +
+    (r.description === null ? 0 : 1) +
+    (r.accessibility.stepFree === null ? 0 : 1);
+
+  const survivors: Experience[] = [];
+  for (const bucket of byName.values()) {
+    const only = bucket[0];
+    if (bucket.length === 1 && only) {
+      survivors.push(only);
+      continue;
+    }
+    // Richest first, so the row that survives a collision is the informative one.
+    const ordered = [...bucket].sort((a, b) => richness(b) - richness(a));
+    const kept: Experience[] = [];
+    for (const row of ordered) {
+      const clash = kept.find((k) => metresBetween(k, row) <= NEAR_DUPLICATE_METRES);
+      if (clash) {
+        drops.set("near-duplicate-place", (drops.get("near-duplicate-place") ?? 0) + 1);
+        continue;
+      }
+      kept.push(row);
+    }
+    survivors.push(...kept);
+  }
+
   // Validate every row against the real contract before writing a single byte.
   // A projection that silently emits a schema-invalid row is worse than one that
   // fails loudly, because the catalogue is a committed artefact.
   const valid: Experience[] = [];
   const invalid: string[] = [];
-  for (const r of rows) {
+  for (const r of survivors) {
     const parsed = Experience.safeParse(r);
     if (parsed.success) valid.push(parsed.data);
     else invalid.push(`${r.id}: ${parsed.error.issues[0]?.message ?? "unknown"}`);

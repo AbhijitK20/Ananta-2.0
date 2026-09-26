@@ -42,6 +42,17 @@ export interface ResultCardProps {
   primaryActionLabel?: string;
   /** Card click. Drives the map coupling — see CardMapCoupling. */
   onSelect?: (experience: Experience) => void;
+  /**
+   * Select this place and bring it into view on the map.
+   *
+   * Separate from `onSelect` on purpose. `onSelect` is the "Why this, and why
+   * not the others" ledger, and it is a button in the card's action row. This is
+   * the card itself: clicking anywhere on the body, or the explicit "Show on
+   * map" button, selects the place and reveals it. They were the same action
+   * once, which meant selecting a place could not open the map, and the only way
+   * to reveal anything was to also add it to the plan.
+   */
+  onReveal?: (experience: Experience) => void;
   /** Highlights the card because the map selection moved. */
   selected?: boolean;
   className?: string;
@@ -64,6 +75,7 @@ export function ResultCard({
   onPrimaryAction,
   primaryActionLabel = "Add to plan",
   onSelect,
+  onReveal,
   selected = false,
   className,
 }: ResultCardProps) {
@@ -74,6 +86,15 @@ export function ResultCard({
 
   return (
     <article
+      /*
+        The whole card reveals on the map. The click lives on the <article>
+        rather than on a wrapper <button> on purpose: a button wrapping these
+        action-row buttons would nest interactive controls, which is invalid and
+        breaks assistive tech. Keyboard and screen-reader users get the same
+        action from the explicit "Show on map" button in the row below, so the
+        convenience click on the container is never the only way to do it.
+      */
+      onClick={onReveal ? () => onReveal(experience) : undefined}
       className={cn(
         "rounded-md border bg-surface p-4",
         "transition-[border-color,box-shadow,opacity] duration-[var(--dur-fast)]",
@@ -82,9 +103,13 @@ export function ResultCard({
         // enough to act on, but recedes.
         doesNotFit ? "border-rule opacity-70" : "border-rule",
         selected && "border-accent shadow-raise-1",
+        // A revealable card is a pointer target and has to say so. Selected or
+        // not, though: the accent border already carries that state.
+        onReveal && "cursor-pointer hover:border-accent/60",
         className,
       )}
       aria-label={experience.name}
+      aria-current={selected ? "true" : undefined}
     >
       {/* 1. Fit meter — the verdict, above everything. */}
       <FitMeter fit={fit} compact={doesNotFit} />
@@ -126,20 +151,34 @@ export function ResultCard({
         ) : null}
       </div>
 
-      {/* 4. Rating, Bayesian-smoothed, raw count shown. */}
+      {/*
+        4. Rating, Bayesian-smoothed, raw count shown.
+
+        A count of zero renders as an explicit absence, never as a number. The
+        catalogue's rating is a Bayesian prior — a regional average used to keep
+        the ranking maths well-defined when no one has rated anything — and
+        showing that prior as "3.8 (0)" puts an identical fabricated score on a
+        bakery, a mosque and a co-working space, which reads as a real 3.8 from
+        zero people. It was the first thing anyone saw on the page.
+
+        So `ratingToDisplay` is not called at zero. The row still occupies its
+        place, because a card that silently drops a line reflows the list, and it
+        still says which fields are missing — see the inferred-fields note below.
+      */}
       <div className="mt-1.5 flex items-center gap-1 text-num-sm">
-        <Star aria-hidden className="size-3.5 text-warn" strokeWidth={2} />
-        <span className="font-medium text-ink">
-          {ratingToDisplay(experience.rating.value, experience.rating.count)}
-        </span>
-        {/*
-          A rating with a tiny sample is a different claim from one with a
-          large one. The count is already visible, but the low-sample caveat is
-          worth saying outright.
-        */}
-        {experience.rating.count > 0 && experience.rating.count < 10 ? (
-          <span className="text-warn">few reviews</span>
-        ) : null}
+        {experience.rating.count > 0 ? (
+          <>
+            <Star aria-hidden className="size-3.5 text-warn" strokeWidth={2} />
+            <span className="font-medium text-ink">
+              {ratingToDisplay(experience.rating.value, experience.rating.count)}
+            </span>
+            {experience.rating.count < 10 ? (
+              <span className="text-warn">few reviews</span>
+            ) : null}
+          </>
+        ) : (
+          <span className="text-ink-muted">Not yet rated</span>
+        )}
       </div>
 
       {/* 5. Blurb, two lines max. */}
@@ -168,6 +207,25 @@ export function ResultCard({
 
       {/* 8. Primary action. */}
       <div className="mt-3.5 flex flex-wrap items-center gap-2">
+        {/*
+          The keyboard-reachable route to the same place the card body click
+          goes. It stops propagation because the card body is itself clickable,
+          and without this the button's own activation would fire the handler
+          twice — which is harmless here only by accident, and would not be
+          harmless if revealing ever became expensive.
+        */}
+        {onReveal ? (
+          <Button
+            variant="ghost"
+            className="px-2"
+            onClick={(event) => {
+              event.stopPropagation();
+              onReveal(experience);
+            }}
+          >
+            Show on map
+          </Button>
+        ) : null}
         <Button
           variant={doesNotFit ? "secondary" : "primary"}
           onClick={() => onPrimaryAction?.(experience)}

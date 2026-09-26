@@ -647,10 +647,9 @@ export const FIXTURE_WEIGHTS: WeightProfile = WeightProfile.parse({
    ========================================================================== */
 
 /*
-  `CONTEXT_TRIGGERS` used to live here. It moved to
-  `src/app/_components/triggers.ts` because this module parses eight contract
-  schemas at module scope, so a client component importing one constant from it
-  shipped the whole zod contract to the browser. Re-exported below so server-side
-  importers keep one name.
+  `CONTEXT_TRIGGERS` used to live here and was re-exported from this module.
+  It is now only in `src/app/_components/triggers.ts`, and the re-export is gone
+  rather than kept as an alias: nothing imports it from here any more, and an
+  alias whose only purpose was to be a second name for the same array is how the
+  client ends up importing the whole zod contract again.
 */
-export { CONTEXT_TRIGGERS } from "../_components/triggers";

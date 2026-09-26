@@ -4,8 +4,8 @@
  * WHY THIS IS NOT IN `src/app/_fixtures/index.ts`. That module imports eight
  * contract schemas as VALUES and calls `.parse()` on them at module scope, so
  * anything importing one constant from it drags the entire 824-line / 35 KB zod
- * contract into the browser bundle. `DiscoverySurface` did exactly that to read
- * a six-element array of `{key, label, detail}` strings, and none of it
+ * contract into the browser bundle. `TunePanel` did exactly that to read a
+ * six-element array of `{key, label, detail}` strings, and none of it
  * tree-shook because a zod schema evaluated at module scope is not a pure
  * constant as far as a bundler is concerned.
  *
