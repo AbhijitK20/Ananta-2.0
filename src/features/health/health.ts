@@ -138,6 +138,31 @@ export const THRESHOLDS = {
   /** Design-system label cuts. */
   frictionAt: 68,
   saneAt: 38,
+  /**
+   * The four `HealthBand` cuts. `severe` is pinned to `frictionAt` and
+   * `moderate` to `saneAt`, so a band can never disagree with the headline label
+   * about the same number.
+   */
+  bandCuts: { low: 20, moderate: 38, high: 55, severe: 68 } as const,
+  /**
+   * How wrong `Plan.totalMin` may be before we stop believing it. Generous on
+   * purpose: `Fit.totalMin` is per stop and the leg list is separate, so a real
+   * engine's two totals differ by the per-stop travel estimate. Only a gross
+   * disagreement means the plan is broken.
+   */
+  minutesTolerance: 30,
+  minutesToleranceShare: 0.25,
+  /** A city ride is this much quicker than the walk it replaces. */
+  rideSpeedup: 2.5,
+  /**
+   * The smallest gain worth putting in front of a traveller, in score points.
+   *
+   * The bands sit 20 points apart, so a 2-point "improvement" crosses nothing and
+   * changes no label: it is a rescue the traveller cannot act on and can only
+   * learn to ignore. A move is therefore shown when it clears this OR when it
+   * crosses a band, because crossing a band is a real milestone even at 1 point.
+   */
+  minRecoveryGain: 3,
 } as const;
 
 /**
@@ -205,6 +230,8 @@ export type HealthDimension = {
   explanation: string;
   /** The named sub-measurements. This is the audit trail for `value`. */
   signals: Signal[];
+  /** Word for `value`, so no component has to invent the scale. */
+  band: HealthBand;
   /** Non-null only on the worst factor, per the contract's own comment. */
   rescue: string | null;
 };
@@ -227,7 +254,28 @@ export type CompanionDimension = {
   signals: Signal[];
 };
 
-export type HealthLabel = "high_friction" | "manageable" | "sane";
+/**
+ * `unreadable` is not a stress level. It means the plan contradicts itself, so
+ * no score off it means anything, and the UI must not draw bars off it. See
+ * `TripHealth.warnings`.
+ */
+export type HealthLabel = "high_friction" | "manageable" | "sane" | "unreadable";
+
+/**
+ * How bad a single dimension is, in words. The radar needs a band per bar and
+ * the design system only fixes two cuts (38 and 68), so the three between them
+ * are ours and are named here rather than left to a component to invent.
+ */
+export type HealthBand = "clear" | "low" | "moderate" | "high" | "severe";
+
+/** Word for a 0-100 reading, on the design system's own scale. */
+export function bandOf(value: number, t: Thresholds = THRESHOLDS): HealthBand {
+  if (value >= t.bandCuts.severe) return "severe";
+  if (value >= t.bandCuts.high) return "high";
+  if (value >= t.bandCuts.moderate) return "moderate";
+  if (value >= t.bandCuts.low) return "low";
+  return "clear";
+}
 
 export type TripHealth = {
   planId: string;
@@ -249,6 +297,14 @@ export type TripHealth = {
   unknownIds: string[];
   /** Beside the score, not inside it. See `CompanionDimension`. */
   budgetPressure: CompanionDimension;
+  /**
+   * Ways this plan contradicts itself, in the traveller's words. Non-empty means
+   * the read is arithmetic on a broken input, so `label` is `unreadable` and the
+   * numbers should be shown as untrustworthy rather than as a score.
+   */
+  warnings: string[];
+  /** `warnings.length === 0`. The one thing a panel should check before drawing. */
+  trustworthy: boolean;
   /** The facts every dimension was read from, so the whole read is checkable. */
   facts: TripFacts;
 };
@@ -296,11 +352,12 @@ function haversine(a: { lat: number; lon: number }, b: { lat: number; lon: numbe
 }
 
 /** `instanceof Map` will not narrow a `ReadonlyMap`, and `Array.isArray` does not narrow it out of a union either. */
-function isIndex(catalogue: Catalogue): catalogue is ReadonlyMap<string, Experience> {
+export function isIndex(catalogue: Catalogue): catalogue is ReadonlyMap<string, Experience> {
   return !Array.isArray(catalogue);
 }
 
-function indexCatalogue(catalogue: Catalogue): Map<string, Experience> {
+/** One place that knows how a `Catalogue` becomes a lookup, whatever shape it arrived in. */
+export function indexCatalogue(catalogue: Catalogue): Map<string, Experience> {
   if (isIndex(catalogue)) return new Map(catalogue);
   return new Map(catalogue.map((exp) => [exp.id, exp]));
 }
@@ -357,6 +414,89 @@ type Ctx = {
   facts: TripFacts;
   t: Thresholds;
 };
+
+const clock = (min: number): string => {
+  const h = Math.floor(min / 60) % 24;
+  const m = min % 60;
+  return `${h}:${m.toString().padStart(2, "0")}`;
+};
+
+/**
+ * Ways the plan argues with itself. A read is arithmetic, and arithmetic on a
+ * self-contradictory input produces a confident wrong number — which is worse
+ * than no number, because the panel has no way to tell. Every message names the
+ * two facts that disagree, in the traveller's words, because "invalid plan"
+ * would be a support ticket.
+ *
+ * This is deliberately NOT the engine's `validate`: that recomputes the
+ * objective and rejects a plan. This one does not reject anything, it marks the
+ * reading untrustworthy and lets the caller decide.
+ */
+function integrityOf(plan: Plan, ctx: DiscoveryContext, facts: TripFacts, t: Thresholds): string[] {
+  const found: string[] = [];
+  const stops = [...plan.stops].sort((a, b) => a.order - b.order);
+
+  if (new Set(stops.map((s) => s.order)).size !== stops.length) {
+    found.push("Two stops claim the same place in the plan, so the order is ambiguous.");
+  }
+  if (new Set(stops.map((s) => s.experienceId)).size !== stops.length) {
+    found.push("The same place is in the plan more than once.");
+  }
+  for (const stop of stops) {
+    if (stop.departMin < stop.arriveMin) {
+      found.push(`Stop ${stop.order + 1} leaves before it arrives.`);
+    }
+  }
+  for (let i = 1; i < stops.length; i += 1) {
+    const prev = stops[i - 1];
+    const next = stops[i];
+    if (prev && next && next.arriveMin < prev.departMin) {
+      found.push(
+        `Stop ${next.order + 1} starts at ${clock(next.arriveMin)}, before stop ${prev.order + 1} ends at ${clock(prev.departMin)}.`,
+      );
+    }
+  }
+  if (plan.contextId !== ctx.id) {
+    found.push("This plan was built for a different search, so it was not measured against your window.");
+  }
+  const expectedLegs = Math.max(0, stops.length - 1);
+  if (plan.legs.length !== expectedLegs) {
+    found.push(
+      `${plural(plan.legs.length, "leg", "legs")} for ${plural(stops.length, "stop", "stops")}, which needs ${expectedLegs}.`,
+    );
+  }
+  for (let i = 0; i < plan.legs.length; i += 1) {
+    const leg = plan.legs[i];
+    const from = stops[i];
+    const to = stops[i + 1];
+    if (!leg || !from || !to) continue;
+    if (leg.fromId !== from.experienceId || leg.toId !== to.experienceId) {
+      // Not cosmetic: this is the invariant any re-timing of the plan relies on.
+      // A route cannot be checked, or rebuilt, when the legs do not say which two
+      // stops they join.
+      found.push(
+        `The leg between stop ${from.order + 1} and stop ${to.order + 1} does not join them, so the route cannot be checked.`,
+      );
+      break;
+    }
+  }
+  const legMin = plan.legs.reduce((sum, leg) => sum + leg.minutes, 0);
+  const stopMin = stops.reduce(
+    (sum, stop) => sum + Math.max(0, stop.departMin - stop.arriveMin) + stop.fit.bufferMin,
+    0,
+  );
+  const built = legMin + stopMin;
+  if (stops.length > 0) {
+    const slack = Math.max(t.minutesTolerance, built * t.minutesToleranceShare);
+    if (Math.abs(built - facts.plannedMin) > slack) {
+      found.push(`The plan says ${hm(facts.plannedMin)}, but its own stops and legs add up to ${hm(built)}.`);
+    }
+  }
+  if (plan.legs.length > 0 && facts.legMetres !== facts.totalMetres) {
+    found.push(`It claims ${km(facts.totalMetres)} of travel, but the legs add up to ${km(facts.legMetres)}.`);
+  }
+  return found;
+}
 
 // ---------------------------------------------------------------------------
 // The seven dimensions. Each returns a value, its signals, and a sentence.
@@ -826,7 +966,8 @@ const ordinal = (n: number): string =>
 // Assembly
 // ---------------------------------------------------------------------------
 
-const LABELS: Record<Dimension, string> = {
+/** Finished labels, so no caller has to keep its own copy of the vocabulary. */
+export const DIMENSION_LABELS: Record<Dimension, string> = {
   overload: "Overload",
   pinDebt: "Pinned time",
   weatherRisk: "Weather risk",
@@ -835,6 +976,9 @@ const LABELS: Record<Dimension, string> = {
   transitComplexity: "Getting there",
   reservationRisk: "Reservation risk",
 };
+
+/** The label a dimension is shown under, by its key. */
+export const dimensionLabel = (dimension: Dimension): string => DIMENSION_LABELS[dimension];
 
 type Computed = { value: number; signals: Signal[]; explanation: string };
 
@@ -886,12 +1030,13 @@ export function assessTripHealth(
     const contribution = round2(weight * value * (weightOf > 0 ? 1 / weightOf : 0));
     return {
       dimension,
-      label: LABELS[dimension],
+      label: DIMENSION_LABELS[dimension],
       weight,
       value,
       contribution,
       explanation: all[dimension].explanation,
       signals: all[dimension].signals,
+      band: bandOf(value, t),
       rescue: null,
     };
   });
@@ -908,9 +1053,18 @@ export function assessTripHealth(
   );
   if (weightOf > 0) worst.rescue = rescueFor(worst.dimension, d);
 
-  const label: HealthLabel = score >= t.frictionAt ? "high_friction" : score <= t.saneAt ? "sane" : "manageable";
-  const labelSentence =
-    label === "high_friction"
+  const warnings = integrityOf(plan, ctx, facts, t);
+  const trustworthy = warnings.length === 0;
+  const label: HealthLabel = !trustworthy
+    ? "unreadable"
+    : score >= t.frictionAt
+      ? "high_friction"
+      : score <= t.saneAt
+        ? "sane"
+        : "manageable";
+  const labelSentence = !trustworthy
+    ? `This plan contradicts itself, so the ${score} off it means nothing. ${warnings[0] ?? ""}`
+    : label === "high_friction"
       ? `High friction at ${score} of 100.`
       : label === "sane"
         ? `Trip feels sane at ${score} of 100.`
@@ -928,8 +1082,33 @@ export function assessTripHealth(
     unmeasured,
     unknownIds,
     budgetPressure: budgetPressure(d),
+    warnings,
+    trustworthy,
     facts,
   };
+}
+
+/**
+ * The `EnginePort.stress` implementation, ready to hand the engine.
+ *
+ * The third argument is OPTIONAL on purpose. `EnginePort.stress` is stubbed in
+ * every engine and test double in the repo, and four of the seven dimensions
+ * need the catalogue. Making the catalogue a required argument would break all
+ * of those call sites; making it optional means every existing two-argument call
+ * still compiles, and simply reads fewer dimensions — which `assessTripHealth`
+ * already reports honestly through `coverage` and `unmeasured`.
+ *
+ * The catalogue argument is the whole reason this exists rather than
+ * `toPlanStress(assessTripHealth(...))` at each call site: one place decides
+ * what a missing catalogue means.
+ */
+export function stressFor(
+  plan: Plan,
+  ctx: DiscoveryContext,
+  catalogue: Catalogue = [],
+  thresholds?: Partial<Thresholds>,
+): { score: number; factors: Plan["stressFactors"] } {
+  return toPlanStress(assessTripHealth(plan, ctx, catalogue, thresholds));
 }
 
 /**

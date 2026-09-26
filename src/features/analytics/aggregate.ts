@@ -114,8 +114,13 @@ export function categoryIntent(interests: readonly string[]): CategoryIntent {
   const cleaned = interests.map((s) => s.trim().toLowerCase()).filter((s) => s.length > 0);
   for (const raw of cleaned) {
     const normalised = raw.replace(/\s+/g, "_");
-    if (CATEGORY_TAGS.has(raw) || CATEGORY_TAGS.has(normalised)) {
-      return { category: raw as Category, tier: "observed", matchedOn: raw };
+    // Return the NORMALISED form, never `raw`. "craft workshop" matched the set and
+    // came back as `category: "craft workshop"`, which is not a `Category` — so
+    // it landed in a cell key, in the category bars, and in `servesCell`, where
+    // `listing.category === cell.category` could never be true and the search
+    // silently produced no opportunity at all.
+    if (CATEGORY_TAGS.has(normalised)) {
+      return { category: normalised as Category, tier: "observed", matchedOn: raw };
     }
   }
   let best: { category: Category; len: number; on: string } | null = null;
@@ -242,6 +247,25 @@ export interface AggregateOptions {
 
 export function windowStart(asOf: string, windowDays: number): number {
   return Date.parse(asOf) - windowDays * DAY_MS;
+}
+
+/**
+ * The rows a window actually covers. Exported because every panel number has to
+ * agree on this set: `aggregateDemand` filters by it, and a caller that skipped
+ * the filter got `unmetNearby != demand.total` and a heat grid with
+ * out-of-window searches in it.
+ */
+export function rowsInWindow(
+  rows: readonly UnmetDemand[],
+  asOf: string,
+  windowDays: number,
+): UnmetDemand[] {
+  const start = windowStart(asOf, windowDays);
+  const end = Date.parse(asOf);
+  return rows.filter((row) => {
+    const at = Date.parse(row.at);
+    return !Number.isNaN(at) && at <= end && at >= start;
+  });
 }
 
 /**

@@ -188,7 +188,6 @@ export function fakeEngine(options: FakeOptions): EnginePort {
   };
 
   const ok: ValidationResult = { ok: true, violations: [], recomputedObjective: 0, claimedObjective: 0, objectiveDelta: 0 };
-  const catalogue = options.catalogue ?? [];
 
   return {
     retrieve(input: RetrieveInput): Experience[] {

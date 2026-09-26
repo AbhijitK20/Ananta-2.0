@@ -48,6 +48,25 @@ export interface EnginePort {
   validate(plan: Plan): ValidationResult;
   replan(prev: Plan, ctx: DiscoveryContext, change: ContextChange): ReplanResult;
   computeFit(ctx: DiscoveryContext, exp: Experience): Fit;
-  stress(plan: Plan, ctx: DiscoveryContext): { score: number; factors: Plan["stressFactors"] };
+  /**
+   * The catalogue is OPTIONAL, and that is the whole point of the annotation.
+   *
+   * Four of the seven stress dimensions cannot be read without the rows the
+   * plan's ids point at, so a required parameter would have been the honest
+   * signature — and it would also have broken every existing two-argument call
+   * site and test double in the repo on the day it landed. Optional means all of
+   * them still compile, and a caller with no catalogue gets a score over the
+   * dimensions that do not need one, renormalised, with the skipped dimensions
+   * named in `unmeasured` and the lost weight reported as `coverage`.
+   *
+   * The implementation is `assessTripHealth` + `toPlanStress` in
+   * `src/features/health`, which is where the arithmetic and the thresholds
+   * live. `src/features/health`'s `stressFor` is the ready-made binding.
+   */
+  stress(
+    plan: Plan,
+    ctx: DiscoveryContext,
+    catalogue?: ReadonlyMap<string, Experience> | readonly Experience[],
+  ): { score: number; factors: Plan["stressFactors"] };
   travelBetween(from: GeoPoint, to: GeoPoint, mode: TravelMode, atMin: number): TravelLeg;
 }

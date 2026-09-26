@@ -387,6 +387,13 @@ export function replan(
   engine: EnginePort,
   session: DiscoverySession,
   change: ContextChange,
+  /**
+   * The context `session.plan` was solved under. The session handed in already
+   * carries the NEW context, so this cannot be read off it; callers that applied
+   * an edit have the old one. Defaults to the session's own context, which is
+   * right whenever the plan was built from it.
+   */
+  prevCtx: DiscoveryContext = session.state.ctx,
   /** Attribution for the demand row. Without it the verdict is still reported. */
   meta?: DemandMeta,
 ): ReplanOutcome {
@@ -441,6 +448,7 @@ export function replan(
     catalogue: session.catalogue,
     change,
     travelMode: ctx.travelMode,
+    origin: ctx.origin.point,
   });
   const reality = buildRealityChanged({
     change,
@@ -448,6 +456,7 @@ export function replan(
     before: previous,
     after: gate.plan,
     nextCtx: ctx,
+    prevCtx,
     intent: session.intent,
     enginePreservedIntent: result.preservedIntent,
     stressBefore: stressBefore(engine, previous, ctx),
@@ -532,7 +541,7 @@ export function applyEditorChange(
     return { ok: false, session, reason: "That would not change anything, so nothing was re-solved.", load: null };
   }
   const candidate: DiscoverySession = { ...session, state: edit.state };
-  const outcome = replan(engine, candidate, edit.change, meta);
+  const outcome = replan(engine, candidate, edit.change, session.state.ctx, meta);
   return outcome.ok ? outcome : { ...outcome, session };
 }
 

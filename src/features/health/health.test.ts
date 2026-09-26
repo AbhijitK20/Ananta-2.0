@@ -16,6 +16,9 @@ import {
   DIMENSIONS,
   THRESHOLDS,
   assessTripHealth,
+  bandOf,
+  dimensionLabel,
+  stressFor,
   toPlanStress,
   type Dimension,
   type TripHealth,
@@ -499,7 +502,7 @@ describe("budget pressure is measured beside the score, not inside it", () => {
 
   it("is deliberately outside the score, so the radar stays at seven", () => {
     expect(squeezed.dimensions).toHaveLength(7);
-    expect(squeezed.dimensions.every((d) => !(DIMENSION_WEIGHTS as Record<string, number>).budgetPressure)).toBe(true);
+    expect(squeezed.dimensions.every((_d) => !(DIMENSION_WEIGHTS as Record<string, number>).budgetPressure)).toBe(true);
   });
 });
 
@@ -728,3 +731,227 @@ describe("the fixtures are the contract, not a shape we invented", () => {
   });
 });
 
+
+/** A deliberately broken plan, for the checks that must refuse to trust one. */
+const corrupt = (mutate: (p: Plan) => Plan): Plan => {
+  const base = plan({ stops: DEFAULT_STOPS, availableMin: 420 });
+  return PlanSchema.parse({ ...mutate(base), stressScore: 0, stressFactors: [] });
+};
+
+describe("a plan that contradicts itself is never scored confidently", () => {
+  /**
+   * WHY THIS GROUP EXISTS. A health read is arithmetic. Arithmetic on a
+   * self-contradictory plan still returns a number, and a panel has no way to
+   * tell that number from a real one. So the read marks itself untrustworthy and
+   * says which two facts disagree. Without this, a corrupt plan is the one input
+   * that produces the most confident and least true answer in the product.
+   */
+  it("trusts a plan that holds together", () => {
+    const read = generous();
+    expect(read.warnings).toEqual([]);
+    expect(read.trustworthy).toBe(true);
+    expect(read.label).toBe("sane");
+  });
+
+  it("catches a stop that starts before the one before it has finished", () => {
+    const read = assessTripHealth(
+      corrupt((p) => ({ ...p, stops: p.stops.map((s, i) => (i === 1 ? { ...s, arriveMin: 600 } : s)) })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    expect(read.trustworthy).toBe(false);
+    expect(read.label).toBe("unreadable");
+    expect(read.warnings.join(" ")).toMatch(/before stop \d+ ends/);
+    expect(read.warnings[0]).toMatch(/\d+:\d\d/);
+  });
+
+  it("catches a stop that leaves before it arrives", () => {
+    const read = assessTripHealth(
+      corrupt((p) => ({ ...p, stops: p.stops.map((s) => ({ ...s, departMin: s.arriveMin - 5 })) })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toContain("leaves before it arrives");
+  });
+
+  it("catches two stops claiming the same slot", () => {
+    const read = assessTripHealth(
+      corrupt((p) => ({ ...p, stops: p.stops.map((s) => ({ ...s, order: 0 })) })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toContain("same place in the plan");
+  });
+
+  it("catches the same place being in the plan twice", () => {
+    const read = assessTripHealth(
+      corrupt((p) => ({
+        ...p,
+        stops: p.stops.map((s, i) => ({ ...s, order: i, experienceId: "exp-fort" })),
+        legs: [],
+      })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toContain("more than once");
+  });
+
+  it("catches legs that do not join the stops they sit between", () => {
+    const read = assessTripHealth(
+      corrupt((p) => ({ ...p, legs: p.legs.map((leg) => ({ ...leg, fromId: "exp-nobody" })) })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toContain("does not join them");
+  });
+
+  it("catches the wrong number of legs, naming both counts", () => {
+    const read = assessTripHealth(corrupt((p) => ({ ...p, legs: [] })), context({ availableMin: 420 }), CATALOGUE);
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toMatch(/0 legs for 2 stops, which needs 1/);
+  });
+
+  it("catches a totalMin its own stops and legs do not add up to", () => {
+    const read = assessTripHealth(corrupt((p) => ({ ...p, totalMin: 20 })), context({ availableMin: 420 }), CATALOGUE);
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toMatch(/but its own stops and legs add up to/);
+  });
+
+  it("catches claimed travel that the legs do not account for", () => {
+    const read = assessTripHealth(corrupt((p) => ({ ...p, totalMetres: 99_000 })), context({ availableMin: 420 }), CATALOGUE);
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toContain("but the legs add up to");
+  });
+
+  it("catches a plan built for a different search", () => {
+    const read = assessTripHealth(corrupt((p) => ({ ...p, contextId: "ctx-someone-else" })), context({ availableMin: 420 }), CATALOGUE);
+    expect(read.trustworthy).toBe(false);
+    expect(read.warnings.join(" ")).toContain("different search");
+  });
+
+  it("still returns a number, because a blank panel helps nobody", () => {
+    const read = assessTripHealth(corrupt((p) => ({ ...p, totalMin: 20 })), context({ availableMin: 420 }), CATALOGUE);
+    expect(read.score).toBeGreaterThanOrEqual(0);
+    expect(read.dimensions).toHaveLength(7);
+    expect(read.labelSentence).toContain("means nothing");
+  });
+
+  it("tolerates a per-stop travel estimate that differs from the leg", () => {
+    // `Fit.totalMin` is per stop and the leg list is separate, so a real engine's
+    // two totals differ. A small disagreement is normal and must not be a warning,
+    // or every real plan would be flagged.
+    const read = assessTripHealth(corrupt((p) => ({ ...p, totalMin: p.totalMin + 12 })), context({ availableMin: 420 }), CATALOGUE);
+    expect(read.trustworthy).toBe(true);
+  });
+
+  it("collects every problem, not just the first", () => {
+    const read = assessTripHealth(
+      corrupt((p) => ({ ...p, contextId: "ctx-other", legs: [], totalMin: 20 })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    const said = read.warnings.join(" ");
+    expect(read.warnings.length).toBeGreaterThanOrEqual(3);
+    expect(said).toContain("different search");
+    expect(said).toContain("0 legs for 2 stops");
+    expect(said).toContain("its own stops and legs add up to");
+  });
+
+  it("stays quiet about travel it cannot check, rather than guessing", () => {
+    // With no legs there is nothing to check the claimed metres against, so the
+    // read says nothing about them instead of inventing a disagreement.
+    const read = assessTripHealth(
+      corrupt((p) => ({ ...p, legs: [], totalMetres: 99_000, totalMin: 1_000 })),
+      context({ availableMin: 420 }),
+      CATALOGUE,
+    );
+    expect(read.warnings.join(" ")).not.toContain("but the legs add up to");
+  });
+});
+
+describe("every dimension carries a word as well as a number", () => {
+  it("bands the scale on the design system's own cuts", () => {
+    expect(THRESHOLDS.bandCuts.severe).toBe(THRESHOLDS.frictionAt);
+    expect(THRESHOLDS.bandCuts.moderate).toBe(THRESHOLDS.saneAt);
+  });
+
+  it("reads 0 as clear and 100 as severe, with nothing skipped between", () => {
+    expect(bandOf(0)).toBe("clear");
+    expect(bandOf(19.9)).toBe("clear");
+    expect(bandOf(20)).toBe("low");
+    expect(bandOf(38)).toBe("moderate");
+    expect(bandOf(55)).toBe("high");
+    expect(bandOf(68)).toBe("severe");
+    expect(bandOf(100)).toBe("severe");
+  });
+
+  it("agrees with the value on every dimension of every scenario", () => {
+    for (const read of [generous(), tight(), walked(), dense(), stormy()]) {
+      for (const dim of read.dimensions) {
+        expect(dim.band).toBe(bandOf(dim.value));
+      }
+    }
+  });
+
+  it("never calls a severe dimension anything but severe", () => {
+    for (const dim of stormy().dimensions.filter((d) => d.band === "severe")) {
+      expect(dim.value).toBeGreaterThanOrEqual(THRESHOLDS.frictionAt);
+    }
+  });
+
+  it("labels every dimension in words the panel can print", () => {
+    for (const dim of stormy().dimensions) {
+      expect(dimensionLabel(dim.dimension)).toBe(dim.label);
+      expect(dim.label).toMatch(/^[A-Z]/);
+    }
+  });
+});
+
+describe("the engine port binding", () => {
+  const packed = plan({ stops: DEFAULT_STOPS, availableMin: 420 });
+  const ctx = context({ availableMin: 420 });
+
+  it("is the read plus the adapter, with a catalogue", () => {
+    expect(stressFor(packed, ctx, CATALOGUE)).toEqual(toPlanStress(assessTripHealth(packed, ctx, CATALOGUE)));
+  });
+
+  it("still answers with no catalogue, over the dimensions it can read", () => {
+    const { score, factors } = stressFor(packed, ctx);
+    const read = assessTripHealth(packed, ctx, []);
+    expect(score).toBe(read.score);
+    expect(factors).toHaveLength(7);
+    expect(read.coverage).toBeLessThan(1);
+    expect(read.unmeasured.length).toBe(4);
+  });
+
+  it("produces something the contract accepts, with and without a catalogue", () => {
+    for (const catalogue of [CATALOGUE, []]) {
+      const { score, factors } = stressFor(packed, ctx, catalogue);
+      const parsed = PlanSchema.parse({ ...packed, stressScore: score, stressFactors: factors });
+      expect(parsed.stressScore).toBeGreaterThanOrEqual(0);
+      expect(parsed.stressScore).toBeLessThanOrEqual(100);
+      expect(parsed.stressFactors).toHaveLength(7);
+    }
+  });
+
+  it("carries the rescue on the worst factor alone, whichever catalogue it got", () => {
+    for (const catalogue of [CATALOGUE, []]) {
+      const { factors } = stressFor(packed, ctx, catalogue);
+      expect(factors.filter((f) => f.rescue !== null)).toHaveLength(1);
+    }
+  });
+
+  it("renormalises over what it could read, rather than scoring the gap as zero", () => {
+    const withCatalogue = assessTripHealth(packed, ctx, CATALOGUE);
+    const without = assessTripHealth(packed, ctx, []);
+    expect(without.coverage).toBeCloseTo(0.25 + 0.13 + 0.1, 2);
+    // The three dimensions still readable are the same either way.
+    for (const key of ["overload", "fomoRisk", "transitComplexity"] as const) {
+      expect(value(without, key)).toBe(value(withCatalogue, key));
+    }
+  });
+});

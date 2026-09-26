@@ -95,8 +95,23 @@ export class ProviderStore {
     });
   }
 
+  /**
+   * Rows this provider owns. The backing state can hold another provider's rows
+   * (a shared load, a demo that splices one in), and every read below goes
+   * through here — a read that leaks a competitor's name, dates or capacity is
+   * the same defect as a mutation that touches one.
+   */
+  private own<T extends { providerId: string | null }>(rows: readonly T[]): T[] {
+    return rows.filter((row) => row.providerId === this.provider.id);
+  }
+
+  /** `DatedSlot` keeps the date beside the slot, so ownership is read off `slot`. */
+  private ownSlots(): DatedSlot[] {
+    return this.slots.filter((dated) => dated.slot.providerId === this.provider.id);
+  }
+
   allListings(): Experience[] {
-    return [...this.listings].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    return this.own(this.listings).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
   /**
@@ -106,9 +121,7 @@ export class ProviderStore {
    * our `providerId` and quietly taken over.
    */
   listing(id: string): Experience | undefined {
-    return this.listings.find(
-      (listing) => listing.id === id && listing.providerId === this.provider.id,
-    );
+    return this.own(this.listings).find((listing) => listing.id === id);
   }
 
   /** `id === null` creates. Anything else edits in place, keeping OSM data. */
@@ -185,20 +198,24 @@ export class ProviderStore {
   }
 
   availability(experienceId?: string): SlotView[] {
-    const slots = experienceId ? this.slots.filter((dated) => dated.slot.experienceId === experienceId) : this.slots;
+    // Scoped to our own slots, or the panel prints a competitor's dates, capacity
+    // and booking status.
+    const mine = this.ownSlots();
+    const slots = experienceId ? mine.filter((dated) => dated.slot.experienceId === experienceId) : mine;
     return slotViews(slots, this.blocks, this.bookings);
   }
 
   /**
-   * A request is this provider's business if it points at one of their slots or
-   * one of their listings. ONE predicate, used by both the inbox and the mutation
-   * path — filtering only in `requests()` leaves `confirm(id)` callable on a
-   * request the provider was never shown.
+   * A request is this provider's business if it points at one of THEIR slots or
+   * one of THEIR listings — and the slot or listing has to actually be theirs.
+   * Matching on id alone is not enough: a shared state can carry another
+   * provider's slot, and then `confirm(id)` would mutate a request this provider
+   * was never shown. ONE predicate, used by the inbox AND the mutation path.
    */
   private owns(request: BookingRequest): boolean {
     return (
-      this.slots.some((dated) => dated.slot.id === request.slotId) ||
-      this.listings.some((listing) => listing.id === request.experienceId)
+      this.ownSlots().some((dated) => dated.slot.id === request.slotId) ||
+      this.own(this.listings).some((listing) => listing.id === request.experienceId)
     );
   }
 

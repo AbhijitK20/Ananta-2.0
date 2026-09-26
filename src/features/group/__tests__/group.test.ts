@@ -23,7 +23,16 @@ import { WEIGHTS, exp } from "../../discovery/__tests__/fixtures";
 import { referenceEngine } from "../../discovery/__tests__/referenceEngine";
 import { INDOOR_TOKEN, WALK_TOKENS, createContext } from "../../discovery/context";
 import type { EnginePort } from "../../discovery/engine";
-import { aggregateGroup, planForGroup, type GroupAxis, type GroupMember, type GroupRequest } from "..";
+import {
+  INTEREST_SLOTS,
+  MAX_ROUNDS,
+  aggregateGroup,
+  planForGroup,
+  replanForGroup,
+  resolveGroup,
+  type GroupMember,
+  type GroupRequest,
+} from "..";
 
 // ---------------------------------------------------------------------------
 // A catalogue on one street
@@ -162,7 +171,7 @@ function served(group: ReturnType<typeof planForGroup>): string[] {
   return group.outcome.plan.stops.map((stop: Plan["stops"][number]) => stop.experienceId);
 }
 
-function decisionFor(group: ReturnType<typeof aggregateGroup>, axis: GroupAxis) {
+function decisionFor(group: ReturnType<typeof aggregateGroup>, axis: string) {
   const found = group.decisions.find((decision) => decision.axis === axis);
   if (!found) throw new Error(`no decision for ${axis}`);
   return found;
@@ -285,6 +294,46 @@ describe("what a group commits to", () => {
     expect(backwards.seed).toEqual(forwards.seed);
     expect(backwards.decisions).toEqual(forwards.decisions);
     expect(backwards.members.map((member) => member.id)).toEqual(["a", "b", "c", "d"]);
+  });
+
+  it("unions diets the way it unions access, because both are facts about a body", () => {
+    const group = aggregateGroup(REQUEST, [
+      { id: "a", label: "Aarti", hard: { diets: ["vegetarian"] } },
+      { id: "b", label: "Bilal", hard: { diets: ["Halal ", "vegetarian"] } },
+      { id: "c", label: "Child", role: "child", age: 7 },
+    ]);
+
+    // One slot, not two, and normalised the way the engine matches: "Halal " and
+    // "vegetarian" spelled twice is still one requirement each.
+    expect(group.seed.diets).toEqual(["halal", "vegetarian"]);
+    expect(group.diets.by.get("vegetarian")).toEqual(["Aarti", "Bilal"]);
+    expect(group.diets.by.get("halal")).toEqual(["Bilal"]);
+    // A diet nobody stated is never added, and neither is a soft one.
+    expect(createContext(group.seed).ctx.diets).toEqual(["halal", "vegetarian"]);
+  });
+
+  it("ignores a diet stated as a preference, because a diet is not a preference", () => {
+    const group = aggregateGroup(REQUEST, [
+      { id: "a", label: "Aarti", hard: { diets: ["jain"] } },
+      { id: "b", label: "Bilal", strong: { interests: ["street food"] } },
+    ]);
+
+    expect(group.seed.diets).toEqual(["jain"]);
+    expect(decisionFor(group, "diet").by).toEqual(["Aarti"]);
+    expect(decisionFor(group, "diet").reason).toContain("a place has to feed everybody");
+  });
+
+  it("counts a soft ask towards the support, because two of you is two of you", () => {
+    const group = aggregateGroup(REQUEST, [
+      { id: "a", label: "Aarti", strong: { interests: ["adventure"] } },
+      { id: "b", label: "Bilal", soft: { interests: ["Adventure"] } },
+    ]);
+
+    // Same interest spelled two ways, one slot, and the count that decides the
+    // ranking is the number of people rather than the number of strong statements.
+    expect(group.seed.interests).toEqual(["adventure"]);
+    expect(group.interests.kept[0]?.labels).toEqual(["Aarti", "Bilal"]);
+    expect(decisionFor(group, "interests").reason).toContain("adventure (2 of you)");
   });
 
   it("refuses a group it cannot trust, by name", () => {
@@ -455,8 +504,23 @@ describe("a group that cannot be served", () => {
     expect(group.reason).toBe("Nothing within reach works for all of you at once.");
     // No plan is handed back in any form: not an empty one, not a partial one.
     expect("plan" in group).toBe(false);
-    expect(group.conflicts[0]?.severity).toBe("blocking");
-    expect(group.conflicts[0]?.evidence.join("\n")).toContain("budget:");
+  });
+
+  it("blames the axis that stopped them, and the person who set it", () => {
+    const group = run(IMPOSSIBLE, WHAT_IS_THERE);
+    if (group.ok) throw new Error("this group cannot be served");
+
+    // Not "something about the group": the budget, held by the one person who set
+    // it, with the engine's own sentence for the cheapest place that fell out.
+    expect(group.conflicts).toHaveLength(1);
+    const conflict = group.conflicts[0];
+    expect(conflict?.axis).toBe("budget");
+    expect(conflict?.severity).toBe("blocking");
+    expect(conflict?.heldBy).toEqual(["Feroza"]);
+    expect(conflict?.reason).toContain("4 places ruled out on budget");
+    expect(conflict?.reason).toContain("Feroza set the ceiling at ₹100 each");
+    expect(conflict?.evidence).toContain("Over budget by ₹100.");
+    expect(conflict?.evidence.join("\n")).toContain("Ruled out: Nocturne theatre.");
   });
 
   it("asks for the smallest change that would have worked, with the rupee in it", () => {
@@ -624,5 +688,311 @@ describe("an engine that ignores what the group said", () => {
     expect(group.reason).toBe("We could not build a plan for this window.");
     expect(group.conflicts[0]?.evidence.join("\n")).toContain("index offline");
     expect(group.ask).toEqual([]);
+  });
+
+  it("says nothing about interests when the engine does not report them", () => {
+    // An engine that scores without naming its matches is not saying "nothing
+    // matched" — it is saying nothing. Turning that silence into "Child did not get
+    // their entertainment" would invent a conflict between a child and a plan.
+    const honest = referenceEngine(CATALOGUE, WEIGHTS);
+    const mute: EnginePort = {
+      ...honest,
+      score: (_ctx, items, weights) =>
+        items.map((item) => ({
+          experienceId: item.id,
+          total: 0,
+          components: [{ key: "proximity", label: "Close by", value: 1, weight: 1, reason: "1 km" }],
+          profileVersion: weights.version,
+          learnedComponents: [],
+        })),
+    };
+    const group = planForGroup({
+      engine: mute,
+      request: REQUEST,
+      members: THE_GROUP,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+    });
+
+    expect(group.ok).toBe(true);
+    if (!group.ok) throw new Error(group.reason);
+    // No claim about what was or was not answered...
+    expect(group.conflicts.filter((conflict) => conflict.axis === "interests")).toEqual([]);
+    // ...and the walk that is verifiable is still reported.
+    expect(group.outcome.load.budget.tolerance).toBe("low");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The group answers, and the ordinary replanner does the work
+// ---------------------------------------------------------------------------
+
+describe("a group that already has a plan", () => {
+  /** A servable group whose budget can then be squeezed. */
+  const two: GroupMember[] = [
+    { id: "a", label: "Feroza", hard: { budgetMinor: 300_000 } },
+    { id: "b", label: "Bilal", strong: { interests: ["entertainment"] } },
+  ];
+
+  const started = () => {
+    const engine = referenceEngine(CATALOGUE, WEIGHTS);
+    const group = planForGroup({ engine, request: REQUEST, members: two, catalogue: CATALOGUE, weights: WEIGHTS });
+    if (!group.ok) throw new Error(group.reason);
+    return { engine, group };
+  };
+
+  it("re-solves through the replanner and reports the same guarantees", () => {
+    const { engine, group } = started();
+    const before = group.outcome.plan.stops.map((stop) => stop.experienceId);
+    expect(before).toContain("vineyard-table");
+
+    // Squeeze the ceiling to ₹800 a head for two, which puts the ₹1,200 table out.
+    const after = replanForGroup({
+      engine,
+      session: group.session,
+      aggregate: group.aggregate,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+      answer: {
+        sentence: "Take the cheaper ceiling.",
+        op: { kind: "set_budget", budgetMinor: 160_000, perPersonMinor: 80_000 },
+        by: ["Feroza"],
+        evidence: [],
+      },
+    });
+
+    expect(after.ok).toBe(true);
+    if (!after.ok) throw new Error(after.reason);
+    // The existing replanner produced the diff and the reality panel, not this file.
+    expect(after.outcome.change.kind).toBe("budget_cut");
+    expect(after.outcome.diff.removed.map((stop) => stop.id)).toContain("vineyard-table");
+    expect(after.outcome.reality.removed.map((stop) => stop.id)).toContain("vineyard-table");
+    // The replanner's own diff, measured against the intent the group started with:
+    // ₹6,000 for the two of them, which is the ceiling they had before they answered.
+    expect(after.outcome.reality.intentPreserved).toBe(true);
+    expect(after.outcome.reality.intent.join(" ")).toContain("₹6,000");
+    // And the plan really moved.
+    expect(after.outcome.plan.stops.map((stop) => stop.experienceId)).not.toContain("vineyard-table");
+    expect(after.outcome.plan.totalCost.minor).toBeLessThanOrEqual(160_000);
+    expect(after.session.state.ctx.budgetPerPerson?.minor).toBe(80_000);
+  });
+
+  it("keeps the previous plan when the answer leaves them nothing", () => {
+    const { engine, group } = started();
+    const before = group.outcome.plan;
+
+    // A five-minute window cannot hold a stop plus travel. `admit` passes an empty
+    // plan — it is a true plan, just an empty one — so the group layer is what stops
+    // that being handed back as a result.
+    const after = replanForGroup({
+      engine,
+      session: group.session,
+      aggregate: group.aggregate,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+      answer: { sentence: "Five minutes is all we have.", op: { kind: "set_time", availableMin: 5 }, by: [], evidence: [] },
+    });
+
+    expect(after.ok).toBe(false);
+    if (after.ok) return;
+    expect(after.change?.kind).toBe("time_shrank");
+    expect(after.reason).toBe("Nothing within reach works for all of you at once.");
+    // The evidence is the engine's own, and the group is asked rather than served an
+    // empty day.
+    expect(after.conflicts.length).toBeGreaterThan(0);
+    expect(after.ask.length).toBeGreaterThan(0);
+    expect(after.ask[0]?.op.kind).toBe("set_time");
+  });
+
+  it("refuses to re-solve an answer that changes nothing the planner reads", () => {
+    const { engine, group } = started();
+    const after = replanForGroup({
+      engine,
+      session: group.session,
+      aggregate: group.aggregate,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+      // The group already has a walking cap they never set: a no-op edit.
+      answer: { sentence: "Nothing really.", op: { kind: "set_mood", mood: null }, by: [], evidence: [] },
+    });
+
+    expect(after.ok).toBe(false);
+    if (after.ok) return;
+    expect(after.change).toBeNull();
+    expect(after.reason).toContain("would not change anything");
+    expect(after.conflicts).toEqual([]);
+  });
+
+  it("will not adapt a plan that does not exist", () => {
+    const engine = referenceEngine(CATALOGUE, WEIGHTS);
+    const unserved = planForGroup({
+      engine,
+      request: REQUEST,
+      members: [{ id: "a", label: "Feroza", hard: { budgetMinor: 10_000 } }],
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+    });
+    if (unserved.ok) throw new Error("this group cannot be served");
+
+    const after = replanForGroup({
+      engine,
+      session: unserved.session,
+      aggregate: unserved.aggregate,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+      answer: unserved.ask[0]!,
+    });
+
+    expect(after.ok).toBe(false);
+    if (after.ok) return;
+    // An unserved group needs a new solve, not a re-solve, and is told so.
+    expect(after.reason).toContain("new solve");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Negotiation
+// ---------------------------------------------------------------------------
+
+describe("the group negotiating with itself", () => {
+  it("converges in one round when one answer is enough", () => {
+    const resolved = resolveGroup({
+      engine: referenceEngine([NOCTURNE, BAZAAR, SEABOARD, VINEYARD], WEIGHTS),
+      request: REQUEST,
+      members: [
+        { id: "a", label: "Feroza", hard: { budgetMinor: 10_000 } },
+        { id: "b", label: "Bilal" },
+      ],
+      catalogue: [NOCTURNE, BAZAAR, SEABOARD, VINEYARD],
+      weights: WEIGHTS,
+    });
+
+    expect(resolved.ok).toBe(true);
+    expect(resolved.rounds).toHaveLength(1);
+    expect(resolved.rounds[0]?.ask?.op.kind).toBe("set_budget");
+    expect(resolved.rounds[0]?.stops).toBe(1);
+    expect(resolved.plan.ok).toBe(true);
+    if (!resolved.plan.ok) throw new Error(resolved.plan.reason);
+    expect(resolved.plan.outcome.plan.stops.map((stop) => stop.experienceId)).toEqual(["nocturne-theatre"]);
+  });
+
+  it("stops immediately when the group is already servable", () => {
+    const resolved = resolveGroup({
+      engine: referenceEngine(CATALOGUE, WEIGHTS),
+      request: REQUEST,
+      members: THE_GROUP,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+    });
+
+    expect(resolved.ok).toBe(true);
+    expect(resolved.rounds).toEqual([]);
+    expect(resolved.plan.ok).toBe(true);
+    if (!resolved.plan.ok) throw new Error(resolved.plan.reason);
+    expect(resolved.plan.outcome.plan.stops).toHaveLength(2);
+  });
+
+  it("does not keep asking when there is nothing left to ask", () => {
+    // An empty catalogue is a market gap: no constraint is to blame, so there is no
+    // question, and a group that cannot be served ends without a plan.
+    const resolved = resolveGroup({
+      engine: referenceEngine([], WEIGHTS),
+      request: REQUEST,
+      members: THE_GROUP,
+      catalogue: [],
+      weights: WEIGHTS,
+    });
+
+    expect(resolved.ok).toBe(false);
+    expect(resolved.stuck).toBe(true);
+    expect(resolved.rounds).toHaveLength(1);
+    expect(resolved.rounds[0]?.ask).toBeNull();
+    expect(resolved.plan.ok).toBe(false);
+  });
+
+  it("converges by letting the group walk when nothing is walkable", () => {
+    const far = [RIDGE, CREST];
+    const resolved = resolveGroup({
+      engine: referenceEngine(far, WEIGHTS),
+      request: REQUEST,
+      members: [{ id: "a", label: "Feroza", hard: { walking: "low" } }],
+      catalogue: far,
+      weights: WEIGHTS,
+    });
+
+    expect(resolved.ok).toBe(true);
+    expect(resolved.rounds).toHaveLength(1);
+    expect(resolved.rounds[0]?.ask?.op.kind).toBe("set_walking");
+    expect(resolved.rounds[0]?.stops).toBe(2);
+  });
+
+  it("stops rather than asking again when no answer would help", () => {
+    // A market that cannot seat the group at all. Capacity is nobody's preference,
+    // so there is no honest question to put to them, and offering one anyway would
+    // be asking a group to give up something they did not choose to limit.
+    const honest = referenceEngine(CATALOGUE, WEIGHTS);
+    const tooSmall: EnginePort = {
+      ...honest,
+      filterFeasible: () => ({
+        passed: [],
+        rejected: CATALOGUE.map((item) => ({
+          experienceId: item.id,
+          code: "capacity_exceeded" as const,
+          message: "Seats 1; you are 4.",
+          shortfall: 3,
+          unit: "people" as const,
+          relaxable: false,
+        })),
+      }),
+    };
+    const resolved = resolveGroup({
+      engine: tooSmall,
+      request: REQUEST,
+      members: THE_GROUP,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+    });
+
+    expect(resolved.ok).toBe(false);
+    expect(resolved.stuck).toBe(true);
+    expect(resolved.rounds).toHaveLength(1);
+    expect(resolved.rounds[0]?.ask).toBeNull();
+    // It is still reported as what it is, with the engine's sentence.
+    expect(resolved.rounds[0]?.reason).toBe("Nothing within reach works for all of you at once.");
+    expect(resolved.rounds[0]?.conflicts[0]?.evidence).toContain("Seats 1; you are 4.");
+  });
+
+  it("is deterministic: the same negotiation twice is the same transcript", () => {
+    const ask = (): Parameters<typeof resolveGroup>[0] => ({
+      engine: referenceEngine([NOCTURNE, BAZAAR, SEABOARD, VINEYARD], WEIGHTS),
+      request: REQUEST,
+      members: [
+        { id: "a", label: "Feroza", hard: { budgetMinor: 10_000 } },
+        { id: "b", label: "Bilal" },
+      ],
+      catalogue: [NOCTURNE, BAZAAR, SEABOARD, VINEYARD],
+      weights: WEIGHTS,
+    });
+    const first = resolveGroup(ask());
+    const second = resolveGroup(ask());
+
+    expect(second.rounds.map((round) => [round.ask?.sentence, round.reason, round.stops])).toEqual(
+      first.rounds.map((round) => [round.ask?.sentence, round.reason, round.stops]),
+    );
+    expect(second.ok).toBe(first.ok);
+  });
+
+  it("clamps a silly round count instead of trusting it", () => {
+    const resolved = resolveGroup({
+      engine: referenceEngine(CATALOGUE, WEIGHTS),
+      request: REQUEST,
+      members: THE_GROUP,
+      catalogue: CATALOGUE,
+      weights: WEIGHTS,
+      maxRounds: 99,
+    });
+
+    expect(MAX_ROUNDS).toBe(3);
+    expect(resolved.ok).toBe(true);
   });
 });

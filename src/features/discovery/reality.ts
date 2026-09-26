@@ -75,6 +75,13 @@ export type RealityInput = {
   before: Plan;
   after: Plan;
   nextCtx: DiscoveryContext;
+  /**
+   * The context `before` was actually produced under. Not `intent` and not
+   * `nextCtx`: after a time edit the old plan was solved against the old window,
+   * and shaping it with either of those reports a before-state the traveller was
+   * never shown.
+   */
+  prevCtx: DiscoveryContext;
   intent: DiscoveryContext;
   enginePreservedIntent: boolean;
   stressBefore: number | null;
@@ -136,7 +143,7 @@ export function buildRealityChanged(input: RealityInput): RealityChanged {
     removed: diff.removed,
     added: diff.added,
     unchanged: diff.unchanged,
-    before: shapeOf(before, intent),
+    before: shapeOf(before, input.prevCtx),
     after: shapeOf(after, nextCtx),
     stressBefore: input.stressBefore,
     intent: intentLines(intent),

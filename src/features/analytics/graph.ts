@@ -74,7 +74,12 @@ export function toGraphExport(dashboard: ProviderDashboard): GraphExport {
   }
 
   for (const opp of dashboard.opportunities) {
-    const cellId = `cell:${opp.demand.neighbourhood}:${opp.missingSupply.code}`;
+    // One node per OPPORTUNITY, not per (neighbourhood, blocking code). Two gaps in
+    // the same hood blocked by the same code are still different demand cells —
+    // different category, budget band, time band and access constraints — and a
+    // shared key collapsed them into one node whose evidence was then duplicated
+    // across its edges.
+    const cellId = `cell:${opp.id}`;
     nodes.push({
       id: cellId,
       kind: "demand_cell",
@@ -89,17 +94,10 @@ export function toGraphExport(dashboard: ProviderDashboard): GraphExport {
       weight: Math.min(1, opp.sampleSize / Math.max(1, dashboard.demand.total)),
       sampleSize: opp.sampleSize,
     });
-    if (opp.nearbyMatches > 0) {
-      for (let i = 0; i < opp.nearbyMatches; i += 1) {
-        edges.push({
-          from: `listing:competitor:${opp.id}:${i}`,
-          to: cellId,
-          kind: "competes_with",
-          weight: 0.5,
-          sampleSize: opp.sampleSize,
-        });
-      }
-    }
+    // `nearbyMatches` is a COUNT, not a set of ids. There is no competitor to name
+    // yet, so an edge to `listing:competitor:...` would dangle — a consumer
+    // resolving endpoints gets nothing. The count stays on the cell's
+    // `sampleSize`; the edge waits until the ids exist.
   }
 
   return { nodes, edges };

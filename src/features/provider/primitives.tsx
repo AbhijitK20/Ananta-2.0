@@ -5,7 +5,7 @@
  *
  * The mission says: if his components exist, consume them; if not, represent
  * them here rather than writing into his directory. These are deliberately plain
- * and read every colour from his tokens via `var(--token)`, so when the real
+ * and read every colour from his tokens by name, so when the real
  * primitives land this file can be deleted and the JSX barely moves.
  *
  * ponytail: ceiling — no hex literals, no Tailwind classes, no motion. Swap for
@@ -240,7 +240,7 @@ export function Badge({ tone = "muted", children }: { tone?: Tone; children: Rea
         ...TONES[tone],
         display: "inline-block",
         border: "1px solid",
-        borderRadius: "var(--radius-full, 999px)",
+        borderRadius: "var(--radius-pill)",
         padding: "0.0625rem 0.5rem",
         fontSize: "0.75rem",
         whiteSpace: "nowrap",

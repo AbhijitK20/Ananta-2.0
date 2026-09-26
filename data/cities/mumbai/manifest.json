@@ -1,0 +1,82 @@
+{
+  "slug": "mumbai",
+  "displayName": "Mumbai",
+  "country": "India",
+  "bbox": [72.775, 18.875, 72.99, 19.265],
+  "centre": { "lat": 19.0596, "lon": 72.8295 },
+  "timezone": "Asia/Kolkata",
+  "currency": "INR",
+  "neighbourhoods": [
+    "Bandra West",
+    "Bandra East",
+    "Khar",
+    "Juhu",
+    "Vile Parle",
+    "Andheri West",
+    "Andheri East",
+    "Bandra Kurla Complex",
+    "Colaba",
+    "Fort",
+    "Worli",
+    "Dadar",
+    "Parel",
+    "Lower Parel",
+    "Prabhadevi",
+    "Girgaon",
+    "Malabar Hill",
+    "Pali Hill",
+    "Bandra Reclamation",
+    "Wadala",
+    "Chembur",
+    "Powai",
+    "Ghatkopar",
+    "Sion",
+    "Matunga",
+    "Mahim"
+  ],
+  "monsoonMonths": [6, 7, 8, 9],
+  "congestionModel": {
+    "western_suburban": {
+      "early_morning": 1.35,
+      "morning": 1.25,
+      "afternoon": 1.1,
+      "evening": 1.5,
+      "night": 1.0
+    },
+    "southern_corridor": {
+      "early_morning": 1.5,
+      "morning": 1.2,
+      "afternoon": 1.0,
+      "evening": 1.3,
+      "night": 0.9
+    },
+    "central_city": {
+      "early_morning": 1.2,
+      "morning": 1.15,
+      "afternoon": 1.1,
+      "evening": 1.4,
+      "night": 0.85
+    },
+    "eastern_suburban": {
+      "early_morning": 1.3,
+      "morning": 1.2,
+      "afternoon": 1.05,
+      "evening": 1.4,
+      "night": 0.95
+    }
+  },
+  "transitCorridors": [
+    { "from": "Bandra West", "to": "Andheri East", "mode": "train", "line": "Western Line", "minutes": 18, "transfers": 0 },
+    { "from": "Bandra West", "to": "Colaba", "mode": "train", "line": "Western Line", "minutes": 22, "transfers": 0 },
+    { "from": "Bandra West", "to": "Worli", "mode": "train", "line": "Western Line", "minutes": 12, "transfers": 0 },
+    { "from": "Bandra West", "to": "Mahim", "mode": "train", "line": "Western Line", "minutes": 8, "transfers": 0 },
+    { "from": "Andheri East", "to": "Bandra East", "mode": "metro", "line": "Metro Line 1", "minutes": 24, "transfers": 0 },
+    { "from": "Andheri East", "to": "Fort", "mode": "metro", "line": "Metro Line 1 + Line 3", "minutes": 28, "transfers": 1 },
+    { "from": "Fort", "to": "Colaba", "mode": "ferry", "line": "Colaba-Belapur Ferry", "minutes": 15, "transfers": 0 },
+    { "from": "Bandra Kurla Complex", "to": "Fort", "mode": "metro", "line": "Metro Line 3", "minutes": 18, "transfers": 0 },
+    { "from": "Worli", "to": "Lower Parel", "mode": "train", "line": "Western Line", "minutes": 9, "transfers": 0 },
+    { "from": "Dadar", "to": "Matunga", "mode": "train", "line": "Central Line", "minutes": 5, "transfers": 0 },
+    { "from": "Sion", "to": "Chembur", "mode": "train", "line": "Central Line", "minutes": 4, "transfers": 0 },
+    { "from": "Chembur", "to": "Bandra Kurla Complex", "mode": "train", "line": "Central Line", "minutes": 14, "transfers": 0 }
+  ]
+}

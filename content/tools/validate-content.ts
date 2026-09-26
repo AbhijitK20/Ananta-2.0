@@ -17,6 +17,7 @@
  *      hand-maintaining 114 of them is how they drift.
  *   4. COPY. Banned AI-slop phrases, over-long blurbs, and descriptions that
  *      restate the blurb.
+ *   5. APPLY. Rating rewrites, last, and only when steps 1-4 found nothing.
  *
  * Usage:
  *   npx tsx content/tools/validate-content.ts
@@ -61,12 +62,22 @@ function readJsonl(path: string): Line[] {
     .map((raw, i) => ({ file: path.slice(ROOT.length + 1), no: i + 1, raw }))
     .filter((l) => l.raw.trim().length > 0)
     .map((l) => {
+      let value: unknown;
       try {
-        return { ...l, rec: JSON.parse(l.raw) as Rec };
+        value = JSON.parse(l.raw);
       } catch (e) {
         fail(`${l.file}:${l.no} not valid JSON — ${(e as Error).message}`);
         return l;
       }
+      // `JSON.parse("null")` is `null` and `as Rec` does not make it a record.
+      // Every dataset loop below does `if (!l.rec) continue`, so a `null` line
+      // vanished instead of being reported — the one class of corruption this
+      // file exists to catch.
+      if (value === null || typeof value !== "object" || Array.isArray(value)) {
+        fail(`${l.file}:${l.no} must be a JSON object, got ${Array.isArray(value) ? "an array" : JSON.stringify(value)}`);
+        return l;
+      }
+      return { ...l, rec: value as Rec };
     });
 }
 
@@ -125,7 +136,11 @@ for (const l of revLines) {
     continue;
   }
   const rating = l.rec.rating;
-  if (typeof rating !== "number" || !Number.isInteger(rating) || rating < 1 || rating > 5)
+  // A rating that failed the check above must NOT reach the aggregate: `Number("bad")`
+  // is NaN, and NaN written into a derived rating is an invalid record that
+  // outlives the run that could have told you about it.
+  const ratingOk = typeof rating === "number" && Number.isInteger(rating) && rating >= 1 && rating <= 5;
+  if (!ratingOk)
     fail(`${l.file}:${l.no} ${eid} · review rating must be an integer 1..5, got ${String(rating)}`);
   if (typeof l.rec.partySize !== "number" || l.rec.partySize < 1)
     fail(`${l.file}:${l.no} ${eid} · review partySize must be >= 1`);
@@ -151,9 +166,11 @@ for (const l of revLines) {
     if (spend > ceiling)
       fail(`${l.file}:${l.no} ${eid} · free entry but spendMinor ${spend} exceeds the ₹${FREE_ENTRY_SPEND_CEILING_PER_PERSON}/person incidental ceiling (${ceiling})`);
   }
-  const list = revByExp.get(eid) ?? [];
-  list.push(Number(rating));
-  revByExp.set(eid, list);
+  if (ratingOk) {
+    const list = revByExp.get(eid) ?? [];
+    list.push(rating);
+    revByExp.set(eid, list);
+  }
 }
 
 for (const l of evtLines) {
@@ -284,21 +301,8 @@ for (const l of expLines) {
     fail(`${l.file}:${l.no} ${id} · rating drift: file has count=${cur.count} rawMean=${cur.rawMean} value=${cur.value}; reviews give count=${n} rawMean=${rawMean} value=${value} (prior ${RATING_PRIOR}, weight ${RATING_PRIOR_WEIGHT}) — re-run with --write-ratings`);
   }
 }
-// One write per file, not per line. Grouping here is not tidiness: writing each
-// fix as its own `writeFileSync` silently truncates the file to the last line.
-const byFile = new Map<string, Fix[]>();
-for (const f of fixes) (byFile.get(f.file) ?? byFile.set(f.file, []).get(f.file)!).push(f);
-for (const [file, group] of byFile) {
-  let text = readFileSync(file, "utf8");
-  for (const f of group) {
-    if (!text.includes(f.before)) {
-      fail(`${file.replace(ROOT + "\\", "")} · rating rewrite aborted: the line changed underneath us. Re-run.`);
-      continue;
-    }
-    text = text.replace(f.before, f.after);
-  }
-  writeFileSync(file, text, "utf8");
-}
+// The writes happen in section 5, after every check has run. Applying them here
+// meant a fix could land on disk while a later problem was still unknown.
 
 // --- 4. copy ---------------------------------------------------------------
 
@@ -341,6 +345,37 @@ for (const l of expLines) {
   // fix is `mixed`, which is what the enum's `mixed` member is for.
   if (l.rec.indoorOutdoor === "indoor" && l.rec.weatherSensitive === "rain")
     fail(`${l.file}:${l.no} ${id} · indoorOutdoor "indoor" contradicts weatherSensitive "rain"; use "mixed" if part of the visit is exposed`);
+}
+
+// --- 5. apply the rating rewrites -----------------------------------------
+
+/**
+ * Deferred, and gated on a clean run. Writing mid-pass meant `--write-ratings`
+ * could persist a derived rating computed from a review the same pass had just
+ * rejected — the tool would fix one number and corrupt another, then exit 1.
+ */
+if (fixes.length > 0) {
+  if (problems.length > 0) {
+    console.log(
+      `\nrefusing to write ${fixes.length} rating fix(es): ${problems.length} problem(s) above must be fixed first.\n`,
+    );
+  } else {
+    // One write per file, not per line. Grouping here is not tidiness: writing
+    // each fix as its own `writeFileSync` truncates the file to the last line.
+    const byFile = new Map<string, Fix[]>();
+    for (const f of fixes) (byFile.get(f.file) ?? byFile.set(f.file, []).get(f.file)!).push(f);
+    for (const [file, group] of byFile) {
+      let text = readFileSync(file, "utf8");
+      for (const f of group) {
+        if (!text.includes(f.before)) {
+          fail(`${file.replace(ROOT + "\\", "")} · rating rewrite aborted: the line changed underneath us. Re-run.`);
+          continue;
+        }
+        text = text.replace(f.before, f.after);
+      }
+      writeFileSync(file, text, "utf8");
+    }
+  }
 }
 
 // --- report ----------------------------------------------------------------

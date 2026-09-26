@@ -11,13 +11,22 @@
  * group.ok
  *   ? render(group.outcome.plan, group.conflicts)                  // strained, with evidence
  *   : render(group.reason, group.ask, group.conflicts);             // no plan, and what to change
- * const answered = planForGroup({ engine, request, members, catalogue, weights, adjust: group.ask });
+ *
+ * // the group answers, and the ordinary replanner does the work
+ * const after = replanForGroup({ engine, session: group.session, aggregate: group.aggregate, catalogue, weights, answer: group.ask });
+ *
+ * // or let the group negotiate itself, bounded and always terminating
+ * const settled = resolveGroup({ engine, request, members, catalogue, weights });
+ * settled.rounds.forEach(render);
  * ```
  */
 export {
   INTEREST_SLOTS,
+  MAX_ROUNDS,
   aggregateGroup,
   planForGroup,
+  replanForGroup,
+  resolveGroup,
   type Ask,
   type GroupAggregate,
   type GroupAxis,
@@ -27,7 +36,11 @@ export {
   type GroupMember,
   type GroupPlan,
   type GroupPlanInput,
+  type GroupReplan,
+  type GroupReplanInput,
   type GroupRequest,
+  type GroupResolution,
+  type GroupRound,
   type GroupWalking,
   type Strength,
 } from "./group";
