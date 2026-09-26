@@ -108,7 +108,7 @@ systems	nomadnote	https://github.com/Ghostsheep1/NomadNote.git	Local-first plann
 systems	jauntai	https://github.com/Param-Pandya/JauntAI.git	Multi-agent travel system: Supervisor Agent decomposes the query, Domain Guardrails filter unsafe or off-topic input, specialist sub-agents per domain, human-in-the-loop approval gate. Reference for our input-safety layer and orchestration shape. MIT.	-
 systems	inkle	https://github.com/vipa22aiml/inkle.git	Gemini-based planner with explicit pipeline nodes (Places -> Route -> Cost -> Synthesizer). Concrete shipped evidence that the staged-pipeline pattern is implementable, which is the core of our architecture claim.	-
 systems	tourwise	https://github.com/lasa1015/tourwise-springboot-react.git	Academic capstone folding an ML-predicted crowd "Busyness Index" into itinerary scoring. Sourceable method for our crowd_fit ranking feature, which the plan needs grounding for. GPL-2.0, and a 387 MB repo so only the model and service code is kept.	/webapp/src/ /service/ /src/main/
-systems	routemind-pritesh	https://github.com/pritesh-4/RouteMind.git	RAG + embeddings + OR-Tools + Google Maps. The masterplan flags this as a modest-scope project we should NOT quote as a benchmark without checking ourselves. Kept as a counter-example, not an authority.	-
+systems	routemind-pritesh	https://github.com/pritesh-4/RouteMind.git	MISCLASSIFIED AND CORRECTED: this is an LLM-provider router for a chat app, NOT a travel project. Its description was copy-pasted from the OTHER RouteMind (peer/routemind). It has zero ortools, zero itinerary, zero poi. The masterplan lists it as a counter-example not to quote as a benchmark; keep it only as evidence that repo descriptions get copy-pasted. See findings/02-engine-internals.md claim 1.	-
 systems	tourism-spot-baseline	https://github.com/Jess607/Tourism-Spot-Recommendation-System.git	Academic hybrid content-based/collaborative-filtering tourism recommender. Useful ONLY as a baseline-quality comparison: static catalogue, no real-time constraints, same cold-start problem. GPL-3.0.	-
 
 # ---------------------------------------------------------------------------
@@ -118,3 +118,12 @@ peer	tourism-recommendation	https://github.com/shr1911/Tourism-Recommendation.gi
 peer	tourism-recommendation-2	https://github.com/yalsaffar/Tourism-Recommendation-System.git	Notebook-based tourism recommendation system. 153 MB almost entirely dataset, so only the notebooks and code are kept.	*.ipynb *.py
 peer	ai-travelassistant-bala	https://github.com/bala-ceg/ai-travelassistant.git	Small FastAPI-style AI travel assistant with an input.json and a generated report.md. Useful for comparing how a thin LLM wrapper differs from our engine-first design.	-
 domain	trek-xaler1	https://github.com/Xaler1/TREK.git	The Xaler1/TREK original named in the masterplan, kept alongside liketrek/TREK (the actively developed 14k-star fork we already have) so we can see what the fork diverged on. AGPL-3.0.	-
+
+# ---------------------------------------------------------------------------
+# Added from TRAVELBUDDY_MASTERPLAN_FINAL.md §21, which supersedes the earlier
+# ATHITI plan. Verified against the GitHub API.
+# ---------------------------------------------------------------------------
+systems	event-recommender-engine	https://github.com/haniabdemai/event-recommender.git	THE closest prior art to our engine in the whole corpus, and the masterplan admits §9 was "directly shaped" by it: Python veto rules as a hard pre-filter plus weighted scoring signals, then an LLM sense-check on top. Same hard-veto-then-rank shape as our feasibility gate.	-
+related	event-recommendation-wangxh	https://github.com/Wangxh329/EventRecommendation.git	Java. Location-aware event ranking with interaction history. Cited by the masterplan for event personalisation and geographic ranking.	-
+related	event-recommender-liush	https://github.com/liush27/EventRecommender.git	Java. Geographic plus behavioural event recommendation. Baseline comparison for the event side of the catalogue.	-
+patterns	catalens-one	https://github.com/haniabdemai/catalens-one.git	Same author as the veto engine. Scores a catalogue product-by-product for agent-readiness with an auditable per-item verdict. Useful reference for how to present a scored, explainable audit to a non-technical provider audience.	-

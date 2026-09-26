@@ -131,12 +131,19 @@ if [ "$MODE" = "update" ]; then
     git -C "$dest" reset -q --hard FETCH_HEAD 2>/dev/null
 fi
 if [ "$use_sparse" -eq 1 ] && [ ! -f "$dest/.git/info/sparse-checkout" ]; then
-  # existing full clone that never got patterns applied
-  # shellcheck disable=SC2086
+  # existing full clone that never got patterns applied.
+  # NOTE: --no-cone is REQUIRED on both calls. Omitting it made git write the
+  # default `/*` + `!/*/` pattern, which materialises an empty working tree.
   git -C "$dest" sparse-checkout init --no-cone >/dev/null 2>&1
   # shellcheck disable=SC2086
-  git -C "$dest" sparse-checkout set $sparse >/dev/null 2>&1
-  emit TRIMMED "$tier" "$dir" "sparse-applied"
+  git -C "$dest" sparse-checkout set --no-cone $sparse >/dev/null 2>&1
+  # verify we actually got a populated tree, else fall back to everything
+  if [ "$(find "$dest" -type f -not -path '*/.git/*' 2>/dev/null | wc -l)" -lt 5 ]; then
+    git -C "$dest" sparse-checkout disable >/dev/null 2>&1
+    emit TRIMMED "$tier" "$dir" "sparse-empty-fallback-full"
+  else
+    emit TRIMMED "$tier" "$dir" "sparse-applied"
+  fi
   exit 0
 fi
 emit CACHED "$tier" "$dir"

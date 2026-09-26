@@ -26,6 +26,10 @@ tsconfig.tsbuildinfo
 *.sqlite3
 data/local/
 
+# graphify knowledge-graph output (generated; large — graph.html + graph.json)
+/graphify-out/
+/graphify-systems-out/
+
 # research/reference clones — read-only, pinned in research/MANIFEST.json
 research/adopt/
 research/patterns/
@@ -73,3 +77,12 @@ coverage/
 .nyc_output/
 playwright-report/
 test-results/
+
+# teammate working directories that are themselves git repos - never commit
+/makemydrivefun/
+/trip-planner/
+/travel-like-local/
+
+# graphify knowledge-graph cache (regenerable; the teammate's plugin writes here)
+graphify-out/
+research/graphify-out/

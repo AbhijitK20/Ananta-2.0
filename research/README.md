@@ -33,6 +33,33 @@ specific thing we take from it — or the specific reason we rejected it.
 | `related/` | **Not installed.** Prior work. Cited in the deck; proves we know the field. |
 | `rejected/` | Evaluated and declined. Cloned so nobody re-litigates it mid-build. |
 
+## Findings — the distillation
+
+`research/findings/` holds the output of a five-way parallel deep dive across all 67 repos
+(~14,900 lines, every claim tagged `repo/path:line`).
+
+| File | Lines | Domain |
+|---|---|---|
+| **`00-SYNTHESIS.md`** | ~300 | **Start here.** Distillation: what to build, what to copy, what the literature gets wrong |
+| `01-traveler-uiux.md` | 1,153 | Screens, timeline, map coupling, confidence surfacing, cards, empty states, a11y |
+| `02-engine-internals.md` | 2,906 | Request decomposition, cluster-then-route, penalty encoding, VRP, minimal TS design |
+| `03-marketplace-booking.md` | 2,580 | Capacity model, oversell prevention, workflow engine, auth, booking state machine |
+| `04-data-retrieval.md` | 2,300 | OSM tag semantics, Overpass, opening_hours, isochrones, geo utils, MapLibre perf |
+| `05-llm-integration.md` | 5,999 | AI SDK v7, the engine/LLM boundary, chat UX, memory, guardrails, evaluation |
+
+**27 claims from READMEs, papers and file names did not survive checking** — they are catalogued in
+`02-engine-internals.md` §"CLAIMS THAT DID NOT SURVIVE CHECKING", and three of them
+(UGuideRAG's spatial stage, TripWeaver's relaxation, the masterplan's Z3 story) are load-bearing
+in `ATHITI_MASTERPLAN_V2.md`. Read the synthesis before trusting any of those papers again.
+
+## Housekeeping
+
+`repair-sparse.sh` exists because `fetch.sh` had a bug: its existing-clone path called
+`sparse-checkout set` **without `--no-cone`**, so git wrote the include-nothing default
+(`/*` + `!/*/`) and 11 clones ended up with a valid `.git` but an **empty working tree**. Fixed in
+both scripts; `repair-sparse.sh` re-applies every declared pattern and verifies each tree is
+populated. Run it after any re-clone.
+
 ## `systems/` — the tier that matters most
 
 Cloned from the repo list in `ATHITI_MASTERPLAN_V2.md`, every URL verified against
