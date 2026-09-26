@@ -358,14 +358,18 @@ describe("what-if: rain", () => {
     expect(closed[0]?.code).toBe("weather_unsafe");
     expect(closed[0]?.unit).toBeNull();
 
-    // Never possible and not possible now: tightened, and it was already out of
-    // the running. Reporting it as newly lost would be false.
-    const tightened = result.gates.filter((change) => change.kind === "tightened");
-    expect(tightened.map((change) => change.id)).toEqual(["fort"]);
+    // `gallery` and `fort` were already ruled out on budget before it rained, so
+    // the rain is not what lost them. A two-state model reports them as newly
+    // unavailable, which would mean telling the traveller rain cost them two
+    // stops it did not.
+    expect(result.gates.filter((change) => change.id === "gallery" || change.id === "fort")).toEqual([]);
 
-    // Nothing was unlocked by rain, and saying so is better than implying the
-    // swap was a win.
-    expect(unlockedBy(result.gates)).toEqual([]);
+    // The interesting one: rain pushed the outdoor stops out, the budget then
+    // reached further, and the indoor workshop made the day it was previously
+    // ₹500 over on.
+    const unlocked = unlockedBy(result.gates);
+    expect(unlocked.map((change) => change.id)).toEqual(["craft"]);
+    expect(unlocked[0]?.reason).toBe("₹500 over your budget.");
   });
 });
 
@@ -474,6 +478,7 @@ describe("what-if: honest refusals", () => {
     const planner = scriptedPlanner();
     const session = live(planner.engine);
     deepFreeze(session);
+    const callsBefore = planner.calls.length;
     const outcome = simulate(planner.engine, session, [
       { kind: "budget_delta", minor: PER_STOP },
       { kind: "time", availableMin: 120 },
@@ -486,7 +491,7 @@ describe("what-if: honest refusals", () => {
     expect(result.ctx.availableMin).toBe(120);
     expect(result.ctx.avoid).toContain("indoors_only");
     // One re-solve for three edits, not three.
-    expect(planner.calls.filter((c) => c.fn === "pack")).toHaveLength(1);
+    expect(planner.calls.slice(callsBefore).filter((c) => c.fn === "pack")).toHaveLength(1);
     expect(result.plan.totalMin).toBeLessThanOrEqual(120);
     expect(session.state.ctx.availableMin).toBe(WINDOW_MIN);
     expect(session.state.ctx.avoid).not.toContain("indoors_only");

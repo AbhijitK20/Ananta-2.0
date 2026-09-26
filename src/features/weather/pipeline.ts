@@ -19,14 +19,18 @@
  *     to append rejections to `rejected`. When `src/engine/**` lands, the only
  *     thing that changes is the one wiring line in the app:
  *     `withWeather(engine, session.catalogue)`.
- *  2. **Fine weather is a no-op.** `profileFor(ctx).severity === 0` short-circuits
- *     every stage and returns the engine's own objects, untouched and un-copied.
- *     "The weather did not change anything" is then a fact a test can assert.
+ *  2. **Nothing is invented.** A clear sky at an hour that suits the records, with no
+ *     month injected and no indoor request, is a genuine no-op: the engine's own
+ *     objects come back untouched. The gate only ever closes something when one of
+ *     its four inputs — severity, the sun, the calendar, the traveller's own stated
+ *     preference — says so, and `closesThings()` is the single predicate that decides
+ *     it, so "the weather did not change anything" stays an observable fact rather
+ *     than an assumption.
  *  3. **No hidden state.** A decorator that stashed rejections between calls would
- *     make the call order load-bearing and the result unexplainable. Everything
- *     here is a function of `(ctx, catalogue)`, which is why the catalogue is a
- *     required argument: `replan()` is handed a plan and a context, not the records
- *     behind the stops, and the catalogue belongs to the engine.
+ *     make the call order load-bearing and the result unexplainable. Everything here
+ *     is a function of `(ctx, catalogue)`, which is why the catalogue is a required
+ *     argument: `replan()` is handed a plan and a context, not the records behind the
+ *     stops, and the catalogue belongs to the engine.
  *
  * If the engine grows its own weather gate this composes rather than conflicts: the
  * gate only ever *removes* ids the engine passed and *lowers* scores, so an engine
@@ -63,9 +67,11 @@ import {
   WEATHER_POLICY_VERSION,
   assess,
   profileFor,
-  weatherComponent,
+  verdictComponents,
+  type WeatherEnv,
   type WeatherProfile,
 } from "./model";
+import { timingMiss } from "./timing";
 
 /**
  * Re-solve budget for one replan. A real engine should already have re-solved for
@@ -76,7 +82,7 @@ import {
  */
 export const MAX_WEATHER_REPAIRS = 3;
 
-export type WeatherOptions = {
+export type WeatherOptions = WeatherEnv & {
   /**
    * Record lookup for the stages that are handed ids rather than records.
    * `DiscoverySession.catalogue` is already exactly this type.
@@ -84,8 +90,29 @@ export type WeatherOptions = {
   catalogue: ReadonlyMap<string, Experience>;
 };
 
+/**
+ * Whether this context can close a door at all.
+ *
+ * The fine-weather fast path is the reason this exists as a predicate and not as
+ * `severity > 0`: the gate is now three signals wide, and two of them — a stated
+ * `indoors_only` request and an injected month — can close a record under a cloudless
+ * sky. Getting that wrong would mean a traveller who asked for indoors only quietly
+ * got the street back.
+ */
+function closesThings(p: WeatherProfile): boolean {
+  return p.severity > 0 || p.season.month !== null || p.indoorOnly;
+}
+
+/** Whether any record's own `bestTimeOfDay` would earn a clock term. */
+function clockMatters(p: WeatherProfile, items: readonly Experience[]): boolean {
+  return items.some((item) => (timingMiss(item.bestTimeOfDay, p.window) ?? 0) > 0);
+}
+
 /** `experienceId + code`, so an engine that already wrote the same reason wins. */
 const rejectionKey = (entry: Rejection): string => `${entry.experienceId}:${entry.code}`;
+
+/** One decimal, the same shape the engine's own components use. */
+const round1 = (value: number): number => Math.round(value * 10) / 10;
 
 function mergeRejections(plan: Plan, extra: readonly Rejection[]): Rejection[] {
   if (extra.length === 0) return plan.rejected;
@@ -148,6 +175,10 @@ function swapsFor(prev: Plan, next: Plan, reason: (id: string) => string, narrat
  */
 export function withWeather(base: EnginePort, options: WeatherOptions): EnginePort {
   const { catalogue } = options;
+  // The window is left out on purpose: it is derived from the context on every call,
+  // because `nowMin` moves as the traveller edits their day and a captured window
+  // would go stale in exactly the case where it matters most.
+  const env: WeatherEnv = { month: options.month ?? null, monsoonMonths: options.monsoonMonths };
 
   return {
     retrieve(input: RetrieveInput): Experience[] {
@@ -156,8 +187,8 @@ export function withWeather(base: EnginePort, options: WeatherOptions): EnginePo
 
     filterFeasible(ctx: DiscoveryContext, items: Experience[]): FeasibleResult {
       const engineResult = base.filterFeasible(ctx, items);
-      const p = profileFor(ctx);
-      if (p.severity === 0) return engineResult;
+      const p = profileFor(ctx, env);
+      if (!closesThings(p)) return engineResult;
       const byId = new Map(items.map((item) => [item.id, item]));
       const passed: string[] = [];
       const rejected: Rejection[] = [...engineResult.rejected];
@@ -178,18 +209,18 @@ export function withWeather(base: EnginePort, options: WeatherOptions): EnginePo
 
     score(ctx: DiscoveryContext, items: Experience[], weights: WeightProfile): ScoreBreakdown[] {
       const engineScores = base.score(ctx, items, weights);
-      const p = profileFor(ctx);
-      if (p.severity === 0) return engineScores;
+      const p = profileFor(ctx, env);
+      if (!closesThings(p) && !clockMatters(p, items)) return engineScores;
       const byId = new Map(items.map((item) => [item.id, item]));
       return engineScores.map((entry) => {
         const item = byId.get(entry.experienceId);
         if (!item) return entry;
-        const component = weatherComponent(assess(p, item));
-        if (!component) return entry;
+        const components = verdictComponents(assess(p, item));
+        if (components.length === 0) return entry;
         return {
           ...entry,
-          total: entry.total + component.value,
-          components: [...entry.components, component],
+          total: round1(entry.total + components.reduce((sum, part) => sum + part.value, 0)),
+          components: [...entry.components, ...components],
           // The engine's own version stays in the string, so a score that moved
           // can be traced to the weather policy that moved it.
           profileVersion: `${entry.profileVersion}+${WEATHER_POLICY_VERSION}`,
@@ -206,9 +237,9 @@ export function withWeather(base: EnginePort, options: WeatherOptions): EnginePo
     },
 
     replan(prev: Plan, ctx: DiscoveryContext, change: ContextChange): ReplanResult {
-      const p = profileFor(ctx);
+      const p = profileFor(ctx, env);
       let result = base.replan(prev, ctx, change);
-      if (p.severity === 0) return result;
+      if (!closesThings(p)) return result;
 
       // The engine may or may not have re-solved hard enough for the new sky. We
       // do not re-pack anything here: the sealed stops go into `excludedIds` and

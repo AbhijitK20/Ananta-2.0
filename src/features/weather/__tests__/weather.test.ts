@@ -14,25 +14,15 @@
  *   5. Determinism, including that a live forecast and a simulated one produce the
  *      same plan.
  *
+ * The clock, the calendar and the written report are in `forecast.test.ts`; the
+ * shipped 133-record catalogue is in `real-catalogue.test.ts`. The nine records here
+ * live in `fixtures.ts` and are shared by all three.
+ *
  * Nothing here opens a socket, reads a clock, or depends on a wall of `Date`.
  */
 import { describe, expect, it } from "vitest";
-import {
-  type DiscoveryContext,
-  type Experience,
-  type WeatherNow,
-  Experience as ExperienceSchema,
-} from "../../../contracts";
-import {
-  ACTION_BY_ID,
-  applyOpsAndReplan,
-  createContext,
-  createSession,
-  discover,
-  indexCatalogue,
-  type ContextSeed,
-  type EditorOp,
-} from "../../discovery";
+import { type Experience, type WeatherNow } from "../../../contracts";
+import { ACTION_BY_ID, applyOpsAndReplan, createContext, discover, type ContextSeed } from "../../discovery";
 import { SWAP_BUDGET } from "../../discovery/reality";
 import {
   UNKNOWN_WEATHER,
@@ -46,228 +36,31 @@ import {
   withWeather,
 } from "..";
 import { DEFAULT_WEIGHTS, planner } from "./planner";
+import {
+  BRITANNIA,
+  CATALOGUE,
+  COLABA,
+  DISPENSARY,
+  FILM_WALK,
+  GATEWAY,
+  JAZZ,
+  PROMENADE,
+  SOLAR_CAFE,
+  TULIP,
+  CATALOGUE_INDEX,
+  clearSeed,
+  ctxOf,
+  engineFor,
+  exp,
+  plannedIds,
+  rainSeed,
+  rankedIds,
+  setSky,
+  weather,
+} from "./fixtures";
 
 /** The one request shape these tests use. Fixed instant, so nothing reads a clock. */
 const REQUEST = { point: { lat: 18.9265, lon: 72.8247 }, at: new Date("2026-07-14T12:00:00.000Z") };
-
-// ---------------------------------------------------------------------------
-// A catalogue of real Colaba and Marine Drive records, with the weather fields
-// copied verbatim out of `content/experiences/*.jsonl`. The coordinates, the
-// labels and the ratings are the shipped ones, so the gate is exercised against
-// the values production will feed it, without these tests breaking every time
-// somebody fixes a blurb in the seed data.
-// ---------------------------------------------------------------------------
-
-const rupees = (minor: number) => ({ minor, currency: "INR" as const });
-
-function exp(overrides: Partial<Experience> & Pick<Experience, "id" | "name">): Experience {
-  return ExperienceSchema.parse({
-    category: "street_food",
-    durationMin: 45,
-    pricePerPerson: null,
-    capacity: null,
-    hours: { raw: "Mo-Su 09:00-22:00", status: "ok", lastVerified: null },
-    indoorOutdoor: "outdoor",
-    accessibility: {
-      stepFree: null,
-      strollerOk: null,
-      lowStairs: null,
-      seatingAvailable: null,
-      hearingLoop: null,
-      restroomOnSite: null,
-    },
-    kidFriendly: null,
-    minAge: null,
-    diets: [],
-    cuisines: [],
-    rating: { value: 4.1, count: 3, rawMean: 4.1 },
-    blurb: null,
-    description: null,
-    keywords: [],
-    neighbourhood: "Colaba",
-    city: "Mumbai",
-    ...overrides,
-  });
-}
-
-/** `col-gateway-of-india`: the open plaza that a monsoon has to close. */
-const GATEWAY = exp({
-  id: "col-gateway-of-india",
-  name: "Gateway of India",
-  category: "heritage_site",
-  location: { lat: 18.932, lon: 72.8348 },
-  durationMin: 45,
-  indoorOutdoor: "outdoor",
-  weatherSensitive: "any",
-  rating: { value: 4.08, count: 3, rawMean: 4 },
-  keywords: ["gateway of india", "gateway", "heritage", "apollo bunder"],
-  neighbourhood: "Colaba",
-});
-
-/** `col-solar-cafe-apollo`: lawn dining, so rain-specific rather than any-weather. */
-const SOLAR_CAFE = exp({
-  id: "col-solar-cafe-apollo",
-  name: "Solar Cafe, Apollo Bandar",
-  category: "restaurant",
-  location: { lat: 18.9305, lon: 72.8336 },
-  durationMin: 80,
-  pricePerPerson: rupees(160000),
-  indoorOutdoor: "outdoor",
-  weatherSensitive: "rain",
-  rating: { value: 4.08, count: 3, rawMean: 4 },
-  keywords: ["apollo bunder cafe", "lawn dining", "seafood colaba"],
-});
-
-/** `col-cafe-tulip`: the covered verandah, which is the whole reason it is here. */
-const TULIP = exp({
-  id: "col-cafe-tulip",
-  name: "The Tulip — verandah tables",
-  category: "cafe",
-  location: { lat: 18.923, lon: 72.8298 },
-  durationMin: 45,
-  pricePerPerson: rupees(80000),
-  indoorOutdoor: "covered",
-  weatherSensitive: "rain",
-  rating: { value: 4.01, count: 3, rawMean: 4 },
-  keywords: ["tulip", "verandah", "covered seating", "light rain"],
-});
-
-/** `col-monsoon-film-walk`: a `covered` record the rain actually improves. */
-const FILM_WALK = exp({
-  id: "col-monsoon-film-walk",
-  name: "Monsoon Film Walk",
-  category: "hidden_place",
-  location: { lat: 18.9231, lon: 72.8327 },
-  durationMin: 60,
-  pricePerPerson: rupees(30000),
-  indoorOutdoor: "covered",
-  weatherSensitive: "rain",
-  rating: { value: 4.08, count: 3, rawMean: 4 },
-  keywords: ["monsoon", "rain photography", "covered walk"],
-});
-
-const BRITANNIA = exp({
-  id: "col-britannia-co",
-  name: "Britannia & Co.",
-  category: "restaurant",
-  location: { lat: 18.924, lon: 72.8327 },
-  durationMin: 75,
-  pricePerPerson: rupees(220000),
-  indoorOutdoor: "indoor",
-  weatherSensitive: "none",
-  rating: { value: 4.08, count: 3, rawMean: 4 },
-  keywords: ["britannia", "parsi", "berry pulao"],
-});
-
-const JAZZ = exp({
-  id: "col-jazz-corner",
-  name: "Colaba Jazz Corner",
-  category: "music_live",
-  location: { lat: 18.9268, lon: 72.8341 },
-  durationMin: 90,
-  pricePerPerson: rupees(90000),
-  indoorOutdoor: "indoor",
-  weatherSensitive: "none",
-  rating: { value: 3.95, count: 3, rawMean: 3.33 },
-  keywords: ["jazz", "live jazz", "colaba live"],
-});
-
-const DISPENSARY = exp({
-  id: "col-dispensary-reading-room",
-  name: "Old Dispensary Reading Room",
-  category: "hidden_place",
-  location: { lat: 18.9284, lon: 72.8363 },
-  durationMin: 30,
-  indoorOutdoor: "indoor",
-  weatherSensitive: "none",
-  rating: { value: 4.08, count: 3, rawMean: 4 },
-  keywords: ["dispensary", "heritage office", "sitting room"],
-});
-
-/** `md-promenade`: the heat half of the gate, from the Marine Drive set. */
-const PROMENADE = exp({
-  id: "md-promenade",
-  name: "Marine Drive promenade",
-  category: "nature",
-  location: { lat: 19.0449, lon: 72.8203 },
-  durationMin: 40,
-  indoorOutdoor: "outdoor",
-  weatherSensitive: "heat",
-  rating: { value: 4.1, count: 3, rawMean: 4 },
-  keywords: ["marine drive", "promenade", "sea walk"],
-  neighbourhood: "Marine Drive",
-});
-
-const SEAVIEW = exp({
-  id: "md-grand-hotel-seaview",
-  name: "Grand Hotel sea-view cafe",
-  category: "cafe",
-  location: { lat: 19.0451, lon: 72.8205 },
-  durationMin: 60,
-  pricePerPerson: rupees(120000),
-  indoorOutdoor: "indoor",
-  weatherSensitive: "none",
-  rating: { value: 4.2, count: 3, rawMean: 4.2 },
-  keywords: ["grand hotel", "sea view", "cafe"],
-  neighbourhood: "Marine Drive",
-});
-
-const CATALOGUE = [GATEWAY, SOLAR_CAFE, TULIP, FILM_WALK, BRITANNIA, JAZZ, DISPENSARY, PROMENADE, SEAVIEW];
-const CATALOGUE_INDEX = indexCatalogue(CATALOGUE);
-
-// ---------------------------------------------------------------------------
-// One traveller, one clock, several skies
-// ---------------------------------------------------------------------------
-
-const COLABA: ContextSeed = {
-  id: "ctx-colaba",
-  origin: { label: "Colaba, near the Taj", point: { lat: 18.9265, lon: 72.8247 } },
-  availableMin: 120,
-  nowMin: 1020,
-  partySize: 2,
-  interests: ["heritage"],
-};
-
-const weather = (condition: WeatherNow["condition"], tempC: number): Partial<WeatherNow> =>
-  ({ condition, tempC, source: "simulated" });
-
-/** Scenario A and Scenario B: identical in every field except the sky. */
-const clearSeed: ContextSeed = { ...COLABA, weather: weather("clear", 28) };
-const rainSeed: ContextSeed = { ...COLABA, weather: weather("heavy_rain", 25) };
-
-const ctxOf = (seed: ContextSeed): DiscoveryContext => createContext(seed).ctx;
-
-function engineFor(seed: ContextSeed, options: { preferPreviousOrder?: boolean } = {}) {
-  const engine = withWeather(planner({ catalogue: CATALOGUE, ...options }), { catalogue: CATALOGUE_INDEX });
-  const session = createSession({ engine, seed, catalogue: CATALOGUE, weights: DEFAULT_WEIGHTS });
-  return { engine, session };
-}
-
-/** The ids the pipeline would offer the packer, best first. */
-function rankedIds(ctx: DiscoveryContext, options: { preferPreviousOrder?: boolean } = {}): string[] {
-  const engine = withWeather(planner({ catalogue: CATALOGUE, ...options }), { catalogue: CATALOGUE_INDEX });
-  const shortlist = engine.retrieve({ context: ctx, catalogue: CATALOGUE, limit: 120 });
-  const feasible = engine.filterFeasible(ctx, shortlist);
-  const byId = new Map(shortlist.map((item) => [item.id, item]));
-  const items = feasible.passed
-    .map((id) => byId.get(id))
-    .filter((item): item is Experience => item !== undefined);
-  const rank = new Map(engine.score(ctx, items, DEFAULT_WEIGHTS).map((entry) => [entry.experienceId, entry.total]));
-  return [...items].sort((a, b) => (rank.get(b.id) ?? 0) - (rank.get(a.id) ?? 0) || a.id.localeCompare(b.id))
-    .map((item) => item.id);
-}
-
-const plannedIds = (seed: ContextSeed, options: { preferPreviousOrder?: boolean } = {}): string[] => {
-  const { engine, session } = engineFor(seed, options);
-  const first = discover(engine, session);
-  if (!first.ok) throw new Error(`planner built nothing: ${first.reason}`);
-  return first.plan.stops.map((stop) => stop.experienceId);
-};
-
-const setSky = (condition: WeatherNow["condition"]): EditorOp[] =>
-  [{ kind: "set_weather", condition }];
-
-// ===========================================================================
 
 describe("weather profile", () => {
   it("turns every condition into a hazard, and temperature into heat on its own", () => {
@@ -326,8 +119,8 @@ describe("the gate", () => {
 
   it("closes the street when it rains, and only the street", () => {
     for (const condition of ["light_rain", "heavy_rain", "storm"] as const) {
+      // `any` means "ruined by any weather", so even a shower closes the square.
       expect(verdict(condition, 25, GATEWAY).sealed, condition).toBe(true);
-      expect(verdict(condition, 25, SOLAR_CAFE).sealed, condition).toBe(true);
       // `covered` is the member of the enum that exists for exactly this.
       expect(verdict(condition, 25, TULIP).sealed, condition).toBe(false);
       expect(verdict(condition, 25, FILM_WALK).sealed, condition).toBe(false);
@@ -335,6 +128,45 @@ describe("the gate", () => {
       expect(verdict(condition, 25, BRITANNIA).sealed, condition).toBe(false);
       expect(verdict(condition, 25, JAZZ).sealed, condition).toBe(false);
     }
+    // A record that names `rain` survives a shower with a written reason, which is
+    // what `content/evaluation/scenarios.jsonl` §1 asks for when it keeps
+    // `col-sassoon-steps-sketch` in the acceptable set under `light_rain` and asks
+    // for `noOutdoorStopWithoutJustification`.
+    expect(verdict("light_rain", 25, SOLAR_CAFE).sealed).toBe(false);
+    expect(verdict("light_rain", 25, SOLAR_CAFE).penalty).toBeGreaterThan(0);
+    expect(verdict("light_rain", 25, SOLAR_CAFE).reason).not.toBe("");
+    // A downpour closes it anyway: the severe floor is a floor, not a label.
+    expect(verdict("heavy_rain", 25, SOLAR_CAFE).sealed).toBe(true);
+  });
+
+  it("closes open air on a severe hazard even when the record blames another one", () => {
+    // `PROMENADE` is `outdoor` + `heat`, and `content/evaluation/scenarios.jsonl`
+    // §19 forbids `adj-banganga` — also `outdoor` + `heat`, a stepped tank in the
+    // open — under `heavy_rain` with the reason `weather_unsafe`. A record that only
+    // admits to heat is still standing in the rain.
+    expect(verdict("heavy_rain", 25, PROMENADE).sealed).toBe(true);
+    expect(verdict("heavy_rain", 25, PROMENADE).rejection?.code).toBe("weather_unsafe");
+    // And it is not a record of last resort: mild rain leaves it alone.
+    expect(verdict("light_rain", 25, PROMENADE).sealed).toBe(false);
+    // 41°C closes it for its own reason.
+    expect(verdict("heat", 41, PROMENADE).sealed).toBe(true);
+  });
+
+  it("will not close a street on a forecast it does not have", () => {
+    // `docs/FEATURES.md` §125: never present a guess as a forecast. The same honesty
+    // applies to enforcement — an `unknown` source may still refuse on severe
+    // weather, but it may not refuse on a mild one.
+    const guessed = (condition: WeatherNow["condition"], tempC: number) =>
+      assess(profile({ condition, tempC, source: "unknown" }), GATEWAY);
+    expect(guessed("light_rain", 25).sealed).toBe(false);
+    expect(guessed("light_rain", 25).penalty).toBeGreaterThan(0);
+    expect(guessed("heavy_rain", 25).sealed).toBe(true);
+    // And a simulated forecast is treated exactly like a live one, because a demo
+    // that plans differently from production is a demo that lies.
+    const simulated = assess(profile({ condition: "light_rain", tempC: 25, source: "simulated" }), GATEWAY);
+    const live = assess(profile({ condition: "light_rain", tempC: 25, source: "live" }), GATEWAY);
+    expect(simulated.sealed).toBe(live.sealed);
+    expect(simulated.penalty).toBe(live.penalty);
   });
 
   it("leaves the street alone in fine weather", () => {
@@ -431,10 +263,13 @@ describe("the pipeline: one traveller, one clock, two skies", () => {
     expect(b.passed).toContain("col-monsoon-film-walk");
 
     const closed = b.rejected.filter((entry) => entry.code === "weather_unsafe");
+    // All three are open air under a downpour: the square, the lawn dining, and the
+    // promenade — which is labelled `heat` and is closed anyway, by the severe floor.
     expect(closed.map((entry) => entry.experienceId).sort())
-      .toEqual(["col-gateway-of-india", "col-solar-cafe-apollo"]);
-    // The outdoor record that only fears heat is not a rain casualty.
-    expect(b.passed).toContain("md-promenade");
+      .toEqual(["col-gateway-of-india", "col-solar-cafe-apollo", "md-promenade"]);
+    // The covered records are the whole point of having a `covered` member.
+    expect(b.passed).toContain("col-cafe-tulip");
+    expect(b.passed).toContain("col-monsoon-film-walk");
   });
 
   it("reorders the candidates, not just the survivors", () => {

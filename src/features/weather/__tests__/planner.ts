@@ -19,6 +19,12 @@
  * ponytail: ceiling — no hours adapter, no congestion model, no bandit, haversine
  * instead of a router. Swap this for `src/engine` when it lands. Nothing in
  * `src/features/weather` changes, because it only ever speaks `EnginePort`.
+ *
+ * One deliberate failure: a window that runs past midnight produces arrival minutes
+ * above `Minutes`' 1440 ceiling, and `PlanSchema.parse` throws rather than wrapping.
+ * That is the unresolved question `content/evaluation/README.md` §85 records for the
+ * real packer, and a test double that quietly invented an answer to it would be
+ * worse than one that refuses.
  */
 import {
   Plan as PlanSchema,

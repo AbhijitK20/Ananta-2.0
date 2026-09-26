@@ -36,11 +36,12 @@
  * traveller asking a genuine question is worth several re-solves; a slider firing
  * this on every tick is not, and that decision belongs to the caller.
  */
+import type { DiscoveryContext, Experience, Plan } from "../../contracts";
 import type { EnginePort } from "../discovery/engine";
 import { hm, money, plural } from "../discovery/format";
 import type { DiscoverySession } from "../discovery/replanner";
-import { type GateChange, unlockedBy } from "./gates";
-import { type ScenarioEdit, type ScenarioOutcome, simulate } from "./scenario";
+import { type GateChange, gateChanges, unlockedBy } from "./gates";
+import { type ScenarioEdit, simulate, walkCapOf } from "./scenario";
 
 /**
  * `budget` in paise, `time` in minutes, `walk` in metres. One unit per axis and
@@ -89,7 +90,16 @@ export type LadderRung = {
   value: number;
   label: string;
   edits: readonly ScenarioEdit[];
-  outcome: ScenarioOutcome;
+  /** The engine's plan at this rung, or null when the rung could not be built. */
+  plan: Plan | null;
+  /** Why there is no plan. Null on a good rung. */
+  reason: string | null;
+  /**
+   * True for the rung that IS the live trip. It costs no solve, and it is
+   * exactly right rather than approximately: the live plan is what the traveller
+   * has, which may have come from a replan rather than a fresh pack.
+   */
+  isCurrent: boolean;
 };
 
 /** What one step up the ladder bought. Every field is a difference of two plans. */
@@ -110,7 +120,7 @@ export type MarginalStep = {
    * the same cost. This is the "more of this axis is wasted" signal.
    */
   saturated: boolean;
-  /** Why the step was saturated, from the engine, or null when it was not. */
+  /** Why the step was saturated, or null when it bought something. */
   saturatedBecause: string | null;
 };
 
@@ -118,26 +128,31 @@ export type Ladder = {
   axis: LadderAxis;
   unit: LadderUnit;
   rungs: LadderRung[];
-  /** One entry fewer than rungs: steps are between rungs. */
+  /** One entry fewer than the good rungs: steps are between rungs. */
   steps: MarginalStep[];
   /**
    * The first rung where the axis stopped paying, or null if it never did. In
    * axis units, so a UI can label it without knowing the axis.
+   *
+   * This is the last rung that BOUGHT something, not the first one that failed
+   * to. The step ₹2000 -> ₹2500 changing nothing establishes that ₹2000 was
+   * enough, and "you have enough at ₹2,000" is the fact worth reporting;
+   * naming ₹2,500 would be true and useless.
    */
   saturatesAt: number | null;
   /**
-   * A real solve per rung, counted structurally. Present so a caller can show or
-   * budget the cost BEFORE running, not after being surprised.
+   * Real solves performed, counted structurally rather than estimated, so a
+   * caller can show or budget the cost. One less than the rung count whenever the
+   * live value is on the ladder, because that rung is the trip itself.
    */
   plannerCalls: number;
   /** One or two sentences, arithmetic only. Never generated prose. */
   verdict: string;
-  /** Rungs that did not survive planning, with the reason. */
+  /** Rungs that could not be planned, with the reason. */
   failures: { value: number; label: string; reason: string }[];
 };
 
-const ids = (plan: { stops: readonly { experienceId: string }[] }): string[] =>
-  plan.stops.map((stop) => stop.experienceId).sort();
+const ids = (plan: Plan): string[] => plan.stops.map((stop) => stop.experienceId).sort();
 
 /**
  * A step changed nothing if the day is materially identical: the same places, in
@@ -145,10 +160,7 @@ const ids = (plan: { stops: readonly { experienceId: string }[] }): string[] =>
  * same three stops is churn, not a purchase, and calling it value would be the
  * kind of small lie this feature exists to avoid.
  */
-const samePlan = (
-  a: { stops: readonly { experienceId: string }[]; totalCost: { minor: number } },
-  b: { stops: readonly { experienceId: string }[]; totalCost: { minor: number } },
-): boolean =>
+const samePlan = (a: Plan, b: Plan): boolean =>
   ids(a).join("|") === ids(b).join("|") && a.totalCost.minor === b.totalCost.minor;
 
 /** Why this axis is not paying, named per axis. Never a guess about the engine. */
@@ -163,25 +175,36 @@ function saturatedBecauseFor(axis: LadderAxis): string {
   }
 }
 
+/**
+ * The marginal value of the step between two plans.
+ *
+ * Computed from the two `Plan`s and the catalogue alone — not from a
+ * `ScenarioComparison` — because that is all it needs, and because it lets the
+ * reference rung be the live plan instead of a re-solve. A ladder whose first
+ * rung cannot be simulated is a ladder with a hole in it, and the hole is always
+ * at the value the traveller is already at, which is the one value they care
+ * most about.
+ */
 function stepBetween(
   axis: LadderAxis,
   lower: LadderRung,
   upper: LadderRung,
+  catalogue: ReadonlyMap<string, Experience>,
 ): MarginalStep | null {
-  if (!lower.outcome.ok || !upper.outcome.ok) return null;
-  const before = lower.outcome.scenario;
-  const after = upper.outcome.scenario;
-  const saturated = samePlan(before.plan, after.plan);
+  const before = lower.plan;
+  const after = upper.plan;
+  if (!before || !after) return null;
+  const saturated = samePlan(before, after);
   return {
     from: lower.value,
     to: upper.value,
     cost: upper.value - lower.value,
     unit: LADDER_UNITS[axis],
-    stops: after.compare.stops.delta,
-    spendMinor: after.compare.spend.delta,
-    minutes: after.compare.plannedMin.delta,
-    walkingMetres: after.compare.walkingMetres.delta,
-    unlocked: unlockedBy(after.gates),
+    stops: after.stops.length - before.stops.length,
+    spendMinor: after.totalCost.minor - before.totalCost.minor,
+    minutes: after.totalMin - before.totalMin,
+    walkingMetres: after.totalMetres - before.totalMetres,
+    unlocked: unlockedBy(gateChanges(before, after, catalogue)),
     saturated,
     saturatedBecause: saturated ? saturatedBecauseFor(axis) : null,
   };
@@ -214,6 +237,18 @@ function verdictFor(axis: LadderAxis, steps: MarginalStep[], saturatesAt: number
   return `${lead}${tail} Past ${labelFor(axis, saturatesAt)}, this axis is spent.`;
 }
 
+/** The value of an axis on the live trip, or null when the axis is not set. */
+function currentValueOf(ctx: DiscoveryContext, axis: LadderAxis): number | null {
+  switch (axis) {
+    case "budget":
+      return ctx.budget?.minor ?? null;
+    case "time":
+      return ctx.availableMin;
+    case "walk":
+      return walkCapOf(ctx);
+  }
+}
+
 /**
  * Re-solve the trip at each rung of one axis.
  *
@@ -222,6 +257,11 @@ function verdictFor(axis: LadderAxis, steps: MarginalStep[], saturatesAt: number
  * them out of order gets a ladder that still works but whose steps carry negative
  * costs, so the sort is silent and the marginal arithmetic stays meaningful
  * rather than surprising.
+ *
+ * The rung at the live value is the live plan. It is not re-solved, and that is
+ * not an optimisation — it is the correct answer, because the live plan is what
+ * the traveller actually has, and re-deriving it could disagree with the thing on
+ * their screen.
  *
  * A budget ladder needs a budget to be a ladder over. With no ceiling there is no
  * axis to move along, and saying so beats inventing a ₹0 starting rung.
@@ -232,7 +272,8 @@ export function ladder(
   axis: LadderAxis,
   values: readonly number[],
 ): Ladder {
-  if (axis === "budget" && !session.state.ctx.budget) {
+  const current = currentValueOf(session.state.ctx, axis);
+  if (axis === "budget" && current === null) {
     return {
       axis,
       unit: LADDER_UNITS[axis],
@@ -246,31 +287,36 @@ export function ladder(
   }
 
   const sorted = [...new Set(values.map((value) => Math.round(value)))].sort((a, b) => a - b);
-  const rungs: LadderRung[] = sorted.map((value) => ({
-    value,
-    label: labelFor(axis, value),
-    edits: [editFor(axis, value)],
-    outcome: simulate(engine, session, [editFor(axis, value)]),
-  }));
+  const rungs: LadderRung[] = sorted.map((value) => {
+    const edits = [editFor(axis, value)];
+    if (current === value && session.plan) {
+      return { value, label: labelFor(axis, value), edits, plan: session.plan, reason: null, isCurrent: true };
+    }
+    const outcome = simulate(engine, session, edits);
+    return {
+      value,
+      label: labelFor(axis, value),
+      edits,
+      plan: outcome.ok ? outcome.scenario.plan : null,
+      reason: outcome.ok ? null : outcome.reason,
+      isCurrent: false,
+    };
+  });
 
   const steps: MarginalStep[] = [];
   for (let i = 1; i < rungs.length; i += 1) {
     const lower = rungs[i - 1];
     const upper = rungs[i];
     if (!lower || !upper) continue;
-    const step = stepBetween(axis, lower, upper);
+    const step = stepBetween(axis, lower, upper, session.catalogue);
     if (step) steps.push(step);
   }
 
   const firstSaturated = steps.find((step) => step.saturated);
-  const saturatesAt = firstSaturated?.to ?? null;
+  const saturatesAt = firstSaturated?.from ?? null;
   const failures = rungs
-    .filter((rung) => !rung.outcome.ok)
-    .map((rung) => ({
-      value: rung.value,
-      label: rung.label,
-      reason: rung.outcome.ok ? "" : rung.outcome.reason,
-    }));
+    .filter((rung) => rung.reason !== null)
+    .map((rung) => ({ value: rung.value, label: rung.label, reason: rung.reason ?? "" }));
 
   return {
     axis,
@@ -278,7 +324,7 @@ export function ladder(
     rungs,
     steps,
     saturatesAt,
-    plannerCalls: rungs.length,
+    plannerCalls: rungs.filter((rung) => !rung.isCurrent).length,
     verdict: verdictFor(axis, steps, saturatesAt),
     failures,
   };
