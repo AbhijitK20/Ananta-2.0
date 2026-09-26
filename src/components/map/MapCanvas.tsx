@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { MapRef } from "react-map-gl/maplibre";
+import type { MapInstance } from "react-map-gl/maplibre";
 
 import type { GeoPoint } from "@/contracts";
 
@@ -93,6 +94,22 @@ export function MapCanvas({
   return (
     <div ref={containerRef} className={cn("relative size-full overflow-hidden", className)}>
       <Map
+        // `ref` is the ONLY correct way to get a `MapRef` out of react-map-gl.
+        //
+        // This used to read `onLoad`'s `event.target` and cast it `as MapRef`.
+        // That cast was a lie: `event.target` is the raw maplibre `Map`
+        // instance, which has no `.getMap()`. `MapPanel` stored it and passed it
+        // to `ClusterLayer`/`RouteLine`, which call `mapRef.getMap()` to reach
+        // the underlying map -- so the page threw
+        // `TypeError: i.getMap is not a function` on every load, which is a
+        // whole-page client crash, not a degraded map.
+        //
+        // `MapRef` is `{ getMap(): MapInstance } & MapInstance`, i.e. a thin
+        // binding wrapper. The ref gives us that wrapper; the load event does not.
+        // The fallback keeps the callback firing if a future version attaches the
+        // ref late, but it now passes the raw map only as a last resort and the
+        // consumers guard for a missing `.getMap`.
+        ref={mapRef}
         // Keyless style. No token, no account, nothing to leak.
         mapStyle={STYLE_URL}
         initialViewState={{
@@ -107,14 +124,38 @@ export function MapCanvas({
         // Reuse the canvas across renders — recreating it on every parent
         // render is the single biggest cause of jank in a map this small.
         reuseMaps
-        onLoad={(event: { target: unknown }) => {
-          mapRef.current = event.target as MapRef;
-          onMapReady?.(mapRef.current);
+        onLoad={() => {
+          if (mapRef.current) onMapReady?.(mapRef.current);
         }}
         style={{ width: "100%", height: "100%" }}
       />
     </div>
   );
+}
+
+/**
+ * The raw maplibre map behind a react-map-gl `MapRef`, or null.
+ *
+ * Every layer that attaches to the map goes through this rather than calling
+ * `mapRef.getMap()` directly. `mapRef?.getMap()` only guards against a null ref;
+ * it throws just as hard if the value is not actually a `MapRef`, which is
+ * exactly how a bad `onLoad` payload took down the entire page.
+ *
+ * A map that fails to attach is a degraded map, not a broken page. The list
+ * beside it carries the same information and is the accessible path
+ * (DESIGN_SYSTEM §5), so returning null here costs a visual layer and nothing
+ * else.
+ */
+export function resolveMap(mapRef: MapRef | null | undefined): MapInstance | null {
+  if (!mapRef) return null;
+  if (typeof mapRef.getMap !== "function") return null;
+  try {
+    return mapRef.getMap() ?? null;
+  } catch {
+    // A maplibre instance that has been destroyed throws on access. Treat that
+    // as "not attached yet" rather than letting it escape into a render.
+    return null;
+  }
 }
 
 /**
