@@ -41,6 +41,7 @@ import { measureGap, type Measurement } from "./measure";
 import {
   bucketOf,
   type Calendar,
+  type CalendarVerdict,
   localDate,
   localMinutesOfDay,
   MUMBAI_TZ_OFFSET_MIN,
@@ -655,7 +656,7 @@ function changeFor(
 interface EvidenceExtra {
   status: OpportunityStatus;
   /** The calendar verdict for the target, when a calendar was supplied. */
-  calendar: { published: number; served: boolean; unusable: number; mismatch: number; suggestion: SlotSuggestion | null } | null;
+  calendar: CalendarVerdict | null;
   /** Replayed against today's supply. Absent when the caller passed no rows. */
   measurement: Measurement | null;
 }
@@ -733,10 +734,10 @@ function evidenceFor(
 }
 
 /** The calendar, said the way a provider needs it: what exists, and what is wrong. */
-function calendarLine(calendar: NonNullable<EvidenceExtra["calendar"]>): string {
+function calendarLine(calendar: CalendarVerdict): string {
   if (calendar.served) return `a slot they can book (${calendar.published} published)`;
   if (calendar.published === 0) return "nothing published at all";
-  return `${calendar.published} published, none bookable at that hour: ${calendar.mismatch} at another hour, ${calendar.unusable} full, blocked or out of horizon`;
+  return `${calendar.published} published, none bookable at that hour: ${calendar.mismatched} at another hour, ${calendar.unusable} full, blocked or out of horizon`;
 }
 
 /** The time signal, or an honest "no pattern" — never a guess from one search. */
