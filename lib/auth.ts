@@ -59,6 +59,51 @@ function secret(): string {
 }
 
 /**
+ * The origins a deployment answers on, taken from the platform.
+ *
+ * Vercel sets `VERCEL_URL` (and the production/branch aliases) itself, to the
+ * deployment's own hostname with no protocol. Trusting them costs nothing and
+ * saves the most common production misconfiguration there is: a site deployed
+ * and then unable to sign in, because the only configured origin was
+ * `localhost` and every real request arrives from the deployment's hostname.
+ *
+ * Read from the environment rather than hardcoded, so this is inert everywhere
+ * that is not Vercel.
+ */
+function platformOrigins(): string[] {
+  const hosts = [
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    process.env.VERCEL_BRANCH_URL,
+    process.env.VERCEL_URL,
+  ];
+
+  const origins = new Set<string>();
+  for (const host of hosts) {
+    if (!host) continue;
+    // Tolerate a value pasted with its scheme or a trailing slash, since these
+    // get typed by hand into a dashboard.
+    const bare = host.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    if (bare) origins.add(`https://${bare}`);
+  }
+  return [...origins];
+}
+
+/**
+ * Where the app says it lives, which is what the OAuth callback and the session
+ * cookie are built from.
+ *
+ * A localhost fallback on a real deployment is not a harmless default: it makes
+ * Better Auth hand Google a `redirect_uri` pointing at a machine that is not
+ * serving the request, and set a cookie on a domain the visitor never visited.
+ * So the platform's own address wins when nothing was configured.
+ */
+function appUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_APP_URL;
+  if (configured) return configured;
+  return platformOrigins()[0] ?? "http://localhost:4310";
+}
+
+/**
  * Every origin a browser may legitimately present.
  *
  * ---------------------------------------------------------------------------
@@ -89,13 +134,18 @@ function secret(): string {
  * the check is that only the site's own origins may drive a sign-in.
  */
 function trustedOrigins(): string[] {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:4310";
-  const origins = new Set<string>([appUrl]);
+  const origins = new Set<string>([appUrl(), ...platformOrigins()]);
 
   try {
-    const { protocol, port } = new URL(appUrl);
-    for (const host of ["localhost", "127.0.0.1", "[::1]"]) {
-      origins.add(`${protocol}//${host}:${port}`);
+    const { protocol, port, hostname } = new URL(appUrl());
+    // Only meaningful when the app is running on this machine at all. On a
+    // deployed origin the loopback spellings are not addresses anything will ever
+    // present, and a port-less URL would otherwise produce "https://localhost:",
+    // with a colon and nothing after it.
+    const loopback = ["localhost", "127.0.0.1", "[::1]"];
+    if (loopback.includes(hostname)) {
+      const suffix = port ? `:${port}` : "";
+      for (const host of loopback) origins.add(`${protocol}//${host}${suffix}`);
     }
   } catch {
     // A malformed NEXT_PUBLIC_APP_URL is left to fail loudly at the first request
@@ -145,7 +195,7 @@ export const authOptions = {
   ...(pool ? { database: pool } : {}),
   secret: secret(),
 
-  baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:4310",
+  baseURL: appUrl(),
   trustedOrigins: trustedOrigins(),
 
   socialProviders: google,

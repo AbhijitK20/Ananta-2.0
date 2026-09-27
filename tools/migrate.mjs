@@ -16,12 +16,22 @@
  * package, so the schema always matches the version actually running.
  *
  * ---------------------------------------------------------------------------
+ * WHY THE NPM SCRIPT PASSES `--env-file-if-exists=.env.local`
+ * ---------------------------------------------------------------------------
+ *
+ * Next loads `.env.local` itself. A script run under `tsx` does not — plain node
+ * only reads a dotenv file when told to. Without the flag this script would
+ * report "DATABASE_URL is not set" on a machine where it is very much set, in a
+ * file it simply was not asked to read, and the obvious reaction would be to go
+ * looking for a typo in a working connection string.
+ *
+ * ---------------------------------------------------------------------------
  * WHY IT READS `authOptions` RATHER THAN ITS OWN CONFIG
  * ---------------------------------------------------------------------------
  *
  * See `lib/auth.ts`. One config, one schema.
  *
- * Run: `npm run auth:migrate`        (applies)
+ * Run: `npm run auth:migrate`              (applies)
  *      `npm run auth:migrate -- --print`   (prints SQL, changes nothing)
  */
 

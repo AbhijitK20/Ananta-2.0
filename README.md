@@ -360,11 +360,45 @@ another device. Nothing about the site requires signing in.
    Port 5432, not 6543 — Better Auth opens real transactions and the transaction
    pooler refuses them.
 
+**Deploying to Vercel.** `.env.local` is a Next convention and **Vercel never
+reads it** — the values there exist only on this machine. Set the same values in
+the dashboard (Project → Settings → Environment Variables), or:
+
+```bash
+npx vercel env add NEXT_PUBLIC_APP_URL production
+npx vercel env add BETTER_AUTH_SECRET   production
+npx vercel env add DATABASE_URL         production
+npx vercel env add GOOGLE_CLIENT_ID       production
+npx vercel env add GOOGLE_CLIENT_SECRET   production
+```
+
+Scope matters: set them for **Production** and **Preview**, or a preview build
+fails sign-in while production works, which reads as a flaky bug rather than a
+missing variable.
+
+`NEXT_PUBLIC_APP_URL` should be the deployed origin. If it is left unset the app
+now derives it from Vercel's own `VERCEL_URL`, and trusts the deployment's
+production and branch URLs automatically, so a fresh deploy signs in without
+configuration — but setting it explicitly is still better, because
+`NEXT_PUBLIC_*` is inlined at build time and an explicit value is what you can
+read.
+
+The one thing the code cannot do is guess: **add the deployed callback URI** to
+the Google credential, alongside the local one.
+
+```
+http://localhost:4310/api/auth/callback/google
+https://<your-app>.vercel.app/api/auth/callback/google
+```
+
+Without it Google answers `redirect_uri_mismatch` and sign-in fails at the last
+step, after the consent screen.
+
 **"Invalid origin".** Better Auth compares the request's `Origin` header against
 `trustedOrigins` and refuses anything else, so a sign-in that looks correctly
-configured can still fail on a config that reads correct. One dev server is
-reachable at several *different* origins, and the browser does not care that they
-are the same server:
+configured can still fail on a config that reads correct. One server is reachable
+at several *different* origins, and the browser does not care that they are the
+same server:
 
 | you typed | trusted? |
 |---|---|
@@ -372,7 +406,7 @@ are the same server:
 | `http://127.0.0.1:4310` | yes — added automatically |
 | `http://[::1]:4310` | yes — added automatically |
 | `http://192.168.x.x:4310` | **no** — the "Network" URL Next prints |
-| your deployed host | **no** — set `NEXT_PUBLIC_APP_URL` to it |
+| your deployed host | yes — from Vercel's own env, or `NEXT_PUBLIC_APP_URL` |
 
 The three loopback spellings are added in code because they are this machine by
 definition and cannot be reached from anywhere else. The LAN address is not
@@ -381,6 +415,7 @@ narrow list on purpose, since this is a CSRF control and anything loose in it
 lets another site drive a sign-in. Note the check only runs on requests that
 carry a cookie, which is Better Auth's reasoning: a cookieless request cannot be
 a forged authenticated action.
+
 
 2. Create Better Auth's four tables:
 
