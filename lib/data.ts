@@ -175,7 +175,11 @@ export const NAV = [
   { href: "/social-impact", label: "Plan a trip" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
+  // Replaces the Contact entry. The assistant is the one part of this site that
+  // is actually ours rather than reconstructed, and it is unreachable by
+  // browsing if the only route to it is /oracle. /contact still exists and still
+  // routes; it just is not what the nav advertises.
+  { href: "/oracle", label: "Ask the AI" },
   { href: "/partners", label: "Partner With Us" },
 ];
 

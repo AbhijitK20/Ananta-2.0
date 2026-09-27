@@ -35,11 +35,18 @@ export function Footer() {
 
         {/* One centred line, matching the reference: a single paragraph with
             the separators as inline entities rather than a flex list, which is
-            what makes it 22px narrower as a list. */}
+            what makes it 22px narrower as a list.
+
+            The Contact slot now points at the assistant rather than the contact
+            form. A chatbot buried only at /oracle is a chatbot nobody finds, and
+            the assistant is the one part of this site that is genuinely ours
+            rather than a reconstruction — so it earns the prime footer slot.
+            /contact still exists and still routes; nothing 404s, this just stops
+            advertising it from here. */}
         <p className="lal-footer__legal">
           <a href="/">Privacy Policy</a> &nbsp;&middot;&nbsp;{" "}
           <a href="/">Terms &amp; Conditions</a> &nbsp;&middot;&nbsp;{" "}
-          <a href="/contact">Contact</a> &nbsp;&middot;&nbsp;{" "}
+          <a href="/oracle">Ask the AI</a> &nbsp;&middot;&nbsp;{" "}
           <a href="/">Small Business Toolkit</a>
         </p>
 
