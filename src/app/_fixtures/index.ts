@@ -646,12 +646,10 @@ export const FIXTURE_WEIGHTS: WeightProfile = WeightProfile.parse({
    LOOKUPS
    ========================================================================== */
 
-/** The six "reality changed" triggers from docs/FEATURES.md §3. */
-export const CONTEXT_TRIGGERS = [
-  { key: "rain", label: "It started raining", detail: "Outdoor loses, indoor wins" },
-  { key: "time", label: "We lost 90 minutes", detail: "Fewer stops, closer" },
-  { key: "soldout", label: "This one's sold out", detail: "Find a replacement" },
-  { key: "budget", label: "Budget is now ₹600", detail: "Prune and show what was cut" },
-  { key: "restroom", label: "Need a bathroom", detail: "Filter to on-site" },
-  { key: "exhausted", label: "We're exhausted", detail: "Fewer transfers, longer dwell" },
-] as const;
+/*
+  `CONTEXT_TRIGGERS` used to live here and was re-exported from this module.
+  It is now only in `src/app/_components/triggers.ts`, and the re-export is gone
+  rather than kept as an alias: nothing imports it from here any more, and an
+  alias whose only purpose was to be a second name for the same array is how the
+  client ends up importing the whole zod contract again.
+*/

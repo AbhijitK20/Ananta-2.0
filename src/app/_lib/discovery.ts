@@ -18,7 +18,12 @@
 import { planItinerary } from "@/engine/plan";
 import { computeFit } from "@/engine/fit";
 import { score, DEFAULT_PROFILE } from "@/engine/scoring";
-import { DiscoveryContext, type Experience, type Fit, type ScoreBreakdown } from "@/contracts";
+import { DiscoveryContext, type Experience, type Fit, type Plan, type Rejection, type ScoreBreakdown } from "@/contracts";
+import { weekdayOf } from "@/lib/time";
+import { realEngine } from "@/features/discovery/real-engine";
+import { createSession, type DiscoverySession } from "@/features/discovery/replanner";
+import type { EnginePort } from "@/features/discovery/engine";
+import type { ContextSeed } from "@/features/discovery/context";
 import { loadCatalogue } from "./catalogue";
 
 /** Bandra West. Verified against the catalogue, not guessed — see `page.tsx`. */
@@ -108,31 +113,105 @@ export interface Discovery {
 }
 
 /**
+ * How many retrieved candidates to show beyond the planned and rejected rows.
+ *
+ * ponytail: ceiling — there is no search over the long tail and no server-side
+ * pagination; the list paginates 24 at a time from this set. Raise it and the
+ * download grows with it, because the map is built from the same array. Add
+ * real pagination when someone asks to see past the hundredth.
+ */
+const MAX_CANDIDATES = 40;
+
+/**
+ * The ids allowed to cross the server/client boundary.
+ *
+ * Three groups, in priority order:
+ *   1. the plan's stops — omitting these breaks the timeline and the map route
+ *   2. the gate's rejections — the "why not that" ledger is the product
+ *   3. the top of the retriever's own ranking — the near-misses and maybes
+ *
+ * A set, not an array: the caller filters the catalogue by membership, so order
+ * would be discarded anyway and the catalogue's own order is the stable one.
+ */
+function shortlistIds(
+  catalogue: ReadonlyArray<Experience>,
+  candidateIds: ReadonlyArray<string>,
+  plan: Plan,
+  rejected: ReadonlyArray<Rejection>,
+): Set<string> {
+  const known = new Set(catalogue.map((item) => item.id));
+  const chosen = new Set<string>();
+
+  const take = (id: string): void => {
+    if (known.has(id)) chosen.add(id);
+  };
+
+  for (const stop of plan.stops) take(stop.experienceId);
+  for (const rejection of rejected) take(rejection.experienceId);
+
+  const budget = plan.stops.length + rejected.length + MAX_CANDIDATES;
+  for (const id of candidateIds) {
+    if (chosen.size >= budget) break;
+    take(id);
+  }
+
+  return chosen;
+}
+
+/**
  * Everything the UI needs, computed once per request.
  *
- * `fits` and `scores` are computed for every row, not just the planned ones,
- * because the results list renders a feasibility meter and a score on cards the
- * plan did not choose. That is 4,596 fits and scores per request, which sounds
- * expensive and measures at well under the cost of serialising the result.
+ * `fits` and `scores` are computed only for the rows in `shortlisted`, not for
+ * every catalogue row. That comment used to say "for every row… that is 4,596
+ * fits and scores per request, which measures at well under the cost of
+ * serialising the result" — and the serialising was the cost. Every row, its
+ * fit and its score were crossing into the client component, and the deployed
+ * homepage was 48.9 MB of HTML at 22 s to first byte. The list was already
+ * paginated to 24 visible rows with a "show 48 more" button, so the other 4,572
+ * were downloaded to be hidden.
+ *
+ * The bound is `result.candidateIds` — the retriever's own ranking, which
+ * `planItinerary` already computed and returned. Plus every planned stop and
+ * every rejection, because the "why not that" ledger is the product: a
+ * rejection with no card behind it is a rejection nobody can read.
  */
 export async function computeDiscovery(params: URLSearchParams): Promise<Discovery> {
   const context = contextFromParams(params);
   const { experiences } = await loadCatalogue();
   const rowCount = experiences.length;
 
+  /*
+    `weekdayOf`, not the literal `6` this used to pass. `lib/time` numbers
+    weekdays 0 = MONDAY, so 6 is SUNDAY — the gate was evaluating Sunday's
+    opening hours for every card, and the error is invisible because both are
+    small integers. `lib/time` warns about exactly this conflation. Read from
+    the clock for the same reason `month` already was: these are real OSM hours
+    and belong to a real day.
+  */
+  const now = new Date();
+  const weekday = weekdayOf(now);
+
   // `mode` is deliberately not passed: planItinerary derives it from the context
   // (`travelMode === "any" ? "walk" : travelMode`), and restating it here is a
   // second place for the two to disagree.
   const result = planItinerary(context, experiences, {
-    weekday: 6,
-    month: new Date().getMonth() + 1,
+    weekday,
+    month: now.getMonth() + 1,
     planId: "travelbuddy",
   });
+
+  const shortlist = shortlistIds(
+    experiences,
+    result.candidateIds,
+    result.plan,
+    result.rejected,
+  );
 
   const origin = context.origin.point;
   const fits: Record<string, Fit> = {};
   const scores: Record<string, ScoreBreakdown> = {};
   for (const experience of experiences) {
+    if (!shortlist.has(experience.id)) continue;
     const travelMin = origin ? travelEstimate(origin, experience.location) : 0;
     const visitFrom = context.nowMin + travelMin + 10;
     fits[experience.id] = computeFit(context, experience, {
@@ -141,14 +220,14 @@ export async function computeDiscovery(params: URLSearchParams): Promise<Discove
       visitFrom,
       visitTo: visitFrom + experience.durationMin,
       cost: experience.pricePerPerson ?? { minor: 0, currency: "INR" },
-      weekday: 6,
+      weekday,
     });
     scores[experience.id] = score(context, experience, DEFAULT_PROFILE, { travelMin });
   }
 
   return {
     context,
-    experiences,
+    experiences: experiences.filter((experience) => shortlist.has(experience.id)),
     fits,
     scores,
     plan: result.plan,
@@ -171,4 +250,51 @@ export function paramsFromContext(context: DiscoveryContext): string {
   if (rupees !== 3000) params.set("b", String(rupees));
   if (context.accessNeeds.length) params.set("needs", context.accessNeeds.join(","));
   return params.toString();
+}
+
+/**
+ * A `DiscoverySession` for the feature layer, built from the same URL the home
+ * page reads.
+ *
+ * This is the seam the traveller-side features were waiting on. Every one of
+ * them — `whatif`, `group`, `weather`, `health`, `explain`, `discovery/unmet` —
+ * takes a session and an `EnginePort`, and until this existed there was no way
+ * for a route to hand them one, so 20,828 lines of finished feature code had no
+ * caller. `createSession` is cheap (a context and a catalogue index), so each
+ * feature route builds its own rather than sharing one across requests.
+ *
+ * The plan is NOT computed here. `whatif` runs the real planner once per
+ * scenario by design — "a what-if runs the real planner, not a narration of what
+ * the planner would do" — so pre-computing it would be both wasted and wrong.
+ */
+export async function computeFeatureSession(
+  params: URLSearchParams,
+): Promise<{ session: DiscoverySession; catalogue: Experience[]; engine: EnginePort }> {
+  // Parsed once. The context is the source of truth for every field, and five
+  // separate parses of the same params is five places for two of them to disagree.
+  const ctx = contextFromParams(params);
+
+  const seed: ContextSeed = {
+    id: ctx.id,
+    origin: { label: ctx.origin.label, point: { ...ctx.origin.point! } },
+    availableMin: ctx.availableMin,
+    nowMin: ctx.nowMin,
+    budgetMinor: ctx.budget?.minor ?? null,
+    partySize: ctx.partySize,
+    accessNeeds: [...ctx.accessNeeds],
+    // Left empty on purpose: the URL carries the traveller's situation, not their
+    // interests, and inventing interests here would make every score depend on
+    // a guess the traveller never made.
+    interests: [],
+    travelMode: ctx.travelMode,
+    weather: { ...ctx.weather },
+  };
+
+  const { experiences } = await loadCatalogue();
+  const engine = realEngine();
+  return {
+    session: createSession({ engine, seed, catalogue: experiences, weights: DEFAULT_PROFILE }),
+    catalogue: experiences,
+    engine,
+  };
 }

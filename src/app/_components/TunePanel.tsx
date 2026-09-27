@@ -7,7 +7,7 @@ import type { ContextChange, DiscoveryContext, Rejection } from "@/contracts";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AccessibilityControls } from "./AccessibilityControls";
-import { CONTEXT_TRIGGERS } from "../_fixtures";
+import { CONTEXT_TRIGGERS } from "./triggers";
 import { RealityPanel } from "./RealityPanel";
 import { SituationEditor } from "./SituationEditor";
 import { LearnedWeights } from "@/components/fit";

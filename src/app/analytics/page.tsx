@@ -23,8 +23,15 @@ export const metadata: Metadata = {
   Pure and synchronous. The analytics module is a pure function of an
   `AnalyticsSource` plus a fixed `asOf`, with no clock and no randomness, so this
   render is deterministic and does not need a loading state.
+
+  There is deliberately NO `export const dynamic` here. It used to say
+  `force-static`, which contradicts the `await searchParams` below: under
+  `force-static` the page is prerendered at build time with empty
+  `searchParams`, so the four `?provider=` links all resolved to
+  `dashboards[0]` and every one of them served byte-identical HTML. Verified
+  against the deployed site. The module is pure and synchronous, so it needs no
+  loading state and gains nothing from prerendering.
 */
-export const dynamic = "force-static";
 
 export default async function AnalyticsPage({
   searchParams,

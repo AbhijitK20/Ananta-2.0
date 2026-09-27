@@ -21,12 +21,13 @@
 import type {
   ContextChange,
   DiscoveryContext,
-  Experience,
   Plan,
   ReplanResult,
   ValidationResult,
 } from "@/contracts";
+import { weekdayOf } from "@/lib/time";
 
+import { loadCatalogue } from "./catalogue";
 import {
   FIXTURE_CONTEXT,
   FIXTURE_EXPERIENCES,
@@ -34,61 +35,31 @@ import {
 } from "../_fixtures";
 
 /**
- * The engine's public API, transcribed from TASKS.md.
+ * The engine module, as the seam needs it.
  *
- * Declared as a TYPE, not an interface we implement — so importing this module
- * cannot accidentally satisfy the engine's contract while missing a function.
+ * `typeof import("@/engine")` rather than a hand-transcribed shape. This file
+ * used to declare its own `EngineApi` describing eleven functions, and an
+ * ambient `engine-seam.d.ts` declared the same eleven a second time, and BOTH
+ * disagreed with the engine that actually landed:
  *
- * The `satisfies EngineApi` check at the bottom of this file constrains the
- * RUNTIME GUARD below to these names. It does NOT compare either one against the
- * real engine: `tsc` resolves `@/engine` to the ambient declaration in
- * `engine-seam.d.ts` and never to a real module, so a mismatch between this type
- * and a future `src/engine/index.ts` is invisible to the typechecker. That
- * comparison is `tests/engine-seam.test.ts`, and nothing else.
+ *   - `filterFeasible(ctx, candidates)` vs the real `(ctx, candidates, opts)`
+ *   - `pack(ctx, survivors): Plan` vs the real `(ctx, feasible, opts): PackResult`
+ *   - `filterFeasible` takes `Candidate[]` (`{experience, travelMin, ...}`),
+ *     not `Experience[]`
+ *
+ * Every name existed, so the name-based seam test passed, `tsc` was satisfied by
+ * the fiction, and all 1,145 tests were green while `POST /api/discover` and
+ * `PUT /api/discover` returned a bodiless 500 on every request. The arity and
+ * shape were only ever checkable by CALLING it, which nothing did.
+ *
+ * Deriving the type from the real module makes that class of drift a compile
+ * error instead of a production 500. The dynamic import is still load-bearing:
+ * it is what lets a build without the engine fall back to fixtures.
  */
-export type EngineApi = {
-  retrieve(input: { context: DiscoveryContext; catalogue: Experience[]; limit?: number }): Experience[];
-  filterFeasible(
-    ctx: DiscoveryContext,
-    items: Experience[],
-  ): { passed: string[]; rejected: DiscoveryContext extends never ? never : RejectionLike[] };
-  score(
-    ctx: DiscoveryContext,
-    items: Experience[],
-    weights: unknown,
-  ): ScoreBreakdownLike[];
-  pack(ctx: DiscoveryContext, items: Experience[]): Plan;
-  validate(plan: Plan): ValidationResult;
-  replan(prev: Plan, ctx: DiscoveryContext, change: ContextChange): ReplanResult;
-  computeFit(ctx: DiscoveryContext, exp: Experience): FitLike;
-  stress(plan: Plan, ctx: DiscoveryContext): {
-    score: number;
-    factors: Plan["stressFactors"];
-  };
-  isOpenDuring(
-    hours: unknown,
-    fromMin: number,
-    toMin: number,
-    lat: number,
-    lon: number,
-  ): { open: boolean; status: "ok" | "partial" | "unparsable" | "absent" };
-  travelBetween(
-    from: { lat: number; lon: number },
-    to: { lat: number; lon: number },
-    mode: "walk" | "auto" | "transit" | "ferry",
-    atMin: number,
-  ): unknown;
-  observe(profile: unknown, event: unknown): unknown;
-};
-
-// Local aliases so the declaration above stays readable. They are the contract
-// types themselves, not redefinitions.
-type RejectionLike = Plan["rejected"][number];
-type ScoreBreakdownLike = Plan["stops"][number]["score"];
-type FitLike = Plan["stops"][number]["fit"];
+type EngineModule = typeof import("@/engine");
 
 export type EngineAvailability =
-  | { ready: true; engine: EngineApi }
+  | { ready: true; engine: EngineModule }
   | { ready: false; reason: string };
 
 /**
@@ -113,7 +84,8 @@ export const REQUIRED_ENGINE_EXPORTS = [
   "isOpenDuring",
   "travelBetween",
   "observe",
-] as const satisfies ReadonlyArray<keyof EngineApi>;
+  "planItinerary",
+] as const satisfies ReadonlyArray<Extract<keyof EngineModule, string>>;
 
 /**
  * Resolve the engine, or explain why there isn't one.
@@ -129,7 +101,7 @@ export async function loadEngine(): Promise<EngineAvailability> {
   if (cached) return cached;
 
   try {
-    const mod = (await import("@/engine")) as Partial<EngineApi>;
+    const mod = (await import("@/engine")) as Partial<EngineModule>;
     // Check the whole surface, not just that the module resolved. A partial
     // engine that fails halfway through a request is worse than none, because
     // the failure surfaces as a wrong answer instead of an error.
@@ -141,11 +113,11 @@ export async function loadEngine(): Promise<EngineAvailability> {
       };
       return cached;
     }
-    cached = { ready: true, engine: mod as EngineApi };
+    cached = { ready: true, engine: mod as EngineModule };
   } catch (error) {
     cached = {
       ready: false,
-      reason: `@/engine not found (Abhijit's stream). ${
+      reason: `@/engine failed to load. ${
         error instanceof Error ? error.message : String(error)
       }`,
     };
@@ -175,39 +147,30 @@ export async function discover(context: DiscoveryContext): Promise<DiscoverResul
   const engine = await loadEngine();
 
   if (engine.ready) {
-    const { retrieve, filterFeasible, pack, validate } = engine.engine;
-    const candidates = retrieve({ context, catalogue: FIXTURE_EXPERIENCES });
-    const feasible = filterFeasible(context, candidates);
-    const survivors = feasible.passed
-      .map((id) => FIXTURE_EXPERIENCES.find((item) => item.id === id))
-      .filter((item): item is Experience => item !== undefined);
-
     /*
-      NOTE ON `score`, for the Day 1 standup — two contract observations, both
-      of which a previous version of this file hid behind a `void score`.
+      One call, not three.
 
-      1. `score` is not called here, and cannot be. The published signature is
-         `pack(ctx, items): Plan` — there is nowhere to hand precomputed
-         breakdowns to it. Since `PlanStop.score` is required by the contract,
-         `pack` must therefore score internally, so calling `score` here as well
-         would compute the same numbers twice and risk the two copies drifting.
-         One number, computed once, in one place.
+      This used to hand-assemble `retrieve -> filterFeasible -> pack`, against a
+      signature published in TASKS.md rather than one that existed. It threw a
+      TypeError on `opts` for every request. `planItinerary` is the orchestrator
+      that the landing page already used successfully, so calling it here is both
+      the fix and the smaller diff: no retrieve wiring, no Candidate decoration,
+      no PackResult-to-Plan assembly, and no chance of forwarding `weekday` to
+      the gate but forgetting it for the packer.
 
-      2. That leaves a real gap. `score(ctx, items, weights: WeightProfile)` takes
-         a weight profile, and the whole bandit stream exists to learn one, but
-         `pack(ctx, items)` has no way to receive it. So on the published API a
-         learned weight profile cannot reach the plan that a traveller sees. It
-         probably wants to be `pack(ctx, items, weights)`. Worth raising before
-         the engine is written rather than after.
-
-      There is a related absence on the read side: the UI needs a
-      WeightProfile to render "what I learned about you", and no published
-      function returns one — `observe(profile, event)` takes a profile, so
-      something has to own it, and nothing currently says what.
+      The catalogue is the real one, same as the page. Serving the 133 fixture
+      rows from the API while the page served 4,982 harvested rows would have
+      been two different products behind one origin.
     */
+    const { experiences } = await loadCatalogue();
+    const catalogue = experiences.length > 0 ? experiences : FIXTURE_EXPERIENCES;
 
-    const plan = pack(context, survivors);
-    return { plan, source: "engine", validation: validate(plan) };
+    const result = engine.engine.planItinerary(context, catalogue, {
+      weekday: weekdayOf(new Date()),
+      month: new Date().getMonth() + 1,
+    });
+
+    return { plan: result.plan, source: "engine", validation: result.validation };
   }
 
   return { plan: FIXTURE_PLAN, source: "fixtures", validation: null };
