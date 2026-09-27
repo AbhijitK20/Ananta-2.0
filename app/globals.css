@@ -164,6 +164,24 @@ a {
   margin: 0;
   padding: 0;
   list-style: none;
+  /* Positioning context for .lal-nav__game only. Does not affect geometry. */
+  position: relative;
+}
+
+/* Local Legends, hung off the left of the nav into the free gap between the
+   logo and the first link. Absolutely positioned so it is out of flow: the list
+   box and every measured link keep the geometry tools/verify.mjs records, and
+   it tracks the nav at any width instead of needing a tuned offset. */
+.lal-nav__game {
+  position: absolute;
+  right: 100%;
+  margin-right: 22px;
+  white-space: nowrap;
+}
+
+.lal-nav__game a {
+  color: var(--lal-accent);
+  font-weight: 600;
 }
 
 .lal-nav a {
@@ -1108,6 +1126,16 @@ a {
 @media (min-width: 768px) {
   .lal-cities__panel {
     width: 92%;
+  }
+}
+
+/* Below this the gap between the logo and the nav is too small to hang the game
+   link in, and at 1024 the nav collapses into a panel where absolute
+   positioning would be meaningless. The game is still reachable from every game
+   page's own nav; this is only the brochure's way in. */
+@media (max-width: 1200px) {
+  .lal-nav__game {
+    display: none;
   }
 }
 

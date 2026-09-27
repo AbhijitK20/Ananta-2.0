@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { NAV } from "../lib/data";
+import { GAME_LINK, NAV } from "../lib/data";
 
 import { useState } from "react";
 
@@ -39,6 +39,11 @@ export function Header() {
                   <Link href={item.href}>{item.label}</Link>
                 </li>
               ))}
+              {/* Absolutely positioned, so it is out of flow and cannot move the
+                  list or any link the replica is measured on. See GAME_LINK. */}
+              <li className="lal-nav__game">
+                <Link href={GAME_LINK.href}>{GAME_LINK.label}</Link>
+              </li>
             </ul>
           </nav>
 

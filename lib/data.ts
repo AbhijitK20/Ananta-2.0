@@ -175,6 +175,18 @@ export const NAV = [
   { href: "/partners", label: "Partner With Us" },
 ];
 
+/**
+ * Local Legends is ours, not the live site's, so it is kept out of NAV on
+ * purpose. The row has about 18px of slack at the 1440px width
+ * tools/verify.mjs measures, so a sixth <li> wraps the header, grows it from
+ * 124px to 187px and pushes 50 of the 56 measured elements down by 63px.
+ *
+ * It is rendered separately as an absolutely positioned child of the same list,
+ * so it is out of flow: the list's box and every measured link keep their
+ * geometry, and it sits in the free gap between the logo and the nav.
+ */
+export const GAME_LINK = { href: "/local-legends", label: "Local Legends" };
+
 export const PROMISES = [
   {
     title: "Verified by locals",
