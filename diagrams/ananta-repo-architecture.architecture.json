@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Ananta-2.0 — Repository Architecture",
+    "output": "ananta-repo-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "tools/",
+      "sublabel": "extract · verify · capture",
+      "pos": [
+        40,
+        70
+      ],
+      "size": [
+        140,
+        62
+      ]
+    },
+    {
+      "id": "data",
+      "type": "database",
+      "label": "data/",
+      "sublabel": "14 cities · 160 posts · 892",
+      "pos": [
+        240,
+        70
+      ],
+      "size": [
+        155,
+        62
+      ],
+      "tag": "committed"
+    },
+    {
+      "id": "lib",
+      "type": "backend",
+      "label": "lib/",
+      "sublabel": "content · pages · game",
+      "pos": [
+        455,
+        70
+      ],
+      "size": [
+        140,
+        62
+      ]
+    },
+    {
+      "id": "components",
+      "type": "frontend",
+      "label": "components/",
+      "sublabel": "17 modules",
+      "pos": [
+        655,
+        70
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "routes",
+      "type": "frontend",
+      "label": "app/",
+      "sublabel": "14 route groups",
+      "pos": [
+        865,
+        70
+      ],
+      "size": [
+        140,
+        62
+      ],
+      "tag": "App Router"
+    },
+    {
+      "id": "public",
+      "type": "cloud",
+      "label": "public/",
+      "sublabel": "content · cesium · globe",
+      "pos": [
+        240,
+        320
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "cesium",
+      "type": "external",
+      "label": "Cesium",
+      "sublabel": "3D globe tiles",
+      "pos": [
+        655,
+        320
+      ],
+      "size": [
+        140,
+        62
+      ]
+    },
+    {
+      "id": "three",
+      "type": "external",
+      "label": "Three.js",
+      "sublabel": "via react-globe.gl",
+      "pos": [
+        865,
+        320
+      ],
+      "size": [
+        140,
+        62
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "tools",
+      "to": "data",
+      "label": "writes"
+    },
+    {
+      "from": "data",
+      "to": "lib",
+      "label": "import",
+      "variant": "emphasis"
+    },
+    {
+      "from": "lib",
+      "to": "components",
+      "label": "read"
+    },
+    {
+      "from": "components",
+      "to": "routes",
+      "label": "render"
+    },
+    {
+      "from": "tools",
+      "to": "public",
+      "label": "copies assets",
+      "variant": "dashed"
+    },
+    {
+      "from": "components",
+      "to": "cesium",
+      "label": "3D globe",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "from": "components",
+      "to": "three",
+      "label": "globe render",
+      "variant": "dashed"
+    }
+  ]
+}

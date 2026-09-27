@@ -32,3 +32,9 @@ public/cesium
 /trip-planner/
 /research/
 /.twin/
+
+# Archify viewers and visual-check receipts are build output, ~3.4MB.
+# The JSON specs in diagrams/ are the source of truth; see diagrams/README.md.
+diagrams/*.html
+!diagrams/README.md
+diagrams/*.visual-check.*

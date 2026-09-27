@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Local Legends — Stamp Lifecycle",
+    "output": "ananta-game-lifecycle.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1030,
+      630
+    ]
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Stamp journey"
+    },
+    {
+      "id": "exceptions",
+      "label": "Storage fault"
+    }
+  ],
+  "states": [
+    {
+      "id": "idle",
+      "type": "start",
+      "label": "Unstamped",
+      "sublabel": "emptySave()",
+      "lane": "main",
+      "col": 0,
+      "step": "01"
+    },
+    {
+      "id": "pick",
+      "type": "active",
+      "label": "Browse",
+      "sublabel": "app/(game)/pick",
+      "lane": "main",
+      "col": 1,
+      "step": "02"
+    },
+    {
+      "id": "stamped",
+      "type": "active",
+      "label": "Stamped",
+      "sublabel": "city/slug + ts",
+      "lane": "main",
+      "col": 2,
+      "step": "03"
+    },
+    {
+      "id": "rewarded",
+      "type": "decision",
+      "label": "Quests",
+      "sublabel": "city +50 · day +15",
+      "lane": "main",
+      "col": 3,
+      "step": "04"
+    },
+    {
+      "id": "saved",
+      "type": "success",
+      "label": "Saved",
+      "sublabel": "localStorage v1",
+      "lane": "main",
+      "col": 4,
+      "step": "05"
+    },
+    {
+      "id": "storagewarn",
+      "type": "failure",
+      "label": "No storage",
+      "sublabel": "not swallowed",
+      "lane": "exceptions",
+      "col": 0,
+      "yOffset": 78,
+      "tag": "retryable"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "write-failed",
+      "from": "saved",
+      "to": "storagewarn",
+      "variant": "security",
+      "label": "write failed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "keep-playing",
+      "from": "storagewarn",
+      "to": "pick",
+      "variant": "emphasis",
+      "label": "keep playing"
+    }
+  ]
+}

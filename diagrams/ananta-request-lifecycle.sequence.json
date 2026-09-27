@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Ananta-2.0 — Request Lifecycle",
+    "output": "ananta-request-lifecycle.html",
+    "quality_profile": "showcase",
+    "column_fit": "spread"
+  },
+  "participants": [
+    { "id": "visitor", "type": "frontend", "label": "Visitor" },
+    { "id": "nextjs", "type": "backend", "label": "Next.js", "sublabel": "App Router" },
+    { "id": "content", "type": "backend", "label": "content.ts", "sublabel": "lib/ accessors" },
+    { "id": "data", "type": "database", "label": "data/*.json", "sublabel": "committed" }
+  ],
+  "messages": [
+    { "from": "nextjs", "to": "content", "y": 195, "label": "import CITIES, ENTRIES" },
+    { "from": "content", "to": "data", "y": 300, "label": "read cities.json + social-impact.json" },
+    { "from": "data", "to": "content", "y": 400, "label": "14 cities · 892 entries", "variant": "return" },
+    { "from": "visitor", "to": "nextjs", "y": 540, "label": "GET /lisbon" },
+    { "from": "nextjs", "to": "visitor", "y": 655, "label": "200 HTML — images from /content/*", "variant": "emphasis" }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Ananta-2.0 — Content Pipeline",
+    "output": "ananta-content-pipeline.html",
+    "quality_profile": "showcase"
+  },
+  "phases": [
+    {
+      "id": "acquire",
+      "label": "Acquire",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "verify",
+      "label": "Verify",
+      "fromCol": 2,
+      "toCol": 2,
+      "variant": "emphasis"
+    },
+    {
+      "id": "ship",
+      "label": "Ship",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "dashed"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "acquire",
+      "label": "Acquire"
+    },
+    {
+      "id": "version",
+      "label": "Versioned Data"
+    },
+    {
+      "id": "ship",
+      "label": "Verify & Ship"
+    }
+  ],
+  "mainPath": [
+    "live",
+    "extract",
+    "datasets",
+    "gates",
+    "routes"
+  ],
+  "nodes": [
+    {
+      "id": "live",
+      "lane": "acquire",
+      "col": 0,
+      "type": "external",
+      "width": 150,
+      "label": "likealocalguide.com",
+      "sublabel": "reference site"
+    },
+    {
+      "id": "extract",
+      "lane": "acquire",
+      "col": 1,
+      "type": "backend",
+      "width": 150,
+      "label": "extract-content.mjs",
+      "sublabel": "DOM → JSON"
+    },
+    {
+      "id": "datasets",
+      "lane": "version",
+      "col": 2,
+      "type": "database",
+      "width": 148,
+      "label": "data/*.json",
+      "sublabel": "14 cities · 160 posts · 892 entries",
+      "tag": "committed"
+    },
+    {
+      "id": "gates",
+      "lane": "ship",
+      "col": 3,
+      "type": "security",
+      "width": 132,
+      "label": "Quality gates",
+      "sublabel": "tsc + Playwright diff",
+      "tag": "blocking"
+    },
+    {
+      "id": "routes",
+      "lane": "ship",
+      "col": 4,
+      "type": "frontend",
+      "width": 150,
+      "label": "next build → routes",
+      "sublabel": "/[slug] · /blog · /places"
+    }
+  ],
+  "edges": [
+    {
+      "from": "live",
+      "to": "extract",
+      "label": "scrape DOM"
+    },
+    {
+      "from": "extract",
+      "to": "datasets",
+      "label": "writes 3 datasets",
+      "variant": "emphasis"
+    },
+    {
+      "from": "datasets",
+      "to": "gates",
+      "label": "via lib/content.ts"
+    },
+    {
+      "from": "gates",
+      "to": "routes",
+      "label": "green",
+      "variant": "security"
+    }
+  ]
+}
