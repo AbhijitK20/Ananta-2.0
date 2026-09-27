@@ -376,6 +376,28 @@ another device. Nothing about the site requires signing in.
 
 4. `npm run dev`, then "Sign in" in the header.
 
+**Signing in.** A centred `<dialog>` with two peers, not a fallback chain:
+"Continue with Google" first, because on a phone it is one tap, then the email
+form for people who would rather not hand a Google account to a travel site.
+Native `<dialog>` rather than a div overlay, because `showModal()` gives the
+focus trap, the inert background, Escape, and focus-return for free — the four
+things a hand-rolled overlay gets subtly wrong.
+
+Google needs two more optional values:
+
+| variable | where |
+|---|---|
+| `GOOGLE_CLIENT_ID` | Google Cloud Console → Credentials → OAuth client ID → Web application |
+| `GOOGLE_CLIENT_SECRET` | on the same credential |
+
+with the redirect URI `{NEXT_PUBLIC_APP_URL}/api/auth/callback/google` and the
+origin `{NEXT_PUBLIC_APP_URL}`, and the People API enabled for the project. With
+either value missing the provider is **not registered at all** rather than
+registered broken — a provider with an id and no secret produces an OAuth
+redirect Google answers with an error the player cannot act on. The button still
+renders, because the request it makes exists either way, and says so in words
+when it fails. The email form is unaffected.
+
 **On the keys.** No Supabase anon, publishable or service-role key is used, and
 none is needed. This is not an oversight: the server already holds a SQL
 connection for Better Auth's tables, so reaching for the service-role key — which

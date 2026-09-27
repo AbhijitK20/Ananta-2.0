@@ -1,34 +1,43 @@
 "use client";
 
 /**
- * Sign in, sign up, sign out, and one line explaining what an account is for.
+ * Sign in, sign up, and sign out, in a centred modal.
  *
- * Deliberately a disclosure rather than a separate `/login` page: the only thing
- * an account does here is switch on cloud sync, so making it a destination would
- * mean a route that exists to be left again. The panel is closed by default and
- * its trigger is in the header, so the editorial pages stay exactly as they were
- * for a reader who never signs in.
+ * A native `<dialog>` rather than a panel. `showModal()` gives focus trapping, an
+ * inert background, Escape-to-close, and focus returned to the trigger, all of
+ * which are the parts a hand-rolled overlay gets subtly wrong. It is also one
+ * element instead of a dependency, which is the main reason this is not a
+ * component library.
  *
- * A signed-out reader sees this and nothing else changes. The quest book and the
- * planner keep working on `localStorage`, which is the state the whole app was
- * built around.
+ * ---------------------------------------------------------------------------
+ * TWO WAYS IN, GOOGLE AND EMAIL
+ * ---------------------------------------------------------------------------
+ *
+ * Google first because on a phone it is one tap and no typing, then the email
+ * form for the many people who would rather not hand a Google account to a
+ * travel site. The email form is not the fallback for a failed Google button; it
+ * is a peer.
+ *
+ * The Google button renders whether or not a Google provider is configured,
+ * because `authClient.signIn.social({ provider: "google" })` exists either way.
+ * With no provider behind it the click returns an error and the dialog says so
+ * in words, rather than the button silently doing nothing.
  *
  * ---------------------------------------------------------------------------
  * WHY THIS DOES NOT USE `authClient.useSession()`
  * ---------------------------------------------------------------------------
  *
- * Better Auth's `useSession` reads the session through a nanostore, bridged into
- * React by `useSyncExternalStore`. That bridge does not survive this app's build:
- * the bridge lands in a different server chunk from the component, gets its own
+ * Better Auth's `useSession` reads the session through a nanostore bridged into
+ * React by `useSyncExternalStore`. That bridge does not survive this app's
+ * build: it lands in a different server chunk from the component, gets its own
  * copy of React, and on a prerendered page React's dispatcher is null — so every
  * page fails to export with a minified `Cannot read properties of null (reading
- * 'useRef')` that points nowhere near the cause.
+ * 'useRef')` pointing nowhere near the cause.
  *
  * `authClient.getSession()` in an effect is one request and about ten lines, and
- * it has no such problem. The trade is that the session is read on the client
- * rather than during the server render, which is fine: the session lives in an
- * httpOnly cookie, so the server render could not have known it either without a
- * cookie read this app has no reason to do on every page.
+ * has no such problem. The session lives in an httpOnly cookie, so the server
+ * render could not have known it either without a cookie read this app has no
+ * reason to perform on every page.
  */
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
@@ -37,10 +46,33 @@ import { authClient } from "../lib/auth-client";
 
 type Mode = "signin" | "signup";
 
-type Account = { email: string } | null;
+type Account = { email: string; name?: string | null } | null;
+
+/** Google's mark, per their branding guidelines: the G in its own four colours. */
+function GoogleMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <path
+        fill="#4285F4"
+        d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"
+      />
+      <path
+        fill="#34A853"
+        d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M11.69 28.18A13.2 13.2 0 0 1 11 24c0-1.45.25-2.86.69-4.18v-5.7H4.34A21.99 21.99 0 0 0 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"
+      />
+      <path
+        fill="#EA4335"
+        d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"
+      />
+    </svg>
+  );
+}
 
 export function AccountMenu() {
-  const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -51,18 +83,19 @@ export function AccountMenu() {
   const [account, setAccount] = useState<Account>(null);
   const [resolved, setResolved] = useState(false);
 
-  const panelId = useId();
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const emailId = useId();
+  const passwordId = useId();
+  const nameId = useId();
 
   const refresh = useCallback(async () => {
     try {
       const { data } = await authClient.getSession();
-      setAccount(data?.user ? { email: data.user.email } : null);
+      setAccount(data?.user ? { email: data.user.email, name: data.user.name } : null);
     } catch {
       // No backend, or none configured. An unreachable auth server is not the
-      // reader's problem to read about, and the signed-out control below is the
-      // honest thing to render. Submitting will say so plainly.
+      // reader's problem to read about; the signed-out dialog is the honest thing
+      // to render, and submitting will say so plainly.
       setAccount(null);
     } finally {
       setResolved(true);
@@ -73,24 +106,22 @@ export function AccountMenu() {
     void refresh();
   }, [refresh]);
 
-  // Close on Escape and return focus to the trigger, so a keyboard user is not
-  // dropped at the top of the document.
-  useEffect(() => {
-    if (!open) return;
-    function onKey(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      setOpen(false);
-      triggerRef.current?.focus();
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+  function open() {
+    setError(null);
+    dialogRef.current?.showModal();
+  }
 
-  // Focus the first field on open, so the panel is usable without a mouse.
-  useEffect(() => {
-    if (!open) return;
-    panelRef.current?.querySelector<HTMLInputElement>("input")?.focus();
-  }, [open, mode]);
+  function close() {
+    dialogRef.current?.close();
+  }
+
+  // The dialog owns Escape and the focus trap, so the only thing left to reset is
+  // the form's own state — and doing it on `close` rather than on the click means
+  // it happens for Escape and for a backdrop click too.
+  function onClosed() {
+    setError(null);
+    setPassword("");
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -111,133 +142,179 @@ export function AccountMenu() {
       return;
     }
 
-    setPassword("");
-    setOpen(false);
+    close();
     await refresh();
+  }
+
+  async function signInWithGoogle() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    // A redirect, so there is nothing to await and nothing to catch: the browser
+    // leaves the page. If the provider is not configured this rejects, and the
+    // error is shown in place rather than swallowed.
+    const { error: failure } = await authClient.signIn.social({ provider: "google" });
+    if (failure) {
+      setBusy(false);
+      // "Provider not found" is Better Auth's own wording for GOOGLE_CLIENT_ID or
+      // GOOGLE_CLIENT_SECRET being absent, and it is accurate but useless to the
+      // person looking at it. Say what is actually wrong.
+      setError(
+        /not found|not configured|invalid_provider/i.test(failure.message ?? "")
+          ? "Google sign-in is not set up on this deploy. Use your email below."
+          : (failure.message ?? "That did not work."),
+      );
+    }
   }
 
   async function signOut() {
+    setBusy(true);
     await authClient.signOut();
-    setOpen(false);
+    setBusy(false);
+    close();
     await refresh();
   }
 
-  // Until the session has been read there is nothing truthful to render, and a
-  // placeholder would only reserve width the reader may not need.
-  if (!resolved) return null;
-
-  if (account) {
-    return (
-      <span className="lal-account">
-        <button
-          type="button"
-          className="lal-account__trigger"
-          ref={triggerRef}
-          aria-expanded={open}
-          aria-controls={panelId}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {account.email}
-        </button>
-        {open ? (
-          <div className="lal-account__panel" id={panelId} ref={panelRef}>
-            <p className="lal-account__note">
-              Signed in. Your stamps and your itinerary are syncing.
-            </p>
-            <button type="button" className="lal-btn" onClick={signOut}>
-              Sign out
-            </button>
-          </div>
-        ) : null}
-      </span>
-    );
-  }
-
+  // The trigger renders whatever the session check last said, rather than
+  // appearing only once it has resolved. Gating it on `resolved` meant the button
+  // was absent from the header for the length of one request and then pushed the
+  // nav sideways when it arrived — a visible jump on every page load, which is
+  // worse than briefly showing the signed-out label to someone who is signed in.
+  // The dialog below is the part that waits, because showing a sign-in form to
+  // someone who already has a session is the mistake worth avoiding.
   return (
-    <span className="lal-account">
-      <button
-        type="button"
-        className="lal-account__trigger"
-        ref={triggerRef}
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((v) => !v)}
-      >
-        Sign in
+    <>
+      <button type="button" className="lal-account__trigger" onClick={open}>
+        {account ? account.email : "Sign in"}
       </button>
 
-      {open ? (
-        <div className="lal-account__panel" id={panelId} ref={panelRef}>
-          <form className="lal-form lal-account__form" onSubmit={submit}>
-            <p className="lal-account__note">
-              An account carries your stamps and your itinerary between devices. Without one,
-              everything stays on this browser.
-            </p>
-
-            {mode === "signup" ? (
-              <div className="lal-field">
-                <label htmlFor={`${panelId}-name`}>Name</label>
-                <input
-                  id={`${panelId}-name`}
-                  type="text"
-                  autoComplete="name"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-            ) : null}
-
-            <div className="lal-field">
-              <label htmlFor={`${panelId}-email`}>Email</label>
-              <input
-                id={`${panelId}-email`}
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="lal-field">
-              <label htmlFor={`${panelId}-password`}>Password</label>
-              <input
-                id={`${panelId}-password`}
-                type="password"
-                autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            {error ? (
-              <p className="lal-account__error" role="alert">
-                {error}
+      <dialog
+        className="lal-dialog"
+        ref={dialogRef}
+        onClose={onClosed}
+        aria-labelledby={`${emailId}-title`}
+        /* ::backdrop is not an element, so a click on it is dispatched with the
+           dialog as the target. Inside the card the target is the card, which is
+           why this closes on the backdrop and not on the form. */
+        onClick={(event) => {
+          if (event.target === dialogRef.current) close();
+        }}
+      >
+        <div className="lal-dialog__card">
+          {!resolved ? (
+            <p className="lal-dialog__lede">Checking your session…</p>
+          ) : account ? (
+            <>
+              <h2 className="lal-dialog__title" id={`${emailId}-title`}>
+                Your account
+              </h2>
+              <p className="lal-dialog__lede">
+                Signed in as <strong>{account.email}</strong>. Your stamps and your itinerary are
+                syncing.
               </p>
-            ) : null}
+              <button type="button" className="lal-btn lal-dialog__wide" onClick={signOut} disabled={busy}>
+                {busy ? "Signing out…" : "Sign out"}
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="lal-dialog__title" id={`${emailId}-title`}>
+                {mode === "signup" ? "Create your account" : "Sign in"}
+              </h2>
+              <p className="lal-dialog__lede">
+                An account carries your stamps and your itinerary between devices. Without one,
+                everything stays on this browser.
+              </p>
 
-            <button type="submit" className="lal-btn" disabled={busy}>
-              {busy ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}
-            </button>
+              <button
+                type="button"
+                className="lal-btn lal-dialog__wide lal-dialog__google"
+                onClick={signInWithGoogle}
+                disabled={busy}
+              >
+                <GoogleMark />
+                Continue with Google
+              </button>
 
-            <button
-              type="button"
-              className="lal-account__switch"
-              onClick={() => {
-                setMode(mode === "signin" ? "signup" : "signin");
-                setError(null);
-              }}
-            >
-              {mode === "signin"
-                ? "No account yet? Create one"
-                : "Already have an account? Sign in"}
-            </button>
-          </form>
+              <div className="lal-dialog__or" role="separator">
+                <span>or use your email</span>
+              </div>
+
+              <form className="lal-form lal-dialog__form" onSubmit={submit}>
+                {mode === "signup" ? (
+                  <div className="lal-field">
+                    <label htmlFor={nameId}>Name</label>
+                    <input
+                      id={nameId}
+                      type="text"
+                      autoComplete="name"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                ) : null}
+
+                <div className="lal-field">
+                  <label htmlFor={emailId}>Email</label>
+                  <input
+                    id={emailId}
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="lal-field">
+                  <label htmlFor={passwordId}>Password</label>
+                  <input
+                    id={passwordId}
+                    type="password"
+                    autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                    required
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+
+                {error ? (
+                  <p className="lal-dialog__error" role="alert">
+                    {error}
+                  </p>
+                ) : null}
+
+                <button type="submit" className="lal-btn lal-dialog__wide" disabled={busy}>
+                  {busy
+                    ? "Working…"
+                    : mode === "signup"
+                      ? "Create account"
+                      : "Sign in"}
+                </button>
+
+                <button
+                  type="button"
+                  className="lal-dialog__switch"
+                  onClick={() => {
+                    setMode(mode === "signin" ? "signup" : "signin");
+                    setError(null);
+                  }}
+                >
+                  {mode === "signin"
+                    ? "No account yet? Create one"
+                    : "Already have an account? Sign in"}
+                </button>
+              </form>
+            </>
+          )}
+
+          <button type="button" className="lal-dialog__close" onClick={close} aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      ) : null}
-    </span>
+      </dialog>
+    </>
   );
 }

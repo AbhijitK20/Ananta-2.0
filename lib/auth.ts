@@ -58,6 +58,34 @@ function secret(): string {
   return randomBytes(32).toString("base64");
 }
 
+/**
+ * The Google sign-in provider, or nothing.
+ *
+ * Both halves must be present. A provider with an id and no secret produces an
+ * OAuth redirect that Google answers with an error the player cannot act on, and
+ * that is worse than the button being absent — so an unconfigured deploy gets no
+ * Google provider at all rather than a broken one.
+ *
+ * The client renders its "Continue with Google" button unconditionally, because
+ * `authClient.signIn.social()` exists either way. With no provider behind it the
+ * click returns an error, which the dialog shows in plain words.
+ *
+ * The redirect URI to paste into the Google Cloud console is:
+ *   {NEXT_PUBLIC_APP_URL}/api/auth/callback/google
+ */
+const google =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? {
+        google: {
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          // Without this Better Auth asks for the bare minimum, and a Google
+          // account that has never had a profile picture comes back avatar-less.
+          mapProfileToUser: (profile: { picture?: string }) => ({ image: profile.picture }),
+        },
+      }
+    : {};
+
 export const authOptions = {
   // Absent rather than a pool pointed at nothing: an adapter over an unreachable
   // database is a runtime error waiting for a request, and Better Auth logs a
@@ -66,6 +94,8 @@ export const authOptions = {
   secret: secret(),
 
   baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:4310",
+
+  socialProviders: google,
 
   emailAndPassword: {
     enabled: true,
