@@ -2,3 +2,18 @@ node_modules
 .next
 next-env.d.ts
 tsconfig.tsbuildinfo
+.vercel
+
+# Cesium's runtime assets, ~14MB, copied out of node_modules by
+# tools/copy-cesium-assets.mjs on predev and prebuild. A build artifact, not
+# source: committing it would put a vendored copy of the library in history and
+# make it go stale the moment the cesium version moves. Vercel runs prebuild, so
+# the deploy generates it the same way a local build does.
+public/cesium
+
+# The crowd sprite sheet, written by tools/generate-crowd-sheet.mjs on predev
+# and prebuild. Same reasoning as public/cesium: it is derived, not authored,
+# and the generator is the source of truth. Committing it would put a second
+# copy of the artwork in history that can silently disagree with the script
+# that produces it. The build regenerates it, and Vercel runs prebuild.
+public/crowd

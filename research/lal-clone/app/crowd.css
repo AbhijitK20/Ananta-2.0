@@ -1,0 +1,90 @@
+/* ==========================================================================
+   CROWD — the moving people at the foot of the home page.
+
+   A full-bleed band that closes the page before the footer. The canvas crops
+   its figures at the bottom edge on purpose: the engine has no legs to draw,
+   so the cut is what sells them as a packed crowd rather than floating busts.
+   Section height therefore has to leave the heads around the lower two thirds
+   — see the depth fractions in CrowdCanvas.tsx, which are relative to it.
+   ========================================================================== */
+
+.lal-crowd {
+  background: var(--lal-bg);
+  border-top: 1px solid var(--lal-line);
+  overflow: hidden;
+  padding: clamp(40px, 6vw, 76px) 0 0;
+}
+
+/* 1120px + 20px inline padding, matching .lal-tips__head directly above, so
+   the two blocks share one measure. There is no --lal-max token in this
+   codebase; the widths are literals, so this one is too. */
+.lal-crowd__inner {
+  margin-inline: auto;
+  max-width: 1120px;
+  padding-inline: 20px;
+  text-align: center;
+}
+
+.lal-crowd__eyebrow {
+  color: var(--lal-accent);
+  font-family: var(--lal-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.lal-crowd__title {
+  color: var(--lal-ink);
+  font-family: var(--lal-display);
+  font-size: clamp(26px, 3.4vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 auto;
+  max-width: 18ch;
+}
+
+.lal-crowd__sub {
+  color: var(--lal-ink-3);
+  font-family: var(--lal-ui);
+  font-size: clamp(14px, 1.3vw, 17px);
+  line-height: 1.6;
+  margin: 14px auto 0;
+  max-width: 46ch;
+}
+
+/* Wide and short-ish. Tall enough for a second depth row to read, short
+   enough that the band does not push the footer off a laptop screen. */
+.lal-crowd__canvas {
+  display: block;
+  height: clamp(260px, 34vw, 420px);
+  margin-top: clamp(8px, 2vw, 24px);
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .lal-crowd__canvas {
+    height: clamp(220px, 40vw, 320px);
+  }
+}
+
+@media (max-width: 480px) {
+  .lal-crowd {
+    padding-top: 32px;
+  }
+
+  .lal-crowd__canvas {
+    height: 210px;
+    margin-top: 4px;
+  }
+}
+
+/* Reduced motion still gets a crowd, just a still one: the engine lays the
+   figures out in a single static row instead of tweening them across. */
+@media (prefers-reduced-motion: reduce) {
+  .lal-crowd__canvas {
+    height: clamp(200px, 26vw, 300px);
+  }
+}

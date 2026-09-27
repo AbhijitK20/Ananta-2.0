@@ -1,0 +1,170 @@
+/* The parallax hero: three stacked layers of artwork that separate on scroll,
+   with the site search sitting on top.
+
+   A separate file for the same reason filmstrip.css and globe.css are separate
+   ones — layout.tsx imports each concern once, and a feature's styles travel
+   with it instead of accumulating in globals.css. */
+
+.lal-parallax {
+  position: relative;
+}
+
+/* The stage owns the height. The layers inside it are absolutely positioned and
+   contribute nothing, so the height has to be declared rather than inherited.
+   `svh` rather than `vh` so the hero is not cropped when mobile browser chrome
+   is expanded.
+
+   It is a full viewport MINUS the header. The hero renders inside <main>, below
+   a header whose height is content-derived and which wraps to two rows on a
+   phone, so a plain 100svh stage pushed its own bottom past the fold and took
+   the search field with it. ParallaxHero measures the header and writes
+   --lal-parallax-inset; the 124px here is only what shows before that runs.
+
+   `overflow: hidden` is what clips the layers as they scale past the stage edge
+   — it is the mechanism, so there is no need for the black bar the source
+   snippet used to fake the same clipping. */
+.lal-parallax__stage {
+  position: relative;
+  height: calc(100svh - var(--lal-parallax-inset, 124px));
+  overflow: hidden;
+}
+
+.lal-parallax__layers {
+  position: absolute;
+  inset: 0;
+}
+
+.lal-parallax__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dissolves the artwork into the page background so the hero has no hard bottom
+   edge. Transparent stop mirrors .lal-parallax__copy's own ramp: between them
+   the artwork is faded all the way to the page colour. */
+.lal-parallax__fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.7) 0%,
+    rgb(255 255 255 / 0) 45%,
+    var(--lal-bg) 100%
+  );
+}
+
+/* The copy band. Its top padding is 80px and its gradient reaches full
+   --lal-bg at exactly 80px, so the band is already the page colour by the time
+   the eyebrow starts. That is deliberate: the type has to be legible against a
+   photograph, and the only reliable way to guarantee it is to put the type on
+   the page colour rather than to hope the image is dark enough.
+
+   The ramp length is a custom property because it is load-bearing twice — it is
+   both the padding and the gradient stop, and if those two ever disagree the
+   headline ends up sitting on a half-transparent band. Referencing one value
+   means they cannot drift.
+
+   The hero used to be white-on-purple, which is why these are the dark ink
+   tokens now instead of #fff. */
+.lal-parallax__copy {
+  --lal-parallax-ramp: 80px;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: var(--lal-parallax-ramp) 20px 6vh;
+  text-align: center;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0) 0px,
+    var(--lal-bg) var(--lal-parallax-ramp),
+    var(--lal-bg) 100%
+  );
+}
+
+.lal-parallax__eyebrow {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  /* --lal-accent rather than --lal-accent-tint: the tint was chosen to sit on
+     the old purple gradient and is roughly 1.3:1 on white. */
+  color: var(--lal-accent);
+}
+
+.lal-parallax__title {
+  margin: 0;
+  /* 24ch is wide enough to hold the line whole at desktop, so it sets on one
+     line at 1440. `text-wrap: balance` covers the widths where it cannot: it
+     splits the two lines evenly instead of orphaning "love" on a line of its
+     own, which is what a plain max-width did at every width below ~1200. */
+  max-width: 24ch;
+  text-wrap: balance;
+  font-family: var(--lal-display);
+  font-size: clamp(38px, 6.4vw, 74px);
+  font-weight: 600;
+  line-height: 1.08;
+  color: var(--lal-ink);
+}
+
+.lal-parallax__desc {
+  margin: 0;
+  max-width: 56ch;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--lal-ink-2);
+}
+
+.lal-parallax__hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--lal-ink-3);
+}
+
+/* Attribution for the Osmo artwork. Small and quiet, but not --lal-ink-5:
+   that is 2.4:1 on white and this is a credit, which has to stay readable. */
+.lal-parallax__credit {
+  margin: 0;
+  padding: 8px 20px 10px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--lal-ink-3);
+}
+
+.lal-parallax__credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.lal-parallax__credit a:hover {
+  color: var(--lal-ink);
+}
+
+/* Below 700px the type tightens and the ramp shortens. The stage no longer needs
+   a height override here — the measured header inset covers the wrapped case,
+   which is what actually caused the overflow. */
+@media (width <= 700px) {
+  .lal-parallax__copy {
+    --lal-parallax-ramp: 56px;
+    gap: 8px;
+    padding-bottom: 4vh;
+  }
+
+  .lal-parallax__desc {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .lal-parallax__hint {
+    font-size: 12px;
+  }
+}
