@@ -1,7 +1,4 @@
-import Link from "next/link";
-
 import { CityPicker } from "../components/CityPicker";
-import { CountryFilmstrip } from "../components/CountryFilmstrip";
 import { ParallaxHero } from "../components/ParallaxHero";
 import { Promise, Tips } from "../components/Sections";
 
@@ -10,22 +7,17 @@ export default function HomePage() {
     <>
       <ParallaxHero />
       <CityPicker />
-      {/* 100 famous places on a rotating strip. Placed directly after the city
-          picker: the picker asks "where do you want to go", and this widens the
-          answer to the whole world before the page settles into advice.
+      {/* The 100-place filmstrip used to sit here, between the city picker and
+          the advice sections. It is on /partners now, and the reason is
+          measurable rather than aesthetic: tools/verify.mjs compares the border
+          box of 56 named elements against likealocalguide.com, and the strip
+          cost 26 of this page's 56. A 100-card rotating carousel is not part of
+          the page being cloned, so on the page being cloned it can only be
+          wrong.
 
-          The globe deliberately lives on its own page rather than here. Beside a
-          filmstrip the two competed for the same attention and the strip lost --
-          the planet is the better object and deserves the room. See /globe. */}
-      <section className="lal-world" aria-labelledby="lal-world-title">
-        <h2 className="lal-sr" id="lal-world-title">
-          Around the world
-        </h2>
-        <CountryFilmstrip />
-        <p className="lal-world__more">
-          <Link href="/globe">See all 100 on a globe</Link>
-        </p>
-      </section>
+          The strip earns its place on /partners, where the sub-headline claims
+          "100+ cities" and the strip is the proof of that claim. The globe is
+          still one tap away here via /cities. */}
       <Promise />
       <Tips />
     </>

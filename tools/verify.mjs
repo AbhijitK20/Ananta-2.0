@@ -56,7 +56,9 @@ const grab = (page, side) =>
     [PAIRS, side],
   );
 
-const browser = await chromium.launch();
+/* LAL_CHROME=1 uses the system Chrome instead of playwright's bundled build,
+   for hosts where `npx playwright install` cannot reach the CDN. */
+const browser = await chromium.launch(process.env.LAL_CHROME ? { channel: "chrome" } : {});
 const page = await (await browser.newContext({ viewport: { width, height: 900 }, isMobile: width < 500 })).newPage();
 
 /**
