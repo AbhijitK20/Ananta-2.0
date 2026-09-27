@@ -14,31 +14,28 @@ Experience Platform**. Research codename: ATHITI.
 ## Status — read this first
 
 This repository is being built by three people in three parallel streams
-(see [Team](#team)). **The UI/UX stream is implemented. The engine, data and
-LLM streams are not yet.** Nothing in this README describes the whole system as
-working, because it does not yet.
+(see [Team](#team)). **The UI/UX stream and the engine are implemented. The data
+pipeline, the database and parts of the LLM edge are not.** Nothing in this
+README describes the whole system as working, because it does not yet.
 
 | Area | State | What that means in practice |
 |---|---|---|
 | `src/styles/**`, `src/components/**` | **Implemented** | Design tokens, all 12 primitives from the design system's inventory plus 5 the spec's own requirements implied, the signature fit components, the map wrapper |
-| `src/app/**` | **Implemented** | Discovery surface, plan timeline, replanner panel, chat sidecar, API routes |
-| `src/engine/**` | Not implemented | Retrieval, feasibility, scoring, packing, validation, replanning |
-| `src/data/**`, `src/db/**` | Not implemented | OSM harvest, curation, catalogue, database |
-| `src/llm/**` | Not implemented | Intent parsing, narration, enrichment |
-| `src/features/**` | Not implemented | Provider side, unmet-demand feed, context editor feature logic |
-| `tests/**`, `scripts/eval.ts` | Not implemented | Unit tests and the eval table |
+| `src/app/**` | **Implemented** | Discovery surface, plan timeline, **replanner with a swap diff**, context editor, chat sidecar, API routes |
+| `src/engine/**` | **Implemented** | Retrieval, feasibility, scoring, packing, validation, replanning, hours, travel, geo |
+| `src/llm/**` | **Implemented** | OpenRouter client with a circuit breaker, NLU with a deterministic regex fallback, narration, enrichment, guardrails |
+| `src/features/**` | **Implemented** | Provider side, unmet-demand feed, what-if, group, health, evidence ledger |
+| `src/data/**`, `src/db/**` | Partial | Schema and migrations exist. The app reads a committed catalogue from `content/experiences/**`; the SQLite path is not wired into a route |
+| `tests/**` | **Implemented** | 1,164 tests, including the engine suite and the replanner/URL contract |
+| `scripts/eval.ts` | **Implemented, and RED** | 31 scenarios run with no model. 4 pass. See [Eval](#the-eval-table) |
 
-**The running app is backed by fixtures, not by the engine.** Every response
-says so: the API returns an `x-engine: fixtures` header and the UI shows a
-"Fixtures, engine pending" badge. This is deliberate — a demo that quietly
-served static data while appearing live would be the one dishonest thing this
-product could do, and the seam is built so the app switches to the real engine
-with no code change when it lands. See [Engine seam](#engine-seam).
-
-The Quick Start below is accurate. Several scripts referenced by the original
-plan (`db:seed`, `db:harvest`, `db:embed`, `eval`, `test`) point at files that
-do not exist yet and **will fail**; they are left in `package.json` because they
-belong to another stream.
+**The eval suite is red, and that is the most important line in this file.** It
+was written before the engine and had never been run, because
+`scripts/eval.ts` did not exist. Now it does, and it reports 4 of 31. The two
+dominant causes are a scenario-data problem and an engine problem, both
+described under [The eval table](#the-eval-table). We are publishing the number
+rather than tuning the assertions until it reads well, because a green table
+nobody believes is worth less than a red one somebody can act on.
 
 ---
 
@@ -284,27 +281,34 @@ offline; there is no API key anywhere in the project.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
+| `npm test` | Vitest. 1,164 tests |
+| `npm run eval` | The 31-scenario table. Exits non-zero while it is red |
 | `npm run theme:lint` | Token gate (`--watch` for instant feedback) |
 | `npm run copy:lint` | Copy gate |
 | `npm run contrast:lint` | Contrast gate |
+| `npm run content:validate` | Validates every curated row against the frozen contract |
 
 ### Scripts that do not work yet
 
-`npm test`, `npm run eval`, `npm run db:seed`, `npm run db:harvest`,
-`npm run db:embed` — all point at files owned by another stream that have not
-been written. They are left in place rather than removed so the other streams
-have their entry points.
+`npm run db:embed` points at `scripts/embed.ts`, which does not exist. The
+`embeddings` table exists in `src/db/migrations.ts` and nothing writes to it —
+standup decision O3 ("ship or leave behind the interface") resolved to *leave*,
+so the script entry is dead and should be deleted rather than implemented
+without a group decision on the vector store. `npm run db:seed`, `db:harvest`
+and `db:project` run.
 
 ---
 
 ## Testing
 
-There is no unit-test suite yet; `tests/**` belongs to the engine stream. What
-exists is a set of executable gates, all of which run in CI on every push:
+`npm test` runs 1,164 tests across 48 files, and `npm run eval` runs the
+scenario table. Both are in CI on every push, along with the four lint gates:
 
 ```
 typecheck      tsc --noEmit, strict + noUncheckedIndexedAccess
 lint           ESLint 9 flat config, React hooks rules on
+test           vitest, 48 files
+eval           31 scenarios, no model, exits non-zero while red
 theme:lint     token gate — no colour literal outside tokens.css
 copy:lint      copy gate — no emoji, filler, or colon reveals
 contrast:lint  34 token pairs, both themes, WCAG AA
@@ -314,6 +318,66 @@ build          next build
 Each lint was verified against a planted violation to confirm it actually fails,
 because a linter that never fails is worse than none. Contrast covers 34 pairs
 across light and dark.
+
+One of those gates had a bug worth recording, because it is the kind that reads
+as "the project is broken" rather than "the linter is wrong". `theme:lint`
+reported 15 violations in files it explicitly allowlists. The cause was
+`path.relative()`, which returns the platform separator: on Windows it returns
+`scripts\theme-lint.ts` while every allowlist in the file is written
+`scripts/theme-lint.ts`, so the self-exemption, the lint-family exemption and
+`LITERAL_EXCEPTIONS` all silently stopped matching. The gate was reporting its
+own documented exceptions as violations. Fixed by normalising the separator once,
+where a repo-relative path is produced. It now reports 4, and all 4 are real:
+undefined custom properties in the digital-twin map layer.
+
+---
+
+## The eval table
+
+`npm run eval` — 31 scenarios from `content/evaluation/scenarios.jsonl`, run
+against the real engine with no model in the path.
+
+| Metric | Value |
+|---|---|
+| Scenarios passing | **4 / 31** |
+| Coverage (`expectCoverage: true`) | 77% |
+| Mean utilisation | 55% |
+| Baseline mean utilisation | 167% |
+| Forbidden items the baseline showed | 2 |
+| The engine showed a forbidden item | **0** |
+| precision@5 vs `acceptableIds` | 0.281 |
+| Mean swaps per replan | 1.00 (budget 2) |
+
+The last three rows are the ones that work. **Constraint satisfaction is 100% by
+construction and the table confirms it: the engine surfaced zero forbidden items
+across 31 scenarios, and the naive baseline surfaced two.** Mean swaps per replan
+is 1.00 against a budget of 2, so the adaptation claim holds. Utilisation is
+55% against a target of 85%, which is a real miss.
+
+Two causes, and they are different in kind:
+
+1. **The scenarios carry no date.** Opening hours and the season gate are inputs
+   to the result, so the harness pins `weekday 6, month 11` and prints it. Those
+   are guesses. Most of the hour-specific failures (`closed_now` expected,
+   `lead_time_too_short` reported) are this, not the engine. Either the scenarios
+   gain a date or the harness gains a sweep over all seven weekdays.
+2. **`forbiddenBecause` was hand-authored before the gate existed.** The gate
+   reports a different, equally correct primary reason in most cases —
+   `inaccessible` where the curator wrote `not_step_free`, `over_budget` where
+   they wrote `duration_exceeds_budget`. Reconciling those is a data fix, not a
+   code fix, and it is the single highest-value thing to do to this table.
+
+Two scenarios (`no-tourists`, `hidden-local-2h`) have a `requests[0]` with no
+`pos`, which violates the frozen contract. `npm run content:validate` reports
+0 problems, so **it does not validate the scenarios against
+`DiscoveryContext`** — which is a gap in the content gate worth closing.
+
+What the harness will not do: silently skip an assertion. Any key in a
+scenario's `assertions` that this file does not implement is reported as a hard
+failure, so a scenario cannot declare an expectation and have it quietly
+dropped. `notInTopTenTouristList` fails for exactly that reason — the scenario
+README says it "needs a concrete list", so it stays failing rather than being
+switched off.
 
 Manually verified at runtime: server-rendered page, `POST /api/discover`
 returning the honest `x-engine` header, `PUT` replan returning a one-swap diff

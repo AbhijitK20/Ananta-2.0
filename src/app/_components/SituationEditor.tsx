@@ -12,13 +12,30 @@
  * score: "I need step-free" has to be satisfiable exactly or not at all.
  */
 
+import { useState } from "react";
+
+import { cn } from "@/components/cn";
 import { Button } from "@/components/ui/Button";
 import { SegmentedControl, Slider, Toggle } from "@/components/ui/Controls";
 import type { AccessNeed, DiscoveryContext, PartyType } from "@/contracts";
+import type { PlaceOption } from "../_lib/place";
+
+/**
+ * The free-text vocabularies, offered as chips.
+ *
+ * `interests` and `avoid` are open strings in the contract on purpose — "quiet
+ * courtyard", "no queue" — so this is a suggestion list, not an enum. A
+ * traveller can still type their own; the chips exist because a bare text box
+ * for a field the engine tokenises is a field nobody fills in.
+ */
+const INTEREST_CHIPS = ["local food", "craft", "history", "live music", "markets", "waterfront"];
+const AVOID_CHIPS = ["crowds", "long queues", "steep stairs", "loud noise"];
 
 export interface SituationEditorProps {
   context: DiscoveryContext;
   onChange: (patch: Partial<DiscoveryContext>) => void;
+  /** Resolvable places, for the origin box. */
+  places?: ReadonlyArray<PlaceOption>;
   onSubmit?: () => void;
   pending?: boolean;
   submitLabel?: string;
@@ -27,12 +44,63 @@ export interface SituationEditorProps {
 export function SituationEditor({
   context,
   onChange,
+  places = [],
   onSubmit,
   pending = false,
   submitLabel = "Find what fits",
 }: SituationEditorProps) {
+  const [placeDraft, setPlaceDraft] = useState(context.origin.label);
+
+  // The typed value and the applied value are allowed to disagree: the traveller
+  // may be part-way through typing a place that does not exist, and rewriting
+  // the box on every keystroke would make it impossible to type one.
+  const commitPlace = () => {
+    const label = placeDraft.trim();
+    if (!label || label === context.origin.label) return;
+    onChange({ origin: { label, point: null } });
+  };
+
   return (
     <div className="space-y-5">
+      {/*
+        F1, "I am at ...". The datalist rather than a <select>: there are ~4,600
+        resolvable places and 26 neighbourhoods, and a select with 4,600 options
+        is a list nobody scrolls. `commitOnBlur` is a native input attribute, not
+        a re-implemented key handler.
+      */}
+      <div>
+        <label htmlFor="origin" className="text-meta block text-ink-muted">
+          Where are you
+        </label>
+        <input
+          id="origin"
+          list="place-options"
+          value={placeDraft}
+          onChange={(event) => setPlaceDraft(event.target.value)}
+          onBlur={commitPlace}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              commitPlace();
+            }
+          }}
+          placeholder="Colaba, or a hotel or landmark"
+          autoComplete="off"
+          aria-describedby="origin-note"
+          className="border-rule bg-canvas text-ink mt-1.5 w-full rounded-md border px-3 py-2 text-body outline-none focus-visible:border-accent"
+        />
+        <datalist id="place-options">
+          {places.map((place) => (
+            <option key={place.label} value={place.label} />
+          ))}
+        </datalist>
+        <p id="origin-note" className="text-meta-sm mt-1 text-ink-muted">
+          {context.origin.point
+            ? `Distances are measured from ${context.origin.label}.`
+            : "Distances are not being measured, because that place is not one we know."}
+        </p>
+      </div>
+
       <Slider
         label="How long have you got"
         value={context.availableMin}
@@ -121,6 +189,40 @@ export function SituationEditor({
         </div>
       </fieldset>
 
+      {/*
+        F6, interests and things to avoid. Chips rather than a text box, because
+        both feed a tokeniser and an empty text box for a field the engine reads
+        is a field nobody fills in. Free text still works: the datalist pattern
+        above is the same idea for a vocabulary that is not ours to enumerate.
+      */}
+      <fieldset>
+        <legend className="text-meta text-ink-muted">What you are after</legend>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {INTEREST_CHIPS.map((chip) => (
+            <Chip
+              key={chip}
+              label={chip}
+              on={context.interests.includes(chip)}
+              onToggle={(on) => onChange({ interests: toggleNeed(context.interests, chip, on) })}
+            />
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="text-meta text-ink-muted">What to keep away from</legend>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {AVOID_CHIPS.map((chip) => (
+            <Chip
+              key={chip}
+              label={chip}
+              on={context.avoid.includes(chip)}
+              onToggle={(on) => onChange({ avoid: toggleNeed(context.avoid, chip, on) })}
+            />
+          ))}
+        </div>
+      </fieldset>
+
       <div>
         <span className="text-meta text-ink-muted">Weather</span>
         <div className="mt-1.5">
@@ -144,6 +246,35 @@ export function SituationEditor({
         </Button>
       ) : null}
     </div>
+  );
+}
+
+/** One selectable word. A real button, so it is in the tab order for free. */
+function Chip({
+  label,
+  on,
+  onToggle,
+}: {
+  label: string;
+  on: boolean;
+  onToggle: (on: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => onToggle(!on)}
+      className={cn(
+        "min-h-9 rounded-pill border px-3 text-meta",
+        "transition-[background-color,border-color,color] duration-[var(--dur-fast)]",
+        "ease-[var(--ease-out-soft)]",
+        on
+          ? "border-accent bg-accent-soft text-accent"
+          : "border-rule bg-surface text-ink-muted hover:border-accent hover:text-ink",
+      )}
+    >
+      {label}
+    </button>
   );
 }
 

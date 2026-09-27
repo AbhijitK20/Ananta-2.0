@@ -148,7 +148,7 @@ function additionReason(stop: PlanStop, change: ContextChange): string {
  * rather than something wrong.
  */
 function savedTravel(
-  engine: EnginePort,
+  engine: Pick<EnginePort, "travelBetween">,
   id: string,
   before: Plan,
   catalogue: ReadonlyMap<string, Experience>,
@@ -189,7 +189,13 @@ const ROUTER_MODE: Record<DiscoveryContext["travelMode"], TravelMode> = {
 };
 
 export function diffPlans(
-  engine: EnginePort,
+  // Narrowed from the whole `EnginePort` on purpose: the only engine function
+  // this file calls is `travelBetween`, and requiring the full eleven-function
+  // seam to price one removed leg made the only production caller — the app's
+  // `/tune` route — construct a full adapter to satisfy a router. A full
+  // `EnginePort` still satisfies this parameter, so every existing caller is
+  // unaffected.
+  engine: Pick<EnginePort, "travelBetween">,
   before: Plan,
   after: Plan,
   input: DiffInput,

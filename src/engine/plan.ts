@@ -29,8 +29,10 @@ import type {
   DiscoveryContext,
   Experience,
   FeasibleResult,
+  GeoPoint,
   Plan,
   Rejection,
+  TravelLeg,
   ValidationResult,
 } from "@/contracts";
 import { EPOCH_ISO } from "@/lib/time";
@@ -85,20 +87,61 @@ export interface PlanResult {
  * rows rather than admitting ones the traveller cannot reach. Live routing
  * belongs in `travel.ts` and is wired in by the caller when a provider is
  * available; the eval harness runs with this so it never touches the network.
+ *
+ * Exported because the app needs the same number in two more places — the
+ * per-card fit meter and the travel a removed stop saves in the swap diff. A
+ * second copy of this arithmetic is how a page ends up quoting two different
+ * journey times for the same pair of places.
  */
-function estimateTravelMinutes(
+export function estimateTravelMinutes(
   ctx: DiscoveryContext,
-  e: Experience,
+  to: GeoPoint,
   mode: PlanOptions["mode"],
 ): number {
   const from = ctx.origin.point;
   if (!from) return 0;
-  const metres = haversineMetres(from, e.location);
+  const metres = haversineMetres(from, to);
   // 1.3 detour factor: straight lines understate real street distance.
   const withDetour = metres * 1.3;
   const metresPerMinute =
     mode === "auto" ? 400 : mode === "transit" ? 250 : mode === "ferry" ? 300 : 80;
   return Math.max(1, Math.round(withDetour / metresPerMinute));
+}
+
+/**
+ * A synchronous `TravelLeg` for two points, on the offline estimator above.
+ *
+ * Exists because two callers need a leg without a network call and without a
+ * promise: the swap diff, which prices the travel a removed stop saved, and the
+ * eval harness. The engine's own `travelBetween` takes a `TravelContext` and
+ * returns a promise, because live routing is I/O — so it cannot be the answer
+ * for a synchronous measurement, and writing a second estimator to fill the gap
+ * is how a page ends up quoting two different journey times for the same pair of
+ * places.
+ *
+ * `estimated: true` and a `detail` that says so are load-bearing: this number
+ * reaches the traveller as "saves about 12m of travel", and an estimate has to
+ * be labelled as one or the product is claiming a precision it does not have.
+ */
+export function estimateLeg(
+  from: GeoPoint,
+  to: GeoPoint,
+  mode: NonNullable<PlanOptions["mode"]>,
+  atMin: number,
+): TravelLeg {
+  void atMin; // The offline estimator is time-blind; the congestion multiplier is not.
+  const ctx = {
+    origin: { label: "", point: from },
+  } as DiscoveryContext;
+  return {
+    fromId: "origin",
+    toId: "to",
+    mode,
+    minutes: estimateTravelMinutes(ctx, to, mode),
+    metres: Math.round(haversineMetres(from, to) * 1.3),
+    detail: `${mode}, estimated`,
+    estimated: true,
+  };
 }
 
 /**
@@ -130,7 +173,7 @@ export function planItinerary(
   // 2. Decorate with a travel estimate, which the gate and packer both need.
   const candidates: Candidate[] = experiences.map((e) => ({
     experience: e,
-    travelMin: estimateTravelMinutes(ctx, e, mode),
+    travelMin: estimateTravelMinutes(ctx, e.location, mode),
     distanceM: ctx.origin.point ? haversineMetres(ctx.origin.point, e.location) : null,
     slot: null,
   }));

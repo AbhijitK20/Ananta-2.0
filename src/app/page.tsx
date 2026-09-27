@@ -39,6 +39,7 @@ export default async function Page({
         query={query}
         stopCount={discovery.plan.stops.length}
         rowCount={discovery.rowCount}
+        originNote={discovery.originNote}
       />
       <ResultsSurface
         context={discovery.context}

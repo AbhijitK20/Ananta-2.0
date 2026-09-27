@@ -22,6 +22,23 @@ import { extname, join, relative, resolve } from "node:path";
 const ROOT = resolve(import.meta.dirname, "..");
 const TOKENS_FILE = join("src", "styles", "tokens.css");
 
+/**
+ * Repo-relative path in POSIX form.
+ *
+ * `relative()` returns the platform separator, so on Windows it hands back
+ * `scripts\theme-lint.ts` while every list in this file is written
+ * `scripts/theme-lint.ts`. Comparing the two directly means the self-exemption,
+ * the lint-family exemption and `LITERAL_EXCEPTIONS` all silently stop matching
+ * on Windows, and the gate reports every documented exception as a violation.
+ * That is a linter crying wolf on its own allowlist, which is how a real token
+ * violation gets lost in the noise.
+ *
+ * So the separator is normalised once, here, at the single place a repo-relative
+ * path is produced, rather than at each comparison — which is how those three
+ * lists drifted apart in the first place.
+ */
+const posix = (path: string): string => path.split(/[\\/]/).join("/");
+
 /** Directories never scanned. Third-party and generated. */
 const IGNORED_DIRS = new Set([
   "node_modules",
@@ -45,7 +62,7 @@ const IGNORED_DIRS = new Set([
  * banned string it looks for, so scanning it would report its own
  * documentation as a violation on every run. Every linter does this.
  */
-const SELF = relative(ROOT, resolve(import.meta.filename));
+const SELF = posix(relative(ROOT, resolve(import.meta.filename)));
 
 /**
  * The lint family exempts itself, as a family.
@@ -64,7 +81,7 @@ const SELF = relative(ROOT, resolve(import.meta.filename));
  */
 const LINTER_FAMILY = ["scripts/theme-lint.ts", "scripts/copy-lint.ts", "scripts/contrast-lint.ts"];
 
-const isLintFamily = (rel: string): boolean => LINTER_FAMILY.includes(rel);
+const isLintFamily = (rel: string): boolean => LINTER_FAMILY.includes(posix(rel));
 
 
 const SCANNED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css"]);
@@ -251,7 +268,7 @@ const LITERAL_EXCEPTIONS: ReadonlyArray<{ file: string; reason: string }> = [
   },
 ];
 
-const exceptionFor = (rel: string) => LITERAL_EXCEPTIONS.find((entry) => entry.file === rel);
+const exceptionFor = (rel: string) => LITERAL_EXCEPTIONS.find((entry) => entry.file === posix(rel));
 
 /**
  * HEX_RE already constrains the match to hex digits, so `#root`, `#app` and

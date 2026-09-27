@@ -19,6 +19,8 @@
     "dev": "next dev",
     "eval": "tsx scripts/eval.ts",
     "lint": "eslint .",
+    "nugen:align": "tsx scripts/nugen-align.ts",
+    "nugen:probe": "tsx scripts/nugen-probe.ts",
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",

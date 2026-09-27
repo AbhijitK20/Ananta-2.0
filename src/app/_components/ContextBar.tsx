@@ -52,9 +52,15 @@ export interface ContextBarProps {
   /** How many stops the plan holds, so the bar can link to it. */
   stopCount: number;
   rowCount: number;
+  /**
+   * What to say about the origin, or null. An unplaced origin means no distance
+   * has been measured, and the bar is the one place the traveller is guaranteed
+   * to read, so the caveat goes here rather than being buried on the editor.
+   */
+  originNote?: string | null;
 }
 
-export function ContextBar({ context, query, stopCount, rowCount }: ContextBarProps) {
+export function ContextBar({ context, query, stopCount, rowCount, originNote = null }: ContextBarProps) {
   const budget =
     context.budget === null
       ? "No budget limit"
@@ -68,6 +74,7 @@ export function ContextBar({ context, query, stopCount, rowCount }: ContextBarPr
     PARTY_LABEL[context.partyType] ?? `${context.partySize} people`,
     `${context.partySize} ${context.partySize === 1 ? "person" : "people"}`,
     WEATHER_LABEL[context.weather.condition] ?? context.weather.condition,
+    ...context.interests,
     ...needs,
   ].filter((fact, index, all) => all.indexOf(fact) === index);
 
@@ -105,6 +112,10 @@ export function ContextBar({ context, query, stopCount, rowCount }: ContextBarPr
           </Link>
         </div>
       </div>
+
+      {originNote ? (
+        <p className="text-meta mx-auto mt-2 max-w-[100rem] text-warn">{originNote}</p>
+      ) : null}
     </div>
   );
 }

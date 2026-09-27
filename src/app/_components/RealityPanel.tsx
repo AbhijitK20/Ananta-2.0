@@ -1,128 +1,98 @@
 "use client";
 
-import type { ContextChange } from "@/contracts";
+import type { DiscoveryContext } from "@/contracts";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
 import { cn } from "@/components/cn";
 import { Button } from "@/components/ui/Button";
-
-/** One of the six triggers from docs/FEATURES.md §3. */
-export interface RealityTrigger {
-  key: string;
-  label: string;
-  detail: string;
-}
+import { CONTEXT_TRIGGERS, queryForTrigger, type ContextTrigger } from "../_lib/triggers";
 
 export interface RealityPanelProps {
-  triggers: ReadonlyArray<RealityTrigger>;
-  onApply: (change: ContextChange) => void | Promise<void>;
+  /** The traveller's situation, for the triggers that move a window. */
+  context: DiscoveryContext;
+  /** The query the panel's own buttons build on. */
+  query: string;
+  /** The stop the sold-out trigger removes. Null when the plan is empty. */
+  firstStopId: string | null;
   pending?: boolean;
-  lastChange?: ContextChange | null;
   className?: string;
 }
 
 /**
- * RealityPanel — the "reality changed" triggers and the swap diff.
+ * RealityPanel — the six things that go wrong in a real day.
  *
- * Each trigger is a real `ContextChange` with a written `narrative`. The
- * narrative is not decoration: it is what gets shown in the swap diff, so if it
- * is not a finished sentence the user reads a machine word where an
- * explanation should be.
+ * Each one writes a real `DiscoveryContext` field and navigates. The previous
+ * version handed the route handler a `ContextChange` with an empty `patch`,
+ * which — because this app keeps the situation in the URL, not in a store —
+ * meant every button navigated to the address it came from. The triggers and
+ * their patches now live in `_lib/triggers.ts`, which both this panel and the
+ * server-side diff read, so the button and the explanation cannot disagree about
+ * what "it started raining" means.
  *
- * The metric that matters is ≤ 2 swaps per trigger (docs/FEATURES.md §3). A
- * replan that returns five is a finding about the engine, not a state to ship,
- * so the count is displayed and a plan over budget is called out rather than
- * quietly accepted.
+ * The metric that matters is at most two swaps per trigger. The count is
+ * rendered by `SwapDiff` above this panel, including when it is over, because a
+ * replan that returns five changes is a finding about the engine rather than a
+ * state to ship quietly.
  */
 export function RealityPanel({
-  triggers,
-  onApply,
+  context,
+  query,
+  firstStopId,
   pending = false,
-  lastChange = null,
   className,
 }: RealityPanelProps) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+
+  const apply = useCallback(
+    (trigger: ContextTrigger) => {
+      setBusy(true);
+      const next = queryForTrigger(trigger, {
+        params: new URLSearchParams(query),
+        context,
+        firstStopId,
+      });
+      router.push(`/tune?${next}`);
+    },
+    [context, firstStopId, query, router],
+  );
+
   return (
     <div className={cn("min-w-0", className)}>
       <h2 className="text-caps text-ink-muted">Reality changed</h2>
       <p className="mt-1 text-meta-sm text-ink-muted">
-        Six things that go wrong in a real day. Each one re-solves the plan.
+        Six things that go wrong in a real day. Each one re-solves the plan and
+        shows what it swapped.
       </p>
 
       <ul className="mt-3 space-y-1.5">
-        {triggers.map((trigger) => (
-          <li key={trigger.key}>
-            <Button
-              variant="secondary"
-              fullWidth
-              disabled={pending}
-              onClick={() => void onApply(buildChange(trigger, lastChange))}
-              className="h-auto justify-start py-2 text-left"
-            >
-              <span className="min-w-0">
-                <span className="block truncate">{trigger.label}</span>
-                <span className="block truncate text-meta-sm text-ink-muted">
-                  {trigger.detail}
+        {CONTEXT_TRIGGERS.map((trigger) => {
+          // `soldout` names a specific stop. With an empty plan there is none to
+          // name, so the button says so in its own detail line and is disabled —
+          // a live button that navigated to an unchanged URL is the bug this
+          // panel was rewritten to remove.
+          const blocked = trigger.key === "soldout" && !firstStopId;
+          return (
+            <li key={trigger.key}>
+              <Button
+                variant="secondary"
+                fullWidth
+                disabled={pending || busy || blocked}
+                onClick={() => apply(trigger)}
+                className="h-auto justify-start py-2 text-left"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate">{trigger.label}</span>
+                  <span className="block truncate text-meta-sm text-ink-muted">
+                    {blocked ? "Nothing is in the plan to replace" : trigger.detail}
+                  </span>
                 </span>
-              </span>
-            </Button>
-          </li>
-        ))}
+              </Button>
+            </li>
+          );
+        })}
       </ul>
-
-      {/*
-        `preservedIntent` is asserted VISIBLY. Principle 3 of the masterplan is
-        that the original intent is never silently replaced, and a guarantee the
-        user cannot see is not a guarantee — it is a claim.
-      */}
-      {lastChange ? (
-        <div className="mt-4 rounded-md border border-rule bg-canvas p-3">
-          <span className="text-caps text-ink-muted">Last change</span>
-          <p className="mt-1 text-body text-ink">{lastChange.narrative}</p>
-          <p className="mt-1.5 text-meta-sm text-fit">
-            Still looking for what you asked for at the start.
-          </p>
-        </div>
-      ) : null}
     </div>
   );
-}
-
-/**
- * Turn a trigger into a `ContextChange`.
- *
- * The `narrative` is written by hand per trigger rather than generated from
- * the `kind`, because it is the sentence the user reads in the swap diff. A
- * templated one ("Context changed: time_shrank") is exactly the machine-wording
- * the contract forbids.
- *
- * `patch` is intentionally empty here. The route handler owns the mutation —
- * these are the USER'S stated changes, and the engine decides what they imply.
- * Putting a guessed patch here would make the panel a second source of truth
- * about what a trigger means.
- */
-function buildChange(trigger: RealityTrigger, last: ContextChange | null): ContextChange {
-  const kinds: Record<string, ContextChange["kind"]> = {
-    rain: "weather_changed",
-    time: "time_shrank",
-    soldout: "became_unavailable",
-    budget: "budget_cut",
-    restroom: "access_need_added",
-    exhausted: "mood_changed",
-  };
-
-  const narratives: Record<string, string> = {
-    rain: "It started raining, so anything outdoors lost and the indoor options moved up.",
-    time: "You lost 90 minutes, so the plan is shorter and closer.",
-    soldout: "That one is sold out, so it needs replacing with the nearest equivalent.",
-    budget: "The budget is now ₹600, so anything over that came out.",
-    restroom: "You need a restroom on site, so everything without one dropped.",
-    exhausted: "Everyone is exhausted, so transfers came down and dwell time went up.",
-  };
-
-  return {
-    kind: kinds[trigger.key] ?? "mood_changed",
-    narrative: narratives[trigger.key] ?? `You said: ${trigger.label}.`,
-    // Carried forward so the diff can show what changed relative to the LAST
-    // change, not only relative to the original intent.
-    patch: last ? { previousNarrative: last.narrative } : {},
-  };
 }
