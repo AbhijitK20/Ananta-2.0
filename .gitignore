@@ -4,6 +4,24 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .vercel
 
+# SECRETS. `.env.local` exists in this working tree and holds a live
+# NUGEN_API_KEY. It was not ignored, so any `git add -A` would have published it
+# to a public repository. Secrets are the one category where "it was only on my
+# machine" stops being true the instant it is pushed, and a leaked key has to be
+# rotated, not just deleted from the last commit.
+.env
+.env.*
+!.env.example
+
+# Local SQLite. A database file is binary, is specific to one machine's schema
+# state, and gets merge conflicts that cannot be resolved. It belongs in whatever
+# seeds it, not in git.
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.sqlite
+data/*.sqlite3
+
 # Cesium's runtime assets, ~14MB, copied out of node_modules by
 # tools/copy-cesium-assets.mjs on predev and prebuild. A build artifact, not
 # source: committing it would put a vendored copy of the library in history and

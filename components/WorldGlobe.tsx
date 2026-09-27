@@ -28,6 +28,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { CONSENT_EVENT, isCategoryAllowed } from "../lib/consent";
+
 /* Types only. `import type` is erased at compile time, so nothing of Cesium
    enters the webpack bundle -- see loadCesium below for the runtime story. */
 import type * as CesiumNS from "cesium";
@@ -203,9 +205,34 @@ export function WorldGlobe({
    *  live in different effects. */
   const hoveredRef = useRef<number | null>(null);
 
-  /* Cesium only in the browser, and only on this page: the library plus ~8MB of
-     runtime assets, which nothing above the fold on any other route should pay. */
+  /*
+   * THE CONSENT GATE, and it sits on the Cesium import on purpose.
+   *
+   * This is the only place a third-party request originates in this component,
+   * so gating the import gates the request. An overlay drawn in front of a live
+   * globe would have been the obvious wrong answer: the tiles would already have
+   * gone out, carrying the visitor's IP address, before anybody was asked about
+   * it. There is no way to un-send that.
+   *
+   * `map` is the only category, and undecided counts as refused.
+   * `CookieConsent` dispatches CONSENT_EVENT when somebody answers, so choosing
+   * "allow" builds the globe without a reload, and choosing "decline" leaves the
+   * list beside it as the only way to reach a place.
+   */
+  const [allowed, setAllowed] = useState(false);
+
   useEffect(() => {
+    const settle = () => setAllowed(isCategoryAllowed("map"));
+    settle();
+    window.addEventListener(CONSENT_EVENT, settle);
+    return () => window.removeEventListener(CONSENT_EVENT, settle);
+  }, []);
+
+  /* Cesium only in the browser, only on this page, and only once consent allows
+     a tile request. The library plus ~8MB of runtime assets is not something
+     anything above the fold on another route should pay for either. */
+  useEffect(() => {
+    if (!allowed) return;
     let cancelled = false;
     loadCesium()
       .then((mod) => {
@@ -217,7 +244,7 @@ export function WorldGlobe({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [allowed]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -476,11 +503,27 @@ export function WorldGlobe({
 
   return (
     <div className="worldglobe" ref={boxRef}>
-      <p className="worldglobe__hint" data-ready={ready ? "true" : "false"}>
-        {ready
-          ? `${pins.length} places plotted · search the list, or click a pin`
-          : "Loading the globe…"}
-      </p>
+      {/*
+        A refusal is a decision, not a failure, so it is stated as one. Three
+        alternatives were wrong: an empty div reads as a broken page, a spinner
+        that never resolves reads as a hang, and "Loading the globe..." would be a
+        promise the code has deliberately decided not to keep. The list beside the
+        globe is the accessible path to every place either way, and this only
+        exists so a refusal is visibly a refusal.
+      */}
+      {!allowed ? (
+        <p className="worldglobe__hint" data-ready="false">
+          The globe is switched off in your privacy choice, so no tile request has
+          been made. Every place is still listed below. You can turn it back on from
+          the <a href="/cookies">cookie page</a>.
+        </p>
+      ) : (
+        <p className="worldglobe__hint" data-ready={ready ? "true" : "false"}>
+          {ready
+            ? `${pins.length} places plotted · search the list, or click a pin`
+            : "Loading the globe…"}
+        </p>
+      )}
     </div>
   );
 }

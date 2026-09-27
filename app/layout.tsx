@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { CookieConsent } from "../components/CookieConsent";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { MeshDriftBackground } from "../components/MeshDriftBackground";
@@ -11,6 +12,7 @@ import "./interior.css";
 import "./filmstrip.css";
 import "./globe.css";
 import "./parallax.css";
+import "./legal.css";
 
 /* The two families the live design actually uses, self-hosted by next/font so
    the clone makes no third-party request at runtime. */
@@ -66,6 +68,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Header />
         <main id="main">{children}</main>
         <Footer />
+        {/*
+          Last, so it paints above the footer. It renders nothing until it has
+          read a stored choice, so a visitor who has already answered never sees
+          it, and until they answer components/WorldGlobe.tsx does not import
+          Cesium at all - so no tile request goes out and no IP address is
+          exposed.
+        */}
+        <CookieConsent />
       </body>
     </html>
   );
