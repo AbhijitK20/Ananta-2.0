@@ -1,11 +1,26 @@
-/** PostCSS. Next.js 15 + Tailwind v4: the plugin is @tailwindcss/postcss and
- *  the theme lives in CSS, not here. This file exists because Next requires
- *  it, and because it is the one place we can add a step without touching
- *  package.json — which is Abhijit's, and a group decision per TASKS.md. */
+/** PostCSS. Deliberately empty, and deliberately here.
+ *
+ *  This app has no Tailwind and no PostCSS steps. The file exists anyway
+ *  because of a specific failure: with no config of its own, Next walks up
+ *  the directory tree, finds a *different* project's postcss.config.mjs, and
+ *  tries to load it — which named @tailwindcss/postcss.
+ *
+ *  That worked on the machine where the two projects sat side by side, because
+ *  the parent's node_modules was one level up and the plugin resolved. It fails
+ *  the moment the app is installed on its own, which is what a deploy does:
+ *
+ *      Error: Cannot find module '@tailwindcss/postcss'
+ *
+ *  The symptom pointed at CSS and at Tailwind; the cause was a config file
+ *  belonging to another project a few directories away. That project has since
+ *  been removed, so the hazard no longer exists — but an empty plugin map still
+ *  pins this app's build to its own dependencies, and it is the same promise the
+ *  rest of the design system makes: no Tailwind, values from getComputedStyle,
+ *  nothing inherited. Keeping the file means nesting this app inside anything
+ *  again cannot reintroduce the bug.
+ */
 const config = {
-  plugins: {
-    "@tailwindcss/postcss": {},
-  },
+  plugins: {},
 };
 
 export default config;

@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 TravelBuddy (Ananta) contributors
+Copyright (c) 2026 AbhijitK20
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,13 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ---
-DATA LICENCE NOTE
 
-This repository contains no third-party source code. The 71 reference
-repositories under research/ are NOT committed - they are cloned on demand by
-research/fetch.sh, which pins each to an exact commit in research/MANIFEST.json.
+NOTE ON WHAT THIS COVERS
 
-Shipped data carries these obligations, tracked in CREDITS.md:
-  - OpenStreetMap extracts        ODbL, attribution required
-  - Openverse / Wikimedia images CC per-image, attribution with the cached file
-  - OSM tagging schema            ISC
+The code in this repository is MIT licensed. The *content* is not the same
+thing, and the distinction matters if you reuse any of it:
+
+  - `public/**` contains images and film clips sourced from Wikimedia Commons
+    under CC BY-SA 4.0, each with its author and licence recorded in
+    `public/*/ATTRIBUTION.txt`. CC BY-SA is share-alike: those files carry their
+    own terms and are not MIT.
+  - Place names, descriptions and recommendations reproduce content from
+    likealocalguide.com and remain its property.
+
+Check `ATTRIBUTION.txt` before reusing anything under `public/`.
