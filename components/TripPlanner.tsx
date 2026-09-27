@@ -53,20 +53,22 @@ import {
   moveStop,
   nudgeStop,
   orderPlaces,
+  osrmUrl,
+  parseOsrmRoute,
   planDays,
   removeStop,
-  routeCoordinates,
-  routeLength,
   scaleBarFor,
   stopAt,
+  stopCountForDays,
   stopFrom,
-  trimToDays,
+  straightLineRoute,
   tripReadiness,
   updateStop,
   type Endpoints,
   type FinderOrder,
   type Filters,
   type MappablePlace,
+  type RoadRoute,
   type Stop,
   type Tab,
 } from "../lib/trip";
@@ -168,8 +170,11 @@ type MapLibre = typeof import("maplibre-gl");
 
 type PlannerMapProps = {
   stops: readonly Stop[];
+  /** The road geometry, or the straight line while the router is still thinking. */
+  line: readonly [number, number][];
+  /** Where the router put each stop on the network, when it has answered. */
+  snapped: readonly { lat: number; lng: number }[];
   results: readonly MappablePlace[];
-  loop: boolean;
   /** Fires when the traveller clicks bare map coordinates. */
   onPick: (lat: number, lng: number) => void;
   onCursor: (lat: number, lng: number) => void;
@@ -187,8 +192,9 @@ type PlannerMapProps = {
 
 function PlannerMap({
   stops,
+  line,
+  snapped,
   results,
-  loop,
   onPick,
   onCursor,
   onViewChange,
@@ -260,23 +266,23 @@ function PlannerMap({
     };
   }, [lib]);
 
-  // Route line. The source is in the style object, so this is a plain setData
-  // with no load-ordering to get wrong.
+  // The road line, straight from whatever the router last gave us.
   useEffect(() => {
     const src = mapRef.current?.getSource("route") as
       | import("maplibre-gl").GeoJSONSource
       | undefined;
     if (!src) return;
-    const coordinates = routeCoordinates(stops, loop);
     src.setData({
       type: "Feature",
       geometry: {
         type: "LineString",
-        coordinates: coordinates.length > 1 ? coordinates : [[0, 0], [0, 0]],
+        // maplibre's GeoJSON types want a mutable array; our own is readonly so
+        // the router's result cannot be mutated by whatever draws it.
+        coordinates: line.length > 1 ? [...line] : [[0, 0], [0, 0]],
       },
       properties: {},
     });
-  }, [stops, loop, lib]);
+  }, [line, lib]);
 
   // Finder dots for whatever survived the filters.
   useEffect(() => {
@@ -297,21 +303,25 @@ function PlannerMap({
   }, [results, lib]);
 
   // Numbered markers, rebuilt from scratch. Ten stops does not justify diffing,
-  // and maplibre's Marker has no update method worth using.
+  // and maplibre's Marker has no update method worth using. The positions come
+  // from the router's snapped waypoints when it has answered, so a stop dropped
+  // in a field puts its marker on the road the route actually uses rather than
+  // beside it.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !lib) return;
     for (const m of markersRef.current) m.remove();
     markersRef.current = stops.map((stop, i) => {
+      const at = snapped[i] ?? stop;
       const el = document.createElement("button");
       el.type = "button";
       el.className = "fk-pin";
       el.textContent = String(i + 1);
       el.title = stop.name;
       el.setAttribute("aria-label", `Stop ${i + 1}, ${stop.name}`);
-      return new lib.Marker({ element: el }).setLngLat([stop.lng, stop.lat]).addTo(map);
+      return new lib.Marker({ element: el }).setLngLat([at.lng, at.lat]).addTo(map);
     });
-  }, [stops, lib]);
+  }, [stops, snapped, lib]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -566,7 +576,8 @@ function PlanTripDialog({
 function Itinerary({
   stops,
   plans,
-  legs,
+  legKm,
+  legHours,
   drag,
   onDragStart,
   onDragOver,
@@ -577,8 +588,10 @@ function Itinerary({
 }: {
   stops: readonly Stop[];
   plans: ReturnType<typeof planDays>;
-  /** Per-leg distance, from routeLength. Not the cumulative day total. */
-  legs: ReturnType<typeof routeLength>["legs"];
+  /** Driving distance per leg, from the router. */
+  legKm: readonly number[];
+  /** Driving hours per leg. Empty while on the straight-line fallback. */
+  legHours: readonly number[];
   drag: { from: number; to: number } | null;
   onDragStart: (index: number) => void;
   onDragOver: (index: number) => void;
@@ -598,10 +611,11 @@ function Itinerary({
   return (
     <ol className="fk-stops">
       {stops.map((stop, i) => {
-        // legs[i - 1] is the hop INTO this stop. Two traps here: plans[i].km is
-        // the running total for the day, not this hop's distance, and plans is
-        // indexed by leg while the list is indexed by stop.
-        const hop = i > 0 ? legs[i - 1] : undefined;
+        // legKm[i - 1] is the hop INTO this stop, and it is a driving distance
+        // from the router, not the running total for the day. plans is indexed by
+        // leg while this list is indexed by stop, which is the easy off-by-one.
+        const km = i > 0 ? legKm[i - 1] : undefined;
+        const hours = i > 0 ? legHours[i - 1] : undefined;
         const day = i > 0 ? plans[i - 1] : undefined;
         return (
           <li key={stop.id}>
@@ -630,7 +644,12 @@ function Itinerary({
               <span className="fk-stop__ord">{i + 1}</span>
               <span className="fk-stop__name">
                 {stop.name}
-                {hop && <span>{hop.km} km from previous · day {day?.day}</span>}
+                {km !== undefined && (
+                  <span>
+                    {km} km
+                    {hours !== undefined && ` · ${hours} h`} · day {day?.day}
+                  </span>
+                )}
               </span>
               <input
                 className="fk-stop__stay"
@@ -720,6 +739,86 @@ export function TripPlanner() {
   const results = useMemo(() => filterPlaces(PLOTTABLE, filters), [filters]);
 
   /**
+   * The road route, or the straight line between the same stops.
+   *
+   * This is the difference between a trip planner and a ruler. Everything the
+   * sidebar shows -- distance, hours, how the days split -- comes from here, and
+   * London to Paris to Berlin is 1221km as the crow flies and 1671km by road, so
+   * the previous straight-line version was wrong by 37% while looking plausible.
+   *
+   * Kept as state rather than fetched during render because it is a network call:
+   * the first paint shows the straight line, and the road replaces it when the
+   * answer lands. Debounced and aborted, because dragging a row changes the route
+   * on every step and OSRM's demo server asks for reasonable use.
+   */
+  const [road, setRoad] = useState<RoadRoute | null>(null);
+
+  /**
+   * The day plan, computed from the straight line, decides how many stops a
+   * max-days cap keeps.
+   *
+   * Deliberately the straight line rather than the road route. Using the road
+   * route here would be circular: the cut depends on the plan, the plan depends
+   * on the route, and the route depends on which stops survived the cut. The
+   * straight line is close enough to pick a cut point -- it can be off by a
+   * boundary leg -- and it only ever decides *where to cut*, never a number the
+   * user reads. The distances and hours below come from the real road route of
+   * whatever survives, so those stay exact.
+   */
+  const straight = useMemo(() => straightLineRoute(stops, endpoints.loop), [stops, endpoints.loop]);
+  const cutPlan = useMemo(
+    () => planDays(straight.legKm, maxDailyKm, maxDrivingHours),
+    [straight, maxDailyKm, maxDrivingHours],
+  );
+  const shownStops = useMemo(
+    () => stops.slice(0, stopCountForDays(stops.length, cutPlan, maxDays)),
+    [stops, cutPlan, maxDays],
+  );
+
+  useEffect(() => {
+    if (shownStops.length < 2) {
+      setRoad(null);
+      return;
+    }
+    const url = osrmUrl(shownStops, endpoints.loop);
+    const controller = new AbortController();
+    // A drag fires a state change per step; without a debounce that is a dozen
+    // router calls for one reorder.
+    const timer = setTimeout(() => {
+      fetch(url, { signal: controller.signal })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+        .then((json) => setRoad(parseOsrmRoute(json, shownStops, endpoints.loop)))
+        .catch(() => {
+          // Offline, rate limited, or no route on the network. Keep whatever is on
+          // screen rather than blanking the map, and the fallback flag says so.
+          if (!controller.signal.aborted) setRoad(straightLineRoute(shownStops, endpoints.loop));
+        });
+    }, 250);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [shownStops, endpoints.loop]);
+
+  /** What to draw before the router has answered, or if it never does. */
+  const line = road ?? straightLineRoute(shownStops, endpoints.loop);
+  const usingStraightLine = line.fallback;
+
+  /** Driving legs, which is what the day planner for the shown route is given. */
+  const legKm = line.legKm;
+  const legHours = line.legHours;
+  const plans = useMemo(
+    () => planDays(legKm, maxDailyKm, maxDrivingHours),
+    [legKm, maxDailyKm, maxDrivingHours],
+  );
+  const days = dayCount(plans);
+  const totalStay = stops.reduce((n, s) => n + s.minutes, 0);
+  const scale = scaleBarFor(zoom);
+  const countries = useMemo(() => countriesIn(PLOTTABLE, filters.region), [filters.region]);
+  const shownTotal = line.totalKm;
+  const totalHours = legHours.reduce((a, b) => a + b, 0);
+
+  /**
    * The three finder tabs read the same 100 places, because this clone has no
    * hotel or restaurant database to narrow them with. What separates them is the
    * ordering, and the copy in the panel names it. Nearest is measured from the
@@ -733,23 +832,6 @@ export function TripPlanner() {
     () => orderPlaces(results, finderOrder, origin ? { lat: origin.lat, lng: origin.lng } : undefined),
     [results, finderOrder, origin],
   );
-
-  const { totalKm, legs } = useMemo(() => routeLength(stops), [stops]);
-  const plans = useMemo(
-    () => planDays(stops, maxDailyKm, maxDrivingHours),
-    [stops, maxDailyKm, maxDrivingHours],
-  );
-  const days = dayCount(plans);
-  const totalStay = stops.reduce((n, s) => n + s.minutes, 0);
-  const scale = scaleBarFor(zoom);
-  const countries = useMemo(() => countriesIn(PLOTTABLE, filters.region), [filters.region]);
-
-  /** The daily caps can shorten the route, so the line and length follow them. */
-  const shownStops = useMemo(
-    () => (maxDays > 0 ? trimToDays(stops, plans, maxDays) : stops),
-    [stops, plans, maxDays],
-  );
-  const shownTotal = useMemo(() => routeLength(shownStops).totalKm, [shownStops]);
 
   const isFinder = filters.tab === "find" || filters.tab === "eat" || filters.tab === "sleep";
 
@@ -832,8 +914,9 @@ export function TripPlanner() {
       <div className="fk-stage">
         <PlannerMap
           stops={shownStops}
+          line={line.coordinates}
+          snapped={line.snapped}
           results={isFinder ? results : []}
-          loop={endpoints.loop}
           onPick={addByCoords}
           onCursor={onCursor}
           onViewChange={setZoom}
@@ -914,17 +997,25 @@ export function TripPlanner() {
                     </div>
                     <div className="fk-stat">
                       <b>{shownTotal.toLocaleString()} km</b>
-                      <span>Distance</span>
+                      <span>{usingStraightLine ? "As the crow flies" : "By road"}</span>
                     </div>
                     <div className="fk-stat">
                       <b>{days || "—"}</b>
                       <span>Days</span>
                     </div>
                     <div className="fk-stat">
-                      <b>{Math.round(totalStay / 60)} h</b>
-                      <span>On site</span>
+                      <b>{totalHours ? `${Math.round(totalHours)} h` : `${Math.round(totalStay / 60)} h`}</b>
+                      <span>{totalHours ? "Driving" : "On site"}</span>
                     </div>
                   </div>
+                  {/* The straight line is drawn as a fallback, so saying so is the
+                      difference between a rough estimate and a wrong one. */}
+                  {usingStraightLine && (
+                    <p className="fk-note" role="status">
+                      The routing service did not answer, so this is the straight
+                      line between your stops. Driving distance will be longer.
+                    </p>
+                  )}
                   <p className="fk-note">
                     Drag a row to reorder, or use the arrows. The route and the
                     distances update as you go.
@@ -932,7 +1023,8 @@ export function TripPlanner() {
                   <Itinerary
                     stops={stops}
                     plans={plans}
-                    legs={legs}
+                    legKm={legKm}
+                    legHours={legHours}
                     drag={drag}
                     onDragStart={(i) => setDrag({ from: i, to: i })}
                     onDragOver={(i) => setDrag((d) => (d ? { ...d, to: i } : d))}
@@ -1036,9 +1128,11 @@ export function TripPlanner() {
                     />
                   </label>
                   <p className="fk-note">
-                    {maxDays > 0 && shownStops.length < stops.length
-                      ? `Trimmed to ${shownStops.length} of ${stops.length} stops: ${shownTotal} km instead of ${totalKm} km.`
-                      : `${shownStops.length} stops, ${shownTotal} km over ${days || 0} day${days === 1 ? "" : "s"}.`}
+                    {usingStraightLine
+                      ? `${shownStops.length} stops, ${shownTotal} km as the crow flies. Set a cap to split the days.`
+                      : maxDays > 0 && shownStops.length < stops.length
+                        ? `Trimmed to ${shownStops.length} of ${stops.length} stops: ${shownTotal} km by road.`
+                        : `${shownStops.length} stops, ${shownTotal} km by road over ${days || 0} day${days === 1 ? "" : "s"}.`}
                   </p>
                 </>
               )}

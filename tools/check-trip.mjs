@@ -17,6 +17,8 @@
 import assert from "node:assert/strict";
 
 import {
+  MAX_ROUTED_STOPS,
+  OSRM_BASE,
   addStop,
   dayCount,
   endpointFieldFor,
@@ -28,13 +30,17 @@ import {
   moveStop,
   nudgeStop,
   orderPlaces,
+  osrmUrl,
+  parseOsrmRoute,
   planDays,
   removeStop,
   routeCoordinates,
   routeLength,
   scaleBarFor,
+  simplifyPath,
   stopAt,
-  trimToDays,
+  stopCountForDays,
+  straightLineRoute,
   tripReadiness,
   updateStop,
 } from "../lib/trip.ts";
@@ -264,54 +270,234 @@ check("ordering copies rather than sorting the caller's array in place", () => {
   assert.notEqual(out, ORDERED, "returns a new array");
 });
 
+console.log("on the road");
+
+// A real OSRM response for London -> Paris -> Berlin, trimmed to the fields the
+// parser reads. The numbers are the ones the demo server returns, and they are
+// the whole argument for this section: 620km and 1051km by road, against 344 and
+// 877 as the crow flies.
+const OSRM = {
+  code: "Ok",
+  routes: [
+    {
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [-0.1278, 51.5074],
+          [-0.12, 51.5],
+          [0.5, 51.2],
+          [1.9, 50.9],
+          [2.3522, 48.8566],
+          [4.0, 49.5],
+          [8.0, 50.2],
+          [13.405, 52.52],
+        ],
+      },
+      legs: [
+        { distance: 620400, duration: 43200 },
+        { distance: 1051200, duration: 38880 },
+      ],
+    },
+  ],
+  waypoints: [
+    { location: [-0.12796, 51.50747] },
+    { location: [2.35231, 48.85724] },
+    { location: [13.405, 52.52] },
+  ],
+};
+
+check("a driving route is longer than the crow flies, which is the point", () => {
+  const road = parseOsrmRoute(OSRM, TRIP, false);
+  const straight = straightLineRoute(TRIP, false);
+  assert.equal(road.fallback, false);
+  assert.deepEqual(road.legKm, [620, 1051], "read from the response, in km");
+  assert.equal(road.totalKm, 1671);
+  assert.equal(straight.totalKm, 1221, "the straight line it replaces");
+  assert.ok(road.totalKm > straight.totalKm * 1.3, "at least 30% longer by road");
+});
+
+check("driving hours are read per leg", () => {
+  assert.deepEqual(parseOsrmRoute(OSRM, TRIP, false).legHours, [12, 10.8], "43200s is 12h");
+});
+
+check("stops are snapped onto the network, so markers sit on the road", () => {
+  const road = parseOsrmRoute(OSRM, TRIP, false);
+  assert.deepEqual(road.snapped[0], { lat: 51.50747, lng: -0.12796 });
+  assert.notDeepEqual(road.snapped[0], { lat: LONDON.lat, lng: LONDON.lng });
+});
+
+check("a loop repeats the first stop, which is how a circuit is described", () => {
+  const flat = osrmUrl(TRIP, false);
+  const looped = osrmUrl(TRIP, true);
+  assert.ok(flat.startsWith(`${OSRM_BASE}/route/v1/driving/`));
+  assert.equal((flat.match(/;/g) ?? []).length, 2, "three stops is two separators");
+  assert.equal((looped.match(/;/g) ?? []).length, 3, "a loop adds the closing waypoint");
+  assert.ok(looped.endsWith("?overview=full&geometries=geojson"), "full geometry, not simplified");
+  // lon,lat order, not lat,lon: getting this backwards is the classic OSRM mistake.
+  assert.ok(flat.includes("-0.1278,51.5074"), "coordinates are lon,lat");
+});
+
+check("the waypoint list is capped so the URL stays sane", () => {
+  const many = Array.from({ length: 30 }, (_, i) => stopAt(`s${i}`, 50 + i * 0.1, 4 + i * 0.1));
+  const count = osrmUrl(many, false).split("?")[0].split("/").pop().split(";").length;
+  assert.ok(count <= MAX_ROUTED_STOPS, `${count} waypoints, cap is ${MAX_ROUTED_STOPS}`);
+});
+
+check("a refused or empty response falls back instead of rendering nothing", () => {
+  for (const bad of [
+    { code: "NoRoute" },
+    { code: "Ok", routes: [] },
+    { code: "Ok", routes: [{ geometry: { coordinates: [[0, 0]] }, legs: [] }] },
+    { code: "Ok", routes: [{ legs: [{ distance: 1 }] }] },
+    {},
+  ]) {
+    const r = parseOsrmRoute(bad, TRIP, false);
+    assert.equal(r.fallback, true, `expected fallback for ${JSON.stringify(bad).slice(0, 40)}`);
+    assert.deepEqual(r.legKm, [344, 877], "falls back to haversine, so the numbers still add up");
+    assert.equal(r.totalKm, 1221);
+    assert.equal(r.coordinates.length, 3, "still draws the straight line");
+  }
+});
+
+check("the fallback reports no driving times rather than inventing them", () => {
+  assert.deepEqual(straightLineRoute(TRIP, false).legHours, []);
+  assert.deepEqual(parseOsrmRoute(OSRM, TRIP, false).legHours.length, 2);
+});
+
+check("simplifyPath drops points but keeps the shape and both ends", () => {
+  // A straight run of collinear points must reduce to its two endpoints.
+  const line = Array.from({ length: 200 }, (_, i) => [i * 0.001, 51.5]);
+  const simple = simplifyPath(line, 10);
+  assert.equal(simple.length, 2, "200 collinear points collapse to 2");
+  assert.deepEqual(simple[0], line[0]);
+  assert.deepEqual(simple[1], line[line.length - 1]);
+
+  // A corner has to survive, or the route stops following roads.
+  const corner = simplifyPath(
+    [
+      [0, 0],
+      [0.001, 0],
+      [0.001, 0.001],
+      [0.002, 0.001],
+    ],
+    10,
+  );
+  assert.ok(corner.length >= 3, `expected the corner kept, got ${JSON.stringify(corner)}`);
+
+  // And it must actually shrink a dense path, or it is not doing its job. Eight
+  // hand-written points prove nothing: every one of them is more than 10m off the
+  // chord, so the right answer is to keep all eight. The real input is OSRM's
+  // 18,500 points, so build something of that shape.
+  const dense = Array.from({ length: 5000 }, (_, i) => {
+    const t = i / 4999;
+    return [4 + t * 8, 46 + t * 3 + Math.sin(t * 40) * 0.02];
+  });
+  const pruned = simplifyPath(dense, 10);
+  assert.ok(pruned.length < dense.length / 10, `5000 points reduced to only ${pruned.length}`);
+  assert.ok(pruned.length > 2, `over-pruned to ${pruned.length}, the curve is gone`);
+  assert.deepEqual(pruned[0], dense[0], "keeps the first point exactly");
+  assert.deepEqual(pruned[pruned.length - 1], dense[dense.length - 1], "keeps the last exactly");
+
+  // Whatever it dropped, every original point must still sit within tolerance of
+  // the simplified line. Nearest segment per point, then the worst of those --
+  // measuring each point against every segment would report the distance from one
+  // end of the route to the other and mean nothing.
+  const near = (p, a, b) => {
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    const lenSq = dx * dx + dy * dy;
+    const t = lenSq === 0 ? 0 : Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / lenSq));
+    return Math.hypot((p[0] - (a[0] + t * dx)) * 74000, (p[1] - (a[1] + t * dy)) * 111000);
+  };
+  let worst = 0;
+  for (const p of dense) {
+    let best = Infinity;
+    for (let i = 1; i < pruned.length; i++) {
+      const d = near(p, pruned[i - 1], pruned[i]);
+      if (d < best) best = d;
+    }
+    worst = Math.max(worst, best);
+  }
+  assert.ok(worst < 60, `simplified path strays ${Math.round(worst)}m from the original`);
+});
+
+check("simplifyPath leaves a degenerate input alone", () => {
+  assert.deepEqual(simplifyPath([]), []);
+  assert.equal(simplifyPath([[0, 0]]).length, 1);
+  assert.equal(
+    simplifyPath([
+      [0, 0],
+      [1, 1],
+    ]).length,
+    2,
+  );
+  // A duplicated point must not divide by zero.
+  assert.equal(
+    simplifyPath([
+      [0, 0],
+      [0, 0],
+      [0, 0],
+    ]).length,
+    2,
+  );
+});
+
 console.log("daily limits");
 
+// Legs are now distances, not stops, so the planner works off whatever the router
+// said. The real London-Paris-Berlin figures make the point that the old
+// haversine-based version was planning days against the wrong numbers.
+const ROAD_LEGS = [620, 1051];
+const FLY_LEGS = [344, 877];
+
 check("no cap means every leg is day one", () => {
-  const plans = planDays(TRIP, 0, 0);
+  const plans = planDays(ROAD_LEGS, 0, 0);
   assert.equal(dayCount(plans), 1);
   assert.ok(plans.every((p) => p.day === 1));
 });
 
 check("a 400km daily cap splits London-Paris-Berlin into two days", () => {
-  const plans = planDays(TRIP, 400, 0);
-  assert.deepEqual(plans.map((p) => p.day), [1, 2]);
-  assert.equal(dayCount(plans), 2);
+  // On the road figures, 620km cannot fit in a 400km day, so the first leg is
+  // already over. On the crow-flies figures it looks like it fits. This is the
+  // single reason the planner takes distances from the router.
+  const road = planDays(ROAD_LEGS, 400, 0);
+  assert.equal(road[0].breachesKm, true, "620km does not fit in 400km");
+  assert.equal(planDays(FLY_LEGS, 400, 0)[0].breachesKm, false, "344km would have fit");
+
+  // 700km holds the first leg and not the second.
+  assert.deepEqual(planDays(ROAD_LEGS, 700, 0).map((p) => p.day), [1, 2]);
+  assert.equal(dayCount(planDays(ROAD_LEGS, 700, 0)), 2);
 });
 
 check("a daily cap that a single leg breaches still counts that day", () => {
-  // 930km in one hop cannot fit in any day, so it must not loop or vanish.
-  const plans = planDays(TRIP, 100, 0);
+  // 1051km in one hop cannot fit in any day, so it must not loop or vanish.
+  const plans = planDays(ROAD_LEGS, 100, 0);
   assert.equal(plans.length, 2);
   assert.equal(plans[0].breachesKm, true);
   assert.equal(plans[1].breachesKm, true);
 });
 
 check("a driving-hours cap splits on hours as well as distance", () => {
-  // 344km at 60km/h is 5.7h, so a 6h cap holds the first leg but not the 14.6h
-  // hop from Paris to Berlin, which is what puts Berlin on day two.
-  const plans = planDays(TRIP, 0, 6);
+  // The road figures give real durations: 12h and 10.8h. A 14h cap holds the
+  // first leg and not the second.
+  const plans = planDays(ROAD_LEGS, 0, 14);
   assert.deepEqual(plans.map((p) => p.day), [1, 2]);
-  assert.equal(plans[0].breachesHours, false, "the first leg fits inside six hours");
-  assert.equal(plans[1].breachesHours, true, "Paris to Berlin does not");
+  assert.equal(plans[0].breachesHours, false, "a 12h leg fits inside a 14h day");
+  assert.equal(plans[1].breachesHours, true, "a 10.8h leg on top of it does not");
 });
 
 check("a first leg longer than the whole cap is still day one, and is flagged", () => {
-  // London-Paris alone is 5.7h, so a 5h cap cannot hold it. The leg must not
-  // loop back on day zero or be dropped; it lands on day one and says so.
-  const plans = planDays(TRIP, 0, 5);
+  const plans = planDays(ROAD_LEGS, 0, 5);
   assert.deepEqual(plans.map((p) => p.day), [1, 2]);
   assert.equal(plans[0].breachesHours, true);
 });
 
 check("trimming to N days cuts mid-route and keeps the stop that starts it", () => {
-  const plans = planDays(TRIP, 400, 0);
-  assert.deepEqual(trimToDays(TRIP, plans, 1).map((s) => s.name), ["London", "Paris"]);
-  assert.deepEqual(trimToDays(TRIP, plans, 2).map((s) => s.name), ["London", "Paris", "Berlin"]);
-  assert.deepEqual(
-    trimToDays(TRIP, plans, 0).map((s) => s.name),
-    ["London", "Paris", "Berlin"],
-    "0 means no cap",
-  );
+  const plans = planDays(ROAD_LEGS, 700, 0);
+  assert.equal(stopCountForDays(4, plans, 1), 2, "London and Paris, Berlin is on day two");
+  assert.equal(stopCountForDays(4, plans, 2), 4, "everything");
+  assert.equal(stopCountForDays(4, plans, 0), 4, "0 means no cap");
+  assert.equal(stopCountForDays(2, plans, 1), 2, "a two-stop trip is never trimmed away");
 });
 
 console.log("map furniture");
