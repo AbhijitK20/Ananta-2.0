@@ -13,10 +13,11 @@ export function Header() {
     <header className="lal-header" data-open={open}>
       <div className="lal-box">
         <div className="lal-header__inner lal-container">
-        <Link href="/" className="lal-header__logo" aria-label="Like A Local Guide">
-          {/* The live site serves a 500x178 AVIF at 190px wide. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/lal-logo.avif" width={500} height={178} alt="Like A Local city guide" />
+        <Link href="/" className="lal-header__logo" aria-label="Ananta home">
+          {/* Horizontal lockup (mark + ANANTA + SINCE 2026). The stacked source
+              is portrait 394x462 and would render 223px tall at this width.
+              eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/ananta-logo-horizontal.png" width={725} height={262} alt="Ananta" />
         </Link>
 
         <div className="lal-header__right">
