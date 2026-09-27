@@ -15,6 +15,11 @@
 
 :root {
   /* palette ------------------------------------------------------------ */
+  /* The page background, as a token rather than a literal on `body`. The
+     parallax hero fades its artwork into this colour, and it needs to fade into
+     the same value the body paints — two sources for "the page background" is
+     exactly the drift the rest of this file is written to prevent. */
+  --lal-bg: #fff;
   --lal-ink: #251e20;
   --lal-ink-2: #52474a;
   --lal-ink-3: #7a6e71;
@@ -64,7 +69,7 @@ html {
 
 body {
   margin: 0;
-  background: #fff;
+  background: var(--lal-bg);
   color: var(--lal-ink);
   font-family: var(--lal-ui);
   font-size: 16px;

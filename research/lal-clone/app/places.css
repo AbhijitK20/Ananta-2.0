@@ -1,0 +1,529 @@
+/* ==========================================================================
+   PLACES — the 100-place browse surface and the per-place route.
+
+   Two distinct objects that share a palette, so they share a file:
+
+     .px  the grid, search and filters on /cities
+     .pl  the hero and body of /places/<slug>
+
+   Both sit on the site's own magenta-to-coral gradient rather than the
+   filmstrip's sepia, because they are a browse surface and not the film
+   treatment. Everything is driven off the --g-* custom properties interior.css
+   already defines, so this file inherits the site's radius, line and type
+   scale instead of restating them.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ grid -- */
+
+.px {
+  margin-top: 32px;
+}
+
+.px__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.px__search {
+  display: block;
+  flex: 1 1 320px;
+}
+
+.px__search input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--g-line);
+  border-radius: 999px;
+  background: #fff;
+  font: 500 16px/1.2 var(--lal-ui);
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.px__search input::placeholder {
+  color: rgb(0 0 0 / 0.38);
+}
+
+.px__search input:focus-visible {
+  outline: none;
+  border-color: var(--g-accent);
+  box-shadow: 0 0 0 4px rgb(167 47 152 / 0.16);
+}
+
+.px__selects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.px__select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.px__select > span {
+  font: 700 10px/1 var(--lal-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(0 0 0 / 0.5);
+}
+
+.px__select select {
+  min-width: 150px;
+  padding: 11px 14px;
+  border: 1px solid var(--g-line);
+  border-radius: 10px;
+  background: #fff;
+  font: 500 14px/1.2 var(--lal-ui);
+  color: inherit;
+  cursor: pointer;
+}
+
+.px__select select:focus-visible {
+  outline: none;
+  border-color: var(--g-accent);
+  box-shadow: 0 0 0 4px rgb(167 47 152 / 0.16);
+}
+
+.px__count {
+  margin: 20px 0 4px;
+  font: 600 13px/1.3 var(--lal-ui);
+  color: rgb(0 0 0 / 0.58);
+}
+
+.px__empty {
+  margin: 28px 0;
+  padding: 28px;
+  border: 1px dashed var(--g-line);
+  border-radius: var(--g-radius);
+  font: 500 16px/1.5 var(--lal-ui);
+}
+
+.px__reset {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--g-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.px__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 18px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.px-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--g-line);
+  border-radius: var(--g-radius);
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.16s, box-shadow 0.16s, border-color 0.16s;
+}
+
+.px-card:hover,
+.px-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--g-accent);
+  box-shadow: 0 12px 28px rgb(167 47 152 / 0.18);
+  outline: none;
+}
+
+.px-card__frame {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #efe7f2;
+}
+
+.px-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.px-card:hover .px-card__img {
+  transform: scale(1.05);
+}
+
+.px-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px 16px;
+}
+
+.px-card__name {
+  font: 800 17px/1.25 var(--lal-ui);
+  color: var(--g-ink);
+}
+
+.px-card__where {
+  font: 500 12px/1.3 var(--lal-ui);
+  color: rgb(0 0 0 / 0.55);
+}
+
+.px-card__tag {
+  margin-top: auto;
+  padding-top: 8px;
+  font: 600 11px/1.3 var(--lal-ui);
+  letter-spacing: 0.02em;
+  color: var(--g-accent);
+}
+
+/* ------------------------------------------------- city guides fallback -- */
+
+.px__cities {
+  margin-top: 64px;
+  padding-top: 36px;
+  border-top: 1px solid var(--g-line);
+}
+
+.px__citylist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.px__citylist a {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 16px;
+  border: 1px solid var(--g-line);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.px__citylist a:hover,
+.px__citylist a:focus-visible {
+  border-color: var(--g-accent);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.px__cityname {
+  font: 700 16px/1.25 var(--lal-ui);
+}
+
+.px__citypicks {
+  font: 500 12px/1.3 var(--lal-ui);
+  color: rgb(0 0 0 / 0.55);
+}
+
+.px__foot {
+  margin: 44px 0 0;
+  font: 500 14px/1.6 var(--lal-ui);
+  color: rgb(0 0 0 / 0.6);
+}
+
+/* ------------------------------------------------------------ detail page -- */
+
+.pl {
+  padding-bottom: 20px;
+}
+
+.pl__hero {
+  position: relative;
+  width: 100%;
+  min-height: 46vh;
+  overflow: hidden;
+}
+
+.pl__heroimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pl__heroscrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(12 8 18 / 0.82) 0%,
+    rgb(12 8 18 / 0.34) 46%,
+    rgb(12 8 18 / 0.06) 100%
+  );
+}
+
+/* The copy is anchored to the BOTTOM of the hero, not flowed from the top.
+   The scrim above darkens the bottom of the photograph and leaves the top
+   nearly clear, so white text at the top of the frame sits on whatever sky
+   the photograph happens to have. Bottom-anchored, it always lands on the
+   part of the scrim that is doing the work. */
+.pl__herobody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 46vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 24px 34px;
+  color: #fff;
+}
+
+.pl__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 8px;
+  font: 700 11px/1 var(--lal-ui);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.86;
+}
+
+.pl__eyebrow a {
+  color: inherit;
+}
+
+.pl__lp {
+  padding: 5px 10px;
+  border: 1px solid rgb(255 255 255 / 0.5);
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.pl__title {
+  margin: 0;
+  font: 800 clamp(38px, 6vw, 76px) / 1 var(--lal-display);
+  letter-spacing: -0.02em;
+}
+
+.pl__country {
+  margin: 8px 0 0;
+  font: 600 clamp(16px, 1.6vw, 21px) / 1.2 var(--lal-ui);
+  opacity: 0.9;
+}
+
+.pl__inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px 0;
+}
+
+.pl__lede {
+  margin: 0 0 30px;
+  font: 500 clamp(19px, 2vw, 24px) / 1.55 var(--lal-display);
+  color: var(--g-ink);
+}
+
+.pl__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  margin: 0 0 44px;
+  padding: 0;
+  border: 1px solid var(--g-line);
+  border-radius: var(--g-radius);
+  background: var(--g-line);
+  overflow: hidden;
+}
+
+.pl__facts > div {
+  padding: 16px 18px;
+  background: #fff;
+}
+
+.pl__facts dt {
+  margin: 0 0 5px;
+  font: 700 10px/1 var(--lal-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(0 0 0 / 0.5);
+}
+
+.pl__facts dd {
+  margin: 0;
+  font: 700 16px/1.3 var(--lal-ui);
+}
+
+.pl__h2 {
+  margin: 44px 0 14px;
+  font: 800 clamp(22px, 2.4vw, 30px) / 1.2 var(--lal-display);
+  color: var(--g-ink);
+}
+
+.pl__body {
+  margin: 0;
+  font: 500 17px/1.65 var(--lal-ui);
+  color: rgb(0 0 0 / 0.78);
+}
+
+.pl__body a,
+.pl__lede a {
+  color: var(--g-accent);
+}
+
+.pl__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl__tags li {
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #a72f98, #f0664f);
+  color: #fff;
+  font: 700 14px/1 var(--lal-ui);
+}
+
+.pl__also {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl__also a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--g-line);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.pl__also a:hover,
+.pl__also a:focus-visible {
+  border-color: var(--g-accent);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.pl__also img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.pl__also span {
+  display: block;
+  padding: 10px 13px;
+  font: 700 14px/1.3 var(--lal-ui);
+}
+
+.pl__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl__chips a {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--g-line);
+  border-radius: 999px;
+  background: #fff;
+  color: inherit;
+  font: 600 13px/1 var(--lal-ui);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.pl__chips a:hover,
+.pl__chips a:focus-visible {
+  border-color: var(--g-accent);
+  color: var(--g-accent);
+  outline: none;
+}
+
+.pl__credit {
+  margin: 44px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--g-line);
+  font: 500 12px/1.6 var(--lal-ui);
+  color: rgb(0 0 0 / 0.52);
+}
+
+.pl__pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin: 30px 0 0;
+}
+
+.pl__pager a {
+  flex: 1 1 200px;
+  padding: 14px 18px;
+  border: 1px solid var(--g-line);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  font: 700 15px/1.3 var(--lal-ui);
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.pl__pager a:hover,
+.pl__pager a:focus-visible {
+  border-color: var(--g-accent);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.pl__pager a:last-child {
+  text-align: right;
+}
+
+/* ------------------------------------------------------------ responsive -- */
+
+@media (max-width: 760px) {
+  .pl__hero,
+  .pl__herobody {
+    min-height: 40vh;
+  }
+
+  .pl__herobody {
+    padding: 100px 18px 26px;
+  }
+
+  .pl__inner {
+    padding-top: 28px;
+  }
+
+  .pl__pager a:last-child {
+    text-align: left;
+  }
+}
