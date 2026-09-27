@@ -14,7 +14,7 @@
 
 import Link from "next/link";
 import type { DiscoveryContext } from "@/contracts";
-import { formatMinutes } from "./SituationEditor";
+import { formatMinutes } from "./situation";
 
 const PARTY_LABEL: Record<string, string> = {
   solo: "Solo",
