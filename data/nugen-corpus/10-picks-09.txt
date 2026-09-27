@@ -1,0 +1,151 @@
+# Local picks — part 9
+
+## Zagreb (`zagreb`) — 4 places
+
+- **Booksa** (Zagreb)
+  id: zagreb/booksa
+  neighbourhood: Martićeva (Lower Town)
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: run since 2004 by the nonprofit Kulturtreger association, Booksa is Zagreb's living-room literary club - over 18,000 members and 500-plus visiting writers, sustained…
+- **Britanski trg** (Zagreb)
+  id: zagreb/britanski-trg
+  neighbourhood: Lower Town
+  category: Unfiled
+  budget: Budget
+  note: Britanski trg, or British Square, is a leafy Lower Town square best known for its long-running antiques and flea market. […]
+- **Humana Nova** (Zagreb)
+  id: zagreb/humana-nova
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Humana Nova is a Croatian social cooperative with a shop in Zagreb selling quality second-hand and upcycled clothing and textiles. […]
+- **URIHO Gallery Shop** (Zagreb)
+  id: zagreb/uriho-gallery-shop
+  neighbourhood: Lower Town
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: URIHO is Zagreb's institution for the rehabilitation and employment of people with disabilities - around 500 employees, about 60 percent of them disabled…
+
+## Zurich (`zurich`) — 4 places
+
+- **ÄSS-Bar** (Zurich)
+  id: zurich/ass-bar
+  neighbourhood: Old Town (Niederdorf)
+  category: Restaurants
+  budget: Budget
+  note: A brilliantly simple idea with a cheeky name (‘ässbar’ means edible in Swiss German): every morning the ÄSS-Bar rescues yesterday’s […]
+- **Blindekuh** (Zurich)
+  id: zurich/blindekuh
+  neighbourhood: Seefeld
+  category: Restaurants
+  budget: Price unknown
+  note: Why it matters: opened in 1999 by the Blind-Liecht foundation, blindekuh was the world's first dine-in-the-dark restaurant, created to provide employment for blind and visually impaired…
+- **FREITAG Flagship Store** (Zurich)
+  id: zurich/freitag-flagship-store
+  neighbourhood: Zürich West
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: FREITAG pioneered upcycling before it had a name - every bag is cut from used truck tarpaulins, and the flagship 'tower' itself is…
+- **Zurich Brockenhaus** (Zurich)
+  id: zurich/zurich-brockenhaus
+  neighbourhood: Zurich West
+  category: Unfiled
+  budget: Budget
+  note: The Zurich Brockenhaus is a large, much-loved secondhand and charity store spread over several floors in the city, championing reuse […]
+
+## Muscat (`muscat`) — 3 places
+
+- **Go Green Oman** (Muscat)
+  id: muscat/go-green-oman
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Go Green Oman is a package-free grocery store where shoppers bring their own containers to refill grains, cereals, flours, spices, nuts and natural hygiene products, cutting…
+- **Handicrafts House – Al Mouj** (Muscat)
+  id: muscat/handicrafts-house-al-mouj
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Dar Al Herfya (Handicrafts House) was founded in 2012 by Zuwaina Sultan Al-Rashdi to give Omani artisans, mostly women, a proper retail outlet for pottery, frankincense,…
+- **Omani Heritage Gallery** (Muscat)
+  id: muscat/omani-heritage-gallery
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Omani Heritage Gallery opened in 1995 as a not-for-profit outlet for local artisans, selling frankincense burners, silver, leather and palm-leaf baskets, indigo-dyed textiles, weaving and…
+
+## Parnu (`parnu`) — 3 places
+
+- **Maarja-Magdaleena Gild** (Parnu)
+  id: parnu/maarja-magdaleena-gild
+  neighbourhood: Old Town
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: founded as a nonprofit in 2007 by five local artisans, this guild house revived the name of Parnu's oldest craft guild and now…
+- **Sobralt Sobrale Parnu** (Parnu)
+  id: parnu/sobralt-sobrale-parnu
+  neighbourhood: Papiniidu
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by the Sobralt Sobrale charitable foundation with Swedish partner Erikshjalpen, every sale in this secondhand store funds the Hoolime Koos programme, which…
+- **Uuskasutuskeskus Parnu** (Parnu)
+  id: parnu/uuskasutuskeskus-parnu
+  neighbourhood: Kesklinn
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Uuskasutuskeskus is Estonia's largest nonprofit reuse organisation, and this Parnu shop is the flagship of its 17-store network, built on the belief that…
+
+## Vienna (`vienna`) — 3 places
+
+- **Habibi & Hawara** (Vienna)
+  id: vienna/habibi-hawara
+  neighbourhood: Innere Stadt
+  category: Unfiled
+  budget: Mid-range
+  note: A warm Middle Eastern restaurant run as an integration project - two-thirds of the team come from refugee or migrant backgrounds, employed with fair pay and…
+- **Magdas Hotel** (Vienna)
+  id: vienna/magdas-hotel
+  neighbourhood: Prater
+  category: Unfiled
+  budget: Mid-range
+  note: A design-forward hotel by the Prater run as a social enterprise since 2015, employing and training refugees while proving a social business can still delight guests.…
+- **Vollpension** (Vienna)
+  id: vienna/vollpension
+  neighbourhood: Wieden
+  category: Unfiled
+  budget: Mid-range
+  note: Vollpension is a much-loved ‘generational café’ in Vienna’s Wieden district, where grandmothers and grandfathers bake and serve homemade cakes in […]
+
+## Sintra (`sintra`) — 2 places
+
+- **Cooperativa Agrícola de Sintra** (Sintra)
+  id: sintra/cooperativa-agricola-de-sintra
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Cooperativa Agrícola de Sintra has supported local farmers across the Sintra municipality since 1952, running agricultural supply shops that double as a genuine window into…
+- **Parques de Sintra – Monte da Lua** (Sintra)
+  id: sintra/parques-de-sintra-monte-da-lua
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Parques de Sintra - Monte da Lua is the public company responsible for conserving and restoring the palaces, parks and gardens across Sintra's UNESCO-listed cultural landscape,…
+
+## Rasht (`rasht`) — 1 places
+
+- **Gilan Rural Heritage Museum** (Rasht)
+  id: rasht/gilan-rural-heritage-museum
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Gilan Rural Heritage Museum, in the Saravan forest just outside Rasht, is Iran’s first eco-museum, opened in 2005 after a major regional earthquake accelerated the loss…
+
+## Tunis (`tunis`) — 1 places
+
+- **Dar Lasram** (Tunis)
+  id: tunis/dar-lasram
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Dar Lasram is a grand 19th-century mansion on Rue du Tribunal that now houses the Association de Sauvegarde de la Medina de Tunis, the organisation that…

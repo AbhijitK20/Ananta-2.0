@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start --port 4310",
     "typecheck": "tsc --noEmit",
+    "corpus:build": "esbuild tools/build-nugen-corpus.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/nugen-corpus.mjs --log-level=warning && node node_modules/.cache/nugen-corpus.mjs",
+    "nugen:align": "node tools/nugen-align.mjs",
     "capture": "node tools/capture.mjs",
     "verify": "node tools/verify.mjs",
     "verify:places": "node tools/verify-places.mjs",

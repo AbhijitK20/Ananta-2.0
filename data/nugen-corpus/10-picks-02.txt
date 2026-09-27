@@ -1,0 +1,706 @@
+# Local picks — part 2
+
+## Kathmandu (`kathmandu`) — 8 places
+
+- **Asan Market Producers** (Kathmandu)
+  id: kathmandu/asan-market-producers
+  neighbourhood: Asan
+  category: Unfiled
+  budget: Price unknown
+  note: At Asan and the valleys traditional bazaars, small farmers and traders sell spices, grains, fresh produce and local goods directly, […]
+- **Dhukuti** (Kathmandu)
+  id: kathmandu/dhukuti
+  neighbourhood: Kupondole
+  category: Unfiled
+  budget: Mid-range
+  note: Run by the Association for Craft Producers, Dhukuti is a four-storey fair-trade emporium representing hundreds of low-income Nepali artisans, most […]
+- **Fair Trade Handicraft Cooperatives** (Kathmandu)
+  id: kathmandu/fair-trade-handicraft-cooperatives
+  neighbourhood: Kathmandu
+  category: Unfiled
+  budget: Price unknown
+  note: Kathmandu has a strong fair-trade movement, with cooperatives and shops selling handmade felt, textiles, paper, jewellery and crafts produced by […]
+- **Local Womens Handicrafts** (Kathmandu)
+  id: kathmandu/local-womens-handicrafts
+  neighbourhood: Thamel
+  category: Unfiled
+  budget: Budget
+  note: A grassroots collective founded by activist Nasreen Sheikh, Local Womens Handicrafts trains and employs marginalised women in weaving, sewing, embroidery […]
+- **Mahaguthi Craft with Conscience** (Kathmandu)
+  id: kathmandu/mahaguthi-craft-with-conscience
+  neighbourhood: Kupondole
+  category: Unfiled
+  budget: Mid-range
+  note: One of Nepals oldest fair-trade organisations, Mahaguthi channels its profits into training, education and support for disadvantaged women and artisans. […]
+- **Pashmina and Felt Artisans** (Kathmandu)
+  id: kathmandu/pashmina-and-felt-artisans
+  neighbourhood: Kathmandu
+  category: Unfiled
+  budget: Price unknown
+  note: Nepal is famed for its pashmina and handmade felt products, and workshops and fair-trade shops around Kathmandu produce shawls, blankets, […]
+- **Sana Hastakala** (Kathmandu)
+  id: kathmandu/sana-hastakala
+  neighbourhood: Jhamsikhel
+  category: Unfiled
+  budget: Mid-range
+  note: A fair-trade pioneer founded in 1989, Sana Hastakala works with over a thousand artisans across Nepal, many of them women […]
+- **Thangka Painting Studios** (Kathmandu)
+  id: kathmandu/thangka-painting-studios
+  neighbourhood: Thamel
+  category: Unfiled
+  budget: Price unknown
+  note: Thangka painting, the intricate Buddhist scroll art of the Himalayas, is kept alive in Kathmandu studios where artists spend weeks […]
+
+## New Orleans (`new-orleans`) — 7 places
+
+- **Backstreet Cultural Museum** (New Orleans)
+  id: new-orleans/backstreet-cultural-museum
+  neighbourhood: Treme
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: This small Treme museum documents the living Black cultural traditions of New Orleans, from Mardi Gras Indian suits and second-line parades to jazz…
+- **Cafe Reconcile** (New Orleans)
+  id: new-orleans/cafe-reconcile
+  neighbourhood: Central City
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Cafe Reconcile is a nonprofit that trains young people from underserved neighborhoods in restaurant and hospitality work, with your lunch tab supporting the…
+- **Crescent City Farmers Market** (New Orleans)
+  id: new-orleans/crescent-city-farmers-market
+  neighbourhood: Uptown / citywide
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Run by the nonprofit Market Umbrella, these markets connect small regional farmers, fishers and food makers directly with the community and support local…
+- **Dooky Chase’s Restaurant** (New Orleans)
+  id: new-orleans/dooky-chases-restaurant
+  neighbourhood: Treme
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: This is one of the country's most storied Black-owned restaurants, opened in 1941 and shaped for decades by Leah Chase, who fed civil…
+- **Two Chicks Walking Tours** (New Orleans)
+  id: new-orleans/two-chicks-walking-tours
+  neighbourhood: French Quarter
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: This woman-owned company, founded by Christine Miller, runs small-group walking tours led by knowledgeable local guides. Choose from French Quarter history, Garden District…
+- **Whitney Plantation** (New Orleans)
+  id: new-orleans/whitney-plantation
+  neighbourhood: Wallace (River Road)
+  category: Ticketed Attractions
+  budget: Mid-range
+  note: Why it matters: Whitney is the only plantation museum in Louisiana that centers the lives and voices of the enslaved rather than the enslavers, with memorials…
+- **Willie Mae’s Scotch House** (New Orleans)
+  id: new-orleans/willie-maes-scotch-house
+  neighbourhood: Treme
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Started by Willie Mae Seaton in the 1950s and carried on by her family, this Black- and family-owned kitchen earned a James Beard…
+
+## Nashville (`nashville`) — 6 places
+
+- **Cafe Roze** (Nashville)
+  id: nashville/cafe-roze
+  neighbourhood: East Nashville
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Cafe Roze is a woman-owned neighborhood cafe led by chef Julia Jaksic, serving thoughtful, produce-forward food from morning coffee through evening cocktails. It's…
+- **Parnassus Books** (Nashville)
+  id: nashville/parnassus-books
+  neighbourhood: Green Hills
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: Parnassus is a beloved independent bookstore co-owned by novelist Ann Patchett, who opened it to give Nashville a locally owned bookshop after the…
+- **Prince’s Hot Chicken** (Nashville)
+  id: nashville/princes-hot-chicken
+  neighbourhood: South Nashville
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Prince's is the original Nashville hot chicken, a Black-owned business that has stayed in the Prince family for generations, now led by matriarch…
+- **Slim & Husky’s** (Nashville)
+  id: nashville/slim-huskys
+  neighbourhood: North Nashville
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Slim & Husky's is a Black-owned pizza 'beeria' started by three Tennessee State University friends who chose to build in North Nashville and…
+- **The Cafe at Thistle Farms** (Nashville)
+  id: nashville/the-cafe-at-thistle-farms
+  neighbourhood: The Nations / West Nashville
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: This cafe is part of Thistle Farms, a nonprofit social enterprise where women survivors of trafficking, addiction and prostitution find employment alongside free…
+- **White’s Mercantile** (Nashville)
+  id: nashville/whites-mercantile
+  neighbourhood: 12 South
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: White's Mercantile is a woman-owned 'general store for the modern day' founded by singer-songwriter Holly Williams. The 12 South shop is a well-curated…
+
+## Seattle (`seattle`) — 6 places
+
+- **Communion Restaurant & Bar** (Seattle)
+  id: seattle/communion-restaurant-bar
+  neighbourhood: Central District
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Communion is the restaurant of Black chef Kristi Brown, opened in the historically Black Central District as a gathering place for a community…
+- **Estelita’s Library** (Seattle)
+  id: seattle/estelitas-library
+  neighbourhood: Central District
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Estelita's Library is a justice-focused, Black-owned community bookstore and free lending library founded by Edwin Lindo, built around social justice, ethnic studies and…
+- **FareStart Restaurant** (Seattle)
+  id: seattle/farestart-restaurant
+  neighbourhood: Denny Triangle
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: FareStart is a Seattle nonprofit that runs its downtown restaurant as a hands-on culinary job-training program for people who have faced homelessness, poverty…
+- **Musang** (Seattle)
+  id: seattle/musang
+  neighbourhood: Beacon Hill
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Chef Melissa Miranda's Musang is a Filipina-owned Beacon Hill kitchen that doubled as a free community kitchen during the pandemic, and it stays…
+- **Uwajimaya** (Seattle)
+  id: seattle/uwajimaya
+  neighbourhood: Chinatown-International District
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: Uwajimaya is a beloved Asian grocery and marketplace founded by the Japanese American Moriguchi family in 1928 and still family-run nearly a century…
+- **Wing Luke Museum** (Seattle)
+  id: seattle/wing-luke-museum
+  neighbourhood: Chinatown-International District
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: The Wing Luke is a community-based museum in the Chinatown-International District that tells the Asian Pacific American story through exhibits created hand-in-hand with…
+
+## Kolkata (`kolkata`) — 5 places
+
+- **Cafe Positive** (Kolkata)
+  id: kolkata/cafe-positive
+  neighbourhood: Southern Avenue
+  category: Restaurants
+  budget: Budget
+  note: India's first cafe run entirely by HIV-positive youth, opened in 2018 in a 120-square-foot Jodhpur Park garage after landlords across the city refused the team space.…
+- **Indian Coffee House, College Street** (Kolkata)
+  id: kolkata/indian-coffee-house-college-street
+  neighbourhood: College Street
+  category: Restaurants
+  budget: Budget
+  note: A twin landmark to the book market, this high-ceilinged coffee house has been the haunt of Kolkata's students, writers and intellectuals for generations. Come for strong…
+- **Sasha Fair Trade Shop** (Kolkata)
+  id: kolkata/sasha-fair-trade-shop
+  neighbourhood: Park Street area
+  category: Shops & Markets
+  budget: Price unknown
+  note: Fair trade shopping in Kolkata starts here, at a quiet storefront on Mirza Ghalib Street just off Park Street. Why it matters: this is the retail…
+- **Sienna Store & Café** (Kolkata)
+  id: kolkata/sienna-store-cafe
+  neighbourhood: Hindustan Park
+  category: Unfiled
+  budget: Mid-range
+  note: Sienna Store & Café in the leafy Hindustan Park area combines a design store and a small café with a […]
+- **Sonagachi** (Kolkata)
+  id: kolkata/sonagachi
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Started by British East India Company as British soldiers' wives and girlfriends were in England. The East India Company used to bring local widows to the…
+
+## Ohrid (`ohrid`) — 5 places
+
+- **Atelier & Gallery Marta Pejoska** (Ohrid)
+  id: ohrid/atelier-gallery-marta-pejoska
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Mid-range
+  note: Opened in the mid-2010s, Marta Pejoska's atelier was Macedonia's first private gallery dedicated to contemporary filigree jewellery, made using traditional Ohrid silversmithing techniques alongside local materials…
+- **Filigree Workshop & Museum of Vangel Dereban** (Ohrid)
+  id: ohrid/filigree-workshop-museum-of-vangel-dereban
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Mid-range
+  note: Vangel Dereban is a sixth-generation filigree master and one of the last people keeping Macedonian silver filigree alive as a working craft rather than a museum…
+- **Knigovez Workshop & Gift Shop** (Ohrid)
+  id: ohrid/knigovez-workshop-gift-shop
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Hand bookbinding and leatherwork - book covers, hand stitching, hand carving on leather - in a workshop that started in Bitola in 1979 and later moved…
+- **National Workshop for Handmade Paper** (Ohrid)
+  id: ohrid/national-workshop-for-handmade-paper
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Budget
+  note: This working papermaking studio on Tsar Samoil Street produces paper entirely by hand and houses a replica Gutenberg-era printing press, one of only two such replicas…
+- **Studenchishte Marsh** (Ohrid)
+  id: ohrid/studenchishte-marsh
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The last surviving remnant of a once-extensive wetland on Lake Ohrid's eastern shore, holding flora and fauna substantially different from the lake itself. In February 2021…
+
+## Port au Prince (`port-au-prince`) — 5 places
+
+- **Comité Artisanal Haïtien** (Port au Prince)
+  id: port-au-prince/comite-artisanal-haitien
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Fifty years of fair-trade organising behind the cut-oil-drum metalwork Haiti is known for, and for many members the only income […]
+- **Deux Mains** (Port au Prince)
+  id: port-au-prince/deux-mains
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Sandals and leather goods cut from reclaimed tyres and hides by a workforce of Haitian women paid a living wage, […]
+- **FOKAL** (Port au Prince)
+  id: port-au-prince/fokal
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Haiti's most durable cultural foundation: libraries, debate clubs, theatre and the Monique Calixte library, still programming week by week. Check […]
+- **Le Centre d’Art** (Port au Prince)
+  id: port-au-prince/le-centre-dart
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Founded in 1944 and the crucible of modern Haitian painting; its recent story is a rescue, with the whole collection […]
+- **Papillon Enterprise** (Port au Prince)
+  id: port-au-prince/papillon-enterprise
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A Tabarre workshop village built to keep parents employed so children stay with their families: clay beads, pottery, metalwork and […]
+
+## Aalborg (`aalborg`) — 4 places
+
+- **Fællesskabets Butik** (Aalborg)
+  id: aalborg/f-llesskabets-butik
+  neighbourhood: Aalborg Centrum
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: this Kirkens Korshær shop sells ceramics, sewing, woodwork and metalwork made by socially vulnerable people at the charity's Restrup Kærvej work community -…
+- **KAFFeFAIR** (Aalborg)
+  id: aalborg/kaffefair
+  neighbourhood: Vestby
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: KAFFeFAIR opened on 7 February 2006 in an old household kitchen on Dannebrogsgade as an EU social-fund project by Fokus Folkeoplysning, aimed at…
+- **Kirkens Korshaer Genbrug** (Aalborg)
+  id: aalborg/kirkens-korshaer-genbrug
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Kirkens Korshær runs charity second-hand shops across Denmark, including in Aalborg, selling donated clothes, books, furniture and household goods at […]
+- **Råt&Godt** (Aalborg)
+  id: aalborg/rat-godt
+  neighbourhood: Aalborg Centrum
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: founded in 2015 by Christian Helweg, Raat&Godt builds furniture and interiors out of salvaged and leftover materials while running STU and employment programmes…
+
+## Abu Dhabi (`abu-dhabi`) — 4 places
+
+- **Date Market Producers** (Abu Dhabi)
+  id: abu-dhabi/date-market-producers
+  neighbourhood: Mina
+  category: Unfiled
+  budget: Budget
+  note: Dates are central to Emirati culture and hospitality, and the date market at Mina brings together sellers offering countless varieties […]
+- **Emirati Craft & Heritage** (Abu Dhabi)
+  id: abu-dhabi/emirati-craft-heritage
+  neighbourhood: Breakwater
+  category: Unfiled
+  budget: Budget
+  note: At the Heritage Village and cultural centres, Emirati artisans keep alive traditional crafts such as weaving, palm-frond work, pottery and […]
+- **Local Souk Traders** (Abu Dhabi)
+  id: abu-dhabi/local-souk-traders
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: The souks and markets of Abu Dhabi, from the date and produce markets to the craft stalls, are run by […]
+- **Sustainable & Local Food** (Abu Dhabi)
+  id: abu-dhabi/sustainable-local-food
+  neighbourhood: Abu Dhabi
+  category: Unfiled
+  budget: Mid-range
+  note: Abu Dhabi has a growing focus on local and sustainable food, from farms in the desert using modern techniques to […]
+
+## Addis Ababa (`addis-ababa`) — 4 places
+
+- **Entoto Beth Artisan** (Addis Ababa)
+  id: addis-ababa/entoto-beth-artisan
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Entoto Beth Artisan is a social enterprise and certified member of the World Fair Trade Organization, founded by Bethlehem Birhane […]
+- **Fendika Cultural Center** (Addis Ababa)
+  id: addis-ababa/fendika-cultural-center
+  neighbourhood: Meskel Square
+  category: Nightlife
+  budget: Price unknown
+  note: Why it matters: dancer Melaku Belay turned this legendary azmari bet into a cultural institution that pays traditional musicians and dancers monthly salaries instead of leaving…
+- **Sabahar** (Addis Ababa)
+  id: addis-ababa/sabahar
+  neighbourhood: Mekanisa
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: for over 20 years Sabahar has run as a woman-owned, World Fair Trade Organization-certified textile company, providing reliable employment and equitable pay to…
+- **Salem’s Ethiopia** (Addis Ababa)
+  id: addis-ababa/salems-ethiopia
+  neighbourhood: Bole
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: designer Salem Kassahun's woman-owned fair-trade compound creates jobs for Ethiopian artisan women and men, commits to fair returns for its employees and co-op…
+
+## Adelaide (`adelaide`) — 4 places
+
+- **Adelaide Hills Producers** (Adelaide)
+  id: adelaide/adelaide-hills-producers
+  neighbourhood: Adelaide Hills
+  category: Unfiled
+  budget: Budget
+  note: The cool, green Adelaide Hills are a hub of artisan food and drink producers, from cheesemakers and orchardists to breweries, […]
+- **Barossa & McLaren Vale Wineries** (Adelaide)
+  id: adelaide/barossa-mclaren-vale-wineries
+  neighbourhood: Barossa
+  category: Unfiled
+  budget: Mid-range
+  note: The famous wine regions surrounding Adelaide, from the Barossa Valley and McLaren Vale to the Adelaide Hills, are home to […]
+- **Central Market Producers** (Adelaide)
+  id: adelaide/central-market-producers
+  neighbourhood: CBD
+  category: Unfiled
+  budget: Budget
+  note: The Adelaide Central Market brings together growers, artisans and small producers from across South Australia selling fresh, seasonal and often […]
+- **South Australian Farmers Markets** (Adelaide)
+  id: adelaide/south-australian-farmers-markets
+  neighbourhood: CBD
+  category: Unfiled
+  budget: Budget
+  note: Adelaide and its surrounds host thriving farmers markets, such as the Adelaide Showground Farmers Market, where growers and producers sell […]
+
+## Alanya (`alanya`) — 4 places
+
+- **Alanya Koza Women’s Cooperative** (Alanya)
+  id: alanya/alanya-koza-womens-cooperative
+  neighbourhood: Bedesten / City Center
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: the Alanya Koza women's cooperative revived the near-lost craft of the Alanya silk-cocoon flower (Ipek Kozasi Cicegi) - a skill only two women…
+- **Alanya Saturday Farmers Market** (Alanya)
+  id: alanya/alanya-saturday-farmers-market
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Alanya’s Saturday market is a vast weekly bazaar where local farmers and producers bring their fruit, vegetables, cheeses, olives, honey […]
+- **Kaleici Handicraft Workshops** (Alanya)
+  id: alanya/kaleici-handicraft-workshops
+  neighbourhood: Kaleici
+  category: Unfiled
+  budget: Budget
+  note: In the narrow streets of Alanya’s Kaleici, the old walled quarter, traditional artisans still work at time-honoured crafts, from silk-weaving […]
+- **Strays of Alanya** (Alanya)
+  id: alanya/strays-of-alanya
+  neighbourhood: Seki
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: Strays of Alanya (SOAR) is a volunteer-run, donation-funded rescue that shelters over 150 dogs, cats, horses and donkeys - mistreated or abandoned animals…
+
+## Amman (`amman`) — 4 places
+
+- **Dead Sea & Local Producers** (Amman)
+  id: amman/dead-sea-local-producers
+  neighbourhood: Amman
+  category: Unfiled
+  budget: Mid-range
+  note: Jordanian producers harvest the mineral-rich resources of the Dead Sea and the countrys farms to make natural cosmetics, olive oil, […]
+- **Downtown Local Producers** (Amman)
+  id: amman/downtown-local-producers
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Budget
+  note: The markets of downtown Amman bring together farmers, spice sellers and small traders offering fresh produce, herbs, olives, nuts and […]
+- **Jordanian Craft Cooperatives** (Amman)
+  id: amman/jordanian-craft-cooperatives
+  neighbourhood: Amman
+  category: Unfiled
+  budget: Budget
+  note: Amman is home to craft cooperatives and social enterprises, many supporting women and refugees, that produce embroidery, mosaics, ceramics, soap […]
+- **Women-Led Food Enterprises** (Amman)
+  id: amman/women-led-food-enterprises
+  neighbourhood: Amman
+  category: Unfiled
+  budget: Budget
+  note: A growing number of women-led kitchens, food tours and social enterprises in Amman share Jordanian home cooking and support female […]
+
+## Anchorage ak (`anchorage-ak`) — 4 places
+
+- **Alaska Native Craft Cooperative** (Anchorage ak)
+  id: anchorage-ak/alaska-native-craft-cooperative
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Budget
+  note: Alaska Native artists and cooperatives in Anchorage produce and sell authentic Indigenous art and crafts, from ivory and bone carving […]
+- **Anchorage Farmers Market** (Anchorage ak)
+  id: anchorage-ak/anchorage-farmers-market
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Budget
+  note: Anchorages farmers markets bring together growers, fishers and producers from around Southcentral Alaska selling fresh produce, seafood, berries, baked goods […]
+- **Local Salmon & Food Producers** (Anchorage ak)
+  id: anchorage-ak/local-salmon-food-producers
+  neighbourhood: Anchorage
+  category: Unfiled
+  budget: Budget
+  note: Alaskas fishing families and small producers supply Anchorage with wild salmon, halibut and other seafood, as well as local berries, […]
+- **Sustainable Wildlife & Nature** (Anchorage ak)
+  id: anchorage-ak/sustainable-wildlife-nature
+  neighbourhood: Anchorage
+  category: Unfiled
+  budget: Budget
+  note: The wilderness around Anchorage, from Chugach State Park to Turnagain Arm, is a precious natural asset, and choosing responsible operators, […]
+
+## Arezzo (`arezzo`) — 4 places
+
+- **Arezzo Farmers Market** (Arezzo)
+  id: arezzo/arezzo-farmers-market
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: The markets of Arezzo bring together growers and producers from the surrounding Tuscan countryside selling seasonal fruit, vegetables, cheese, olive […]
+- **Arezzo Goldsmith Artisans** (Arezzo)
+  id: arezzo/arezzo-goldsmith-artisans
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: Arezzo has been a centre of goldsmithing for centuries, and its jewellers and artisan workshops keep alive the skills of […]
+- **Fiera Antiquaria Producers** (Arezzo)
+  id: arezzo/fiera-antiquaria-producers
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: The famous monthly antiques fair and the markets of Arezzo bring together dealers, artisans and small traders selling antiques, crafts […]
+- **Tuscan Wine & Olive Producers** (Arezzo)
+  id: arezzo/tuscan-wine-olive-producers
+  neighbourhood: Countryside
+  category: Unfiled
+  budget: Mid-range
+  note: The hills around Arezzo produce Chianti and other Tuscan wines, along with prized extra-virgin olive oil, from family estates and […]
+
+## Athens (`athens`) — 4 places
+
+- **Forget Me Not** (Athens)
+  id: athens/forget-me-not
+  neighbourhood: Plaka
+  category: Unfiled
+  budget: Budget
+  note: A gem of a shop in Plaka championing contemporary Greek design - witty, beautifully made objects, homeware and gifts from independent local designers and makers. A…
+- **Impact Hub Athens** (Athens)
+  id: athens/impact-hub-athens
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: A community and coworking hub for people building social and environmental ventures, hosting events, incubators and a network of changemakers. A window into Athens' fast-growing social-enterprise…
+- **Shedia Home** (Athens)
+  id: athens/shedia-home
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Mid-range
+  note: A beautiful four-floor cafe-bar-restaurant, art space and shop run by the Shedia street-magazine organisation, employing around 30 people who were once homeless - its chefs trained…
+- **Wise Greece** (Athens)
+  id: athens/wise-greece
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: Wise Greece is a non-profit social enterprise founded in 2013 that champions small Greek farmers and food producers while funding […]
+
+## Austin (`austin`) — 4 places
+
+- **BookWoman** (Austin)
+  id: austin/bookwoman
+  neighbourhood: North Loop
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: opened in 1975 as Common Woman Bookstore by a collective of 13 women, BookWoman turned 50 in January 2026 and is one of…
+- **Community First! Village** (Austin)
+  id: austin/community-first-village
+  neighbourhood: East Austin
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: Why it matters: this 51-acre master-planned community, opened in 2015 by Austin nonprofit Mobile Loaves & Fishes, is home to 440 formerly chronically homeless neighbors -…
+- **Mexic-Arte Museum** (Austin)
+  id: austin/mexic-arte-museum
+  neighbourhood: Downtown
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: founded as a nonprofit in 1984 by artists Sylvia Orozco, Sam Coronado and Pio Pulido, Mexic-Arte is the official Mexican and Mexican American…
+- **SFC Farmers Market** (Austin)
+  id: austin/sfc-farmers-market
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Budget
+  note: Run by the non-profit Sustainable Food Center, the SFC Farmers Market brings central Texas growers, ranchers and food producers together […]
+
+## Baku (`baku`) — 4 places
+
+- **Azerkhalcha Carpet Gallery** (Baku)
+  id: baku/azerkhalcha-carpet-gallery
+  neighbourhood: Old City
+  category: Shops & Markets
+  budget: High-end
+  note: Why it matters: Azerkhalcha's roughly 500 female artisans, aged 18 to 80 and working across 14 studios in rural Azerbaijan, hand-knot every carpet sold here, with…
+- **Folk Art Baku** (Baku)
+  id: baku/folk-art-baku
+  neighbourhood: Old City
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: this Old City shop has spent over a decade connecting travelers directly with Azerbaijani artisans, paying rural producers and craftspeople from the country's…
+- **Kashalata Cafe** (Baku)
+  id: baku/kashalata-cafe
+  neighbourhood: City Centre
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2017 by Aytan Eylanova through the Birge ve Saglam (Together and Healthy) Public Union, Kashalata is Azerbaijan's first inclusive cafe -…
+- **YARAT Contemporary Art Space** (Baku)
+  id: baku/yarat-contemporary-art-space
+  neighbourhood: Bayil
+  category: Unfiled
+  budget: Budget
+  note: YARAT is a non-profit contemporary art organisation that has transformed a former Soviet naval building on the Baku seafront into […]
+
+## Bangkok (`bangkok`) — 4 places
+
+- **Cabbages & Condoms** (Bangkok)
+  id: bangkok/cabbages-condoms
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A restaurant and social enterprise whose profits fund sexual-health and community education across Thailand, serving solid Thai food in a quirky, memorable setting.
+- **Chatuchak Weekend Market** (Bangkok)
+  id: bangkok/chatuchak-weekend-market
+  neighbourhood: not recorded
+  category: Shops & Markets
+  budget: Price unknown
+  note: One of the world's largest markets, with some 8,000 stalls across 14 hectares selling everything from clothing and crafts to plants, art and street food. Weekends…
+- **Earthtone** (Bangkok)
+  id: bangkok/earthtone
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A Bangkok sustainable-fashion label using organic, recycled and fair-trade fabrics and supporting small-batch local makers, part of the city's growing ethical-design scene.
+- **Local Alike** (Bangkok)
+  id: bangkok/local-alike
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A social enterprise championing community-based tourism, connecting travellers with village-led experiences that channel income back to local communities.
+
+## Batumi (`batumi`) — 4 places
+
+- **Batumi Boulevard Craft Market** (Batumi)
+  id: batumi/batumi-boulevard-craft-market
+  neighbourhood: Seafront
+  category: Unfiled
+  budget: Budget
+  note: Along Batumi’s seaside boulevard, local artisans and craftspeople set out stalls selling handmade souvenirs, from Georgian cloisonné enamel jewellery and […]
+- **Boni Gorod Bazaar** (Batumi)
+  id: batumi/boni-gorod-bazaar
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Boni Gorod is Batumi’s main covered market, a bustling bazaar where local farmers and traders sell fresh produce, cheeses, honey, […]
+- **Borjgalo Ethnographic Museum** (Batumi)
+  id: batumi/borjgalo-ethnographic-museum
+  neighbourhood: Outskirts (Khelvachauri side)
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: On the green edge of Batumi, this open-air museum recreates Adjarian village life with wooden houses, working models and dozens of costumed figures showing weavers, beekeepers…
+- **Like at Home (Yak Vdoma)** (Batumi)
+  id: batumi/like-at-home-yak-vdoma
+  neighbourhood: City Center
+  category: Restaurants
+  budget: Budget
+  note: Adorned with colorful murals and Ukrainian ornaments, this small cafe near the center of Batumi serves the borsch, holubtsi and deruny that owner Irina Dotsenko brought…
+
+## Beau Bassin Rose Hill (`beau-bassin-rose-hill`) — 4 places
+
+- **Craft Aid Mauritius Shop** (Beau Bassin Rose Hill)
+  id: beau-bassin-rose-hill/craft-aid-mauritius-shop
+  neighbourhood: Rose Hill
+  category: Unfiled
+  budget: Price unknown
+  note: Craft Aid is a Mauritian social enterprise that employs and trains people with disabilities, producing handmade crafts, model ships, cards […]
+- **Fair-Trade Craft Cooperative** (Beau Bassin Rose Hill)
+  id: beau-bassin-rose-hill/fair-trade-craft-cooperative
+  neighbourhood: Beau-Bassin
+  category: Unfiled
+  budget: Price unknown
+  note: Fair-trade craft cooperatives in the twin town bring together local makers producing baskets, jewellery and homeware from natural and recycled […]
+- **Local Produce Market Stalls** (Beau Bassin Rose Hill)
+  id: beau-bassin-rose-hill/local-produce-market-stalls
+  neighbourhood: Rose Hill
+  category: Unfiled
+  budget: Price unknown
+  note: Small-scale growers and producers sell seasonal fruit, vegetables, honey and preserves at market stalls around Rose Hill, offering a low-impact, […]
+- **Rose Hill Artisan Textiles** (Beau Bassin Rose Hill)
+  id: beau-bassin-rose-hill/rose-hill-artisan-textiles
+  neighbourhood: Rose Hill
+  category: Unfiled
+  budget: Price unknown
+  note: Small artisan textile and craft workshops around Rose Hill produce handwoven bags, embroidery and printed fabrics, often run by womens […]
+
+## Beijing (`beijing`) — 4 places
+
+- **Brickyard Retreat at Mutianyu** (Beijing)
+  id: beijing/brickyard-retreat-at-mutianyu
+  neighbourhood: Beigou Village, Mutianyu
+  category: Hotels
+  budget: High-end
+  note: Why it matters: American-Chinese couple Jim Spear and Liang Tang converted a derelict glazed-tile factory in Beigou Village into this 25-room retreat expressly to create jobs…
+- **Naga Tree Coffee** (Beijing)
+  id: beijing/naga-tree-coffee
+  neighbourhood: Qianmen
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2024 by Ren Jiayi, an entrepreneur with disabilities, Naga Tree is China's first fully accessible cafe — it employs staff with…
+- **Roundabout Charity Store** (Beijing)
+  id: beijing/roundabout-charity-store
+  neighbourhood: Xiangjiang / Shunyi border
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: opened in 2008 by longtime Beijing volunteer Leslie Simpson, Roundabout was mainland China's first charity store, and store proceeds fund medical care for…
+- **The Bulk House** (Beijing)
+  id: beijing/the-bulk-house
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: The Bulk House is a pioneering zero-waste shop and social project in Beijing, dedicated to reducing single-use plastic and everyday […]
+
+## Beirut (`beirut`) — 4 places
+
+- **Artisans du Liban** (Beirut)
+  id: beirut/artisans-du-liban
+  neighbourhood: Ain El Mreisseh
+  category: Unfiled
+  budget: Price unknown
+  note: Artisans du Liban is a long-established cooperative promoting traditional Lebanese crafts, selling handwoven textiles, ceramics, glass, soap and copperware made […]
+- **Beirut Re-Store Vintage** (Beirut)
+  id: beirut/beirut-re-store-vintage
+  neighbourhood: Mar Mikhael
+  category: Unfiled
+  budget: Price unknown
+  note: Vintage and second-hand shops around Mar Mikhael and Gemmayzeh sell reused clothing, furniture and objects, offering a sustainable alternative to […]
+- **L Artisan Soap Cooperative** (Beirut)
+  id: beirut/l-artisan-soap-cooperative
+  neighbourhood: Gemmayzeh
+  category: Unfiled
+  budget: Price unknown
+  note: Small workshops and cooperatives around Beirut produce traditional olive-oil soap, natural cosmetics and handmade goods, often supporting women and rural […]
+- **Souk el Tayeb Farmers Market** (Beirut)
+  id: beirut/souk-el-tayeb-farmers-market
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Price unknown
+  note: Souk el Tayeb is Lebanons pioneering farmers market, bringing small producers from across the country to Beirut to sell organic […]

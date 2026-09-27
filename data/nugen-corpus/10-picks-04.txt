@@ -1,0 +1,730 @@
+# Local picks — part 4
+
+## Cluj Napoca (`cluj-napoca`) — 4 places
+
+- **Cofeels** (Cluj Napoca)
+  id: cluj-napoca/cofeels
+  neighbourhood: Centru
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in 2021 by Lucian Butnaru as Cluj's first social cafe, Cofeels employs people with disabilities - its operating company, Eyes Love Coffee,…
+- **Ecce Homo Social Shop** (Cluj Napoca)
+  id: cluj-napoca/ecce-homo-social-shop
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Ecce Homo Social Shop is the retail arm of Organizația Creștină Ecce Homo, a Cluj-Napoca charity working with children, […]
+- **Fabrica de Pensule** (Cluj Napoca)
+  id: cluj-napoca/fabrica-de-pensule
+  neighbourhood: Marasti
+  category: Unfiled
+  budget: Budget
+  note: The Fabrica de Pensule, or Paintbrush Factory, is a former industrial building in Cluj-Napoca transformed into a pioneering independent art […]
+- **Tranzit House** (Cluj Napoca)
+  id: cluj-napoca/tranzit-house
+  neighbourhood: Centru
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: Why it matters: the Tranzit Foundation has leased the former Poalei Tzedek synagogue from Cluj's Jewish community since 1997 and run it as an independent centre…
+
+## Cologne (`cologne`) — 4 places
+
+- **Kunsthaus KAT18** (Cologne)
+  id: cologne/kunsthaus-kat18
+  neighbourhood: Sudstadt
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: KAT18 is an inclusive art house in Cologne's Sudstadt where around 24 artists with disabilities work in professional studios, run by the nonprofit…
+- **Oxfam Shop Koln** (Cologne)
+  id: cologne/oxfam-shop-koln
+  neighbourhood: Innenstadt
+  category: Unfiled
+  budget: Budget
+  note: This Oxfam charity shop in central Cologne is a well-stocked spot for secondhand clothes, books and bric-a-brac, with proceeds funding […]
+- **Tom am Platz** (Cologne)
+  id: cologne/tom-am-platz
+  neighbourhood: Sulz
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Tom am Platz is an Inklusionsunternehmen (inclusion enterprise) opened in 2024 by Lebenshilfe Koln, created to give people with disabilities real, paid jobs…
+- **Weltladen Koln** (Cologne)
+  id: cologne/weltladen-koln
+  neighbourhood: Innenstadt
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: the Weltladen Koln is one of the city's fair-trade pioneers - run for nearly five decades by the nonprofit Forum Eine Welt e.V.,…
+
+## Colombo (`colombo`) — 4 places
+
+- **Barefoot** (Colombo)
+  id: colombo/barefoot
+  neighbourhood: Kollupitiya (Colombo 3)
+  category: Shops & Markets
+  budget: Mid-range
+  note: Barefoot has been Colombo's most loved shop for over sixty years, a rambling old house on Galle Road filled with rainbow-bright handwoven cloth, a bookshop, an…
+- **Saturday Good Market** (Colombo)
+  id: colombo/saturday-good-market
+  neighbourhood: Cinnamon Gardens (Colombo 7)
+  category: Shops & Markets
+  budget: Budget
+  note: Every Saturday, rain or shine, 70 to 90 vendors fill the Nuga Tree Car Park beside the Colombo Racecourse with organic produce, natural food, ethical fashion,…
+- **Selyn** (Colombo)
+  id: colombo/selyn
+  neighbourhood: Colombo
+  category: Shops & Markets
+  budget: Mid-range
+  note: Selyn is Sri Lanka’s only guaranteed fair-trade handloom company, a social enterprise that provides dignified, sustainable employment to thousands of […]
+- **t-Lounge by Dilmah** (Colombo)
+  id: colombo/t-lounge-by-dilmah
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The t-Lounge by Dilmah on Chatham Street occupies a restored colonial-era building in Colombo Fort, a short walk from the […]
+
+## Como (`como`) — 4 places
+
+- **Garabombo** (Como)
+  id: como/garabombo
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Garabombo is Como's fair trade shop, selling coffee, chocolate, textiles and handicrafts sourced directly from producer cooperatives rather than mass import chains. It's a small, community-run…
+- **Mercato Produttori Como Rebbio** (Como)
+  id: como/mercato-produttori-como-rebbio
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This producers' market in the Rebbio district sells direct from small local farms - vegetables, cheese, honey and other goods with no middleman, run as a…
+- **Oasi WWF del Bassone** (Como)
+  id: como/oasi-wwf-del-bassone
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Bassone Oasis is a small WWF-protected wetland on the edge of Como, a patch of reed beds and ponds kept wild specifically to protect nesting…
+- **Si Può Fare – Mercato dell’Usato Solidale** (Como)
+  id: como/si-puo-fare-mercato-dellusato-solidale
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This is a solidarity secondhand market run by a local social cooperative, reselling donated clothes, furniture and household goods with proceeds going back into community and…
+
+## Copenhagen (`copenhagen`) — 4 places
+
+- **Baisikeli** (Copenhagen)
+  id: copenhagen/baisikeli
+  neighbourhood: Vesterbro
+  category: Tours
+  budget: Budget
+  note: Why it matters: Baisikeli - Swahili for 'bicycle' - is a certified B Corp social enterprise that has shipped more than 20,000 refurbished bikes to Tanzania,…
+- **Café Sonja** (Copenhagen)
+  id: copenhagen/cafe-sonja
+  neighbourhood: Vesterbro
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: run by Settlementet, a Vesterbro nonprofit founded in 1911, Café Sonja has provided employment for people with physical and social challenges for more…
+- **Folkehuset Absalon** (Copenhagen)
+  id: copenhagen/folkehuset-absalon
+  neighbourhood: Vesterbro
+  category: Unfiled
+  budget: Budget
+  note: Folkehuset Absalon is a community house in a former church on Vesterbro, reimagined as a colourful gathering place that fights […]
+- **WeFood** (Copenhagen)
+  id: copenhagen/wefood
+  neighbourhood: Nørrebro
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: opened in 2016 by the Danish aid organization DanChurchAid, WeFood was the world's first supermarket to sell only surplus food - mislabeled, overstocked,…
+
+## Curitiba (`curitiba`) — 4 places
+
+- **Erva-Mate Producers** (Curitiba)
+  id: curitiba/erva-mate-producers
+  neighbourhood: Curitiba
+  category: Unfiled
+  budget: Price unknown
+  note: Parana is the heartland of erva-mate, the herb used for the traditional chimarrao and terere drinks, and Curitiba shops sell […]
+- **Largo da Ordem Artisans** (Curitiba)
+  id: curitiba/largo-da-ordem-artisans
+  neighbourhood: Centro Historico
+  category: Unfiled
+  budget: Price unknown
+  note: The Sunday fair and craft shops of the Largo da Ordem showcase the work of hundreds of Parana artisans producing […]
+- **Mercado Municipal Producers** (Curitiba)
+  id: curitiba/mercado-municipal-producers
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Price unknown
+  note: The Mercado Municipal, with its dedicated organic hall, brings together small Parana producers selling fresh vegetables, fruit, honey, cheeses and […]
+- **Organic and Honey Stalls** (Curitiba)
+  id: curitiba/organic-and-honey-stalls
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Price unknown
+  note: Curitibas markets and dedicated organic fairs feature small producers selling honey, preserves, breads and organically grown fruit and vegetables from […]
+
+## da Nang (`da-nang`) — 4 places
+
+- **Con Market Producers** (da Nang)
+  id: da-nang/con-market-producers
+  neighbourhood: Hai Chau
+  category: Unfiled
+  budget: Price unknown
+  note: At Con Market and the citys other traditional markets, small vendors and producers sell fresh regional produce, herbs, dried goods […]
+- **Da Nang Craft Cooperatives** (da Nang)
+  id: da-nang/da-nang-craft-cooperatives
+  neighbourhood: An Thuong
+  category: Unfiled
+  budget: Price unknown
+  note: Shops and cooperatives around Da Nang sell Vietnamese handicrafts including silk, lacquerware, embroidery, conical hats and bamboo goods made by […]
+- **Fishing Village Seafood** (da Nang)
+  id: da-nang/fishing-village-seafood
+  neighbourhood: Tho Quang
+  category: Unfiled
+  budget: Price unknown
+  note: Da Nangs working fishing harbours and coastal villages supply the citys famous seafood, and buying directly from local fishers and […]
+- **Non Nuoc Stone Carving Village** (da Nang)
+  id: da-nang/non-nuoc-stone-carving-village
+  neighbourhood: Ngu Hanh Son
+  category: Unfiled
+  budget: Price unknown
+  note: The Non Nuoc stone-carving village at the foot of the Marble Mountains is a centuries-old craft community where artisans hand-carve […]
+
+## Delhi (`delhi`) — 4 places
+
+- **Dilli Haat INA** (Delhi)
+  id: delhi/dilli-haat-ina
+  neighbourhood: INA
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: since 1994 this craft bazaar has handed its stalls to artisans registered with the Development Commissioner (Handicrafts), rotating them every 15 days at…
+- **Indian Handloom & Handicrafts** (Delhi)
+  id: delhi/indian-handloom-handicrafts
+  neighbourhood: Delhi
+  category: Unfiled
+  budget: Mid-range
+  note: India has an extraordinarily rich heritage of handloom textiles and handicrafts, from block-printed and handwoven fabrics to pottery, brass, embroidery […]
+- **Salaam Baalak Trust City Walk** (Delhi)
+  id: delhi/salaam-baalak-trust-city-walk
+  neighbourhood: Paharganj
+  category: Tours
+  budget: Budget
+  note: Why it matters: this two-hour walk through Paharganj is guided by adolescents who once lived on these streets themselves, and profits go back into Salaam Baalak…
+- **Sunder Nursery** (Delhi)
+  id: delhi/sunder-nursery
+  neighbourhood: Nizamuddin
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: the Aga Khan Trust for Culture spent a decade turning a century-old British plant nursery into this 90-acre heritage park, opened in 2018…
+
+## Dubai (`dubai`) — 4 places
+
+- **Dubai Turtle Rehabilitation Project** (Dubai)
+  id: dubai/dubai-turtle-rehabilitation-project
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A conservation programme run with Dubai's Wildlife Protection Office that has treated and returned thousands of sea turtles to the […]
+- **Mawaheb** (Dubai)
+  id: dubai/mawaheb
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Founded in 2010, this Al Quoz studio gives adults of determination a professional working space, and its artists have exhibited […]
+- **Sheikh Mohammed Centre for Cultural Understanding** (Dubai)
+  id: dubai/sheikh-mohammed-centre-for-cultural-understanding
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit in Al Fahidi set up to answer visitors' questions about Emirati life directly, working under the motto open […]
+- **Thrift for Good** (Dubai)
+  id: dubai/thrift-for-good
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A charity thrift shop that rehomes donated clothing and books to cut waste, and gives all of its profits to […]
+
+## Dublin (`dublin`) — 4 places
+
+- **Nine Crows** (Dublin)
+  id: dublin/nine-crows
+  neighbourhood: Temple Bar
+  category: Unfiled
+  budget: Mid-range
+  note: Tucked down Temple Lane in Temple Bar, Nine Crows is a beloved vintage and reworked-clothing shop championing circular fashion. The […]
+- **Om Diva** (Dublin)
+  id: dublin/om-diva
+  neighbourhood: Drury Street
+  category: Unfiled
+  budget: Mid-range
+  note: Spread over several floors on Drury Street, Om Diva is a joyful boutique with a conscience, championing up-and-coming Irish designers […]
+- **Oxfam Ireland** (Dublin)
+  id: dublin/oxfam-ireland
+  neighbourhood: City Centre
+  category: Unfiled
+  budget: Budget
+  note: Charity-shopping is alive and well in Dublin, and Oxfam Ireland’s city-centre stores are among the best for a guilt-free rummage. […]
+- **Siopaella Designer Exchange** (Dublin)
+  id: dublin/siopaella-designer-exchange
+  neighbourhood: Wicklow Street
+  category: Unfiled
+  budget: Mid-range
+  note: Siopaella is Dublin’s leading designer consignment store, giving pre-loved luxury a second life on Wicklow Street. Since 2011 it has […]
+
+## Dubrovnik (`dubrovnik`) — 4 places
+
+- **Boutique Ayla** (Dubrovnik)
+  id: dubrovnik/boutique-ayla
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A slow-fashion boutique making timeless pieces from 100 percent natural fabrics, with a focus on linen and a sustainable, low-waste ethos.
+- **Clara Stones** (Dubrovnik)
+  id: dubrovnik/clara-stones
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A Dubrovnik jeweller crafting ethical, sustainable pieces from certified Adriatic coral, each handmade by master artisans with a certificate of origin.
+- **Kokula Art & Craft** (Dubrovnik)
+  id: dubrovnik/kokula-art-craft
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An award-winning art and craft shop selling authentically Croatian handmade souvenirs, from traditional embroidery to jewellery, helping keep local heritage crafts alive.
+- **Konavle Embroidery & Crafts** (Dubrovnik)
+  id: dubrovnik/konavle-embroidery-crafts
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Mid-range
+  note: The Dubrovnik region has a rich heritage of traditional craft, above all the intricate, colourful embroidery of the nearby Konavle […]
+
+## Edinburgh (`edinburgh`) — 4 places
+
+- **Garvald Makers Shop** (Edinburgh)
+  id: edinburgh/garvald-makers-shop
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A Morningside shop selling ceramics, glass, jewellery and textiles handmade by makers with learning disabilities, with profits supporting their work.
+- **Grassmarket Community Project** (Edinburgh)
+  id: edinburgh/grassmarket-community-project
+  neighbourhood: Grassmarket
+  category: Unfiled
+  budget: Budget
+  note: The Grassmarket Community Project is an Edinburgh social enterprise and charity that supports vulnerable adults through craft, training and community. […]
+- **Stockbridge Charity Shops** (Edinburgh)
+  id: edinburgh/stockbridge-charity-shops
+  neighbourhood: Stockbridge
+  category: Unfiled
+  budget: Budget
+  note: The genteel neighbourhood of Stockbridge is famous for having some of the best charity shops in Edinburgh, where the well-heeled […]
+- **The Edinburgh Remakery** (Edinburgh)
+  id: edinburgh/the-edinburgh-remakery
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A Leith social enterprise tackling waste by repairing and reselling electronics and furniture and running community repair workshops, diverting tonnes of goods from landfill each year.
+
+## Enontekio (`enontekio`) — 4 places
+
+- **Fell Nature & Sustainability** (Enontekio)
+  id: enontekio/fell-nature-sustainability
+  neighbourhood: Hetta
+  category: Unfiled
+  budget: Budget
+  note: The fragile arctic environment around Enontekio, from the fells of Pallas to the tundra of Kilpisjarvi, depends on responsible tourism […]
+- **Lapland Local Producers** (Enontekio)
+  id: enontekio/lapland-local-producers
+  neighbourhood: Hetta
+  category: Unfiled
+  budget: Budget
+  note: The scattered communities of Enontekio are home to small producers who forage berries and herbs, smoke fish and reindeer, and […]
+- **Reindeer Herding Community** (Enontekio)
+  id: enontekio/reindeer-herding-community
+  neighbourhood: Enontekio
+  category: Unfiled
+  budget: Budget
+  note: Reindeer herding is the backbone of life and culture in Enontekio, practised by Sami and local families across the vast […]
+- **Sami Duodji Cooperative** (Enontekio)
+  id: enontekio/sami-duodji-cooperative
+  neighbourhood: Hetta
+  category: Unfiled
+  budget: Budget
+  note: Enontekio is a stronghold of Sami culture, and local duodji artisans and cooperatives keep alive the traditional crafts of the […]
+
+## Espoo (`espoo`) — 4 places
+
+- **Espoo Flea Markets** (Espoo)
+  id: espoo/espoo-flea-markets
+  neighbourhood: Espoo
+  category: Unfiled
+  budget: Budget
+  note: Espoo’s flea markets and second-hand shops are a treasure trove for bargain hunters and a cornerstone of the city’s strong […]
+- **Nuuksio National Park** (Espoo)
+  id: espoo/nuuksio-national-park
+  neighbourhood: Nuuksio
+  category: Unfiled
+  budget: Budget
+  note: Nuuksio National Park is Espoo’s great natural treasure, a protected wilderness of ancient forests, clear lakes, bogs and rugged hills […]
+- **Reuse Centre Espoo** (Espoo)
+  id: espoo/reuse-centre-espoo
+  neighbourhood: Nihtisilta
+  category: Unfiled
+  budget: Budget
+  note: The Reuse Centre, or Kierratyskeskus, in Espoo is part of a much-loved non-profit network that champions the circular economy, and […]
+- **Villa Elfvik Nature House** (Espoo)
+  id: espoo/villa-elfvik-nature-house
+  neighbourhood: Laajalahti
+  category: Unfiled
+  budget: Budget
+  note: Villa Elfvik is a charming old wooden villa beside the Laajalahti nature reserve, now serving as a free nature house […]
+
+## Florence (`florence`) — 4 places
+
+- **Il Conventino Caffè Letterario** (Florence)
+  id: florence/il-conventino-caffe-letterario
+  neighbourhood: Oltrarno / San Frediano
+  category: Restaurants
+  budget: Budget
+  note: In the cloister of the former Monastery of Santa Teresa in Oltrarno, this literary cafe doubles as the neighborhood's living room, surrounded by working artisan studios.…
+- **Il Villaggio dei Popoli** (Florence)
+  id: florence/il-villaggio-dei-popoli
+  neighbourhood: Sant'Ambrogio
+  category: Shops & Markets
+  budget: Budget
+  note: A short walk from the Sant'Ambrogio market, this fair-trade bottega has been Florence's home for ethical shopping since 1990. Why it matters: Il Villaggio dei Popoli…
+- **Scuola del Cuoio** (Florence)
+  id: florence/scuola-del-cuoio
+  neighbourhood: Santa Croce
+  category: Shops & Markets
+  budget: High-end
+  note: Tucked behind the apse of Santa Croce in a Renaissance dormitory frescoed by Ghirlandaio's school, the Leather School of Florence is where you watch artisans cut,…
+- **Street Doing** (Florence)
+  id: florence/street-doing
+  neighbourhood: Centro Storico
+  category: Unfiled
+  budget: Mid-range
+  note: Street Doing is a celebrated vintage concept store near Via dei Servi, spread over a labyrinth of rooms packed with […]
+
+## Frankfurt (`frankfurt`) — 4 places
+
+- **Glore Frankfurt** (Frankfurt)
+  id: frankfurt/glore-frankfurt
+  neighbourhood: Nordend
+  category: Unfiled
+  budget: Mid-range
+  note: Glore is a fair-fashion concept store on the Oeder Weg in the Nordend, stocking clothing, shoes and accessories from labels […]
+- **Oxfam Shop Frankfurt** (Frankfurt)
+  id: frankfurt/oxfam-shop-frankfurt
+  neighbourhood: Innenstadt
+  category: Unfiled
+  budget: Budget
+  note: This Oxfam charity shop in the centre is a treasure trove of secondhand clothes, books and bric-a-brac, with proceeds funding […]
+- **Sinn & Wandel** (Frankfurt)
+  id: frankfurt/sinn-wandel
+  neighbourhood: Nordend
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Sinn & Wandel is a recognised Inklusionsbetrieb (inclusion business) in the Nordend, opened by deaf restaurateur Sascha Nuhn, where deaf, hearing-impaired and people…
+- **Weltladen Bornheim** (Frankfurt)
+  id: frankfurt/weltladen-bornheim
+  neighbourhood: Bornheim
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: opened in September 2005 and run largely by around 20 volunteers, Weltladen Bornheim is one of Frankfurt's longtime fair-trade shops — a nonprofit,…
+
+## Garmisch Partenkirchen (`garmisch-partenkirchen`) — 4 places
+
+- **Alpine Dairy and Cheese** (Garmisch Partenkirchen)
+  id: garmisch-partenkirchen/alpine-dairy-and-cheese
+  neighbourhood: Werdenfelser Land
+  category: Unfiled
+  budget: Price unknown
+  note: The alpine pastures around Garmisch-Partenkirchen produce excellent mountain cheeses, butter and dairy from cattle grazed on high meadows in the […]
+- **Bavarian Woodcraft Artisans** (Garmisch Partenkirchen)
+  id: garmisch-partenkirchen/bavarian-woodcraft-artisans
+  neighbourhood: Partenkirchen
+  category: Unfiled
+  budget: Price unknown
+  note: Local artisans around Garmisch-Partenkirchen and the nearby Oberammergau region produce traditional woodcarvings, nativity figures and painted crafts rooted in centuries […]
+- **Garmisch Bauernmarkt** (Garmisch Partenkirchen)
+  id: garmisch-partenkirchen/garmisch-bauernmarkt
+  neighbourhood: Garmisch
+  category: Unfiled
+  budget: Price unknown
+  note: The weekly farmers market in Garmisch-Partenkirchen brings together regional producers selling fresh vegetables, alpine cheeses, honey, bread, sausages and seasonal […]
+- **Local Honey and Herb Producers** (Garmisch Partenkirchen)
+  id: garmisch-partenkirchen/local-honey-and-herb-producers
+  neighbourhood: Garmisch
+  category: Unfiled
+  budget: Price unknown
+  note: Small beekeepers and producers in the Garmisch-Partenkirchen valleys make alpine honey, herbal schnapps, teas and natural products from the mountain […]
+
+## Ghent (`ghent`) — 4 places
+
+- **Avalon** (Ghent)
+  id: ghent/avalon
+  neighbourhood: Patershol
+  category: Unfiled
+  budget: Budget
+  note: A long-running organic vegetarian restaurant opposite the castle, one of the pioneers of Ghent’s strong veggie scene in a city […]
+- **De Centrale** (Ghent)
+  id: ghent/de-centrale
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: An intercultural arts centre near the old harbour hosting world-music concerts, festivals, workshops and community projects that bring together Ghent’s […]
+- **Kringwinkel Gent** (Ghent)
+  id: ghent/kringwinkel-gent
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: A large second-hand and reuse store run as a social enterprise, selling donated furniture, clothes, books and bric-a-brac while providing […]
+- **Oxfam Wereldwinkel** (Ghent)
+  id: ghent/oxfam-wereldwinkel
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: A fair-trade world shop selling ethically sourced coffee, chocolate, wine and crafts that support producers in developing countries, part of […]
+
+## Gothenburg (`gothenburg`) — 4 places
+
+- **Bjorka Secondhand** (Gothenburg)
+  id: gothenburg/bjorka-secondhand
+  neighbourhood: Linne
+  category: Unfiled
+  budget: Budget
+  note: Bjorka Frihet is a well-known secondhand chain with a large store on Linnegatan, selling reused clothing, furniture and household goods […]
+- **Eco Design & Fair-Trade Shops** (Gothenburg)
+  id: gothenburg/eco-design-fair-trade-shops
+  neighbourhood: Inom Vallgraven
+  category: Unfiled
+  budget: Mid-range
+  note: The Magasinsgatan quarter and surrounding streets host a growing number of shops focused on sustainable Scandinavian design, organic materials, fair-trade […]
+- **Local Organic Farmers Market** (Gothenburg)
+  id: gothenburg/local-organic-farmers-market
+  neighbourhood: Inom Vallgraven
+  category: Unfiled
+  budget: Budget
+  note: Gothenburg regular farmers and organic markets bring together small-scale growers from the surrounding Vastra Gotaland region selling seasonal, locally grown […]
+- **West Coast Sustainable Seafood** (Gothenburg)
+  id: gothenburg/west-coast-sustainable-seafood
+  neighbourhood: Inom Vallgraven
+  category: Unfiled
+  budget: Mid-range
+  note: The market halls and fishmongers of Gothenburg, including Feskekorka and Stora Saluhallen, source shellfish and fish from the Swedish West […]
+
+## Guangzhou (`guangzhou`) — 4 places
+
+- **1200bookshop** (Guangzhou)
+  id: guangzhou/1200bookshop
+  neighbourhood: Pantang Village, Liwan
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: architecture graduate Liu Erxi opened 1200bookshop in July 2014 - Guangzhou's first 24-hour bookstore - after walking 1,200km around Taiwan on the kindness…
+- **Cantonese Craft & Embroidery** (Guangzhou)
+  id: guangzhou/cantonese-craft-embroidery
+  neighbourhood: Liwan
+  category: Unfiled
+  budget: Mid-range
+  note: Guangzhou has a proud heritage of traditional crafts, from the intricate Cantonese embroidery known as Yue embroidery to ivory-style carving, […]
+- **Qingping Market** (Guangzhou)
+  id: guangzhou/qingping-market
+  neighbourhood: Liwan
+  category: Unfiled
+  budget: Budget
+  note: The Qingping Market is a famous traditional market in old Guangzhou, celebrated especially for its vast array of dried goods […]
+- **Starbucks Sign Language Store** (Guangzhou)
+  id: guangzhou/starbucks-sign-language-store
+  neighbourhood: Yuexiu / Beijing Road
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: this is Starbucks China's first sign language store, opened on 19 May 2019 - the country's National Day for Helping the Disabled -…
+
+## Hague (`hague`) — 4 places
+
+- **Bloem** (Hague)
+  id: hague/bloem
+  neighbourhood: Centrum
+  category: Restaurants
+  budget: Mid-range
+  note: An organic, sustainability-minded bistro and coffee spot serving wholesome, largely plant-forward dishes made with local and seasonal produce. The relaxed, […]
+- **Kringloop Den Haag** (Hague)
+  id: hague/kringloop-den-haag
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: A large second-hand and reuse store run as a social enterprise, selling donated furniture, clothes, books and household goods while […]
+- **Lola Bikes and Coffee** (Hague)
+  id: hague/lola-bikes-and-coffee
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: A friendly cafe and bicycle workshop rolled into one, serving good coffee alongside bike repairs and a community of local […]
+- **Wereldwinkel Den Haag** (Hague)
+  id: hague/wereldwinkel-den-haag
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: A fair-trade world shop selling ethically sourced coffee, chocolate, wine and handmade crafts that support producers in developing countries, part […]
+
+## Halifax ca (`halifax-ca`) — 4 places
+
+- **Nova Scotia Craft Artisans** (Halifax ca)
+  id: halifax-ca/nova-scotia-craft-artisans
+  neighbourhood: Waterfront
+  category: Unfiled
+  budget: Price unknown
+  note: Halifax shops and market stalls showcase Nova Scotian crafts, including pottery, pewter, woollens, jewellery and Mikmaw beadwork and quillwork made […]
+- **Nova Scotia Seafood Producers** (Halifax ca)
+  id: halifax-ca/nova-scotia-seafood-producers
+  neighbourhood: Waterfront
+  category: Unfiled
+  budget: Price unknown
+  note: Nova Scotias fishing communities supply Halifax with world-renowned lobster, scallops, oysters and haddock, and buying from waterfront fishmongers, market stalls […]
+- **Nova Scotia Wine and Cider** (Halifax ca)
+  id: halifax-ca/nova-scotia-wine-and-cider
+  neighbourhood: Waterfront
+  category: Unfiled
+  budget: Price unknown
+  note: Nova Scotias emerging wine region, centred on the nearby Annapolis Valley, produces crisp whites and the signature sparkling Tidal Bay, […]
+- **Seaport Market Producers** (Halifax ca)
+  id: halifax-ca/seaport-market-producers
+  neighbourhood: Seaport
+  category: Unfiled
+  budget: Price unknown
+  note: At the Halifax Seaport Farmers Market, Nova Scotia farmers, fishers and food makers sell fresh produce, seafood, cheeses, preserves and […]
+
+## Hamburg (`hamburg`) — 4 places
+
+- **Dialoghaus Hamburg** (Hamburg)
+  id: hamburg/dialoghaus-hamburg
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Blind and deaf guides lead every experience at this Speicherstadt social enterprise, where around half the workforce lives with a […]
+- **Hanseatic Help e.V.** (Hamburg)
+  id: hamburg/hanseatic-help-e-v
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Born out of the 2015 refugee response, this Altona charity sorts donated clothing and passes it on through more than […]
+- **Hinz&Kunzt** (Hamburg)
+  id: hamburg/hinz-kunzt
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Hamburg's street magazine is sold by around 530 homeless and formerly homeless vendors, each of whom keeps a share of […]
+- **Villa Viva** (Hamburg)
+  id: hamburg/villa-viva
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Opened in 2023 by the Hamburg water charity Viva con Agua, this twelve-storey guesthouse channels its surpluses into drinking-water and […]
+
+## Hanoi (`hanoi`) — 4 places
+
+- **Bat Trang Craft Artisans** (Hanoi)
+  id: hanoi/bat-trang-craft-artisans
+  neighbourhood: Bat Trang
+  category: Unfiled
+  budget: Budget
+  note: The potters of Bat Trang village near Hanoi have practised their craft for some seven hundred years, shaping and firing […]
+- **Hanoi Street Food Vendors** (Hanoi)
+  id: hanoi/hanoi-street-food-vendors
+  neighbourhood: Old Quarter
+  category: Unfiled
+  budget: Budget
+  note: Hanois pavements are a vast open-air kitchen, where street vendors, many of them women balancing shoulder poles, sell pho, banh […]
+- **KOTO Van Mieu** (Hanoi)
+  id: hanoi/koto-van-mieu
+  neighbourhood: Van Mieu / Dong Da
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: opened in 1999 by Vietnamese-Australian Jimmy Pham, KOTO — Know One, Teach One — was Vietnam’s first social enterprise, putting at-risk and disadvantaged…
+- **Omamori Spa** (Hanoi)
+  id: hanoi/omamori-spa
+  neighbourhood: Old Quarter / Hoan Kiem
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: run by BlindLink, a social enterprise founded in 2013, Omamori Spa trains and employs blind and visually impaired therapists, giving Vietnam’s visually impaired…
+
+## Helsinki (`helsinki`) — 4 places
+
+- **Artek 2nd Cycle** (Helsinki)
+  id: helsinki/artek-2nd-cycle
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The second-hand outpost of iconic Finnish design brand Artek, giving vintage Aalto stools and mid-century pieces a new life, a cornerstone of Helsinki's circular-design scene.
+- **Emmaus Helsinki** (Helsinki)
+  id: helsinki/emmaus-helsinki
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit second-hand store selling clothes, books and furniture, where your purchases support the organisation's social and solidarity work.
+- **Fida Lahetystori** (Helsinki)
+  id: helsinki/fida-lahetystori
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Fida runs a chain of charity second-hand shops across Helsinki, selling donated clothes, homeware, books and furniture at low prices. […]
+- **UFF** (Helsinki)
+  id: helsinki/uff
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A well-known Finnish thrift chain with several Helsinki stores, dedicated to sustainable fashion, with sale proceeds funding humanitarian aid projects around the world.
+
+## Hoi (`hoi`) — 4 places
+
+- **Cam Thanh Basket Weavers** (Hoi)
+  id: hoi/cam-thanh-basket-weavers
+  neighbourhood: Cam Thanh
+  category: Unfiled
+  budget: Price unknown
+  note: In the coconut-palm water-coconut groves of Cam Thanh near Hoi An, local communities weave the round bamboo basket boats used […]
+- **Central Market Producers** (Hoi)
+  id: hoi/central-market-producers
+  neighbourhood: Ancient Town
+  category: Unfiled
+  budget: Price unknown
+  note: At Hoi Ans central market and surrounding stalls, local farmers, fishers and food makers sell fresh produce, herbs, seafood and […]
+- **Silk and Lantern Artisans** (Hoi)
+  id: hoi/silk-and-lantern-artisans
+  neighbourhood: Ancient Town
+  category: Unfiled
+  budget: Price unknown
+  note: Hoi Ans artisans handcraft silk lanterns, textiles and other traditional goods using skills passed down through generations, and workshops around […]
+- **Tra Que Vegetable Village** (Hoi)
+  id: hoi/tra-que-vegetable-village
+  neighbourhood: Tra Que
+  category: Unfiled
+  budget: Price unknown
+  note: Tra Que is a traditional organic herb and vegetable village near Hoi An where farmers grow fragrant greens using natural […]
+
+## Hong Kong (`hong-kong`) — 4 places
+
+- **Dialogue in the Dark** (Hong Kong)
+  id: hong-kong/dialogue-in-the-dark
+  neighbourhood: Cheung Sha Wan
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: Why it matters: co-founded in 2008 by social entrepreneurs Patrick Cheung and KK Tse, this is one of Hong Kong's most celebrated social enterprises - visually…
+- **Dignity Kitchen** (Hong Kong)
+  id: hong-kong/dignity-kitchen
+  neighbourhood: Mong Kok
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in 2019 by Singaporean social entrepreneur Koh Seng-Choon, this Mong Kok hawker food court trains and employs differently-abled and disadvantaged Hongkongers -…
+- **Green Ladies** (Hong Kong)
+  id: hong-kong/green-ladies
+  neighbourhood: Wan Chai
+  category: Shops & Markets
+  budget: Budget
+  note: Green Ladies is a social-enterprise consignment store run by St. James’ Settlement, giving pre-loved women’s fashion a second life. Customers […]
+- **Museum Cafe 8** (Hong Kong)
+  id: hong-kong/museum-cafe-8
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A social enterprise cafe run by The Nesbitt Centre, a Hong Kong charity supporting adults with learning disabilities. The cafe […]

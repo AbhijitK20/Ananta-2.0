@@ -1,0 +1,32 @@
+# Catalogue taxonomy
+
+The 890 places are filed under 8 categories. Counts
+below are the real distribution, including the untagged bucket.
+
+## Categories
+
+- **Restaurants** (`restaurants`) — 86 places.
+- **Shops & Markets** (`shopping`) — 112 places.
+- **Sightseeing** (`sightseeing`) — 20 places.
+- **Tours** (`tours`) — 34 places.
+- **Ticketed Attractions** (`attractions`) — 31 places.
+- **Nightlife** (`nightlife`) — 9 places.
+- **Hotels** (`hotels`) — 26 places.
+- **Unfiled** (`unfiled`) — 576 places.
+
+## Budget bands
+
+- **Budget** (`budget`) — 384 places.
+- **Mid-range** (`mid-range`) — 203 places.
+- **High-end** (`high-end`) — 21 places.
+- **Price unknown** (`unknown`) — 282 places.
+
+Budget is missing on 282 places, which is the largest single band.
+That is an absence in the source, not a price of zero and not a judgement that
+the place is cheap.
+
+## Provenance
+
+Every field in the catalogue is `curated`, `provider`, `osm` or `inferred`.
+Nothing here was invented to fill a column. Where a value is missing it is
+missing on the page too.

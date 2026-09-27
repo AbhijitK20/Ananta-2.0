@@ -1,0 +1,718 @@
+# Local picks — part 1
+
+## Paris (`paris`) — 22 places
+
+- **Artisans du Monde** (Paris)
+  id: paris/artisans-du-monde
+  neighbourhood: Multiple locations
+  category: Unfiled
+  budget: Mid-range
+  note: France's fair-trade shop network, selling crafts and food that pay producers in the Global South fairly.
+- **Astier de Villatte** (Paris)
+  id: paris/astier-de-villatte
+  neighbourhood: 1st Arr.
+  category: Unfiled
+  budget: High-end
+  note: Hand-thrown black-clay ceramics finished in white glaze, all made in a historic Paris atelier.
+- **Causses** (Paris)
+  id: paris/causses
+  neighbourhood: 9th Arr.
+  category: Unfiled
+  budget: Mid-range
+  note: A quality grocer and café championing small, local, organic producers over industrial food.
+- **Centre Commercial** (Paris)
+  id: paris/centre-commercial
+  neighbourhood: 10th Arr.
+  category: Unfiled
+  budget: High-end
+  note: A concept store of ethical, sustainably made fashion and goods - founded by the people behind Veja.
+- **day by day** (Paris)
+  id: paris/day-by-day
+  neighbourhood: Multiple locations
+  category: Unfiled
+  budget: Mid-range
+  note: A zero-waste grocer selling everything loose - bring your own container and buy exactly what you need.
+- **Eden Lodge Paris** (Paris)
+  id: paris/eden-lodge-paris
+  neighbourhood: 11th arrondissement (Bastille side)
+  category: Hotels
+  budget: High-end
+  note: Why it matters: Eden Lodge is an eco-luxury property built around a zero-carbon promise, powered by solar and wood-pellet energy in a timber structure, and recognised…
+- **Emmaüs** (Paris)
+  id: paris/emmaus
+  neighbourhood: Multiple locations
+  category: Unfiled
+  budget: Budget
+  note: The charity-secondhand movement whose shops fund jobs and housing for people rebuilding their lives.
+- **Empreintes Paris** (Paris)
+  id: paris/empreintes-paris
+  neighbourhood: Le Marais
+  category: Unfiled
+  budget: High-end
+  note: A four-floor concept store devoted to French métiers d'art, selling work straight from artisan makers.
+- **Hotel Toujours** (Paris)
+  id: paris/hotel-toujours
+  neighbourhood: 16th arrondissement (Porte Maillot)
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Toujours backs its green claims with two independent certifications (EU Ecolabel and Green Globe) and buys 100% renewable, traceable electricity, alongside fair-labour and…
+- **La Maison Plisson** (Paris)
+  id: paris/la-maison-plisson
+  neighbourhood: Le Marais
+  category: Unfiled
+  budget: High-end
+  note: An ethical épicerie and café spotlighting small French producers and short, traceable supply chains.
+- **La Recyclerie** (Paris)
+  id: paris/la-recyclerie
+  neighbourhood: 18th Arr.
+  category: Unfiled
+  budget: Mid-range
+  note: An eco-café, urban farm and free repair workshop in a former railway station at Porte de Clignancourt.
+- **Les Cuistots Migrateurs** (Paris)
+  id: paris/les-cuistots-migrateurs
+  neighbourhood: Paris (culinary school and kitchens)
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Les Cuistots Migrateurs is a social enterprise built to help refugees rebuild careers through cooking, offering free professional training plus French classes and…
+- **Little Africa Paris** (Paris)
+  id: paris/little-africa-paris
+  neighbourhood: Goutte d'Or, 18th arrondissement
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Little Africa was founded by Jacqueline Ngo Mpii, a Black woman who built the company, a guidebook and a retail-and-gallery 'Little Africa Village'…
+- **Marché d’Aligre** (Paris)
+  id: paris/marche-daligre
+  neighbourhood: 12th Arr.
+  category: Unfiled
+  budget: Budget
+  note: A lively daily street market with a secondhand brocante alongside the produce - local food and reuse.
+- **Marché des Enfants Rouges** (Paris)
+  id: paris/marche-des-enfants-rouges
+  neighbourhood: Le Marais
+  category: Unfiled
+  budget: Budget
+  note: Paris's oldest covered market (1615), full of small organic growers and local food stalls.
+- **MOB Hotel Paris Les Puces** (Paris)
+  id: paris/mob-hotel-paris-les-puces
+  neighbourhood: Saint-Ouen / Les Puces (northern edge of Paris)
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: MOB is a certified B Corp, meaning an independent audit assessed how it treats staff, sources food and gives back, not just its…
+- **Officine Universelle Buly** (Paris)
+  id: paris/officine-universelle-buly
+  neighbourhood: 6th Arr.
+  category: Unfiled
+  budget: High-end
+  note: A revived 1803 beauty house with plant-based, refillable formulas in a jewel-box apothecary setting.
+- **Paris by Mouth** (Paris)
+  id: paris/paris-by-mouth
+  neighbourhood: Marais, Saint-Germain and the Left Bank
+  category: Tours
+  budget: High-end
+  note: Why it matters: Paris by Mouth was founded by writer Meg Zimbeck and its tour operation is directed by Sara Kavelin, making it a woman-founded, woman-led…
+- **Shakespeare and Company** (Paris)
+  id: paris/shakespeare-and-company
+  neighbourhood: Latin Quarter
+  category: Shops & Markets
+  budget: Mid-range
+  note: A world-famous English-language bookshop facing Notre-Dame across the Seine, trading under this name since 1951 and long a haven for […]
+- **Solar Hotel** (Paris)
+  id: paris/solar-hotel
+  neighbourhood: 14th arrondissement (Denfert-Rochereau)
+  category: Hotels
+  budget: Budget
+  note: Why it matters: the Solar bills itself as Paris's first activist eco-hotel, running a real environmental policy (EU Ecolabel and Green Key certified) while deliberately keeping…
+- **Veja Store** (Paris)
+  id: paris/veja-store
+  neighbourhood: Le Marais
+  category: Unfiled
+  budget: Mid-range
+  note: The French sneaker label built on fair-trade Amazonian rubber and organic cotton, with in-store repairs.
+- **Women of Paris** (Paris)
+  id: paris/women-of-paris
+  neighbourhood: Left Bank / Luxembourg Gardens
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: this is a female-founded company whose entire purpose is to put women back into the story of Paris, from revolutionaries to writers to…
+
+## London (`london`) — 16 places
+
+- **Beyond Retro** (London)
+  id: london/beyond-retro
+  neighbourhood: Hackney
+  category: Unfiled
+  budget: Budget
+  note: A cavernous vintage warehouse packed with reclaimed denim, tees and party wear.
+- **Black History Walks** (London)
+  id: london/black-history-walks
+  neighbourhood: Multiple areas across London
+  category: Tours
+  budget: Budget
+  note: Why it matters: Black History Walks was founded by Black historian and author Tony Warner and has, since 2007, told the story of London's Black history…
+- **Brixton Village** (London)
+  id: london/brixton-village
+  neighbourhood: Brixton
+  category: Unfiled
+  budget: Budget
+  note: A covered market of independent traders and global kitchens at the heart of Brixton.
+- **Choosing Keeping** (London)
+  id: london/choosing-keeping
+  neighbourhood: Seven Dials
+  category: Unfiled
+  budget: Mid-range
+  note: An exquisite stationery shop championing traditional, small-batch European makers.
+- **Good Hotel London** (London)
+  id: london/good-hotel-london
+  neighbourhood: Royal Docks (Newham), East London
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Good Hotel is a genuine social enterprise, not just a hotel with a charity angle. It runs a three-month training course of study…
+- **Green Rooms** (London)
+  id: london/green-rooms
+  neighbourhood: Wood Green (Haringey), North London
+  category: Hotels
+  budget: Budget
+  note: Why it matters: Green Rooms is an arts-led social enterprise offering low-cost private and dorm rooms aimed at makers, performers and creative travellers, with an on-site…
+- **Hetu** (London)
+  id: london/hetu
+  neighbourhood: Clapham
+  category: Unfiled
+  budget: Mid-range
+  note: A zero-waste refill store for pantry staples, cleaning and low-impact home goods.
+- **Inhabit Hotels** (London)
+  id: london/inhabit-hotels
+  neighbourhood: Paddington / Bayswater, West London
+  category: Hotels
+  budget: High-end
+  note: Why it matters: Inhabit is one of the few London hotels to earn B Corp certification, meaning an independent body has audited its social and environmental…
+- **Luminary Bakery** (London)
+  id: london/luminary-bakery
+  neighbourhood: Stoke Newington, Hackney
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Luminary is a women-led charity and social enterprise that runs a two-year training programme for women who've faced violence, homelessness or the criminal…
+- **Luna & Curious** (London)
+  id: london/luna-curious
+  neighbourhood: Shoreditch
+  category: Unfiled
+  budget: Mid-range
+  note: An independent collective of British designers selling ceramics, jewellery and gifts.
+- **Lush Oxford Street** (London)
+  id: london/lush-oxford-street
+  neighbourhood: Soho
+  category: Unfiled
+  budget: Mid-range
+  note: The flagship of the ethical, cruelty-free cosmetics brand - naked packaging and all.
+- **Migrateful** (London)
+  id: london/migrateful
+  neighbourhood: Clerkenwell and other London venues
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Migrateful is a charity whose classes are taught by refugees and migrants, giving them paid teaching work, language practice and confidence as they…
+- **Old Spitalfields Market** (London)
+  id: london/old-spitalfields-market
+  neighbourhood: Spitalfields
+  category: Shops & Markets
+  budget: Mid-range
+  note: A covered Victorian market with rotating days for independent makers and vintage sellers.
+- **TRAID Dalston** (London)
+  id: london/traid-dalston
+  neighbourhood: Dalston
+  category: Unfiled
+  budget: Budget
+  note: A charity fashion shop reworking donated clothes to fund garment-worker projects.
+- **Unseen Tours** (London)
+  id: london/unseen-tours
+  neighbourhood: Multiple areas across London
+  category: Tours
+  budget: Budget
+  note: Why it matters: Unseen Tours is a social enterprise whose guides have all experienced homelessness or insecure housing, and most of your ticket price goes straight…
+- **YHA London Central** (London)
+  id: london/yha-london-central
+  neighbourhood: Fitzrovia, Central London
+  category: Hotels
+  budget: Budget
+  note: Why it matters: YHA is a long-standing registered charity, and staying at one of its hostels directly funds its work giving young people and families of…
+
+## Lisbon (`lisbon`) — 14 places
+
+- **A Vida Portuguesa** (Lisbon)
+  id: lisbon/a-vida-portuguesa
+  neighbourhood: Chiado
+  category: Shops & Markets
+  budget: Budget
+  note: A Vida Portuguesa is a beloved shop in Chiado celebrating traditional Portuguese-made goods, set in a former warehouse of the […]
+- **Companhia Portugueza do Chá** (Lisbon)
+  id: lisbon/companhia-portugueza-do-cha
+  neighbourhood: Cais do Sodré
+  category: Unfiled
+  budget: Mid-range
+  note: A jewel-box tea house blending teas, including Portugal’s own Azores harvest.
+- **Cortiço & Netos** (Lisbon)
+  id: lisbon/cortico-netos
+  neighbourhood: Anjos
+  category: Unfiled
+  budget: Mid-range
+  note: Four brothers selling discontinued Portuguese azulejo tiles saved from being lost forever.
+- **Embaixada** (Lisbon)
+  id: lisbon/embaixada
+  neighbourhood: Príncipe Real
+  category: Shops & Markets
+  budget: Mid-range
+  note: A neo-Moorish palace turned concept mall of independent Portuguese designers and makers.
+- **Fábrica Sant’Ana** (Lisbon)
+  id: lisbon/fabrica-santana
+  neighbourhood: Chiado
+  category: Unfiled
+  budget: Mid-range
+  note: A tile workshop hand-painting azulejos by the same methods since 1741.
+- **Inspira Liberdade Boutique Hotel** (Lisbon)
+  id: lisbon/inspira-liberdade-boutique-hotel
+  neighbourhood: Santa Marta / Avenida da Liberdade
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Opened in 2010 as what it calls Lisbon's first sustainable hotel, Inspira Liberdade runs on 100% green energy and holds ISO 14001, Biosphere…
+- **Loja das Conservas** (Lisbon)
+  id: lisbon/loja-das-conservas
+  neighbourhood: Cais do Sodré
+  category: Unfiled
+  budget: Budget
+  note: A gallery-like shop celebrating Portugal’s artisanal tinned-fish canneries, tin by tin.
+- **Martinhal Lisbon** (Lisbon)
+  id: lisbon/martinhal-lisbon
+  neighbourhood: Chiado
+  category: Hotels
+  budget: High-end
+  note: Why it matters: Martinhal is a Portuguese family-hospitality group co-founded and led by Chitra Stern, whose vision shaped a brand built around genuinely family-friendly luxury rather…
+- **Mercado de Campo de Ourique** (Lisbon)
+  id: lisbon/mercado-de-campo-de-ourique
+  neighbourhood: Campo de Ourique
+  category: Unfiled
+  budget: Mid-range
+  note: A neighbourhood market where locals shop and graze tascas away from the crowds.
+- **Migrantour Lisbon** (Lisbon)
+  id: lisbon/migrantour-lisbon
+  neighbourhood: Mouraria
+  category: Tours
+  budget: Budget
+  note: Why it matters: Migrantour Lisbon is run by the neighbourhood nonprofit Renovar a Mouraria as part of a Europe-wide network of migrant-led intercultural walks, guided by…
+- **Retrosaria Rosa Pomar** (Lisbon)
+  id: lisbon/retrosaria-rosa-pomar
+  neighbourhood: Baixa
+  category: Unfiled
+  budget: Mid-range
+  note: A haberdashery championing Portuguese heritage wools from native sheep breeds.
+- **Taste of Lisboa Food Tours** (Lisbon)
+  id: lisbon/taste-of-lisboa-food-tours
+  neighbourhood: Mouraria & Campo de Ourique
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Taste of Lisboa was founded and is owned by Lisbon local Filipa Valente, who built the tours around the everyday food of ordinary…
+- **The Late Birds Lisbon** (Lisbon)
+  id: lisbon/the-late-birds-lisbon
+  neighbourhood: Bairro Alto
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: The Late Birds is a gay urban resort built by and for the LGBTQ+ community, created out of the founders' own experiences travelling…
+- **Treasures of Lisboa Food Tours** (Lisbon)
+  id: lisbon/treasures-of-lisboa-food-tours
+  neighbourhood: Alfama
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Treasures of Lisboa is co-founded and co-owned by Ruthy, a woman entrepreneur who runs the tours alongside her Portuguese partner, sharing a personal…
+
+## Miami (`miami`) — 14 places
+
+- **Cafe La Trova** (Miami)
+  id: miami/cafe-la-trova
+  neighbourhood: Little Havana
+  category: Nightlife
+  budget: Mid-range
+  note: Why it matters: Cafe La Trova is the vision of Cuban-born maestro cantinero Julio Cabrera, who keeps alive the flamboyant Havana bartending tradition he learned back…
+- **Chef Creole Seasoned Kitchen** (Miami)
+  id: miami/chef-creole-seasoned-kitchen
+  neighbourhood: Little Haiti
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Chef Creole is the creation of Haitian-born Wilkinson Sejour, who built it up from Little Haiti roots into a local institution and stays…
+- **El Titan de Bronze** (Miami)
+  id: miami/el-titan-de-bronze
+  neighbourhood: Little Havana
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: This small-batch cigar factory is owned by Sandy Cobas, a Cuban immigrant woman who has kept production on Calle Ocho since 1995 rather…
+- **Fairchild Tropical Botanic Garden** (Miami)
+  id: miami/fairchild-tropical-botanic-garden
+  neighbourhood: Coral Gables
+  category: Ticketed Attractions
+  budget: Mid-range
+  note: Why it matters: Fairchild is a nonprofit dedicated to tropical plant conservation, education, and research, running efforts like the Million Orchid Project to reintroduce native orchids…
+- **Freedom Tower** (Miami)
+  id: miami/freedom-tower
+  neighbourhood: Downtown Miami
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: Often called the 'Ellis Island of the South,' the Freedom Tower served as El Refugio, where the federal Cuban Assistance Program processed and…
+- **HistoryMiami Museum City Tours** (Miami)
+  id: miami/historymiami-museum-city-tours
+  neighbourhood: Downtown Miami
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: HistoryMiami is a Smithsonian-affiliated nonprofit that preserves over 40,000 artifacts and two million historical images, and its City Tours program directly funds that…
+- **La Casa de las Guayaberas (Ramon Puig)** (Miami)
+  id: miami/la-casa-de-las-guayaberas-ramon-puig
+  neighbourhood: Little Havana
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: This Cuban immigrant family business, started by tailor Ramon Puig and continued by his son Louis, has been making the traditional guayabera for…
+- **Lotus House Thrift Chic Boutique** (Miami)
+  id: miami/lotus-house-thrift-chic-boutique
+  neighbourhood: Wynwood / Midtown
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Every purchase here funds Lotus House, described as the nation's largest homeless shelter for women, supporting meals and services for hundreds of women…
+- **Miami Culinary Tours – Little Havana Food & Cultural Tour** (Miami)
+  id: miami/miami-culinary-tours-little-havana-food-cultural-tour
+  neighbourhood: Little Havana
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: founder Grace Della started Miami Culinary Tours in 2010, inspired by her mother, and was the first to run food tours in Little…
+- **Nomad Tribe** (Miami)
+  id: miami/nomad-tribe
+  neighbourhood: Wynwood
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: Nomad Tribe is an ethical Wynwood boutique built around sustainable fashion, stocking fair-trade accessories, handmade shoes, and responsibly sourced clothing from Latin American…
+- **Red Rooster Overtown** (Miami)
+  id: miami/red-rooster-overtown
+  neighbourhood: Overtown
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Chef Marcus Samuelsson's Black-owned Overtown restaurant is built around the neighborhood, hiring locally, sourcing from area purveyors, and using its space to platform…
+- **Sanguich de Miami** (Miami)
+  id: miami/sanguich-de-miami
+  neighbourhood: Little Havana
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Sanguich is the family business of Cuban-American couple Daniel Figueredo and Rosa Romero, who build their Cuban sandwiches from scratch, curing meats and…
+- **Sweat Records** (Miami)
+  id: miami/sweat-records
+  neighbourhood: Little Haiti
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Sweat Records is a woman-owned (Lolo Reskin) independent record shop and community event space that has anchored Miami's underground music scene since 2005.…
+- **Zoo Miami** (Miami)
+  id: miami/zoo-miami
+  neighbourhood: South Miami-Dade
+  category: Ticketed Attractions
+  budget: Mid-range
+  note: Why it matters: Zoo Miami is supported by the nonprofit Zoo Miami Foundation, whose mission is to inspire people to preserve nature through conservation, education, and…
+
+## Nyc (`nyc`) — 11 places
+
+- **abcV** (Nyc)
+  id: nyc/abcv
+  neighbourhood: Flatiron
+  category: Unfiled
+  budget: High-end
+  note: Jean-Georges' Michelin-recognized, plant-forward, sustainability-minded dining.
+- **Beacon’s Closet** (Nyc)
+  id: nyc/beacons-closet
+  neighbourhood: Williamsburg
+  category: Shops & Markets
+  budget: Budget
+  note: Beloved buy-sell-trade secondhand store extending clothing's life.
+- **Brooklyn Grange** (Nyc)
+  id: nyc/brooklyn-grange
+  neighbourhood: Brooklyn Navy Yard
+  category: Unfiled
+  budget: Mid-range
+  note: The world's largest rooftop soil farms; tours, CSA and products.
+- **Emma’s Torch** (Nyc)
+  id: nyc/emmas-torch
+  neighbourhood: Carroll Gardens
+  category: Unfiled
+  budget: Mid-range
+  note: A nonprofit restaurant giving refugees a paid culinary apprenticeship.
+- **Family Meal at Blue Hill** (Nyc)
+  id: nyc/family-meal-at-blue-hill
+  neighbourhood: Greenwich Village
+  category: Unfiled
+  budget: High-end
+  note: Dan Barber's farm-to-table flagship sourcing from Blue Hill Farm & Stone Barns.
+- **Housing Works Bookstore Cafe** (Nyc)
+  id: nyc/housing-works-bookstore-cafe
+  neighbourhood: SoHo / NoHo
+  category: Shops & Markets
+  budget: Budget
+  note: Volunteer-run bookstore-café where 100% of profits fight HIV/AIDS and homelessness.
+- **L Train Vintage** (Nyc)
+  id: nyc/l-train-vintage
+  neighbourhood: East Village
+  category: Shops & Markets
+  budget: Budget
+  note: A family-owned vintage chain giving thousands of garments a second life.
+- **Package Free (Chelsea Market)** (Nyc)
+  id: nyc/package-free-chelsea-market
+  neighbourhood: Chelsea Market
+  category: Shops & Markets
+  budget: Mid-range
+  note: Zero-waste, plastic-free home, beauty and household goods.
+- **Reformation SoHo** (Nyc)
+  id: nyc/reformation-soho
+  neighbourhood: SoHo
+  category: Shops & Markets
+  budget: Mid-range
+  note: Sustainable women's fashion; the store runs on 100% renewable offset.
+- **The RealReal SoHo** (Nyc)
+  id: nyc/the-realreal-soho
+  neighbourhood: SoHo
+  category: Shops & Markets
+  budget: High-end
+  note: Luxury consignment extending the life of designer goods.
+- **Union Square Greenmarket** (Nyc)
+  id: nyc/union-square-greenmarket
+  neighbourhood: Union Square
+  category: Shops & Markets
+  budget: Budget
+  note: GrowNYC's flagship farmers market with ~140 regional, producer-only growers.
+
+## San Francisco (`san-francisco`) — 11 places
+
+- **Brenda’s French Soul Food** (San Francisco)
+  id: san-francisco/brendas-french-soul-food
+  neighbourhood: Tenderloin
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Brenda's is the work of chef-owner Brenda Buenviaje, a Filipina-American raised in New Orleans who built a devoted following for her Creole and…
+- **Cruisin’ the Castro Walking Tours** (San Francisco)
+  id: san-francisco/cruisin-the-castro-walking-tours
+  neighbourhood: The Castro
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Cruisin' the Castro has been women-owned and operated since 1989, one of the longest-running walking tours of San Francisco's most storied LGBTQ neighborhood.…
+- **Edible Excursions** (San Francisco)
+  id: san-francisco/edible-excursions
+  neighbourhood: Ferry Building, North Beach, Mission & Japantown
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Edible Excursions is a woman-run business, started by Lisa Rogovin in 2004 and locally owned ever since. The tours walk you through neighborhoods…
+- **El Rio** (San Francisco)
+  id: san-francisco/el-rio
+  neighbourhood: Mission District
+  category: Nightlife
+  budget: Budget
+  note: Why it matters: El Rio has been queer-owned and operated since 1978 and, by its own account, throws more than 150 benefit events a year for…
+- **Fabulosa Books** (San Francisco)
+  id: san-francisco/fabulosa-books
+  neighbourhood: Castro
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Fabulosa is an LGBTQ-owned bookshop in the heart of the Castro, and it runs Books Not Bans, a program that ships queer titles…
+- **Ferry Plaza Farmers Market** (San Francisco)
+  id: san-francisco/ferry-plaza-farmers-market
+  neighbourhood: Embarcadero
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: Running since 1993 and operated by the nonprofit Foodwise, this market exists to link city shoppers directly with California's sustainable growers and food…
+- **Inn at the Presidio** (San Francisco)
+  id: san-francisco/inn-at-the-presidio
+  neighbourhood: Presidio
+  category: Hotels
+  budget: High-end
+  note: Why it matters: the Inn at the Presidio sits inside the Presidio, a 1,500-acre national park site stewarded by the Presidio Trust, and it runs as…
+- **Reem’s California** (San Francisco)
+  id: san-francisco/reems-california
+  neighbourhood: Mission
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Reem's California grew from a farmers-market stand (incubated by nonprofit La Cocina) into a Mission bakery led by Palestinian-Syrian chef and former labor…
+- **San Francisco City Guides** (San Francisco)
+  id: san-francisco/san-francisco-city-guides
+  neighbourhood: Chinatown & citywide
+  category: Tours
+  budget: Budget
+  note: Why it matters: SF City Guides is a nonprofit founded in 1978 and sponsored by the San Francisco Public Library, with tours led entirely by trained…
+- **The Barrel Room** (San Francisco)
+  id: san-francisco/the-barrel-room
+  neighbourhood: Financial District
+  category: Nightlife
+  budget: Mid-range
+  note: Why it matters: The Barrel Room is co-owned by sommeliers Sarah Trubnick and Carolyn Johnson, a woman-owned wine bar with a deep focus on small American…
+- **Wild SF Tours** (San Francisco)
+  id: san-francisco/wild-sf-tours
+  neighbourhood: Downtown, Mission & citywide
+  category: Tours
+  budget: Budget
+  note: Why it matters: Wild SF Tours is an artist- and activist-led company co-founded by Wes Leslie and J. Jo, built around telling 'the people's history' and…
+
+## Amsterdam (`amsterdam`) — 9 places
+
+- **Amsterdam Underground Tour** (Amsterdam)
+  id: amsterdam/amsterdam-underground-tour
+  neighbourhood: City centre
+  category: Tours
+  budget: Budget
+  note: Why it matters: Amsterdam Underground is an initiative of the De Regenboog Groep, a charity supporting people facing homelessness, addiction and debt, and its guides have…
+- **Conscious Hotels** (Amsterdam)
+  id: amsterdam/conscious-hotels
+  neighbourhood: Vondelpark / Westerpark / Museumplein
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Conscious Hotels is a small Amsterdam-grown group built around sustainability rather than a global chain, with Green Key Gold certification at every property,…
+- **Dignita** (Amsterdam)
+  id: amsterdam/dignita
+  neighbourhood: Various
+  category: Unfiled
+  budget: Mid-range
+  note: A trio of lovely all-day brunch spots where 100% of the profit funds training programmes for survivors of human trafficking and exploitation. Organic, locally sourced food…
+- **Hotel Casa Amsterdam** (Amsterdam)
+  id: amsterdam/hotel-casa-amsterdam
+  neighbourhood: Amsterdam-Oost (East)
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Hotel Casa grew out of a foundation set up to tackle student-housing shortages, and it still runs on that dual model, housing hundreds…
+- **Hotel Jakarta Amsterdam** (Amsterdam)
+  id: amsterdam/hotel-jakarta-amsterdam
+  neighbourhood: Java-eiland (Eastern Docklands)
+  category: Hotels
+  budget: High-end
+  note: Why it matters: Hotel Jakarta was designed as one of the first energy-neutral hotels in the country, generating and saving its own energy through insulation and…
+- **Hungry Birds Street Food Tours** (Amsterdam)
+  id: amsterdam/hungry-birds-street-food-tours
+  neighbourhood: De Pijp & Amsterdam Eastside
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Hungry Birds was started in 2013 by two women, Zosia Konieczna and Esther-Hanna van der Meer, and remains woman-owned, built around Amsterdam's mix…
+- **Instock** (Amsterdam)
+  id: amsterdam/instock
+  neighbourhood: Various
+  category: Unfiled
+  budget: Mid-range
+  note: A social enterprise restaurant fighting food waste - “food-rescue” drivers collect surplus produce, day-old bread and imperfect veg each morning, and the chefs improvise a different…
+- **Rederij Lampedusa** (Amsterdam)
+  id: amsterdam/rederij-lampedusa
+  neighbourhood: Dijksgracht / Oosterdok
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Rederij Lampedusa runs its canal tours on two wooden boats pulled from the Mediterranean in 2015, once used to carry migrants, now crewed…
+- **Refugee Company (A Beautiful Mess)** (Amsterdam)
+  id: amsterdam/refugee-company-a-beautiful-mess
+  neighbourhood: Various
+  category: Unfiled
+  budget: Mid-range
+  note: A social enterprise creating work, training and community with and for refugees through hospitality projects and pop-up restaurants like A Beautiful Mess. A warm, welcoming taste…
+
+## Barcelona (`barcelona`) — 9 places
+
+- **Eco Boutique Hostal Grau** (Barcelona)
+  id: barcelona/eco-boutique-hostal-grau
+  neighbourhood: El Raval (Ciutat Vella)
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Hostal Grau has been in the Grau family since the 1960s, and when the current generation renovated it they rebuilt it as a…
+- **Economat (Cooperative Supermarket)** (Barcelona)
+  id: barcelona/economat-cooperative-supermarket
+  neighbourhood: Various
+  category: Unfiled
+  budget: Budget
+  note: The biggest cooperative supermarket in Barcelona, member-owned and running for over a decade with around 700 family members. Shopping here supports dignified wages and a fairer,…
+- **Espigoladors** (Barcelona)
+  id: barcelona/espigoladors
+  neighbourhood: Various
+  category: Unfiled
+  budget: Budget
+  note: A pioneering Catalan social enterprise fighting food waste - gleaning unharvested and “imperfect” produce and turning it into jams and preserves under the Es Im-perfect label,…
+- **Hidden City Tours** (Barcelona)
+  id: barcelona/hidden-city-tours
+  neighbourhood: Gothic Quarter & El Raval
+  category: Tours
+  budget: Budget
+  note: Why it matters: Hidden City Tours is a social enterprise that trains people who have experienced homelessness to work as tour guides, giving them income and…
+- **Hotel Regina** (Barcelona)
+  id: barcelona/hotel-regina
+  neighbourhood: Ciutat Vella (near Placa Catalunya)
+  category: Hotels
+  budget: High-end
+  note: Why it matters: Hotel Regina belongs to Pulitzer Hotels, a certified B Corp that folds sustainability and social inclusion into how it runs. The group works…
+- **ILUNION Almirante** (Barcelona)
+  id: barcelona/ilunion-almirante
+  neighbourhood: Barri Gotic (Gothic Quarter)
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: ILUNION Hotels is the hotel arm of Grupo Social ONCE, a Spanish social enterprise built around employing people with disabilities, and its special-employment-centre…
+- **Impact Hub Barcelona** (Barcelona)
+  id: barcelona/impact-hub-barcelona
+  neighbourhood: Various
+  category: Unfiled
+  budget: Budget
+  note: A community and coworking hub for people building social and environmental projects, hosting events, mentoring and a network of changemakers. A window into Barcelona's thriving social-enterprise…
+- **Mescladis** (Barcelona)
+  id: barcelona/mescladis
+  neighbourhood: Sant Pere / El Born (Ciutat Vella)
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Mescladis is a foundation-run social enterprise whose kitchen doubles as a training program, teaching migrants hospitality skills so they can find work and…
+- **Migrantour Barcelona** (Barcelona)
+  id: barcelona/migrantour-barcelona
+  neighbourhood: El Raval (Ciutat Vella)
+  category: Tours
+  budget: Budget
+  note: Why it matters: Migrantour Barcelona is part of a European network coordinated locally by the nonprofit Nexes Interculturals, where migrants themselves are trained as 'intercultural companions'…
+
+## Rome (`rome`) — 9 places
+
+- **Albergo Etico Roma** (Rome)
+  id: rome/albergo-etico-roma
+  neighbourhood: Flaminio
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: Albergo Etico is a certified B Corp hotel where young people with disabilities train and work alongside seasoned hospitality staff, building skills meant…
+- **Barikama** (Rome)
+  id: rome/barikama
+  neighbourhood: Various / markets
+  category: Unfiled
+  budget: Budget
+  note: A migrant-run social cooperative founded by West-African newcomers, producing organic yogurt and vegetables and selling through Rome's solidarity-purchase groups and markets. Buying from Barikamà directly supports…
+- **Casa Scalabrini 634** (Rome)
+  id: rome/casa-scalabrini-634
+  neighbourhood: Various
+  category: Unfiled
+  budget: Budget
+  note: Since 2015 this welcoming house has been a Rome reference point for refugee integration, hosting families and young people in semi-autonomy and running events, shared meals…
+- **Hummustown** (Rome)
+  id: rome/hummustown
+  neighbourhood: Ostiense
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Hummustown began in Shaza Saker's kitchen and grew into a Rome nonprofit that gives Syrian refugees paid work and training while its proceeds…
+- **Local Aromas** (Rome)
+  id: rome/local-aromas
+  neighbourhood: Central Rome
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Local Aromas is a woman-owned Italian family business, led by sommeliers Benedetta and Valeria, who have run food and wine experiences in Rome…
+- **Migrantour Roma** (Rome)
+  id: rome/migrantour-roma
+  neighbourhood: Esquilino & Torpignattara
+  category: Tours
+  budget: Budget
+  note: Why it matters: Migrantour Roma is run by Viaggi Solidali, a responsible-tourism social cooperative, and every walk is led by a Roman who arrived here as…
+- **Spin Time Labs** (Rome)
+  id: rome/spin-time-labs
+  neighbourhood: Esquilino
+  category: Unfiled
+  budget: Budget
+  note: A vast reclaimed building near Santa Croce turned self-run community and cultural hub - home to concerts, theatre, workshops, a craft-beer lab and social projects supporting…
+- **The RomeHello** (Rome)
+  id: rome/the-romehello
+  neighbourhood: Monti/Esquilino (near Termini)
+  category: Hotels
+  budget: Budget
+  note: Why it matters: The RomeHello is a social enterprise that ploughs all of its profits back into community and environmental projects and hires people with intellectual…
+- **The Social Hub Rome** (Rome)
+  id: rome/the-social-hub-rome
+  neighbourhood: San Lorenzo
+  category: Hotels
+  budget: Mid-range
+  note: Why it matters: The Social Hub's Rome location is part of a B Corp-certified group that commits 1% of its revenue to the TSH Talent Foundation,…

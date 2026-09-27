@@ -1,0 +1,1419 @@
+# Cities
+
+202 cities, 890 places between them. City names are authoritative
+for 14 of them from the source city list; the rest are
+prettified from their slug.
+
+## Paris
+
+- Slug: `paris`
+- Places: 22
+- Most common categories: Unfiled (13), Hotels (4), Tours (4)
+- Budget mix: Budget, Mid-range, High-end
+
+## London
+
+- Slug: `london`
+- Places: 16
+- Most common categories: Unfiled (7), Hotels (4), Tours (4)
+- Budget mix: Budget, Mid-range, High-end
+
+## Lisbon
+
+- Slug: `lisbon`
+- Places: 14
+- Most common categories: Unfiled (6), Hotels (3), Tours (3)
+- Budget mix: Budget, Mid-range, High-end
+
+## Miami
+
+- Slug: `miami`
+- Places: 14
+- Most common categories: Shops & Markets (5), Restaurants (3), Tours (2)
+- Budget mix: Budget, Mid-range
+
+## Nyc
+
+- Slug: `nyc`
+- Places: 11
+- Most common categories: Shops & Markets (7), Unfiled (4)
+- Budget mix: Budget, Mid-range, High-end
+
+## San Francisco
+
+- Slug: `san-francisco`
+- Places: 11
+- Most common categories: Tours (4), Restaurants (2), Shops & Markets (2)
+- Budget mix: Budget, Mid-range, High-end
+
+## Amsterdam
+
+- Slug: `amsterdam`
+- Places: 9
+- Most common categories: Hotels (3), Tours (3), Unfiled (3)
+- Budget mix: Budget, Mid-range, High-end
+
+## Barcelona
+
+- Slug: `barcelona`
+- Places: 9
+- Most common categories: Hotels (3), Tours (3), Unfiled (3)
+- Budget mix: Budget, Mid-range, High-end
+
+## Rome
+
+- Slug: `rome`
+- Places: 9
+- Most common categories: Hotels (3), Tours (3), Unfiled (3)
+- Budget mix: Budget, Mid-range
+
+## Kathmandu
+
+- Slug: `kathmandu`
+- Places: 8
+- Most common categories: Unfiled (8)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## New Orleans
+
+- Slug: `new-orleans`
+- Places: 7
+- Most common categories: Restaurants (3), Ticketed Attractions (2), Tours (1)
+- Budget mix: Budget, Mid-range
+
+## Nashville
+
+- Slug: `nashville`
+- Places: 6
+- Most common categories: Restaurants (4), Shops & Markets (2)
+- Budget mix: Budget, Mid-range
+
+## Seattle
+
+- Slug: `seattle`
+- Places: 6
+- Most common categories: Restaurants (3), Shops & Markets (2), Ticketed Attractions (1)
+- Budget mix: Budget, Mid-range
+
+## Kolkata
+
+- Slug: `kolkata`
+- Places: 5
+- Most common categories: Restaurants (2), Unfiled (2), Shops & Markets (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Ohrid
+
+- Slug: `ohrid`
+- Places: 5
+- Most common categories: Unfiled (5)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Port au Prince
+
+- Slug: `port-au-prince`
+- Places: 5
+- Most common categories: Unfiled (5)
+- Budget mix: Price unknown
+
+## Aalborg
+
+- Slug: `aalborg`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Abu Dhabi
+
+- Slug: `abu-dhabi`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Addis Ababa
+
+- Slug: `addis-ababa`
+- Places: 4
+- Most common categories: Shops & Markets (2), Nightlife (1), Unfiled (1)
+- Budget mix: Mid-range, Price unknown
+
+## Adelaide
+
+- Slug: `adelaide`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Alanya
+
+- Slug: `alanya`
+- Places: 4
+- Most common categories: Unfiled (2), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget
+
+## Amman
+
+- Slug: `amman`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Anchorage ak
+
+- Slug: `anchorage-ak`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Arezzo
+
+- Slug: `arezzo`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Athens
+
+- Slug: `athens`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Austin
+
+- Slug: `austin`
+- Places: 4
+- Most common categories: Ticketed Attractions (2), Shops & Markets (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Baku
+
+- Slug: `baku`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range, High-end
+
+## Bangkok
+
+- Slug: `bangkok`
+- Places: 4
+- Most common categories: Unfiled (3), Shops & Markets (1)
+- Budget mix: Price unknown
+
+## Batumi
+
+- Slug: `batumi`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Ticketed Attractions (1)
+- Budget mix: Budget, Price unknown
+
+## Beau Bassin Rose Hill
+
+- Slug: `beau-bassin-rose-hill`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Beijing
+
+- Slug: `beijing`
+- Places: 4
+- Most common categories: Restaurants (1), Hotels (1), Shops & Markets (1)
+- Budget mix: Budget, High-end
+
+## Beirut
+
+- Slug: `beirut`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Belfast
+
+- Slug: `belfast`
+- Places: 4
+- Most common categories: Restaurants (2), Ticketed Attractions (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Belgrade
+
+- Slug: `belgrade`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Belo Horizonte
+
+- Slug: `belo-horizonte`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Bergen
+
+- Slug: `bergen`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Berlin
+
+- Slug: `berlin`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Bologna
+
+- Slug: `bologna`
+- Places: 4
+- Most common categories: Sightseeing (1), Shops & Markets (1), Nightlife (1)
+- Budget mix: Budget
+
+## Boston
+
+- Slug: `boston`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Boulder
+
+- Slug: `boulder`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Brasov
+
+- Slug: `brasov`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Bratislava
+
+- Slug: `bratislava`
+- Places: 4
+- Most common categories: Restaurants (2), Shops & Markets (1), Unfiled (1)
+- Budget mix: Budget
+
+## Breda
+
+- Slug: `breda`
+- Places: 4
+- Most common categories: Restaurants (2), Shops & Markets (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Brisbane
+
+- Slug: `brisbane`
+- Places: 4
+- Most common categories: Restaurants (3), Ticketed Attractions (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Brussels
+
+- Slug: `brussels`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Bucharest
+
+- Slug: `bucharest`
+- Places: 4
+- Most common categories: Unfiled (2), Hotels (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Budapest
+
+- Slug: `budapest`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Budva
+
+- Slug: `budva`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Buenos Aires
+
+- Slug: `buenos-aires`
+- Places: 4
+- Most common categories: Restaurants (1), Sightseeing (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Busan
+
+- Slug: `busan`
+- Places: 4
+- Most common categories: Restaurants (1), Sightseeing (1), Ticketed Attractions (1)
+- Budget mix: Budget
+
+## Cairo
+
+- Slug: `cairo`
+- Places: 4
+- Most common categories: Shops & Markets (3), Unfiled (1)
+- Budget mix: Budget, Mid-range, High-end
+
+## Cape Town
+
+- Slug: `cape-town`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Caracas
+
+- Slug: `caracas`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Cardiff
+
+- Slug: `cardiff`
+- Places: 4
+- Most common categories: Unfiled (3), Restaurants (1)
+- Budget mix: Budget, Mid-range
+
+## Catania
+
+- Slug: `catania`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Chania
+
+- Slug: `chania`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Chennai
+
+- Slug: `chennai`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Chicago
+
+- Slug: `chicago`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Chisinau
+
+- Slug: `chisinau`
+- Places: 4
+- Most common categories: Shops & Markets (2), Unfiled (2)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Cluj Napoca
+
+- Slug: `cluj-napoca`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Ticketed Attractions (1)
+- Budget mix: Budget, Price unknown
+
+## Cologne
+
+- Slug: `cologne`
+- Places: 4
+- Most common categories: Restaurants (1), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Colombo
+
+- Slug: `colombo`
+- Places: 4
+- Most common categories: Shops & Markets (3), Unfiled (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Como
+
+- Slug: `como`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Copenhagen
+
+- Slug: `copenhagen`
+- Places: 4
+- Most common categories: Restaurants (1), Tours (1), Shops & Markets (1)
+- Budget mix: Budget
+
+## Curitiba
+
+- Slug: `curitiba`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## da Nang
+
+- Slug: `da-nang`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Delhi
+
+- Slug: `delhi`
+- Places: 4
+- Most common categories: Tours (1), Sightseeing (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Dubai
+
+- Slug: `dubai`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Dublin
+
+- Slug: `dublin`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Dubrovnik
+
+- Slug: `dubrovnik`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Mid-range, Price unknown
+
+## Edinburgh
+
+- Slug: `edinburgh`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Price unknown
+
+## Enontekio
+
+- Slug: `enontekio`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Espoo
+
+- Slug: `espoo`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Florence
+
+- Slug: `florence`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range, High-end
+
+## Frankfurt
+
+- Slug: `frankfurt`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Garmisch Partenkirchen
+
+- Slug: `garmisch-partenkirchen`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Ghent
+
+- Slug: `ghent`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Gothenburg
+
+- Slug: `gothenburg`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Guangzhou
+
+- Slug: `guangzhou`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Hague
+
+- Slug: `hague`
+- Places: 4
+- Most common categories: Unfiled (3), Restaurants (1)
+- Budget mix: Budget, Mid-range
+
+## Halifax ca
+
+- Slug: `halifax-ca`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Hamburg
+
+- Slug: `hamburg`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Hanoi
+
+- Slug: `hanoi`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Ticketed Attractions (1)
+- Budget mix: Budget, Mid-range
+
+## Helsinki
+
+- Slug: `helsinki`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Price unknown
+
+## Hoi
+
+- Slug: `hoi`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Hong Kong
+
+- Slug: `hong-kong`
+- Places: 4
+- Most common categories: Restaurants (1), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget, Price unknown
+
+## Honolulu
+
+- Slug: `honolulu`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Inari
+
+- Slug: `inari`
+- Places: 4
+- Most common categories: Restaurants (1), Sightseeing (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range, High-end
+
+## Isfahan
+
+- Slug: `isfahan`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Istanbul
+
+- Slug: `istanbul`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Izmir
+
+- Slug: `izmir`
+- Places: 4
+- Most common categories: Unfiled (2), Sightseeing (1), Shops & Markets (1)
+- Budget mix: Budget
+
+## Johannesburg
+
+- Slug: `johannesburg`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Karachi
+
+- Slug: `karachi`
+- Places: 4
+- Most common categories: Restaurants (1), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Kaunas
+
+- Slug: `kaunas`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Kemi
+
+- Slug: `kemi`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Kittila
+
+- Slug: `kittila`
+- Places: 4
+- Most common categories: Sightseeing (2), Unfiled (2)
+- Budget mix: Budget, Mid-range
+
+## Kobe
+
+- Slug: `kobe`
+- Places: 4
+- Most common categories: Sightseeing (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Kolari
+
+- Slug: `kolari`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Konstanz
+
+- Slug: `konstanz`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Krakow
+
+- Slug: `krakow`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Sightseeing (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Kutaisi
+
+- Slug: `kutaisi`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Kuusamo
+
+- Slug: `kuusamo`
+- Places: 4
+- Most common categories: Unfiled (2), Sightseeing (1), Ticketed Attractions (1)
+- Budget mix: Budget, Mid-range
+
+## Kuwait City
+
+- Slug: `kuwait-city`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Kyiv
+
+- Slug: `kyiv`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Lafayette
+
+- Slug: `lafayette`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Lagos
+
+- Slug: `lagos`
+- Places: 4
+- Most common categories: Sightseeing (2), Ticketed Attractions (1), Unfiled (1)
+- Budget mix: Budget
+
+## Las Vegas
+
+- Slug: `las-vegas`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Leon
+
+- Slug: `leon`
+- Places: 4
+- Most common categories: Hotels (1), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget
+
+## Ljubljana
+
+- Slug: `ljubljana`
+- Places: 4
+- Most common categories: Restaurants (2), Sightseeing (1), Nightlife (1)
+- Budget mix: Budget, Mid-range
+
+## Los Angeles
+
+- Slug: `los-angeles`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Lugano
+
+- Slug: `lugano`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Luxembourg
+
+- Slug: `luxembourg`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Madrid
+
+- Slug: `madrid`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Marseille
+
+- Slug: `marseille`
+- Places: 4
+- Most common categories: Restaurants (1), Tours (1), Ticketed Attractions (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Mauritius
+
+- Slug: `mauritius`
+- Places: 4
+- Most common categories: Unfiled (3), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Melbourne
+
+- Slug: `melbourne`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Mexico City
+
+- Slug: `mexico-city`
+- Places: 4
+- Most common categories: Unfiled (2), Tours (1), Shops & Markets (1)
+- Budget mix: Mid-range
+
+## Milan
+
+- Slug: `milan`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Montreal
+
+- Slug: `montreal`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Moscow
+
+- Slug: `moscow`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Price unknown
+
+## Mostar
+
+- Slug: `mostar`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Mumbai
+
+- Slug: `mumbai`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Munich
+
+- Slug: `munich`
+- Places: 4
+- Most common categories: Restaurants (3), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Nairobi
+
+- Slug: `nairobi`
+- Places: 4
+- Most common categories: Ticketed Attractions (2), Shops & Markets (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Naples
+
+- Slug: `naples`
+- Places: 4
+- Most common categories: Unfiled (2), Hotels (1), Ticketed Attractions (1)
+- Budget mix: Budget, Price unknown
+
+## Netanya
+
+- Slug: `netanya`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Nice
+
+- Slug: `nice`
+- Places: 4
+- Most common categories: Shops & Markets (3), Sightseeing (1)
+- Budget mix: Budget, Price unknown
+
+## Nicosia
+
+- Slug: `nicosia`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Orlando
+
+- Slug: `orlando`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Oslo
+
+- Slug: `oslo`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Ottawa
+
+- Slug: `ottawa`
+- Places: 4
+- Most common categories: Restaurants (1), Tours (1), Ticketed Attractions (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Palma de Mallorca
+
+- Slug: `palma-de-mallorca`
+- Places: 4
+- Most common categories: Unfiled (3), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Penang
+
+- Slug: `penang`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Philadelphia
+
+- Slug: `philadelphia`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Phoenix
+
+- Slug: `phoenix`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget
+
+## Ploiesti
+
+- Slug: `ploiesti`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Podgorica
+
+- Slug: `podgorica`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Port Douglas
+
+- Slug: `port-douglas`
+- Places: 4
+- Most common categories: Unfiled (3), Ticketed Attractions (1)
+- Budget mix: Price unknown
+
+## Port Elizabeth
+
+- Slug: `port-elizabeth`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Portland
+
+- Slug: `portland`
+- Places: 4
+- Most common categories: Restaurants (2), Shops & Markets (1), Unfiled (1)
+- Budget mix: Budget
+
+## Porto
+
+- Slug: `porto`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Prague
+
+- Slug: `prague`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Punta Cana
+
+- Slug: `punta-cana`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Quebec
+
+- Slug: `quebec`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Quito
+
+- Slug: `quito`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Reykjavik
+
+- Slug: `reykjavik`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Riga
+
+- Slug: `riga`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Sightseeing (1)
+- Budget mix: Budget, Price unknown
+
+## Rio de Janeiro
+
+- Slug: `rio-de-janeiro`
+- Places: 4
+- Most common categories: Restaurants (1), Tours (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Rotterdam
+
+- Slug: `rotterdam`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Rovaniemi
+
+- Slug: `rovaniemi`
+- Places: 4
+- Most common categories: Sightseeing (1), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Sagada
+
+- Slug: `sagada`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## San Diego
+
+- Slug: `san-diego`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Santiago
+
+- Slug: `santiago`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Santo Domingo
+
+- Slug: `santo-domingo`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Sao Paulo
+
+- Slug: `sao-paulo`
+- Places: 4
+- Most common categories: Restaurants (1), Shops & Markets (1), Nightlife (1)
+- Budget mix: Budget
+
+## Sarajevo
+
+- Slug: `sarajevo`
+- Places: 4
+- Most common categories: Tours (1), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Semarang
+
+- Slug: `semarang`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Sevilla
+
+- Slug: `sevilla`
+- Places: 4
+- Most common categories: Shops & Markets (2), Nightlife (1), Unfiled (1)
+- Budget mix: Budget
+
+## Shkoder
+
+- Slug: `shkoder`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Sibenik
+
+- Slug: `sibenik`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Sibiu
+
+- Slug: `sibiu`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Sigulda
+
+- Slug: `sigulda`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Singapore
+
+- Slug: `singapore`
+- Places: 4
+- Most common categories: Restaurants (3), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Skopje
+
+- Slug: `skopje`
+- Places: 4
+- Most common categories: Unfiled (2), Ticketed Attractions (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Sodankyla
+
+- Slug: `sodankyla`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Sofia
+
+- Slug: `sofia`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Split
+
+- Slug: `split`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Stockholm
+
+- Slug: `stockholm`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Sydney
+
+- Slug: `sydney`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range, High-end
+
+## Taipei
+
+- Slug: `taipei`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Tallinn
+
+- Slug: `tallinn`
+- Places: 4
+- Most common categories: Shops & Markets (2), Unfiled (2)
+- Budget mix: Budget, Price unknown
+
+## Targu Mures
+
+- Slug: `targu-mures`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Tartu
+
+- Slug: `tartu`
+- Places: 4
+- Most common categories: Ticketed Attractions (1), Shops & Markets (1), Nightlife (1)
+- Budget mix: Budget, Mid-range
+
+## Tbilisi
+
+- Slug: `tbilisi`
+- Places: 4
+- Most common categories: Shops & Markets (2), Restaurants (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Tehran
+
+- Slug: `tehran`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Thessaloniki
+
+- Slug: `thessaloniki`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Ticketed Attractions (1)
+- Budget mix: Budget, Mid-range, Price unknown
+
+## Timisoara
+
+- Slug: `timisoara`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Tirana
+
+- Slug: `tirana`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Tornio
+
+- Slug: `tornio`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Toronto
+
+- Slug: `toronto`
+- Places: 4
+- Most common categories: Unfiled (2), Sightseeing (1), Shops & Markets (1)
+- Budget mix: Budget, Mid-range
+
+## Trieste
+
+- Slug: `trieste`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Turin
+
+- Slug: `turin`
+- Places: 4
+- Most common categories: Restaurants (3), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Tuzla
+
+- Slug: `tuzla`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget
+
+## Uppsala
+
+- Slug: `uppsala`
+- Places: 4
+- Most common categories: Shops & Markets (2), Unfiled (2)
+- Budget mix: Budget, Mid-range
+
+## Utrecht
+
+- Slug: `utrecht`
+- Places: 4
+- Most common categories: Restaurants (2), Unfiled (2)
+- Budget mix: Budget, Mid-range
+
+## Vancouver
+
+- Slug: `vancouver`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Budget, Mid-range
+
+## Vantaa
+
+- Slug: `vantaa`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Varna
+
+- Slug: `varna`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Venice
+
+- Slug: `venice`
+- Places: 4
+- Most common categories: Shops & Markets (2), Unfiled (2)
+- Budget mix: Budget, Mid-range
+
+## Vilnius
+
+- Slug: `vilnius`
+- Places: 4
+- Most common categories: Restaurants (3), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Warsaw
+
+- Slug: `warsaw`
+- Places: 4
+- Most common categories: Restaurants (2), Unfiled (2)
+- Budget mix: Budget, Mid-range
+
+## Washington dc
+
+- Slug: `washington-dc`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Wroclaw
+
+- Slug: `wroclaw`
+- Places: 4
+- Most common categories: Unfiled (4)
+- Budget mix: Price unknown
+
+## Yerevan
+
+- Slug: `yerevan`
+- Places: 4
+- Most common categories: Shops & Markets (2), Hotels (1), Unfiled (1)
+- Budget mix: Budget, Mid-range
+
+## Zagreb
+
+- Slug: `zagreb`
+- Places: 4
+- Most common categories: Unfiled (2), Restaurants (1), Shops & Markets (1)
+- Budget mix: Budget
+
+## Zurich
+
+- Slug: `zurich`
+- Places: 4
+- Most common categories: Restaurants (2), Shops & Markets (1), Unfiled (1)
+- Budget mix: Budget, Price unknown
+
+## Muscat
+
+- Slug: `muscat`
+- Places: 3
+- Most common categories: Unfiled (3)
+- Budget mix: Price unknown
+
+## Parnu
+
+- Slug: `parnu`
+- Places: 3
+- Most common categories: Shops & Markets (3)
+- Budget mix: Budget, Price unknown
+
+## Vienna
+
+- Slug: `vienna`
+- Places: 3
+- Most common categories: Unfiled (3)
+- Budget mix: Mid-range
+
+## Sintra
+
+- Slug: `sintra`
+- Places: 2
+- Most common categories: Unfiled (2)
+- Budget mix: Price unknown
+
+## Rasht
+
+- Slug: `rasht`
+- Places: 1
+- Most common categories: Unfiled (1)
+- Budget mix: Price unknown
+
+## Tunis
+
+- Slug: `tunis`
+- Places: 1
+- Most common categories: Unfiled (1)
+- Budget mix: Price unknown

@@ -1,0 +1,730 @@
+# Local picks — part 3
+
+## Belfast (`belfast`) — 4 places
+
+- **Clifton House** (Belfast)
+  id: belfast/clifton-house
+  neighbourhood: North Belfast
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: opened in 1774 by the Belfast Charitable Society - founded in 1752 and still going - this Georgian building was the city's original…
+- **Irish Linen & Craft** (Belfast)
+  id: belfast/irish-linen-craft
+  neighbourhood: Belfast
+  category: Unfiled
+  budget: Mid-range
+  note: Belfast was once the linen capital of the world, and Irish linen remains one of Northern Ireland’s proudest heritage crafts, […]
+- **Refresh Cafe** (Belfast)
+  id: belfast/refresh-cafe
+  neighbourhood: East Belfast
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Refresh is the in-house social enterprise cafe of East Belfast Mission, and its profits fund the Mission's work with more than a thousand…
+- **The Bobbin** (Belfast)
+  id: belfast/the-bobbin
+  neighbourhood: City Centre
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: the City Hall coffee shop is run by Loaf Catering and Cafes, which provides training and work experience places for people with a…
+
+## Belgrade (`belgrade`) — 4 places
+
+- **Bez Ambalaze** (Belgrade)
+  id: belgrade/bez-ambalaze
+  neighbourhood: Stari Grad
+  category: Unfiled
+  budget: Budget
+  note: A package-free shop in central Belgrade selling grains, pulses, oils, cosmetics and cleaning products loose, so customers refill their own […]
+- **KC Grad** (Belgrade)
+  id: belgrade/kc-grad
+  neighbourhood: Savamala
+  category: Unfiled
+  budget: Budget
+  note: A pioneering cultural centre in Savamala hosting exhibitions, concerts, talks and workshops, with a cafe-bar and a shop of local […]
+- **Mikser House** (Belgrade)
+  id: belgrade/mikser-house
+  neighbourhood: Savamala
+  category: Unfiled
+  budget: Budget
+  note: A creative hub in Savamala combining a shop of Serbian and regional design, a cafe and a space for concerts, […]
+- **Radost Fina Kuhinjica** (Belgrade)
+  id: belgrade/radost-fina-kuhinjica
+  neighbourhood: Stari Grad
+  category: Unfiled
+  budget: Budget
+  note: A beloved vegetarian and vegan restaurant in the centre with a lush, plant-filled interior and a menu of creative, wholesome […]
+
+## Belo Horizonte (`belo-horizonte`) — 4 places
+
+- **Belo Horizonte Farmers Markets** (Belo Horizonte)
+  id: belo-horizonte/belo-horizonte-farmers-markets
+  neighbourhood: Belo Horizonte
+  category: Unfiled
+  budget: Budget
+  note: Belo Horizonte hosts regular open-air feiras and farmers markets across its neighbourhoods, where growers and producers from the surrounding countryside […]
+- **Mercado Central Producers** (Belo Horizonte)
+  id: belo-horizonte/mercado-central-producers
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: The Mercado Central brings together producers and traders from across Minas Gerais selling artisanal cheeses, cachaca, sweets, coffee, herbs and […]
+- **Minas Cheese & Cachaca Makers** (Belo Horizonte)
+  id: belo-horizonte/minas-cheese-cachaca-makers
+  neighbourhood: Minas Gerais
+  category: Unfiled
+  budget: Budget
+  note: Minas Gerais is famed for its artisanal cheeses, made on family farms using traditional methods now recognised as cultural heritage, […]
+- **Minas Craft Cooperatives** (Belo Horizonte)
+  id: belo-horizonte/minas-craft-cooperatives
+  neighbourhood: Minas Gerais
+  category: Unfiled
+  budget: Budget
+  note: The region around Belo Horizonte has a rich craft tradition, from soapstone carving and ceramics in the historic towns to […]
+
+## Bergen (`bergen`) — 4 places
+
+- **Fish Market Local Producers** (Bergen)
+  id: bergen/fish-market-local-producers
+  neighbourhood: Torget
+  category: Unfiled
+  budget: Budget
+  note: Bergens fish market brings together fishers, farmers and small producers selling fresh seafood, berries, cheese and local goods directly to […]
+- **Fjord & Farm Producers** (Bergen)
+  id: bergen/fjord-farm-producers
+  neighbourhood: Hardanger
+  category: Unfiled
+  budget: Mid-range
+  note: The fjords and valleys around Bergen, including nearby Hardanger, are home to farms and orchards producing apples, cider, cheese, honey […]
+- **Norwegian Craft Cooperative** (Bergen)
+  id: bergen/norwegian-craft-cooperative
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: Bergen and the surrounding region have a rich tradition of crafts, from hand-knitted wool sweaters and rosemaling painting to woodwork, […]
+- **Norwegian Seafood Producers** (Bergen)
+  id: bergen/norwegian-seafood-producers
+  neighbourhood: Vagen
+  category: Unfiled
+  budget: Mid-range
+  note: The waters around Bergen support a sustainable fishing and aquaculture industry that supplies the city with some of the worlds […]
+
+## Berlin (`berlin`) — 4 places
+
+- **Kreuzberger Himmel** (Berlin)
+  id: berlin/kreuzberger-himmel
+  neighbourhood: Kreuzberg
+  category: Unfiled
+  budget: Mid-range
+  note: An award-winning restaurant serving beautiful Syrian and Levantine food, run by refugees from Syria, Afghanistan, Iraq and Pakistan through the Be an Angel integration project. Delicious…
+- **Original Unverpackt** (Berlin)
+  id: berlin/original-unverpackt
+  neighbourhood: Kreuzberg
+  category: Unfiled
+  budget: Budget
+  note: Original Unverpackt is one of Europe’s pioneering package-free shops, opened in Berlin’s Kreuzberg district in 2014. Customers bring their own […]
+- **Refugio Cafe** (Berlin)
+  id: berlin/refugio-cafe
+  neighbourhood: Neukolln
+  category: Unfiled
+  budget: Budget
+  note: A warm, colourful non-profit cafe on the ground floor of a house where refugees and locals live together in Neukolln. Every cent funds the wider Refugio…
+- **Uber den Tellerrand** (Berlin)
+  id: berlin/uber-den-tellerrand
+  neighbourhood: Various
+  category: Unfiled
+  budget: Budget
+  note: A heart-warming social project born in Berlin where refugees and locals cook and eat together - cooking classes led by newcomers, shared meals and events that…
+
+## Bologna (`bologna`) — 4 places
+
+- **Bar Senza Nome** (Bologna)
+  id: bologna/bar-senza-nome
+  neighbourhood: Porto
+  category: Nightlife
+  budget: Budget
+  note: Why it matters: opened in 2012 by Alfonso Marrazzo and Sara Longhi, this is Italy's first bar owned and run by deaf people, and Italian sign…
+- **Camilla Emporio di Comunità** (Bologna)
+  id: bologna/camilla-emporio-di-comunita
+  neighbourhood: Bologna
+  category: Unfiled
+  budget: Budget
+  note: Camilla is a participatory community cooperative supermarket in Bologna, run by and for its members on a not-for-profit basis. Shoppers […]
+- **ExAequo Bottega del Mondo** (Bologna)
+  id: bologna/exaequo-bottega-del-mondo
+  neighbourhood: Centro Storico
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by the ExAequo social cooperative since 1993, this is Bologna's original fair-trade shop, stocking food, crafts and textiles from producer cooperatives that…
+- **Le Serre dei Giardini Margherita** (Bologna)
+  id: bologna/le-serre-dei-giardini-margherita
+  neighbourhood: Giardini Margherita
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: Bologna's abandoned municipal greenhouses in the Giardini Margherita were regenerated by the Kilowatt work cooperative into a community hub - coworking, a kids'…
+
+## Boston (`boston`) — 4 places
+
+- **Boston Building Resources Reuse Center** (Boston)
+  id: boston/boston-building-resources-reuse-center
+  neighbourhood: Roxbury Crossing
+  category: Unfiled
+  budget: Budget
+  note: The Reuse Center at Boston Building Resources is a nonprofit salvage shop in Roxbury Crossing selling rescued cabinetry, fixtures, lighting […]
+- **More Than Words** (Boston)
+  id: boston/more-than-words
+  neighbourhood: South End
+  category: Unfiled
+  budget: Budget
+  note: More Than Words is a nonprofit bookshop and thrift store in the South End that is entirely run by young […]
+- **Morgan Memorial Goodwill** (Boston)
+  id: boston/morgan-memorial-goodwill
+  neighbourhood: South End
+  category: Unfiled
+  budget: Budget
+  note: Founded in Boston’s South End in 1895, Morgan Memorial Goodwill is the original Goodwill, funding job training and placement for […]
+- **Uvida Shop** (Boston)
+  id: boston/uvida-shop
+  neighbourhood: North End
+  category: Unfiled
+  budget: Mid-range
+  note: Uvida is Boston’s first zero-waste shop, a Latina-owned North End gem stocking plastic-free essentials from toothpaste tablets to metal straws, […]
+
+## Boulder (`boulder`) — 4 places
+
+- **Art Parts Creative Reuse** (Boulder)
+  id: boulder/art-parts-creative-reuse
+  neighbourhood: North Boulder
+  category: Unfiled
+  budget: Price unknown
+  note: Art Parts is a creative reuse centre in Boulder that collects donated art and craft materials and resells them cheaply, […]
+- **Boulder County Farmers Market** (Boulder)
+  id: boulder/boulder-county-farmers-market
+  neighbourhood: Central Boulder
+  category: Unfiled
+  budget: Price unknown
+  note: The Boulder County Farmers Market, held along 13th Street beside Central Park, is one of the countrys best-regarded markets, selling […]
+- **Boulder Thrift and Consignment** (Boulder)
+  id: boulder/boulder-thrift-and-consignment
+  neighbourhood: Central Boulder
+  category: Unfiled
+  budget: Price unknown
+  note: Boulders thrift and consignment shops sell quality second-hand clothing, outdoor gear, books and homeware, offering a sustainable alternative to buying […]
+- **Ollin Farms Stand** (Boulder)
+  id: boulder/ollin-farms-stand
+  neighbourhood: Longmont
+  category: Unfiled
+  budget: Price unknown
+  note: Ollin Farms is a family-run regenerative farm near Boulder offering seasonal produce, farm stands and educational programmes focused on soil […]
+
+## Brasov (`brasov`) — 4 places
+
+- **Brasserie Bio Carpathia** (Brasov)
+  id: brasov/brasserie-bio-carpathia
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: this Old Town brasserie is the storefront of the Bio Carpathia Cooperative - 34 certified organic farmers whose mountain dairy, meat and eggs…
+- **Muzeul de Etnografie Brasov** (Brasov)
+  id: brasov/muzeul-de-etnografie-brasov
+  neighbourhood: Old Town
+  category: Shops & Markets
+  budget: Budget
+  note: The Ethnography Museum showcases the traditional crafts, costumes and rural life of the Brasov region, with a shop selling handwoven […]
+- **Ograda** (Brasov)
+  id: brasov/ograda
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: A relaxed garden courtyard bar and bistro in the old town, with mismatched furniture under the trees and a menu […]
+- **Ophori Cosmetics** (Brasov)
+  id: brasov/ophori-cosmetics
+  neighbourhood: not recorded
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Ophori is Brasov County's first work-integration social enterprise (unitate protejata), where every soap, bath bomb and body oil is made from scratch by…
+
+## Bratislava (`bratislava`) — 4 places
+
+- **Dobry trh** (Bratislava)
+  id: bratislava/dobry-trh
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: Dobry trh, the Good Market, is a much-loved community market held periodically in Bratislava, often at the Old Market Hall […]
+- **Kaviaren Radnicka** (Bratislava)
+  id: bratislava/kaviaren-radnicka
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Radnicka is a sheltered-workshop cafe that employs waiters with intellectual disabilities, training them with a hotel-management school so they can move on to…
+- **Lepsi pribeh** (Bratislava)
+  id: bratislava/lepsi-pribeh
+  neighbourhood: Nove Mesto
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in February 2024 by Martin Zambor and the civic association Stary tunel, Lepsi pribeh (A Better Story) is Slovakia's first training cafe,…
+- **Stara Trznica** (Bratislava)
+  id: bratislava/stara-trznica
+  neighbourhood: Old Town
+  category: Shops & Markets
+  budget: Budget
+  note: The Stara Trznica, or Old Market Hall, is a beautifully restored 1910 market building on SNP Square, now a lively […]
+
+## Breda (`breda`) — 4 places
+
+- **Breda Weekly Market** (Breda)
+  id: breda/breda-weekly-market
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: Several times a week the Grote Markt fills with the stalls of Bredas open-air market, where regional growers, cheesemakers, fishmongers […]
+- **Brownies&downies Breda** (Breda)
+  id: breda/brownies-downies-breda
+  neighbourhood: Centrum
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: part of the Dutch Brownies&downies network, this cheerful lunchroom is staffed by people with Down syndrome and other intellectual disabilities, who run the…
+- **ONS Restaurant** (Breda)
+  id: breda/ons-restaurant
+  neighbourhood: Geeren-Zuid
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: ONS Restaurant is the public kitchen of ONS label Breda, a social cooperative that since 2013 has trained several hundred people at a…
+- **Wereldwinkel Breda** (Breda)
+  id: breda/wereldwinkel-breda
+  neighbourhood: Centrum
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Bredas fair-trade world shop is run entirely by volunteers and, as a registered charity (ANBI), works for a fairer deal for less-visible producers…
+
+## Brisbane (`brisbane`) — 4 places
+
+- **Birrunga Gallery & Dining** (Brisbane)
+  id: brisbane/birrunga-gallery-dining
+  neighbourhood: Brisbane CBD
+  category: Restaurants, Ticketed Attractions
+  budget: Mid-range
+  note: Why it matters: this is Brisbane CBD's only First Nations owned and operated gallery and cafe, founded by Wiradyuri artist Birrunga Wiradyuri as a working art…
+- **Espresso Train Cafe** (Brisbane)
+  id: brisbane/espresso-train-cafe
+  neighbourhood: Nundah
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in 2003, this is Australia's longest-running social enterprise cafe, run by the Nundah Community Enterprises Co-operative that eight people with intellectual disability…
+- **Reverse Garbage Queensland** (Brisbane)
+  id: brisbane/reverse-garbage-queensland
+  neighbourhood: Woolloongabba
+  category: Unfiled
+  budget: Budget
+  note: Reverse Garbage is a much-loved Brisbane social enterprise and workers co-operative in Woolloongabba that rescues industrial offcuts, timber, fabric and […]
+- **The Gardens Club** (Brisbane)
+  id: brisbane/the-gardens-club
+  neighbourhood: City Botanic Gardens
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: tucked into the heritage Curators Cottage inside Brisbane's City Botanic Gardens, this not-for-profit cafe is run by the Wise Foundation, whose hospitality program…
+
+## Brussels (`brussels`) — 4 places
+
+- **Ferme Nos Pilifs** (Brussels)
+  id: brussels/ferme-nos-pilifs
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Ferme Nos Pilifs is a working farm in Neder-Over-Heembeek in the north of Brussels, run as an entreprise de travail […]
+- **Les Petits Riens** (Brussels)
+  id: brussels/les-petits-riens
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A long-running Belgian social enterprise whose second-hand shops fund social programmes for people in need, a great place to thrift while doing good.
+- **Think Twice** (Brussels)
+  id: brussels/think-twice
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A well-loved vintage and second-hand chain with several Brussels branches, offering curated pre-loved fashion at friendly prices.
+- **Yuman Village** (Brussels)
+  id: brussels/yuman-village
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A circular concept store bringing together sustainable brands, repair services and a cafe, and hosting regular ethical markets and events.
+
+## Bucharest (`bucharest`) — 4 places
+
+- **Bread & Breakfast Hostel** (Bucharest)
+  id: bucharest/bread-breakfast-hostel
+  neighbourhood: Old Town / Carol Park
+  category: Hotels
+  budget: Budget
+  note: Why it matters: run by the CONCORDIA Foundation since 2017, this old-town hostel gives disadvantaged young people - many aging out of state care - paid…
+- **Mesteshukar ButiQ** (Bucharest)
+  id: bucharest/mesteshukar-butiq
+  neighbourhood: Cismigiu
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: MBQ is a Bucharest-based non-profit social enterprise built to revalue traditional Roma craftsmanship, pairing veteran Roma artisans - silversmiths, coppersmiths, wood carvers, basket…
+- **Remesh** (Bucharest)
+  id: bucharest/remesh
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Remesh is a social enterprise by the NGO Ateliere Fara Frontiere that upcycles advertising banners, seatbelts and textiles into bags […]
+- **Seneca Anticafe** (Bucharest)
+  id: bucharest/seneca-anticafe
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Seneca Anticafe is a cultural cafe and community space near Calea Victoriei where guests pay for their time rather than […]
+
+## Budapest (`budapest`) — 4 places
+
+- **Aurora** (Budapest)
+  id: budapest/aurora
+  neighbourhood: District VIII
+  category: Unfiled
+  budget: Budget
+  note: A community house in District VIII that is bar, venue and headquarters for a cluster of Hungarian NGOs and grassroots groups, from Roma rights to refugee…
+- **Impact Hub Budapest** (Budapest)
+  id: budapest/impact-hub-budapest
+  neighbourhood: District V
+  category: Unfiled
+  budget: Budget
+  note: A coworking and community hub for people building social and environmental projects, hosting events, incubators and a network of changemakers. A window into Budapest's growing social-enterprise…
+- **Nem Adom Fel Café** (Budapest)
+  id: budapest/nem-adom-fel-cafe
+  neighbourhood: Józsefváros
+  category: Unfiled
+  budget: Mid-range
+  note: Nem Adom Fel Café, meaning ‘I Don’t Give Up’, is a pioneering social-enterprise café and cultural venue in Budapest’s Józsefváros […]
+- **Nem Adom Fel Cafe & Bar** (Budapest)
+  id: budapest/nem-adom-fel-cafe-bar
+  neighbourhood: District VIII
+  category: Unfiled
+  budget: Budget
+  note: The first cafe in Budapest founded and run by people with disabilities, its name meaning Never Give Up. Around 90% of the team are differently-abled, and…
+
+## Budva (`budva`) — 4 places
+
+- **Budva Green Market Producers** (Budva)
+  id: budva/budva-green-market-producers
+  neighbourhood: Central Budva
+  category: Unfiled
+  budget: Price unknown
+  note: At Budvas green market and roadside stands, small Montenegrin producers sell honey, olive oil, cheese, cured meats and homemade rakija, […]
+- **Handmade Souvenir Artisans** (Budva)
+  id: budva/handmade-souvenir-artisans
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Price unknown
+  note: Artisans in Budvas Old Town craft handmade jewellery, ceramics, textiles and paintings inspired by the Adriatic and Montenegrin heritage, sold […]
+- **Local Rakija and Honey Producers** (Budva)
+  id: budva/local-rakija-and-honey-producers
+  neighbourhood: Budva Riviera
+  category: Unfiled
+  budget: Price unknown
+  note: Family producers in the villages around Budva make honey, herbal rakija and preserves using traditional methods, often selling directly at […]
+- **Montenegro Olive and Oil Crafts** (Budva)
+  id: budva/montenegro-olive-and-oil-crafts
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Price unknown
+  note: Small shops and workshops in and around Budva sell locally produced olive oil, olive-wood carvings and natural cosmetics made from […]
+
+## Buenos Aires (`buenos-aires`) — 4 places
+
+- **Alamesa** (Buenos Aires)
+  id: buenos-aires/alamesa
+  neighbourhood: Las Cañitas
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: opened in 2024 by infectious-disease doctor Fernando Polack, Alamesa is Buenos Aires' first restaurant run almost entirely by a team of around 40…
+- **Arte y Esperanza** (Buenos Aires)
+  id: buenos-aires/arte-y-esperanza
+  neighbourhood: San Telmo
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: this fair-trade shop is run by an NGO that has worked with Argentina's Indigenous communities since 1986, channeling income to more than 500…
+- **Feria de Mataderos** (Buenos Aires)
+  id: buenos-aires/feria-de-mataderos
+  neighbourhood: Mataderos
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: founded in 1986 to keep gaucho and provincial folk culture alive in the capital, this community fair opened its 40th-anniversary season in 2026…
+- **Feria de San Telmo** (Buenos Aires)
+  id: buenos-aires/feria-de-san-telmo
+  neighbourhood: San Telmo
+  category: Unfiled
+  budget: Budget
+  note: The Feria de San Telmo is a beloved Sunday market that fills the cobbled streets and Plaza Dorrego of the […]
+
+## Busan (`busan`) — 4 places
+
+- **Bosu-dong Book Street** (Busan)
+  id: busan/bosu-dong-book-street
+  neighbourhood: Bosu-dong, Jung-gu
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: this alley of secondhand bookshops was started by North Korean refugees selling magazines off cardboard boxes when Busan was the wartime capital, and…
+- **Gamcheon Culture Village** (Busan)
+  id: busan/gamcheon-culture-village
+  neighbourhood: Saha
+  category: Sightseeing, Ticketed Attractions
+  budget: Budget
+  note: A hillside maze of rainbow houses, murals and tiny galleries.
+- **Gamnae Cafe** (Busan)
+  id: busan/gamnae-cafe
+  neighbourhood: Gamcheon Culture Village, Saha-gu
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: Gamnae Cafe is run by the Gamcheon Culture Village Residents' Association - the registered nonprofit of village residents that also operates the village…
+- **Jagalchi Fish Market** (Busan)
+  id: busan/jagalchi-fish-market
+  neighbourhood: Nampo-dong
+  category: Unfiled
+  budget: Budget
+  note: Jagalchi is Koreas largest seafood market, a Busan institution on the waterfront where mostly female traders known as Jagalchi ajumma […]
+
+## Cairo (`cairo`) — 4 places
+
+- **Association for the Protection of the Environment (APE)** (Cairo)
+  id: cairo/association-for-the-protection-of-the-environment-ape
+  neighbourhood: Manshiyat Naser (Garbage City), Mokattam
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: founded in 1984 by philanthropist Yousriya Sawiris, the Association for the Protection of the Environment (APE) works alongside the Zabbaleen recycling community of…
+- **Fair Trade Egypt** (Cairo)
+  id: cairo/fair-trade-egypt
+  neighbourhood: Zamalek
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: launched in 1998 as Egypt's first fair-trade organization, this Zamalek nonprofit links dozens of artisan groups across the country to a fair market,…
+- **Malaika Linens** (Cairo)
+  id: cairo/malaika-linens
+  neighbourhood: Zamalek
+  category: Shops & Markets
+  budget: High-end
+  note: Why it matters: founded in 2004 by designers Goya Gallagher and Margarita Andrade, this women-led Egyptian linen house created Threads of Hope, a free embroidery school…
+- **Nagada** (Cairo)
+  id: cairo/nagada
+  neighbourhood: Zamalek
+  category: Unfiled
+  budget: Mid-range
+  note: Nagada is a Zamalek design house that has spent decades reviving the handloom weaving of Upper Egypt, working directly with […]
+
+## Cape Town (`cape-town`) — 4 places
+
+- **Monkeybiz** (Cape Town)
+  id: cape-town/monkeybiz
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit beading project that pays women from Khayelitsha and surrounding townships per piece, with each figure signed by its […]
+- **Mzansi Restaurant** (Cape Town)
+  id: cape-town/mzansi-restaurant
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Nomonde and Vukile Siyaka have run this Langa restaurant from their own street since 2008, employing and buying locally. A […]
+- **Original T-Bag Designs** (Cape Town)
+  id: cape-town/original-t-bag-designs
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Artists at this Hout Bay workshop hand-paint used teabags and turn them into cards, trays and jewellery; most of the […]
+- **SANCCOB** (Cape Town)
+  id: cape-town/sanccob
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A registered non-profit in Table View that has rescued and rehabilitated ill, injured, abandoned and oiled seabirds since 1968. A […]
+
+## Caracas (`caracas`) — 4 places
+
+- **El Hatillo Artisan Crafts** (Caracas)
+  id: caracas/el-hatillo-artisan-crafts
+  neighbourhood: El Hatillo
+  category: Unfiled
+  budget: Price unknown
+  note: The workshops and shops of El Hatillo sell handmade Venezuelan crafts, from woven hammocks and ceramics to folk art and […]
+- **Local Coffee Cooperative** (Caracas)
+  id: caracas/local-coffee-cooperative
+  neighbourhood: Los Palos Grandes
+  category: Unfiled
+  budget: Price unknown
+  note: Venezuelan coffee, once world-famous, is grown by smallholders in the surrounding Andean and coastal hills, and Caracas cafes and shops […]
+- **Mercado de Chacao Producers** (Caracas)
+  id: caracas/mercado-de-chacao-producers
+  neighbourhood: Chacao
+  category: Unfiled
+  budget: Price unknown
+  note: At the Chacao market and neighbourhood stands, small growers and vendors sell Venezuelan fruit, vegetables, cheeses and prepared foods, offering […]
+- **Venezuelan Cacao and Chocolate** (Caracas)
+  id: caracas/venezuelan-cacao-and-chocolate
+  neighbourhood: Chacao
+  category: Unfiled
+  budget: Price unknown
+  note: Venezuela produces some of the worlds finest cacao, and Caracas chocolate shops and makers sell bars and bonbons crafted from […]
+
+## Cardiff (`cardiff`) — 4 places
+
+- **Fair Do’s Fairtrade Shop** (Cardiff)
+  id: cardiff/fair-dos-fairtrade-shop
+  neighbourhood: Cathays
+  category: Unfiled
+  budget: Budget
+  note: Cardiff’s long-running fair-trade shop on City Road, selling ethically sourced coffee, chocolate, crafts and gifts that support producers in developing […]
+- **Penylan Pantry** (Cardiff)
+  id: cardiff/penylan-pantry
+  neighbourhood: Roath
+  category: Unfiled
+  budget: Budget
+  note: A neighbourhood deli, cafe and grocer in Roath focused on local, seasonal and sustainably sourced produce, cheeses and coffee. It […]
+- **Riverside Community Market** (Cardiff)
+  id: cardiff/riverside-community-market
+  neighbourhood: Riverside
+  category: Unfiled
+  budget: Budget
+  note: Cardiff’s original farmers’ market, held on Sundays by the River Taff near the Principality Stadium, championing local growers, producers and […]
+- **The Clink** (Cardiff)
+  id: cardiff/the-clink
+  neighbourhood: City Centre
+  category: Restaurants
+  budget: Mid-range
+  note: A restaurant run inside HMP Cardiff as a social enterprise, where serving prisoners are trained in hospitality to help them […]
+
+## Catania (`catania`) — 4 places
+
+- **Etna Wine & Local Vineyards** (Catania)
+  id: catania/etna-wine-local-vineyards
+  neighbourhood: Etna
+  category: Unfiled
+  budget: Mid-range
+  note: The volcanic slopes of Mount Etna produce distinctive wines from indigenous grapes such as Nerello Mascalese and Carricante, grown by […]
+- **La Pescheria Fish Market** (Catania)
+  id: catania/la-pescheria-fish-market
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: La Pescheria is Catanias historic fish market, held each morning in the streets behind Piazza del Duomo, where fishmongers, farmers […]
+- **Sicilian Artisan Craft Shops** (Catania)
+  id: catania/sicilian-artisan-craft-shops
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: The old streets of Catania host workshops and shops selling traditional Sicilian crafts, from hand-painted ceramics and majolica to lava-stone […]
+- **Sicilian Street Food & Slow Food** (Catania)
+  id: catania/sicilian-street-food-slow-food
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: Catania is a capital of Sicilian street food, from arancini and cartocciata to seafood snacks sold at market stalls and […]
+
+## Chania (`chania`) — 4 places
+
+- **Cretan Herb and Honey Stalls** (Chania)
+  id: chania/cretan-herb-and-honey-stalls
+  neighbourhood: City Centre
+  category: Unfiled
+  budget: Price unknown
+  note: Cretan mountain herbs, wild honey, herbal teas and natural cosmetics are sold at market stalls and small shops in Chania, […]
+- **Cretan Olive Oil and Raki** (Chania)
+  id: chania/cretan-olive-oil-and-raki
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Price unknown
+  note: Specialist shops in Chania sell premium Cretan extra-virgin olive oil, raki and herbal products from small producers and cooperatives across […]
+- **Handmade Cretan Crafts** (Chania)
+  id: chania/handmade-cretan-crafts
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Price unknown
+  note: Artisan workshops in Chanias Old Town produce handmade leather goods, woven textiles, ceramics and jewellery rooted in Cretan tradition, sold […]
+- **Municipal Market Producers** (Chania)
+  id: chania/municipal-market-producers
+  neighbourhood: City Centre
+  category: Unfiled
+  budget: Price unknown
+  note: At the Municipal Market and surrounding stalls, Cretan producers sell olive oil, honey, herbs, cheeses, raki and preserves made on […]
+
+## Chennai (`chennai`) — 4 places
+
+- **Co-optex** (Chennai)
+  id: chennai/co-optex
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Co-optex is the Tamil Nadu government's handloom weavers' cooperative, set up to sell directly from weaver societies across the state rather than through middlemen. The Egmore…
+- **Poompuhar** (Chennai)
+  id: chennai/poompuhar
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Poompuhar is the Tamil Nadu government's crafts emporium, set up to give traditional artisans a direct retail outlet for bronze icons, wood carving, sandalwood work and…
+- **Tara Books** (Chennai)
+  id: chennai/tara-books
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Tara Books is an independent publisher founded in 1994, known worldwide for handmade picture books produced on fair-trade principles in its own Chennai workshop. Around 25…
+- **The New LEED Trust** (Chennai)
+  id: chennai/the-new-leed-trust
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The New LEED Trust has spent more than three decades training women from the Perungudi and Thiruvalluvar Nagar slums, including widows and abandoned or physically challenged…
+
+## Chicago (`chicago`) — 4 places
+
+- **beelove café** (Chicago)
+  id: chicago/beelove-cafe
+  neighbourhood: North Lawndale
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: this North Lawndale cafe is run by Sweet Beginnings, a social enterprise of the North Lawndale Employment Network that hires and trains formerly…
+- **Open Books** (Chicago)
+  id: chicago/open-books
+  neighbourhood: West Loop
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: every dollar spent at this nonprofit used bookstore funds Open Books' literacy programs, which reach over 6,000 Chicago students a year and give…
+- **Rebuilding Exchange** (Chicago)
+  id: chicago/rebuilding-exchange
+  neighbourhood: North Side
+  category: Unfiled
+  budget: Budget
+  note: The Rebuilding Exchange is a Chicago social enterprise and non-profit that promotes reuse by diverting building materials from landfill and […]
+- **Women & Children First** (Chicago)
+  id: chicago/women-children-first
+  neighbourhood: Andersonville
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: founded in 1979 by Ann Christophersen and Linda Bubon, this Andersonville institution is one of the largest feminist bookstores in the country and…
+
+## Chisinau (`chisinau`) — 4 places
+
+- **EcoLocal Farmers Market** (Chisinau)
+  id: chisinau/ecolocal-farmers-market
+  neighbourhood: Centru
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: founded in 2018 by a nonprofit association of eco and artisan producers, this is Chisinau's only true farmers market - around 80 small-scale…
+- **EduJoc** (Chisinau)
+  id: chisinau/edujoc
+  neighbourhood: Centru
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: EduJoc is a registered Moldovan social enterprise with a simple mission - that every child in Moldova has at least one educational toy…
+- **Moldovan Traditional Crafts** (Chisinau)
+  id: chisinau/moldovan-traditional-crafts
+  neighbourhood: Chisinau
+  category: Unfiled
+  budget: Mid-range
+  note: Moldova has a rich tradition of folk craft, from handwoven carpets and embroidered textiles to pottery, wood carving and painted […]
+- **Moldovan Wine Producers** (Chisinau)
+  id: chisinau/moldovan-wine-producers
+  neighbourhood: Chisinau
+  category: Unfiled
+  budget: Mid-range
+  note: Moldova is one of the world’s oldest and most prolific wine-producing countries, and wine is woven into the fabric of […]

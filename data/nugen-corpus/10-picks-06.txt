@@ -1,0 +1,730 @@
+# Local picks — part 6
+
+## Marseille (`marseille`) — 4 places
+
+- **Bureau des Guides du GR2013** (Marseille)
+  id: marseille/bureau-des-guides-du-gr2013
+  neighbourhood: Saint-Antoine (15th)
+  category: Tours
+  budget: Price unknown
+  note: Why it matters: this non-profit, co-founded in 2014 by Julie De Muer, Loic Magnant, Baptiste Lanaspeze and Alexandre Field, is the collective of artist-walkers behind the…
+- **Friche la Belle de Mai** (Marseille)
+  id: marseille/friche-la-belle-de-mai
+  neighbourhood: Belle de Mai
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: this 45,000 sq m former Seita tobacco factory has been run since 2007 as a SCIC - a cooperative where every member, from…
+- **L’Apres M** (Marseille)
+  id: marseille/lapres-m
+  neighbourhood: Sainte-Marthe (14e)
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: when the McDonald's here closed in 2019 and made its 77 staff redundant, assistant manager and staff rep Kamel Guemari led former employees,…
+- **Savon de Marseille Soap Makers** (Marseille)
+  id: marseille/savon-de-marseille-soap-makers
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Mid-range
+  note: The traditional savon de Marseille, the celebrated olive-oil soap made in the city for centuries, is one of Provence’s proudest […]
+
+## Mauritius (`mauritius`) — 4 places
+
+- **Bois Cheri Tea Plantation** (Mauritius)
+  id: mauritius/bois-cheri-tea-plantation
+  neighbourhood: Bois Cheri
+  category: Unfiled
+  budget: Mid-range
+  note: Bois Cheri is the oldest and largest tea estate in Mauritius, set amid rolling green highlands in the south of […]
+- **Le Craft Market** (Mauritius)
+  id: mauritius/le-craft-market
+  neighbourhood: Port Louis
+  category: Unfiled
+  budget: Budget
+  note: Le Craft Market at the Caudan Waterfront gathers Mauritian artisans and craftspeople under one roof, selling handmade goods from carved […]
+- **Rault Biscuit Factory** (Mauritius)
+  id: mauritius/rault-biscuit-factory
+  neighbourhood: Mahebourg
+  category: Unfiled
+  budget: Budget
+  note: The Rault Biscuit Factory near Mahebourg has been handcrafting manioc biscuits by the same traditional method since 1870, making it […]
+- **The Good Shop** (Mauritius)
+  id: mauritius/the-good-shop
+  neighbourhood: Curepipe
+  category: Shops & Markets
+  budget: Budget
+  note: The Good Shop is Mauritius's home-grown thrift network, reselling donated clothing, books, toys, furniture and household goods across five branches island-wide. Why it matters: launched in…
+
+## Melbourne (`melbourne`) — 4 places
+
+- **Clothing The Gaps** (Melbourne)
+  id: melbourne/clothing-the-gaps
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An Aboriginal-owned and led clothing label with a Brunswick storefront, using apparel to fund and campaign on First Nations health. […]
+- **Koorie Heritage Trust** (Melbourne)
+  id: melbourne/koorie-heritage-trust
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A First Peoples cultural organisation in Federation Square's Yarra Building, holding South-Eastern Aboriginal collections with free entry. See changing exhibitions […]
+- **STREAT** (Melbourne)
+  id: melbourne/streat
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A social enterprise cafe group that trains and employs young people facing disadvantage, roasting its own coffee on the Collingwood […]
+- **The Social Studio** (Melbourne)
+  id: melbourne/the-social-studio
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A not-for-profit fashion school, ethical manufacturer and shop working with refugee and new-migrant communities inside Collingwood Yards. Buy locally made […]
+
+## Mexico City (`mexico-city`) — 4 places
+
+- **Arca Tierra** (Mexico City)
+  id: mexico-city/arca-tierra
+  neighbourhood: Xochimilco
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: founded in 2009 by Lucio Usobiaga, Arca Tierra is a regenerative-farming network that has revived a community of Xochimilco peasant farming families, restoring…
+- **Onora** (Mexico City)
+  id: mexico-city/onora
+  neighbourhood: Roma Norte
+  category: Unfiled
+  budget: Mid-range
+  note: Onora in Roma Norte is a design studio and shop that works hand in hand with artisan communities across Mexico, […]
+- **Someone Somewhere** (Mexico City)
+  id: mexico-city/someone-somewhere
+  neighbourhood: Condesa
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: launched in 2016, Someone Somewhere is a Certified B Corp social enterprise that partners with more than 270 Indigenous artisans - over 90%…
+- **Utilitario Mexicano** (Mexico City)
+  id: mexico-city/utilitario-mexicano
+  neighbourhood: Escandon
+  category: Unfiled
+  budget: Mid-range
+  note: Utilitario Mexicano celebrates the honest, everyday objects of Mexican life, from enamel cookware and palm brooms to clay comals, all […]
+
+## Milan (`milan`) — 4 places
+
+- **Cascina Cuccagna** (Milan)
+  id: milan/cascina-cuccagna
+  neighbourhood: Porta Romana
+  category: Unfiled
+  budget: Budget
+  note: Cascina Cuccagna is a restored 18th-century farmhouse near Porta Romana, revived by a community association as a cultural and social […]
+- **Libreria delle Donne di Milano** (Milan)
+  id: milan/libreria-delle-donne-di-milano
+  neighbourhood: Piazza Cinque Giornate
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: open since 1975, this is one of Europe's longest-running feminist bookshops, run collectively by more than 40 women through the Circolo cooperativo delle…
+- **Rob de Matt** (Milan)
+  id: milan/rob-de-matt
+  neighbourhood: Dergano
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: opened in 2017 by chef Edoardo Todeschini after he saw Jamie Oliver's ex-offender training kitchens in London, Rob de Matt trains people facing…
+- **SHARE – Second Hand Reuse** (Milan)
+  id: milan/share-second-hand-reuse
+  neighbourhood: Via Padova
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by Vesti Solidale, a social cooperative active since 1998, SHARE turns donated clothing into jobs for people who need a way back…
+
+## Montreal (`montreal`) — 4 places
+
+- **La Guilde** (Montreal)
+  id: montreal/la-guilde
+  neighbourhood: Golden Square Mile
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: La Guilde is a charitable non-profit founded in 1906 that exists to preserve and promote Inuit, First Nations and Metis art alongside Canadian…
+- **Les Filles Fattoush** (Montreal)
+  id: montreal/les-filles-fattoush
+  neighbourhood: Little Italy / Villeray
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: this is a social-economy project whose kitchen gives Syrian refugee women in Montreal a first work experience, built around their own family recipes…
+- **Robin des Bois** (Montreal)
+  id: montreal/robin-des-bois
+  neighbourhood: Plateau-Mont-Royal / Parc La Fontaine
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: founded in 2006 by Judy Servay, Robin des Bois is a non-profit restaurant run largely by volunteers, and it channels its proceeds -…
+- **Santropol Roulant** (Montreal)
+  id: montreal/santropol-roulant
+  neighbourhood: Plateau
+  category: Unfiled
+  budget: Mid-range
+  note: Santropol Roulant is a much-loved Montreal community food hub and social enterprise that uses food as a tool to bring […]
+
+## Moscow (`moscow`) — 4 places
+
+- **Blagosfera Centre** (Moscow)
+  id: moscow/blagosfera-centre
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A public centre for Moscow's charitable sector, hosting talks, screenings and festivals that anyone can walk in and attend. A […]
+- **Charity Shop** (Moscow)
+  id: moscow/charity-shop
+  neighbourhood: Central Moscow
+  category: Unfiled
+  budget: Budget
+  note: More than a second-hand store, Charity Shop is a social enterprise in central Moscow where donated clothes get a second […]
+- **Lavka Radostey** (Moscow)
+  id: moscow/lavka-radostey
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A charity shop network whose takings fund medical and social support; the Pokrovka branch is the easiest one to reach. […]
+- **Naivno? Ochen** (Moscow)
+  id: moscow/naivno-ochen
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A studio and shop for artists with learning disabilities, whose drawings are printed onto the clothing and ceramics sold here. […]
+
+## Mostar (`mostar`) — 4 places
+
+- **Handcraft by Nelica** (Mostar)
+  id: mostar/handcraft-by-nelica
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A small, family-run coppersmith on Mala Tepa where every piece is shaped by hand, from delicate copper jewellery to statement […]
+- **Handmade Art Gallery** (Mostar)
+  id: mostar/handmade-art-gallery
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Tucked into the Old Bridge complex, this social enterprise gives more than sixty women artisans and women-run farms across Bosnia […]
+- **Mostar Art Gallery – Bas Relief in Copper** (Mostar)
+  id: mostar/mostar-art-gallery-bas-relief-in-copper
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Run by master coppersmiths Edo and Saša, this workshop keeps an endangered Mostar craft alive, hand-beating copper bas reliefs the […]
+- **OKC Abrašević** (Mostar)
+  id: mostar/okc-abrasevic
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This youth cultural centre grew out of Mostar's post-war effort to rebuild bridges between divided communities. Part café-bar, part venue, […]
+
+## Mumbai (`mumbai`) — 4 places
+
+- **Adrish – Zero Waste Organic Store** (Mumbai)
+  id: mumbai/adrish-zero-waste-organic-store
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Adrish is one of Mumbai's pioneering zero-waste, package-free stores, built around sustainable living. Eco-minded locals love refilling on organic staples without the usual plastic waste.
+- **Creative Handicrafts** (Mumbai)
+  id: mumbai/creative-handicrafts
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This fair-trade social enterprise trains and employs women from Mumbai's marginalised communities. Shoppers feel good buying its ethically made clothing and crafts, knowing each purchase supports…
+- **Mumbai Khadi & Village Industries Emporium** (Mumbai)
+  id: mumbai/mumbai-khadi-village-industries-emporium
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Rooted in the Gandhian khadi movement, this Fort emporium sells handspun, handwoven cloth that supports rural artisans. Shoppers come for genuine village-made textiles with real heritage…
+- **The Bombay Store** (Mumbai)
+  id: mumbai/the-bombay-store
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Born of the swadeshi movement, The Bombay Store has long championed Indian-made craft and design. Fort shoppers browse its handicrafts, textiles and gifts knowing they're backing…
+
+## Munich (`munich`) — 4 places
+
+- **Bellevue di Monaco** (Munich)
+  id: munich/bellevue-di-monaco
+  neighbourhood: Glockenbachviertel
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: run as a social cooperative, Bellevue di Monaco houses more than 40 refugees in its buildings on Müllerstrasse and runs its street-level cafe…
+- **Conviva im Blauen Haus** (Munich)
+  id: munich/conviva-im-blauen-haus
+  neighbourhood: Altstadt
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: inside the Münchner Kammerspiele theatre, Conviva is an inclusive restaurant run by the Munich cooperative cba, where a large share of the team…
+- **NochMall** (Munich)
+  id: munich/nochmall
+  neighbourhood: Moosach
+  category: Unfiled
+  budget: Budget
+  note: NochMall is Munich’s large second-hand department store, run by the city’s waste-management company to promote reuse and sustainability. Spread over […]
+- **Roecklplatz** (Munich)
+  id: munich/roecklplatz
+  neighbourhood: Dreimühlenviertel
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: since 2008 this nonprofit training restaurant has given young people from difficult life circumstances - including at least one apprenticeship reserved for young…
+
+## Nairobi (`nairobi`) — 4 places
+
+- **Giraffe Centre** (Nairobi)
+  id: nairobi/giraffe-centre
+  neighbourhood: Langata
+  category: Ticketed Attractions
+  budget: Budget
+  note: Feed endangered Rothschild giraffes from a raised platform.
+- **Kazuri Beads** (Nairobi)
+  id: nairobi/kazuri-beads
+  neighbourhood: Karen
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: Kazuri means "small and beautiful" in Swahili, and it began in 1975 as Lady Susan Wood's backyard pottery employing two local women. Today…
+- **Ocean Sole** (Nairobi)
+  id: nairobi/ocean-sole
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Ocean Sole is a Kenyan social enterprise that collects discarded flip-flops from beaches, waterways and waste dumps and turns them […]
+- **Sheldrick Elephant Orphanage** (Nairobi)
+  id: nairobi/sheldrick-elephant-orphanage
+  neighbourhood: Langata
+  category: Ticketed Attractions
+  budget: Budget
+  note: A moving sanctuary for orphaned baby elephants.
+
+## Naples (`naples`) — 4 places
+
+- **Casa Tolentino** (Naples)
+  id: naples/casa-tolentino
+  neighbourhood: Quartieri Spagnoli
+  category: Hotels
+  budget: Price unknown
+  note: Why it matters: run by young people from the Quartieri Spagnoli through the San Nicola da Tolentino social cooperative (a 2014 spin-off of the same La…
+- **Catacombe di San Gennaro** (Naples)
+  id: naples/catacombe-di-san-gennaro
+  neighbourhood: Rione Sanita
+  category: Unfiled
+  budget: Budget
+  note: The Catacombs of San Gennaro are an early-Christian burial complex beneath the Rione Sanita, managed by the youth cooperative La […]
+- **Catacombs of San Gennaro** (Naples)
+  id: naples/catacombs-of-san-gennaro
+  neighbourhood: Rione Sanità
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: since 2006, the young people of the local La Paranza social cooperative have run these ancient catacombs, turning tourism revenue into 56 jobs…
+- **Made in Cloister** (Naples)
+  id: naples/made-in-cloister
+  neighbourhood: Porta Capuana
+  category: Unfiled
+  budget: Budget
+  note: Made in Cloister is a foundation that has restored the 16th-century cloister of Santa Caterina a Formiello near Porta Capuana, […]
+
+## Netanya (`netanya`) — 4 places
+
+- **Dora Community Centre, Ramat Yadin** (Netanya)
+  id: netanya/dora-community-centre-ramat-yadin
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Dora community centre in the Ramat Yadin neighbourhood is one of the busiest of Netanya's municipal 'matnasim' - nonprofit centres that double as the social…
+- **East Netanya Community Centre (Matnas Mizrach)** (Netanya)
+  id: netanya/east-netanya-community-centre-matnas-mizrach
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Matnas Mizrach is the nonprofit community centre that runs East Netanya's cultural and leisure life on behalf of the municipality, from after-school clubs and summer camps…
+- **WIZO Netanya** (Netanya)
+  id: netanya/wizo-netanya
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: WIZO's Netanya shop sells donated clothing, homewares and bric-a-brac, with proceeds funding the organisation's local welfare, education and community programmes for women and children. It's a…
+- **Yad Sarah Netanya** (Netanya)
+  id: netanya/yad-sarah-netanya
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Yad Sarah is Israel's largest volunteer organisation, and its Netanya branch lends wheelchairs, crutches, hospital beds and other medical and rehabilitation equipment free of charge to…
+
+## Nice (`nice`) — 4 places
+
+- **Artisans du Monde Nice** (Nice)
+  id: nice/artisans-du-monde-nice
+  neighbourhood: Libération
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: this volunteer-run boutique is the Nice outpost of Artisans du Monde, France's pioneering fair-trade network, selling crafts and groceries from producer cooperatives paid…
+- **Cours Saleya Market** (Nice)
+  id: nice/cours-saleya-market
+  neighbourhood: Vieux Nice
+  category: Sightseeing
+  budget: Budget
+  note: The Cours Saleya market is the vibrant, beating heart of old Nice, a broad pedestrian square that hosts a famous […]
+- **La Ressourcerie** (Nice)
+  id: nice/la-ressourcerie
+  neighbourhood: Jean Médecin
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: since 2014 this Fondation de Nice program has brought more than sixty people a year back into work, collecting, repairing and reselling the…
+- **Read The Room** (Nice)
+  id: nice/read-the-room
+  neighbourhood: Place Garibaldi
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: this English-language bookstore and coffeeshop is owned and run by a mother-and-daughter duo of avid readers, and it has quickly become the community…
+
+## Nicosia (`nicosia`) — 4 places
+
+- **Cypriot Food Producers** (Nicosia)
+  id: nicosia/cypriot-food-producers
+  neighbourhood: Nicosia
+  category: Unfiled
+  budget: Budget
+  note: Cyprus is famous for products such as halloumi cheese, Commandaria wine, carob, olive oil and honey, made by farmers and […]
+- **Laiki Geitonia Craft Producers** (Nicosia)
+  id: nicosia/laiki-geitonia-craft-producers
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The restored quarter of Laiki Geitonia and the workshops of old Nicosia are home to artisans producing traditional Cypriot crafts, […]
+- **Lefkara Lace Cooperative** (Nicosia)
+  id: nicosia/lefkara-lace-cooperative
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The making of Lefkara lace, a delicate embroidery listed by UNESCO as intangible cultural heritage, is kept alive by the […]
+- **Nicosia Local Market Producers** (Nicosia)
+  id: nicosia/nicosia-local-market-producers
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: The markets of Nicosia, including the covered municipal markets and weekly farmers markets, bring together growers and producers from across […]
+
+## Orlando (`orlando`) — 4 places
+
+- **Fleet Farming** (Orlando)
+  id: orlando/fleet-farming
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An urban agriculture programme run by the environmental non-profit IDEAS For Us, which converts residential front lawns in and around […]
+- **Hannibal Square Heritage Center** (Orlando)
+  id: orlando/hannibal-square-heritage-center
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A small museum and gallery on West New England Avenue documenting Hannibal Square, the historically Black neighbourhood established on the […]
+- **Second Harvest Food Bank of Central Florida** (Orlando)
+  id: orlando/second-harvest-food-bank-of-central-florida
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The regional food bank for six Central Florida counties, distributing many millions of meals a year through a network of […]
+- **Wells’Built Museum of African American History** (Orlando)
+  id: orlando/wellsbuilt-museum-of-african-american-history
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A museum in Parramore occupying the former Wells' Built Hotel, opened in 1929 by Dr William Monroe Wells, one of […]
+
+## Oslo (`oslo`) — 4 places
+
+- **Fretex Grunerlokka** (Oslo)
+  id: oslo/fretex-grunerlokka
+  neighbourhood: Grunerlokka
+  category: Unfiled
+  budget: Budget
+  note: Fretex is Norway largest chain of charity shops, run by the Salvation Army, and its curated Grunerlokka store on Olaf […]
+- **Froken Dianas Salonger** (Oslo)
+  id: oslo/froken-dianas-salonger
+  neighbourhood: Grunerlokka
+  category: Unfiled
+  budget: Mid-range
+  note: In a green shopfront on Markveien, Froken Dianas Salonger has championed slow fashion since 2008, mixing hand-picked vintage clothing, jewellery […]
+- **UFF Vintage** (Oslo)
+  id: oslo/uff-vintage
+  neighbourhood: Sentrum
+  category: Unfiled
+  budget: Budget
+  note: UFF runs its Oslo secondhand shops as a fundraiser, with profits going to humanitarian and development work, so the bargains […]
+- **Velouria Vintage** (Oslo)
+  id: oslo/velouria-vintage
+  neighbourhood: Grunerlokka
+  category: Unfiled
+  budget: Mid-range
+  note: One of the oldest vintage stores in Oslo, Velouria Vintage on Thorvald Meyers gate is a treasure trove of retro […]
+
+## Ottawa (`ottawa`) — 4 places
+
+- **Beandigen Cafe** (Ottawa)
+  id: ottawa/beandigen-cafe
+  neighbourhood: The Glebe (Lansdowne)
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: owned by Anishinaabe mother-daughter duo Paula and Jayde Naponse of Atikameksheng Anishinawbek First Nation, this Lansdowne cafe is a community hub for Indigenous…
+- **Indigenous Walks** (Ottawa)
+  id: ottawa/indigenous-walks
+  neighbourhood: Downtown
+  category: Tours
+  budget: Price unknown
+  note: Why it matters: founded in 2014 by Metis artist and educator Jaime Koebel, these Indigenous-led walks re-read downtown Ottawa's monuments, art and architecture from an Indigenous…
+- **Mādahòkì Farm** (Ottawa)
+  id: ottawa/madahoki-farm
+  neighbourhood: West Hunt Club (Nepean)
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: run by Indigenous Experiences, an Indigenous women-owned organization, this farm 20 minutes from downtown is home to a herd of endangered Ojibwe Spirit…
+- **Maker House Co.** (Ottawa)
+  id: ottawa/maker-house-co
+  neighbourhood: Wellington West
+  category: Shops & Markets
+  budget: Mid-range
+  note: Maker House Co. is an Ottawa shop devoted entirely to Canadian-made goods, championing local artisans and sustainable, small-batch production. Its […]
+
+## Palma de Mallorca (`palma-de-mallorca`) — 4 places
+
+- **Mallorca Olive Oil Producers** (Palma de Mallorca)
+  id: palma-de-mallorca/mallorca-olive-oil-producers
+  neighbourhood: Serra de Tramuntana
+  category: Unfiled
+  budget: Mid-range
+  note: The terraced groves of the Serra de Tramuntana and central Mallorca produce prized extra-virgin olive oil with protected designation of […]
+- **Mercat de l’Olivar** (Palma de Mallorca)
+  id: palma-de-mallorca/mercat-de-lolivar
+  neighbourhood: Centre
+  category: Shops & Markets
+  budget: Budget
+  note: Palma’s biggest and best-loved covered food market, a 1950s hall of some 115 stalls between Plaça d’Espanya and Carrer Sant […]
+- **Mercat de Santa Catalina** (Palma de Mallorca)
+  id: palma-de-mallorca/mercat-de-santa-catalina
+  neighbourhood: Santa Catalina
+  category: Unfiled
+  budget: Budget
+  note: The Mercat de Santa Catalina is Palmas oldest market, a lively neighbourhood hall where local growers, fishmongers and food producers […]
+- **Palma Artisan & Craft Shops** (Palma de Mallorca)
+  id: palma-de-mallorca/palma-artisan-craft-shops
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The old streets of Palma, particularly around the Passeig des Born and the historic centre, host independent shops selling traditional […]
+
+## Penang (`penang`) — 4 places
+
+- **Chowrasta Local Producers** (Penang)
+  id: penang/chowrasta-local-producers
+  neighbourhood: George Town
+  category: Unfiled
+  budget: Budget
+  note: The markets of George Town, led by Chowrasta, bring together small traders and producers selling local nutmeg products, preserved fruits, […]
+- **Clan Jetties Community** (Penang)
+  id: penang/clan-jetties-community
+  neighbourhood: Weld Quay
+  category: Unfiled
+  budget: Budget
+  note: The clan jetty communities on Weld Quay have lived over the water for generations, and today residents balance daily life […]
+- **George Town Craft Makers** (Penang)
+  id: penang/george-town-craft-makers
+  neighbourhood: George Town
+  category: Unfiled
+  budget: Budget
+  note: George Town supports a community of artisans and social enterprises reviving traditional crafts, from batik and songkok-making to signboard carving, […]
+- **Penang Street Food Heritage** (Penang)
+  id: penang/penang-street-food-heritage
+  neighbourhood: George Town
+  category: Unfiled
+  budget: Budget
+  note: Penangs street food is sustained by generations of hawkers, many operating the same family stall for decades and preserving recipes […]
+
+## Philadelphia (`philadelphia`) — 4 places
+
+- **Down North Pizza** (Philadelphia)
+  id: philadelphia/down-north-pizza
+  neighbourhood: Strawberry Mansion
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: founded by Muhammad Abdul-Hadi and open since March 2021, this Strawberry Mansion pizzeria hires only people who have been through the justice system…
+- **Greensgrow Farms** (Philadelphia)
+  id: philadelphia/greensgrow-farms
+  neighbourhood: Kensington
+  category: Unfiled
+  budget: Budget
+  note: Greensgrow Farms is a pioneering urban farm and social enterprise in the Kensington neighbourhood, built on a former industrial site […]
+- **Harriett’s Bookshop** (Philadelphia)
+  id: philadelphia/harrietts-bookshop
+  neighbourhood: Fishtown
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Jeannine A. Cook opened this Black-owned Fishtown bookshop on 1 February 2020 and built it around a single idea - celebrating women authors,…
+- **Philly AIDS Thrift @ Giovanni’s Room** (Philadelphia)
+  id: philadelphia/philly-aids-thrift-giovannis-room
+  neighbourhood: Washington Square West (Gayborhood)
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Giovanni's Room opened in 1973 and is the oldest continuously running queer and feminist bookstore in the country - and since 2014 it…
+
+## Phoenix (`phoenix`) — 4 places
+
+- **Downtown Phoenix Farmers Market** (Phoenix)
+  id: phoenix/downtown-phoenix-farmers-market
+  neighbourhood: Downtown
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: this Saturday market is run by Community Food Connections, a 501(c)(3) nonprofit founded in 2005 to support small Arizona farms and make fresh…
+- **Fair Trade Cafe** (Phoenix)
+  id: phoenix/fair-trade-cafe
+  neighbourhood: Roosevelt Row
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2007 by former teacher Stephanie Vasquez, this is the longest-standing Latina-owned cafe in Phoenix - and every cup is fair-trade sourced.…
+- **Palabras Bilingual Bookstore** (Phoenix)
+  id: phoenix/palabras-bilingual-bookstore
+  neighbourhood: Roosevelt Row
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: owner Chawa Magaña, the daughter of Mexican immigrants, built Palabras as a Latina-owned bilingual bookstore and community refuge that centers BIPOC voices -…
+- **Practical Art** (Phoenix)
+  id: phoenix/practical-art
+  neighbourhood: Central Phoenix
+  category: Unfiled
+  budget: Budget
+  note: A shop on Central Avenue selling only work by Arizona artists and makers – ceramics, jewellery, prints and homeware – […]
+
+## Ploiesti (`ploiesti`) — 4 places
+
+- **Dealu Mare Wine Producers** (Ploiesti)
+  id: ploiesti/dealu-mare-wine-producers
+  neighbourhood: Dealu Mare
+  category: Unfiled
+  budget: Mid-range
+  note: The Dealu Mare region north of Ploiesti is one of Romanias most important wine areas, its sunny hillsides producing acclaimed […]
+- **Halele Centrale Producers** (Ploiesti)
+  id: ploiesti/halele-centrale-producers
+  neighbourhood: Centru
+  category: Unfiled
+  budget: Budget
+  note: The Central Halls market brings together growers and small producers from around Prahova county selling seasonal fruit, vegetables, cheese, honey […]
+- **Prahova Local Producers** (Ploiesti)
+  id: ploiesti/prahova-local-producers
+  neighbourhood: Centru
+  category: Unfiled
+  budget: Budget
+  note: The fertile countryside of Prahova county around Ploiesti produces a wealth of local food, from fruit and vegetables to cheese, […]
+- **Romanian Craft Cooperative** (Ploiesti)
+  id: ploiesti/romanian-craft-cooperative
+  neighbourhood: Centru
+  category: Unfiled
+  budget: Budget
+  note: Artisans in and around Ploiesti keep alive Romanian folk crafts such as embroidery, weaving, ceramics and painted eggs, often working […]
+
+## Podgorica (`podgorica`) — 4 places
+
+- **Montenegrin Craft Cooperative** (Podgorica)
+  id: podgorica/montenegrin-craft-cooperative
+  neighbourhood: Stara Varos
+  category: Unfiled
+  budget: Budget
+  note: Artisans in and around Podgorica keep alive Montenegrin crafts such as filigree metalwork, woodcarving, weaving and traditional costume-making, often working […]
+- **Plantaze Wine Producers** (Podgorica)
+  id: podgorica/plantaze-wine-producers
+  neighbourhood: Podgorica
+  category: Unfiled
+  budget: Mid-range
+  note: The Podgorica region is home to the vast Plantaze vineyards, among the largest single vineyards in Europe, as well as […]
+- **Podgorica Green Market** (Podgorica)
+  id: podgorica/podgorica-green-market
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: Podgoricas green markets bring together growers and producers from around the fertile Zeta plain and beyond, selling seasonal fruit, vegetables, […]
+- **Skadar Lake Sustainability** (Podgorica)
+  id: podgorica/skadar-lake-sustainability
+  neighbourhood: Skadar
+  category: Unfiled
+  budget: Budget
+  note: Skadar Lake, the largest lake in the Balkans and a national park a short drive from Podgorica, is a haven […]
+
+## Port Douglas (`port-douglas`) — 4 places
+
+- **Janbal Gallery** (Port Douglas)
+  id: port-douglas/janbal-gallery
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An Aboriginal-owned gallery and art studio in nearby Mossman, run by a local Kuku Yalanji artist. You can buy work […]
+- **Mossman Gorge Cultural Centre** (Port Douglas)
+  id: port-douglas/mossman-gorge-cultural-centre
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An Indigenous-owned centre run by the local Kuku Yalanji people at the edge of the rainforest. It offers guided Ngadiku […]
+- **Wavelength Reef Cruises** (Port Douglas)
+  id: port-douglas/wavelength-reef-cruises
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A family-owned, marine-biologist-led reef operator that has put conservation at its very core. As a Coral Nurture Program partner, its […]
+- **Wildlife Habitat Port Douglas** (Port Douglas)
+  id: port-douglas/wildlife-habitat-port-douglas
+  neighbourhood: not recorded
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: A well-regarded wildlife sanctuary on the edge of town, involved in native-species care and breeding programmes. Visiting directly supports its […]
+
+## Port Elizabeth (`port-elizabeth`) — 4 places
+
+- **Calabash Tours** (Port Elizabeth)
+  id: port-elizabeth/calabash-tours
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A pioneering, Fair Trade in Tourism-accredited operator running responsible township and cultural tours, with proceeds supporting community projects through the […]
+- **Masinyusane Development Organization** (Port Elizabeth)
+  id: port-elizabeth/masinyusane-development-organization
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An award-winning local non-profit tackling education and literacy in the bay's schools while creating dignified employment for township women. Expect […]
+- **Missionvale Care Centre** (Port Elizabeth)
+  id: port-elizabeth/missionvale-care-centre
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A landmark community care centre founded by Sister Ethel Normoyle, delivering healthcare, education, food support and skills training in the […]
+- **The Hope Factory** (Port Elizabeth)
+  id: port-elizabeth/the-hope-factory
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A respected non-profit enterprise-development organisation, born in Port Elizabeth, that mentors and grows emerging local entrepreneurs and small businesses. Expect […]
+
+## Portland (`portland`) — 4 places
+
+- **Bison Coffeehouse** (Portland)
+  id: portland/bison-coffeehouse
+  neighbourhood: Cully
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in 2014 by Loretta Guzman, a member of the Shoshone-Bannock Tribes, this is Portland's only Native-owned coffeehouse - the beans come from…
+- **Deadstock Coffee** (Portland)
+  id: portland/deadstock-coffee
+  neighbourhood: Old Town Chinatown
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2015 by former Nike shoe developer Ian Williams, this Black-owned sneaker-culture coffee shop set out to make specialty coffee feel welcoming…
+- **Portland Farmers Market** (Portland)
+  id: portland/portland-farmers-market
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Budget
+  note: The Portland Farmers Market, most famously at Portland State University on Saturdays, is a vibrant celebration of the bountiful produce […]
+- **ReBuilding Center** (Portland)
+  id: portland/rebuilding-center
+  neighbourhood: Boise / Mississippi Ave
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: a nonprofit running since 1997, the ReBuilding Center keeps tons of usable building materials out of landfills and sells them cheap so home…
