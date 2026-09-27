@@ -179,6 +179,41 @@ export async function POST(req: Request) {
        */
       send({ type: "status", phase: "thinking" });
 
+      // Questions the game can answer exactly are answered by the game.
+      //
+      // The tools exist so the model never has to remember a number, but a 3B
+      // model does not reliably reach for them: asked "how many stamps do I have
+      // and what level am I", it answered "Stamp: 0 places" without calling
+      // player_progress at all, against a save holding four. A wrong count is
+      // worse than no model, because it is a number the player will believe.
+      //
+      // So the deterministic layer answers first wherever it has a rule, and the
+      // model handles everything it does not -- which is the prose about the
+      // domain it is actually aligned for. `via` names the rule that answered, so
+      // the client can say where the number came from either way.
+      const lastQuestion = [...trimmed].reverse().find((m) => m.role === "user");
+      if (lastQuestion) {
+        const exact = answerFromEngine(lastQuestion.content, save);
+        if (!exact.unmatched) {
+          send({
+            type: "degraded",
+            reason: "answered from the game, which is authoritative for this",
+            via: exact.via,
+            unmatched: false,
+            text: exact.text,
+          });
+          send({
+            type: "done",
+            model: resolveModel().model ?? "local",
+            customized: true,
+            confidence: null,
+            rounds: 0,
+            latencyMs: Date.now() - started,
+          });
+          return;
+        }
+      }
+
       // Highest confidence seen and how many spans reported it. Nugen sends one
       // per generated span in streaming mode, so the number the player sees is
       // the worst-case of those, not the last one.
