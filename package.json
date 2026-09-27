@@ -2,7 +2,7 @@
   "name": "lal-clone",
   "version": "0.0.0",
   "private": true,
-  "description": "Pixel-faithful frontend clone of likealocalguide.com, captured not eyeballed. Reference material: not product surface.",
+  "description": "City travel guides. Multi-city editorial, no accounts, no tracking. Globe imagery gated behind explicit consent.",
   "scripts": {
     "dev": "next dev --port 4310",
     "build": "next build",
@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit",
     "corpus:build": "esbuild tools/build-nugen-corpus.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/nugen-corpus.mjs --log-level=warning && node node_modules/.cache/nugen-corpus.mjs",
     "nugen:align": "node tools/nugen-align.mjs",
+    "check:consent": "tsx --test tools/check-consent.test.mjs",
     "capture": "node tools/capture.mjs",
+    "capture:planner": "node tools/capture-click.mjs",
+    "check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/check-trip.mjs",
+    "shoot": "node tools/shoot-planner.mjs",
     "verify": "node tools/verify.mjs",
     "verify:places": "node tools/verify-places.mjs",
     "predev": "node tools/copy-cesium-assets.mjs",
@@ -19,11 +23,13 @@
   "dependencies": {
     "cesium": "^1.145.0",
     "gsap": "^3.15.0",
+    "maplibre-gl": "^5.24.0",
     "next": "15.5.26",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-globe.gl": "^2.38.0",
-    "three": "^0.186.1"
+    "three": "^0.186.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -31,6 +37,8 @@
     "@types/react-dom": "^19.0.0",
     "esbuild": "^0.28.2",
     "playwright": "^1.49.1",
-    "typescript": "~5.9.3"
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.11"
   }
 }

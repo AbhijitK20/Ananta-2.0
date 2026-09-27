@@ -1,0 +1,969 @@
+/*
+ * PLANNER — a third design system, and the only one that is not a clone of LAL.
+ *
+ * The home page and the interior pages both reproduce likealocalguide.com. This
+ * file does not: /social-impact now rebuilds Furkot's trip planner, which is a
+ * different product with a different palette, a different type stack and a
+ * different idea of what a page is — a full-bleed map with a toolbar and edge
+ * tabs, not a scrolling document. So it gets its own token layer, and, as with
+ * the interior layer, nothing above this is edited to accommodate it.
+ *
+ * Source of every value: tools/capture.mjs and tools/capture-click.mjs against
+ * https://trips.furkot.com/ui at 1440x900 and 390x844, reading
+ * getComputedStyle on each element. Furkot injects its CSS from JS, so the
+ * source rules cannot be fetched and the computed style is the only honest
+ * reading. Where a value is a guess rather than a measurement it says so.
+ *
+ * What could not be measured: the map itself. trips.furkot.com/trip returns the
+ * same 43KB anonymous shell as /ui -- the planner map is behind a login -- so
+ * the toolbar and the edge tabs below are taken from a screenshot, and the
+ * basemap, scale bar and coordinate readout are built to look right rather than
+ * measured. The modal is measured; the map is not. Do not treat the two halves
+ * as equally trustworthy.
+ */
+
+:root {
+  /* Measured: header.page-header computed backgroundColor rgb(97, 95, 92). */
+  --fk-chrome: #615f5c;
+  --fk-chrome-2: #4a4845;
+  --fk-ink: #000;
+  --fk-body: #333;
+  --fk-soft: #6b6b6b; /* measured: input.trip-type colour rgb(107,107,107) */
+  --fk-faint: #9a9a9a;
+  --fk-line: #d6d6d6;
+  --fk-rule: #c8c8c8;
+  --fk-panel: #fff;
+  --fk-canvas: #f2f2f2;
+  /* Measured: a.next / a.done backgroundColor rgb(242, 104, 12), and the same
+     value on a.help-link, so the orange is one brand colour used three ways. */
+  --fk-accent: #f2680c;
+  --fk-accent-dark: #cf5506;
+  /* Measured: button colour rgb(243, 242, 232) — a warm off-white, not #fff. */
+  --fk-on-accent: #f3f2e8;
+  --fk-done: #f7b48a; /* measured: a.done in its fuwr-state-disabled state */
+  /* The yellow map hint in the screenshot. Unmeasured — the map is behind a
+     login. Chrome's own #ffff00 is too harsh against a basemap. */
+  --fk-hint: #ffe066;
+  --fk-hint-ink: #4a3c00;
+
+  /* Measured: every element on the page resolves to this stack. */
+  --fk-ui: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --fk-bar: 34px; /* measured: header.page-header height 34 */
+  --fk-tab: 38px; /* guessed from the screenshot's right-edge tabs */
+  --fk-btn-h: 22px; /* measured: a.done 22px tall */
+}
+
+/* ------------------------------------------------------------------ the shell */
+
+/*
+ * The root layout renders <Header> and <Footer> around every page, and this one
+ * covers the viewport with a fixed map, so they end up behind it. Hidden rather
+ * than merely covered, because `position: fixed` takes them out of sight and not
+ * out of the tab order: a keyboard user could tab from the toolbar straight into
+ * a LAL nav link with nothing on screen to show where they had gone.
+ *
+ * :has() is what scopes this. The planner owns the viewport, so "the LAL chrome
+ * is unwanted exactly when a .fk-page exists" is the whole condition, and it
+ * cannot fire on a page that has no planner. planner.css is also route-scoped --
+ * measured: /social-impact loads it, /about and /cities do not -- so the rule is
+ * doubly scoped. The skip link stays, because #main is where the planner lives.
+ */
+body:has(.fk-page) > .lal-header,
+body:has(.fk-page) > .lal-footer {
+  display: none;
+}
+
+.fk-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--fk-canvas);
+  color: var(--fk-ink);
+  font-family: var(--fk-ui);
+  font-size: 14px;
+  line-height: 1.4; /* measured: div.body 14px / 19.6px */
+  overflow: hidden;
+}
+
+/* The map is the page. Everything else floats on it. */
+.fk-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.fk-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* maplibre's own chrome is third-party; these are the only overrides it needs. */
+.fk-canvas .maplibregl-ctrl-attrib {
+  font-family: var(--fk-ui);
+  font-size: 11px;
+  background: rgb(255 255 255 / 0.8);
+}
+
+/* While maplibre is being fetched there is no map to look at, and a spinner here
+   would collapse to nothing and shove the layout sideways on load. A structural
+   block in the same box is what the map below needs. */
+.fk-mapload {
+  background: linear-gradient(160deg, #e8eef0, #dde6e9);
+}
+
+/* The basemap is a third-party request. If it fails, say so rather than showing
+   an empty grey box that reads as "no places here". */
+.fk-mapfail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--fk-canvas);
+  color: var(--fk-soft);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* A numbered stop marker, built in JS as a <button> so it is focusable and
+   labelled. Unmeasured: the planner map could not be captured. */
+.fk-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--fk-accent);
+  color: #fff;
+  font-family: var(--fk-ui);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+}
+
+.fk-pin:hover {
+  background: var(--fk-accent-dark);
+  transform: scale(1.12);
+}
+
+/* ---------------------------------------------------------------- the toolbar */
+
+/* Measured: header.page-header is 1440x34, display flex, padding 0 5px 0 10px. */
+.fk-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--fk-bar);
+  padding: 0 5px 0 10px;
+  background: var(--fk-chrome);
+  color: #fff;
+  font-size: 13px;
+  flex: none;
+  z-index: 20;
+}
+
+.fk-bar__logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-right: 14px;
+  margin-right: 6px;
+  color: #fff;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  border-right: 1px solid rgb(255 255 255 / 0.18);
+}
+
+.fk-bar__spacer {
+  flex: 1;
+}
+
+/* The icon buttons are the 28x28 squares measured in the toolbar: each
+   .fuwr-state-buttons li is 28x28 with a 28x28 anchor inset by 2px. */
+.fk-ibtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fk-ibtn:hover {
+  background: rgb(255 255 255 / 0.14);
+}
+
+.fk-ibtn[aria-pressed="true"] {
+  background: var(--fk-accent);
+}
+
+/* Measured: div.toolbar / div.trips-buttons is a 143x28 flex row of 28px cells. */
+.fk-bar__group {
+  display: flex;
+  align-items: center;
+  height: 28px;
+}
+
+.fk-bar__group + .fk-bar__group {
+  margin-left: 4px;
+}
+
+.fk-bar__divider {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: rgb(255 255 255 / 0.22);
+}
+
+/* The pencil in the screenshot carries an orange underline, which is how the
+   live page marks the panel you are editing. */
+.fk-ibtn--active {
+  box-shadow: inset 0 -3px 0 var(--fk-accent);
+}
+
+.fk-cta {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  background: var(--fk-accent);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fk-cta:hover {
+  background: var(--fk-accent-dark);
+}
+
+/* ------------------------------------------------------------- the edge tabs */
+
+/* Unmeasured: taken from the screenshot. Right edge reads TRIPS, PLAN, SLEEP,
+   EAT, FIND downwards, each a rotated orange tab. */
+.fk-tabs {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fk-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fk-tab);
+  height: 92px;
+  border: 0;
+  padding: 0;
+  background: var(--fk-accent);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  cursor: pointer;
+}
+
+.fk-tab:hover {
+  background: var(--fk-accent-dark);
+}
+
+.fk-tab[aria-pressed="true"] {
+  background: var(--fk-chrome-2);
+}
+
+/* The single left-edge tab, MY TRIPS, sits at a different height from the right
+   stack in the screenshot, which is why it is positioned on its own. */
+.fk-tabs--left-wrap {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* --------------------------------------------------------------- map overlays */
+
+/* The scale bar in the screenshot: a white box, a black rule, 500mi under it. */
+.fk-scalebar {
+  position: absolute;
+  left: 10px;
+  bottom: 26px;
+  z-index: 10;
+  padding: 2px 6px 3px;
+  background: rgb(255 255 255 / 0.9);
+  border: 1px solid #555;
+  color: #111;
+  font-size: 11px;
+  line-height: 1.3;
+  pointer-events: none;
+}
+
+.fk-scalebar__rule {
+  height: 4px;
+  border: 1px solid #111;
+  border-top: 0;
+  background: linear-gradient(to right, #111 50%, transparent 50%);
+  background-size: 8px 100%;
+}
+
+/* The readout moves in with the panel, for the same reason the panel does. */
+.fk-coords {
+  position: absolute;
+  top: 8px;
+  right: calc(var(--fk-tab) + 12px);
+  z-index: 10;
+  padding: 3px 8px;
+  background: rgb(255 255 255 / 0.92);
+  border: 1px solid var(--fk-line);
+  color: var(--fk-body);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* The yellow "Click to add a new stop here" bubble. Unmeasured. */
+.fk-hint {
+  position: absolute;
+  top: 96px;
+  left: 50%;
+  z-index: 12;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background: var(--fk-hint);
+  color: var(--fk-hint-ink);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+}
+
+.fk-hint::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 6px solid transparent;
+  border-top-color: var(--fk-hint);
+  transform: translateX(-50%);
+}
+
+/* ------------------------------------------------------------------ the panel */
+
+/* Inset by the tab width so the edge tabs stay visible and clickable while a
+   panel is open. At right:0 the panel sat on top of them and there was no way
+   to switch sections without first closing the panel. */
+.fk-panel {
+  position: absolute;
+  top: 0;
+  right: var(--fk-tab);
+  bottom: 0;
+  z-index: 16;
+  width: 372px;
+  display: flex;
+  flex-direction: column;
+  background: var(--fk-panel);
+  border-left: 1px solid var(--fk-rule);
+  box-shadow: -2px 0 10px rgb(0 0 0 / 0.14);
+  overflow: hidden;
+}
+
+.fk-panel__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--fk-chrome);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  flex: none;
+}
+
+.fk-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+
+.fk-panel__foot {
+  flex: none;
+  padding: 9px 12px;
+  border-top: 1px solid var(--fk-line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ------------------------------------------------------------------- controls */
+
+.fk-field {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.fk-field__label {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--fk-soft);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Measured: input.first and input.last are 730x28 at 16px with 3.2px padding and
+   no radius. The 28px height is font-size 16 * line-height 1.4 + 2 * 3.2. */
+.fk-input,
+.fk-select {
+  width: 100%;
+  height: 28px;
+  padding: 3.2px 6px;
+  border: 1px solid var(--fk-line);
+  border-radius: 0;
+  background: #fff;
+  color: var(--fk-ink);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.fk-input:focus-visible,
+.fk-select:focus-visible,
+.fk-btn:focus-visible,
+.fk-tab:focus-visible,
+.fk-ibtn:focus-visible,
+.fk-check:focus-visible + .fk-check__box {
+  outline: 2px solid var(--fk-accent);
+  outline-offset: 1px;
+}
+
+.fk-input::placeholder {
+  color: var(--fk-faint);
+}
+
+/* Measured: a.next is 10px/600 uppercase, 5px 10px padding, 49x22, radius 0. */
+.fk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--fk-btn-h);
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: var(--fk-accent);
+  color: var(--fk-on-accent);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fk-btn:hover {
+  background: var(--fk-accent-dark);
+}
+
+.fk-btn:disabled,
+.fk-btn[aria-disabled="true"] {
+  background: var(--fk-done);
+  cursor: not-allowed;
+}
+
+.fk-btn--ghost {
+  background: transparent;
+  border-color: var(--fk-rule);
+  color: var(--fk-body);
+}
+
+.fk-btn--ghost:hover {
+  background: var(--fk-canvas);
+}
+
+/* Measured: a.help-link colour rgb(242, 104, 12) at 14px, margin-top 7px. */
+.fk-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 7px;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--fk-accent);
+  font-family: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fk-link:hover {
+  text-decoration: underline;
+}
+
+/* Measured: the checkbox is a 13x13 native input, and the label text is 16px at
+   rgb(107,107,107). Furkot hides the native box and draws its own. */
+.fk-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  font-size: 16px;
+  color: var(--fk-soft);
+  cursor: pointer;
+}
+
+.fk-check input {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  opacity: 0;
+}
+
+.fk-check__box {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--fk-soft);
+  background: #fff;
+}
+
+.fk-check input:checked + .fk-check__box {
+  background: var(--fk-accent);
+  border-color: var(--fk-accent);
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+/* ---------------------------------------------------------------- filter bar */
+
+/* The same three controls the clone's DirectoryFilter already offers, restyled
+   for a 372px panel rather than a 1200px wrap. */
+.fk-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fk-filters .fk-field:first-child {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.fk-count {
+  margin: 0 0 8px;
+  color: var(--fk-soft);
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- the results */
+
+.fk-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fk-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-bottom-color: var(--fk-line);
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fk-result:hover {
+  background: var(--fk-canvas);
+  border-color: var(--fk-rule);
+}
+
+.fk-result__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fk-result__meta {
+  color: var(--fk-soft);
+  font-size: 12px;
+}
+
+.fk-result__add {
+  margin-left: auto;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--fk-rule);
+  background: #fff;
+  color: var(--fk-accent);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fk-result__add:hover {
+  background: var(--fk-accent);
+  color: #fff;
+}
+
+/* --------------------------------------------------------------- the itinerary */
+
+.fk-stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fk-stop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--fk-line);
+  background: #fff;
+}
+
+.fk-stop--dragging {
+  opacity: 0.4;
+}
+
+/* The drop indicator. Its position comes from moveStop's reported `to`, which is
+   why that function returns the pair instead of a boolean. */
+.fk-stop--target {
+  border-top: 2px solid var(--fk-accent);
+}
+
+.fk-stop__grip {
+  flex: none;
+  width: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fk-faint);
+  font-size: 14px;
+  line-height: 1;
+  cursor: grab;
+}
+
+.fk-stop__grip:active {
+  cursor: grabbing;
+}
+
+.fk-stop__ord {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--fk-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 20px;
+}
+
+.fk-stop__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.fk-stop__name span {
+  display: block;
+  color: var(--fk-soft);
+  font-size: 12px;
+}
+
+.fk-stop__stay {
+  flex: none;
+  width: 52px;
+  height: 24px;
+  padding: 2px 4px;
+  border: 1px solid var(--fk-line);
+  font-family: inherit;
+  font-size: 12px;
+  text-align: right;
+}
+
+.fk-stop__del {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: none;
+  color: var(--fk-soft);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.fk-stop__del:hover {
+  color: var(--fk-accent);
+}
+
+.fk-leg {
+  margin: 0;
+  padding: 2px 0 2px 50px;
+  color: var(--fk-faint);
+  font-size: 11px;
+}
+
+/* ------------------------------------------------------------------- summary */
+
+.fk-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.fk-stat {
+  padding: 6px 8px;
+  background: var(--fk-canvas);
+  border: 1px solid var(--fk-line);
+}
+
+.fk-stat b {
+  display: block;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.fk-stat span {
+  color: var(--fk-soft);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fk-empty {
+  padding: 18px 10px;
+  color: var(--fk-soft);
+  font-size: 13px;
+  text-align: center;
+}
+
+.fk-note {
+  margin: 0 0 10px;
+  color: var(--fk-soft);
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- the dialog */
+
+/* Measured: dialog.closable.dialog.long is 750x509 centred at 1440 wide, and
+   390x327 pinned to the bottom edge at 390 wide.
+
+   No border. The capture read `border: 0px none` on the dialog, and the 1px
+   outline visible in the reference screenshot is its box-shadow, not a border.
+   That distinction is worth 2px of width: with box-sizing:border-box inherited
+   from the reset, a 1px border here makes the content column 748 and every input
+   inside it 2px narrower than the capture recorded. */
+.fk-dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 60;
+  width: 750px;
+  max-width: 100vw;
+  transform: translate(-50%, -50%);
+  background: var(--fk-panel);
+  box-shadow: 0 0 0 1px var(--fk-rule), 0 6px 28px rgb(0 0 0 / 0.35);
+  font-family: var(--fk-ui);
+  font-size: 14px;
+  line-height: 1.4; /* measured: div.body 14px / 19.6px */
+  color: var(--fk-ink);
+}
+
+/* Click-to-catch for the dialog. Deliberately transparent: the reference
+   screenshot shows the map at full brightness straight through the space around
+   the dialog, so there is no scrim there, and dimming the basemap would be a
+   thing we added that the original does not do. The dialog's own shadow is what
+   separates it from the map. */
+.fk-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+}
+
+/* Measured: span.title is 750x40, padding 9px, 18px/600, bg rgba(0,0,0,0.1). */
+.fk-dialog__title {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 9px;
+  background: rgb(0 0 0 / 0.1);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.23; /* measured 22.158px */
+}
+
+/* Measured: button.close is 30x30 at the dialog's top right, inset 5px. */
+.fk-dialog__close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: rgb(0 0 0 / 0.07);
+  color: var(--fk-body);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fk-dialog__close:hover {
+  background: rgb(0 0 0 / 0.16);
+}
+
+/* Measured: div.body is 750x428 with padding 14px 9.8px, giving the 730px
+   content column the wizard and its inputs actually occupy. */
+.fk-dialog__body {
+  padding: 14px 9.8px;
+}
+
+/*
+ * ponytail: the dialog stands 4px taller than the capture's 509px, and the cause
+ * is deliberate. The reference reaches 509 with a disabled DONE and no
+ * explanation of why; this build adds the "Still needed" line, worth about 29px,
+ * and its paragraphs come out correspondingly tighter. Closing the last 4px means
+ * either dropping the note or reproducing the reference's exact paragraph
+ * wrapping, which follows from its font metrics rather than ours. tools/
+ * shoot-planner.mjs holds the widths and the input heights to a pixel and the
+ * total height to 8px, and says the same thing there.
+ */
+
+/* The wizard's vertical rhythm. Furkot spaces its blocks with empty .spacer divs
+   and zero-margin paragraphs, not with paragraph margins -- adding both is how
+   this ended up 58px taller than the capture. So: paragraphs carry no margin and
+   the spacers do the work. */
+.fk-wizard > p {
+  margin: 0;
+}
+
+.fk-wizard__lede {
+  line-height: 1.3;
+}
+
+.fk-wizard__spacer {
+  height: 8px;
+}
+
+/* Measured: div.with-locate reserves 32px on the right for the house button,
+   which is what makes input.first 698 wide rather than the full 730. */
+.fk-locate {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-right: 32px;
+  position: relative;
+}
+
+.fk-locate .fk-input {
+  height: 28px;
+}
+
+.fk-locate__home {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: none;
+  color: var(--fk-soft);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.fk-locate__home:hover {
+  color: var(--fk-accent);
+}
+
+/* Measured: the loop row is a 730x40 info window holding a 224x26 label. */
+.fk-dialog .fk-check {
+  min-height: 26px;
+  margin: 4px 0 8px;
+  font-size: 16px;
+}
+
+/* Measured: input.destination is the Trip name field, 31px tall, so it is the
+   only input in the dialog not set to the 28px row height. */
+.fk-dialog__name {
+  margin-bottom: 8px;
+}
+
+.fk-dialog__name .fk-input {
+  height: 31px;
+  line-height: 1.4;
+}
+
+.fk-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin: 0 3px; /* measured: .confirmation-actions margin 0 3px */
+  padding: 9.1px 0;
+}
+
+.fk-dialog__actions .fk-link {
+  margin: 0 7px 0 0;
+  margin-right: auto;
+}
+
+@media (max-width: 780px) {
+  /* Measured at 390: the dialog is full-bleed and sits on the bottom edge, and
+     every .wide-screen-only paragraph is gone -- which is why the mobile dialog
+     is 327 tall against 509 on the desktop. */
+  .fk-dialog {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100vw;
+  }
+
+  .fk-dialog__body {
+    padding: 14px 9.8px 0;
+  }
+
+  .fk-wide {
+    display: none;
+  }
+}

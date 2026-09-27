@@ -168,7 +168,11 @@ export const PLACES: Record<string, Place[]> = {
 };
 
 export const NAV = [
-  { href: "/social-impact", label: "Social Impact" },
+  // The href is still /social-impact because that is the route this planner
+  // inherited; the label follows what the page now is. Renaming the route would
+  // break any link already pointing at it for no gain, since nothing outside this
+  // app links here.
+  { href: "/social-impact", label: "Plan a trip" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
