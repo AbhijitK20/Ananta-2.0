@@ -8,7 +8,7 @@ export function Footer() {
       <div className="lal-box">
         <div className="lal-footer__inner lal-container">
         <h2 className="lal-footer__title lal-fit">
-          <Link href="/">Like A Local Guide</Link>
+          <Link href="/">Ananta</Link>
         </h2>
         <p className="lal-footer__tagline lal-fit">
           Curated, multi-city travel guides with local-recommended picks.
@@ -45,7 +45,7 @@ export function Footer() {
 
         <p className="lal-footer__fine">
           Some links may be affiliate links. We only recommend places we genuinely
-          love. &copy; 2026 Like A Local Guide (LAL Guide). Bookings via Hotels.com,
+          love. &copy; 2026 Ananta. Bookings via Hotels.com,
           GetYourGuide &amp; official sites.
         </p>
 

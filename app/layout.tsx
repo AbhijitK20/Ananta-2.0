@@ -26,13 +26,34 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+/* No Ananta domain is recorded anywhere in the repo yet, and Next resolves a
+   relative og:image against this. Left unset it would emit
+   http://localhost:3000/og.png into every shared link, so the deploy sets it. */
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:4310";
+
+const description =
+  "Skip the tourist traps. Start with a city and get straight to the cafés, bars, culture and hidden gems that locals swear by.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Like a Local Guide – City Travel Guides & Local Tips",
-    template: "%s – Like a Local Guide",
+    default: "Ananta – City Travel Guides & Local Tips",
+    template: "%s – Ananta",
   },
-  description:
-    "Skip the tourist traps. Start with a city and get straight to the cafés, bars, culture and hidden gems that locals swear by.",
+  description,
+  openGraph: {
+    type: "website",
+    siteName: "Ananta",
+    title: "Ananta – City Travel Guides & Local Tips",
+    description,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Ananta" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ananta – City Travel Guides & Local Tips",
+    description,
+    images: ["/og.png"],
+  },
 };
 
 export const viewport: Viewport = {

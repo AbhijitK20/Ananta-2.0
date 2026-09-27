@@ -27,20 +27,21 @@ export default function AboutPage() {
 
         <p className="g-edit__sub">
           We believe the best trips come from local knowledge — not endless lists or
-          paid placements. Like A Local Guide exists to fix that.
+          paid placements. Ananta exists to fix that.
         </p>
 
-        <h2 style={{ textAlign: "center" }}>Built by Like A Local Tours</h2>
+        <h2 style={{ textAlign: "center" }}>How Ananta is put together</h2>
 
         <p>
-          Like A Local Guide is built by the team behind Like A Local Tours. We use
-          the same local experience that powers our group walking tours to curate
-          every city guide here.
+          Ananta is built around one idea: a recommendation is only worth anything if
+          it came from someone who knows the place. Every guide here is assembled from
+          that kind of on-the-ground knowledge, and the same bar decides what gets
+          left out.
         </p>
         <p>
-          For years, our guides have walked travelers through these cities in
-          person — learning which counters are worth the queue, which museums earn
-          their ticket price, and which neighbourhoods are still worth a look.
+          That means paying attention to the details a search box cannot return —
+          which counters are worth the queue, which museums earn their ticket price,
+          and which neighbourhoods are still worth a look.
         </p>
         <p>
           <a href="#">Read the story behind our relaunch</a>
@@ -67,12 +68,12 @@ export default function AboutPage() {
           ))}
         </div>
 
-        <h2>From award-winning local tours to a global guide</h2>
+        <h2>From local tips to a global guide</h2>
         <p>
-          Like A Local Tours runs award-winning tours in{" "}
+          Ananta covers{" "}
           {CITIES.length > 0 ? cities.slice(0, 5).map((c) => c.name).join(", ") : "our"}{" "}
-          and counting. The same guides write these guides, which means the advice
-          here is the advice we give on the ground, in person, every single week.
+          and counting. The advice here is the advice a local would give you on the
+          ground, in person, every single week.
         </p>
 
         <h2>What you’ll find here</h2>
