@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * The traveller's situation: time, money, who they are, what they need, weather.
  *
@@ -9,7 +11,13 @@
  *
  * Every control here maps to exactly one field of the frozen `DiscoveryContext`
  * and nothing is derived or hidden. Access needs are discrete booleans, never a
- * score: "I need step-free" has to be satisfiable exactly or not at all.
+ * score: "I need step-free" has to be satisfiable exactly or not all.
+ *
+ * `"use client"` was missing. This component has always used `useState`, and it is
+ * imported by `ContextBar`, which is rendered by the server component at
+ * `src/app/page.tsx` — so `next build` failed with "You're importing a component
+ * that needs `useState`. This React Hook only works in a Client Component." The
+ * dev server tolerates it; the production compiler does not.
  */
 
 import { useState } from "react";

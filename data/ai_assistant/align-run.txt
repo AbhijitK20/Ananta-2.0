@@ -1,0 +1,32 @@
+
+> travelbuddy@0.1.0 assistant:align
+> tsx scripts/assistant-align.ts
+
+[   0s] dataset: 113 train / 34 validation / 24 held out
+[   0s] dataset sha256: 45e9dcecc6a695d9f6942ee173b5d41b3d6ad8979787e567819535b27d120749
+[   1s] uploaded 0 documents, reused 12
+[   1s] all documents READY
+[   2s] benchmark: 34 samples, id benchmark_01m3gf73bak9p8de
+[   2s] alignment alignment_01m3gf73kht8n4tb created on llama-v3p2-3b-reasoning (PROCESSING)
+[   2s] alignment: QUEUED
+[  17s] attempt 1/3 failed: Finetuning failed: Nugen job creation failed: HTTP 502 Bad Gateway
+[  17s] retrying in 10s
+[  27s] alignment alignment_01m3gf7wecx3rnq5 created on llama-v3p2-3b-reasoning (PROCESSING)
+[  27s] alignment: QUEUED
+[  42s] attempt 2/3 failed: Finetuning failed: Nugen job creation failed: HTTP 502 Bad Gateway
+[  42s] retrying in 20s
+[  63s] alignment alignment_01m3gf8z7g3tzrbz created on llama-v3p2-3b-reasoning (PROCESSING)
+[  63s] alignment: QUEUED
+[  78s] attempt 3/3 failed: Finetuning failed: Nugen job creation failed: HTTP 502 Bad Gateway
+
+assistant-align: Nugen could not train the aligned model: Finetuning failed: Nugen job creation failed: HTTP 502 Bad Gateway
+  Their control plane answered — the corpus uploaded, the benchmark was accepted
+  and the project was created and queued — so the request and the data are fine.
+  This is their GPU training backend returning 502.
+
+  Re-run `npm run assistant:align` when it recovers. Uploads are deduplicated by
+  filename, so a re-run costs nothing.
+
+  The assistant keeps working meanwhile: with no customized model it answers from
+  the deterministic provider, and /api/assistant/health reports customized: false.
+

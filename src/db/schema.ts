@@ -270,14 +270,81 @@ export const experienceFtsTriggers = [
   `,
 ];
 
+/**
+ * The AI assistant's conversations and messages.
+ *
+ * Separate tables from `experience` on purpose: the catalogue is shared reference
+ * data that every engine reads, and chat transcripts are per-owner private state
+ * that only the assistant feature touches. One table would force a nullable
+ * `owner_id` onto 250 catalogue rows and a nullable `duration_min` onto every
+ * message.
+ *
+ * `ownerId` is the SHA-256 of the session cookie, not the cookie. See migration 5
+ * in migrations.ts for why that distinction is load-bearing.
+ */
+export const assistantConversation = sqliteTable(
+  "assistant_conversation",
+  {
+    id: text("id").primaryKey(),
+    /** SHA-256 hex of the owner secret. Indexed with updatedAt: that is the sidebar query. */
+    ownerId: text("owner_id").notNull(),
+    /** Derived from the first user message. Empty string until then, never NULL. */
+    title: text("title").notNull().default(""),
+    createdAt: text("created_at").notNull(),
+    /** Bumped on every message write, so the sidebar sorts without a join. */
+    updatedAt: text("updated_at").notNull(),
+    metadata: text("metadata", { mode: "json" })
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default({}),
+  },
+  (t) => [index("idx_assistant_conv_owner").on(t.ownerId, t.updatedAt)],
+);
+
+export const assistantMessage = sqliteTable(
+  "assistant_message",
+  {
+    id: text("id").primaryKey(),
+    conversationId: text("conversation_id")
+      .notNull()
+      .references(() => assistantConversation.id, { onDelete: "cascade" }),
+    role: text("role").$type<"user" | "assistant" | "system">().notNull(),
+    content: text("content").notNull().default(""),
+    /**
+     * Why a message can be incomplete. `streaming` is written by the route before
+     * the first token and rewritten to `complete`/`stopped`/`error` in a finally,
+     * so a crashed request leaves a `streaming` row rather than a truncated
+     * answer that reads as finished.
+     */
+    status: text("status").$type<"complete" | "streaming" | "stopped" | "error">()
+      .notNull()
+      .default("complete"),
+    createdAt: text("created_at").notNull(),
+    /** The model that produced it. Provenance for a prediction, per src/llm/nugen.ts. */
+    modelId: text("model_id"),
+    /** Provider-reported counts. NULL means the provider did not report them. */
+    tokenUsage: text("token_usage", { mode: "json" }).$type<Record<string, number> | null>(),
+    latencyMs: integer("latency_ms"),
+    metadata: text("metadata", { mode: "json" })
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default({}),
+  },
+  (t) => [index("idx_assistant_msg_conversation").on(t.conversationId, t.createdAt)],
+);
+
 /** Convenience alias so callers write `Schema.experience`, matching Drizzle docs. */
 export const Schema = {
   experience,
   experienceOpenInterval,
   experienceEmbedding,
   harvestRun,
+  assistantConversation,
+  assistantMessage,
 };
 
 export type ExperienceRow = typeof experience.$inferSelect;
 export type NewExperienceRow = typeof experience.$inferInsert;
 export type OpenIntervalRow = typeof experienceOpenInterval.$inferSelect;
+export type AssistantConversationRow = typeof assistantConversation.$inferSelect;
+export type AssistantMessageRow = typeof assistantMessage.$inferSelect;

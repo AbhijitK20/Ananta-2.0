@@ -1,0 +1,29 @@
+{
+  "prompt_version": "1.0.0",
+  "generated_by": "scripts/assistant-dataset.ts",
+  "examples": 171,
+  "train": 113,
+  "validation": 34,
+  "test": 24,
+  "documents": 12,
+  "document_characters": 70436,
+  "catalogue_experiences": 4596,
+  "dataset_sha256": "45e9dcecc6a695d9f6942ee173b5d41b3d6ad8979787e567819535b27d120749",
+  "test_sha256": "96e6ac2d6bfdf914abdca32f4bb1a9eecf55c8b2a333edcdaf07a7214f871157",
+  "split_policy": "Deterministic SHA-256 bucket of the example id: <0.70 train, <0.85 validation, else test. Hash rather than position so adding an example does not move an existing one between splits.",
+  "tag_counts": {
+    "adversarial": 5,
+    "ambiguous": 5,
+    "app-howto": 36,
+    "detailed": 108,
+    "domain-qa": 109,
+    "edge-case": 6,
+    "grounded-fact": 101,
+    "multi-turn": 3,
+    "out-of-scope": 8,
+    "refusal": 16,
+    "terminology": 8,
+    "terse": 50,
+    "ungrounded": 4
+  }
+}

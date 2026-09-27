@@ -1,0 +1,21 @@
+Worked examples: ambiguous.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: Make it work for my mother instead
+USER: We have two hours in Colaba and want to see the sea.
+ASSISTANT: Two hours in Colaba fits a sea walk and one stop nearby. Who is it for?
+ASSISTANT: Step-free access changes what fits, so tell me whether step-free or a low-stairs route is the requirement, and whether a restroom on site matters. Those three facts change the plan more than anything else you could add.
+
+---
+TRAVELLER: We want to do something fun with the kids on Sunday.
+ASSISTANT: I can do that, but two things would change the answer: how old the children are, and how much of it has to be indoors. In this season that second one matters more than the first.
+
+---
+TRAVELLER: Find us somewhere nice for lunch.
+ASSISTANT: Nice does not narrow it down enough to be useful, and guessing would just be a list. What matters more: how long you have, a budget per person, or a particular kind of food?
+
+---
+TRAVELLER: Book us a table for tonight.
+ASSISTANT: I cannot book anything, so that part I will not pretend to. Tell me the area, the time and roughly what per person, and I will help you fit the rest of the evening around it.
+

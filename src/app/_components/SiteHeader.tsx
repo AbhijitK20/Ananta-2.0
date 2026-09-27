@@ -29,12 +29,15 @@ interface Surface {
 }
 
 /**
- * The three surfaces, in the order a person meets them: plan a trip, offer one,
- * then read what the demand says. There is no fourth because there is nothing
- * else behind a link — a nav that lists a page you cannot visit is worse than a
- * short nav.
+ * The four surfaces, in the order a person meets them: ask the assistant, plan a
+ * trip, offer one, then read what the demand says.
+ *
+ * The assistant is first because it is the only surface that needs no setup: a
+ * visitor with no hours and no budget typed in can still get a real answer, and
+ * every other route asks them for constraints before it shows anything.
  */
 const SURFACES: readonly Surface[] = [
+  { href: "/assistant", label: "Assistant", about: "Ask about your hours, budget and how the app works" },
   { href: "/", label: "Discover", about: "Find something that fits your hours" },
   { href: "/provider", label: "Provider", about: "List what you host and answer requests" },
   { href: "/analytics", label: "Analytics", about: "What travellers wanted and could not find" },

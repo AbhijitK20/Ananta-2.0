@@ -1,0 +1,64 @@
+The catalogue the assistant answers from. Every field below is a real row from content/experiences.
+The assistant may state a price, an hour, a duration or a distance only when it appears in a fact like these.
+'Price not listed' and 'opening hours not verified' are states, not gaps to be filled in.
+
+- Worli Fort; in Mumbai; — heritage site, 75 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Vetal Temple; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Nagori Tea stall; in MUMBAI, MUMBAI; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- la pinoz's pizza; in Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Balaji Chinese Restaurant; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Cts No. 887 Miranda Fort; in Mumbai; — heritage site, 75 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Racecourse Masjid; in Mumbai; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Frere Temple; in Mumbai; — heritage site, 75 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Kala Ghoda; in Mumbai; — heritage site, 75 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Utsav; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Ayappa Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Chotu's Kitchen; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Hotel Ashirwad; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Lazeez Caterers; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Grab Some Momos; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Mobile Point; in Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- The Walk; in Mumbai; — heritage site, 75 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Chakra; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Delhi Darbar; in Mumbai, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+- Gaylord; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Mockingbird Café Bar; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 09:00-24:00; no access features recorded.
+- Hotel Hindmata; in Mumbai, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 11:00-00:00; no access features recorded.
+- Banana Leaf; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Ninety One Cycles - Ohiwara; in Andheri (W), Mumbai, Andheri (W), Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- What The Fries; in Mumbai, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Steam Train Engine; in Mumbai; — heritage site, 75 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Sri Jalaram Ice Bhel; in Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Shawarma House; in Mumbai, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Marrakesh; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Marimman Temple; in Malad West, Mumbai, Malad West, Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Arslan Shawarma King; in Mumbai, Mumbai; — street food, 30 minutes, outdoor; price not listed; hours: Mo-Su 17:00-23:00; no access features recorded.
+- Tunak Tunak Tunn; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Achija; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su,PH 09:00-01:30; no access features recorded.
+- Rasodu - The Ethnic Kitchen; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 11:00-15:30, 19:30-23:30; no access features recorded.
+- Radha Krishna Fast Food; in Mumbai, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Lala Tulsiram Aggarwal; in Mumbai; — hidden place, 45 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Shiv Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Sea Breeze Kitchen; in Mumbai, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 16:00-00:00; no access features recorded.
+- baba foodin; in Mumbai, Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Gravity Bar and Restaurant; in Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Kshetrapal Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Chamunda Dham; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Shirdi Baba Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- vidhi'; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 11:00-23:00; no access features recorded.
+- Radhe Krishna Temple; in Mumbai, Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- rajaram garden; in Mumbai; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Holy Family Church; in Mumbai; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Sri Baleshwar Mahadev Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- I Love Mulund; in Mumbai; — hidden place, 45 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Radhakrishna Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- western park; in Mumbai, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: 10:00-22:00; no access features recorded.
+- Kalimata Mandir; in Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Granth; in Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Testbuds; in Mulund (West), Mulund (West); — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Paris Bakery; in Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Sayyed Ashiq Shah Bukhari Dargah Masjid; in Mumbai; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Khoja Jama Masjid; in Mumbai; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- St Ignatius Church Mandvi; in Mumbai; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Raju Rolls; in Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Archdiocesan Heritage Museum; in Mumbai; — museum, 120 minutes, indoor; price not listed; opening hours not verified; no access features recorded.

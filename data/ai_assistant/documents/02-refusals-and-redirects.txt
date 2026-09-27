@@ -1,0 +1,7 @@
+What the assistant does when asked something outside its scope.
+One sentence, then the nearest thing it can actually help with. Never a lecture, never a bare refusal.
+
+### medical,That is a medical question and I am not the right place for it — please see a doctor or a pharmacy. I can still help with the rest of your day: what is near you, and what fits the time you have left.,
+### legal-visa,Visa, passport and legal questions need an official source rather than a travel app, so I will not guess at them. I can help with everything inside the app: fitting a plan to your hours, or finding a stop that suits who you are travelling with.,
+### money-transaction,I cannot book anything or move money — the app plans, it does not transact. Book or pay directly, and tell me the constraints and I will help you fit the rest of the day around it.,
+### unrelated,That is outside what I do — I help with planning time in Mumbai and with how this app works. If you have a trip question, I am ready.,

@@ -1,0 +1,571 @@
+Worked examples: grounded-fact.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: What is there in MUMBAI?
+GROUNDING:
+  Nagori Tea stall; in MUMBAI, MUMBAI; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+  GUPTA TEA COFFEE STALL; in MUMBAI, MUMBAI; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In MUMBAI, these are the two the catalogue rates highest:
+- Nagori Tea stall; in MUMBAI, MUMBAI; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- GUPTA TEA COFFEE STALL; in MUMBAI, MUMBAI; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Andheri (W), Mumbai?
+GROUNDING:
+  Ninety One Cycles - Ohiwara; in Andheri (W), Mumbai, Andheri (W), Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Andheri (W), Mumbai, these are the two the catalogue rates highest:
+- Ninety One Cycles - Ohiwara; in Andheri (W), Mumbai, Andheri (W), Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Malad West, Mumbai?
+GROUNDING:
+  Marimman Temple; in Malad West, Mumbai, Malad West, Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Malad West, Mumbai, these are the two the catalogue rates highest:
+- Marimman Temple; in Malad West, Mumbai, Malad West, Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Bandra, Mumbai?
+GROUNDING:
+  vidhi'; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 11:00-23:00; no access features recorded.
+  Mokai; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In Bandra, Mumbai, these are the two the catalogue rates highest:
+- vidhi'; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 11:00-23:00; no access features recorded.
+- Mokai; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Thane (West)?
+GROUNDING:
+  Prashant Corner; in Thane (West), Thane (West); — street food, 30 minutes, outdoor; price not listed; hours: Mo-Su 08:30-21:30; no access features recorded.
+  Cafe Holiday; in Thane (West), Thane (West); — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Thane (West), these are the two the catalogue rates highest:
+- Prashant Corner; in Thane (West), Thane (West); — street food, 30 minutes, outdoor; price not listed; hours: Mo-Su 08:30-21:30; no access features recorded.
+- Cafe Holiday; in Thane (West), Thane (West); — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in BKC?
+GROUNDING:
+  Apple Store; in BKC, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; step-free.
+ASSISTANT: In BKC, these are the two the catalogue rates highest:
+- Apple Store; in BKC, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; step-free.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Thane?
+GROUNDING:
+  Bramhand Phase 5; in Thane, Thane; — nature, 90 minutes, outdoor; price not listed; hours: 24/7; no access features recorded.
+  Mazaar-e-Qutbi; in Thane, Thane; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Thane, these are the two the catalogue rates highest:
+- Bramhand Phase 5; in Thane, Thane; — nature, 90 minutes, outdoor; price not listed; hours: 24/7; no access features recorded.
+- Mazaar-e-Qutbi; in Thane, Thane; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumabi?
+GROUNDING:
+  bialbazzar; in Mumabi, Mumabi; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Fr 09:00-18:00; no access features recorded.
+  Maxus Multiplex; in Mumabi, Mumabi; — theatre, 150 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mumabi, these are the two the catalogue rates highest:
+- bialbazzar; in Mumabi, Mumabi; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Fr 09:00-18:00; no access features recorded.
+- Maxus Multiplex; in Mumabi, Mumabi; — theatre, 150 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mulund?
+GROUNDING:
+  St. Gregorios School Canteen; in Mulund, Mulund; — street food, 30 minutes, outdoor; price not listed; hours: Mo-Fr 08:00-17:00; no access features recorded.
+  Holy Angels Marthoma Syrian Church; in Mulund, Mulund; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mulund, these are the two the catalogue rates highest:
+- St. Gregorios School Canteen; in Mulund, Mulund; — street food, 30 minutes, outdoor; price not listed; hours: Mo-Fr 08:00-17:00; no access features recorded.
+- Holy Angels Marthoma Syrian Church; in Mulund, Mulund; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Matunga East?
+GROUNDING:
+  DP's Fast Food Corner; in Matunga East, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+  Girnar Chaha; in Matunga East, Mumbai; — shopping, 50 minutes, indoor; price not listed; hours: Mo-Sa 08:30-20:00; no access features recorded.
+ASSISTANT: In Matunga East, these are the two the catalogue rates highest:
+- DP's Fast Food Corner; in Matunga East, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Girnar Chaha; in Matunga East, Mumbai; — shopping, 50 minutes, indoor; price not listed; hours: Mo-Sa 08:30-20:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Aram Nagar Part 1?
+GROUNDING:
+  Cat Café Studio; in Aram Nagar Part 1, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Tu-Su 12:00-20:00; no access features recorded.
+ASSISTANT: In Aram Nagar Part 1, these are the two the catalogue rates highest:
+- Cat Café Studio; in Aram Nagar Part 1, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Tu-Su 12:00-20:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Kandivali, Mumbai?
+GROUNDING:
+  chinese food; in Kandivali, Mumbai, Kandivali, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+ASSISTANT: In Kandivali, Mumbai, these are the two the catalogue rates highest:
+- chinese food; in Kandivali, Mumbai, Kandivali, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in santacruz mumbai?
+GROUNDING:
+  NSm park; in santacruz mumbai, santacruz mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Sa 08:00-18:00; no access features recorded.
+ASSISTANT: In santacruz mumbai, these are the two the catalogue rates highest:
+- NSm park; in santacruz mumbai, santacruz mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Sa 08:00-18:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Bhandup?
+GROUNDING:
+  swanandi; in Bhandup, Bhandup; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In Bhandup, these are the two the catalogue rates highest:
+- swanandi; in Bhandup, Bhandup; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in East Mumbai?
+GROUNDING:
+  kalingana park; in East Mumbai, East Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In East Mumbai, these are the two the catalogue rates highest:
+- kalingana park; in East Mumbai, East Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in thane?
+GROUNDING:
+  Peach Tree Cafe; in thane, thane; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+  Deliure; in thane, thane; — shopping, 50 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In thane, these are the two the catalogue rates highest:
+- Peach Tree Cafe; in thane, thane; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+- Deliure; in thane, thane; — shopping, 50 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Santacruz West?
+GROUNDING:
+  Good Luck Accessories; in Santacruz West, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+  A to Z Mobile; in Santacruz West, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Santacruz West, these are the two the catalogue rates highest:
+- Good Luck Accessories; in Santacruz West, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- A to Z Mobile; in Santacruz West, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in ghatkopar east?
+GROUNDING:
+  bhagat tarachand; in ghatkopar east, ghatkopar east; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+  99 pancakes; in ghatkopar east, ghatkopar east; — cafe, 45 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In ghatkopar east, these are the two the catalogue rates highest:
+- bhagat tarachand; in ghatkopar east, ghatkopar east; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+- 99 pancakes; in ghatkopar east, ghatkopar east; — cafe, 45 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Versova?
+GROUNDING:
+  Food Monkey; in Versova, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+  Apna Point Burger Junction; in Versova, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Versova, these are the two the catalogue rates highest:
+- Food Monkey; in Versova, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Apna Point Burger Junction; in Versova, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumbai Central?
+GROUNDING:
+  احمدیہ مسجد; in Mumbai Central, Mumbai Central; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mumbai Central, these are the two the catalogue rates highest:
+- احمدیہ مسجد; in Mumbai Central, Mumbai Central; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Dadar(East), Mumbai?
+GROUNDING:
+  Suman Jewellers; in Dadar(East), Mumbai, Dadar(East), Mumbai; — shopping, 50 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:30; no access features recorded.
+  Latest Mobiles; in Dadar(East), Mumbai, Dadar(East), Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Dadar(East), Mumbai, these are the two the catalogue rates highest:
+- Suman Jewellers; in Dadar(East), Mumbai, Dadar(East), Mumbai; — shopping, 50 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:30; no access features recorded.
+- Latest Mobiles; in Dadar(East), Mumbai, Dadar(East), Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Powai, Mumbai?
+GROUNDING:
+  MCGM PARK RAHEJA VIHAR; in Powai, Mumbai, Powai, Mumbai; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+  Anthem Lounge; in Powai, Mumbai, Powai, Mumbai; — nightlife, 120 minutes, indoor; price not listed; hours: Mo-Su 11:00-02:30; no access features recorded.
+ASSISTANT: In Powai, Mumbai, these are the two the catalogue rates highest:
+- MCGM PARK RAHEJA VIHAR; in Powai, Mumbai, Powai, Mumbai; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+- Anthem Lounge; in Powai, Mumbai, Powai, Mumbai; — nightlife, 120 minutes, indoor; price not listed; hours: Mo-Su 11:00-02:30; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Fort?
+GROUNDING:
+  Contemporary Arts & Crafts; in Fort, Fort; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Fort, these are the two the catalogue rates highest:
+- Contemporary Arts & Crafts; in Fort, Fort; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Bandra?
+GROUNDING:
+  Suzette; in Bandra, Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Bandra, these are the two the catalogue rates highest:
+- Suzette; in Bandra, Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumbi?
+GROUNDING:
+  Panchasar derasar; in Mumbi, Mumbi; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mumbi, these are the two the catalogue rates highest:
+- Panchasar derasar; in Mumbi, Mumbi; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Kurla West, Mumbai?
+GROUNDING:
+  Micromax Service Center; in Kurla West, Mumbai, Kurla West, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+  Mahanagarpalika Udyan; in Kurla West, Mumbai, Kurla West, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: sunrise-sunset; no access features recorded.
+ASSISTANT: In Kurla West, Mumbai, these are the two the catalogue rates highest:
+- Micromax Service Center; in Kurla West, Mumbai, Kurla West, Mumbai; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- Mahanagarpalika Udyan; in Kurla West, Mumbai, Kurla West, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: sunrise-sunset; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in chembur?
+GROUNDING:
+  chanda cafe shop; in chembur, chembur; — cafe, 45 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In chembur, these are the two the catalogue rates highest:
+- chanda cafe shop; in chembur, chembur; — cafe, 45 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in mumbai chembur?
+GROUNDING:
+  footware; in mumbai chembur, mumbai chembur; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In mumbai chembur, these are the two the catalogue rates highest:
+- footware; in mumbai chembur, mumbai chembur; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mulond (West)?
+GROUNDING:
+  CROMA; in Mulond (West), Mulond (West); — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mulond (West), these are the two the catalogue rates highest:
+- CROMA; in Mulond (West), Mulond (West); — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Bandra West?
+GROUNDING:
+  The Bagel Shop; in Bandra West, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-22:30; no access features recorded.
+  New Sunrise Restaurant; in Bandra West, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 07:00-23:30; no access features recorded.
+ASSISTANT: In Bandra West, these are the two the catalogue rates highest:
+- The Bagel Shop; in Bandra West, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-22:30; no access features recorded.
+- New Sunrise Restaurant; in Bandra West, Mumbai; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 07:00-23:30; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Borivali?
+GROUNDING:
+  Hanuman Mandir; in Borivali, Borivali; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Borivali, these are the two the catalogue rates highest:
+- Hanuman Mandir; in Borivali, Borivali; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Lower Parel Mumbai, Maharashtra?
+GROUNDING:
+  Delhi Highway; in Lower Parel Mumbai, Maharashtra, Lower Parel Mumbai, Maharashtra; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 11:30-23:30; no access features recorded.
+ASSISTANT: In Lower Parel Mumbai, Maharashtra, these are the two the catalogue rates highest:
+- Delhi Highway; in Lower Parel Mumbai, Maharashtra, Lower Parel Mumbai, Maharashtra; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 11:30-23:30; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumbai City?
+GROUNDING:
+  Food Inn; in Mumbai City, Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mumbai City, these are the two the catalogue rates highest:
+- Food Inn; in Mumbai City, Mumbai; — restaurant, 75 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in vidyavihar?
+GROUNDING:
+  Cafe Coffee Day; in vidyavihar, vidyavihar; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In vidyavihar, these are the two the catalogue rates highest:
+- Cafe Coffee Day; in vidyavihar, vidyavihar; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Matunga, Mumbai?
+GROUNDING:
+  Oleaf green grocer; in Matunga, Mumbai, Matunga, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Matunga, Mumbai, these are the two the catalogue rates highest:
+- Oleaf green grocer; in Matunga, Mumbai, Matunga, Mumbai; — street food, 30 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in yogi nagar borivali west mumbai?
+GROUNDING:
+  Ajmera Playground; in yogi nagar borivali west mumbai, yogi nagar borivali west mumbai; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; hours: Mo-Sa 09:00-18:00; no access features recorded.
+ASSISTANT: In yogi nagar borivali west mumbai, these are the two the catalogue rates highest:
+- Ajmera Playground; in yogi nagar borivali west mumbai, yogi nagar borivali west mumbai; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; hours: Mo-Sa 09:00-18:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Khar Danda Koliwada?
+GROUNDING:
+  Brenco Breweries; in Khar Danda Koliwada, Khar Danda Koliwada; — nightlife, 120 minutes, indoor; price not listed; hours: 24/7; no access features recorded.
+ASSISTANT: In Khar Danda Koliwada, these are the two the catalogue rates highest:
+- Brenco Breweries; in Khar Danda Koliwada, Khar Danda Koliwada; — nightlife, 120 minutes, indoor; price not listed; hours: 24/7; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mulund(West)?
+GROUNDING:
+  Akshay Food Plaza; in Mulund(West), Mulund(West); — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+  Mahakavi Kalidas Natya Mandir; in Mulund(West), Mulund(West); — theatre, 150 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mulund(West), these are the two the catalogue rates highest:
+- Akshay Food Plaza; in Mulund(West), Mulund(West); — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+- Mahakavi Kalidas Natya Mandir; in Mulund(West), Mulund(West); — theatre, 150 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Thane West?
+GROUNDING:
+  Jyoti Book Mall; in Thane West, Thane West; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Thane West, these are the two the catalogue rates highest:
+- Jyoti Book Mall; in Thane West, Thane West; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in BORIVALI?
+GROUNDING:
+  Lochlainn Cafe; in BORIVALI, BORIVALI; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+ASSISTANT: In BORIVALI, these are the two the catalogue rates highest:
+- Lochlainn Cafe; in BORIVALI, BORIVALI; — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 09:00-21:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Kandivali?
+GROUNDING:
+  Formal Garden; in Kandivali, Kandivali; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Kandivali, these are the two the catalogue rates highest:
+- Formal Garden; in Kandivali, Kandivali; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in andheri?
+GROUNDING:
+  Amabaji dham; in andheri, andheri; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+  BMC Ground; in andheri, andheri; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In andheri, these are the two the catalogue rates highest:
+- Amabaji dham; in andheri, andheri; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+- BMC Ground; in andheri, andheri; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in andheri east?
+GROUNDING:
+  Amabaji Ground; in andheri east, andheri east; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; hours: Mo-Sa 06:00-01:00, Su 06:00-02:00; no access features recorded.
+ASSISTANT: In andheri east, these are the two the catalogue rates highest:
+- Amabaji Ground; in andheri east, andheri east; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; hours: Mo-Sa 06:00-01:00, Su 06:00-02:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Santacruz East, Mumbai?
+GROUNDING:
+  PRAFULLA BAGH; in Santacruz East, Mumbai, Santacruz East, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 09:00-22:00; no access features recorded.
+  Cafe Montana; in Santacruz East, Mumbai, Santacruz East, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-22:00; no access features recorded.
+ASSISTANT: In Santacruz East, Mumbai, these are the two the catalogue rates highest:
+- PRAFULLA BAGH; in Santacruz East, Mumbai, Santacruz East, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 09:00-22:00; no access features recorded.
+- Cafe Montana; in Santacruz East, Mumbai, Santacruz East, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 09:00-22:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in pune?
+GROUNDING:
+  Savitribai Phule BMC Garden; in pune, pune; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 06:00-19:00; no access features recorded.
+  J J garden; in pune, pune; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Sa 08:00-20:00; no access features recorded.
+ASSISTANT: In pune, these are the two the catalogue rates highest:
+- Savitribai Phule BMC Garden; in pune, pune; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 06:00-19:00; no access features recorded.
+- J J garden; in pune, pune; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Sa 08:00-20:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumbai,Dadar(East)?
+GROUNDING:
+  SHINDEWADI  GROUND; in Mumbai,Dadar(East), Mumbai,Dadar(East); — nature, 90 minutes, outdoor; price not listed; hours: 24/7; no access features recorded.
+ASSISTANT: In Mumbai,Dadar(East), these are the two the catalogue rates highest:
+- SHINDEWADI  GROUND; in Mumbai,Dadar(East), Mumbai,Dadar(East); — nature, 90 minutes, outdoor; price not listed; hours: 24/7; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Naigaon, Dadar(East), Mumbai?
+GROUNDING:
+  St. Mary's Orthodox Cathedral.; in Naigaon, Dadar(East), Mumbai, Naigaon, Dadar(East), Mumbai; — church, 30 minutes, indoor; price not listed; hours: Mo-Sa 09:00-19:00; Su 07:00-19:00; step-free.
+  Naigaonchya Vighnaharta; in Naigaon, Dadar(East), Mumbai, Naigaon, Dadar(East), Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Naigaon, Dadar(East), Mumbai, these are the two the catalogue rates highest:
+- St. Mary's Orthodox Cathedral.; in Naigaon, Dadar(East), Mumbai, Naigaon, Dadar(East), Mumbai; — church, 30 minutes, indoor; price not listed; hours: Mo-Sa 09:00-19:00; Su 07:00-19:00; step-free.
+- Naigaonchya Vighnaharta; in Naigaon, Dadar(East), Mumbai, Naigaon, Dadar(East), Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in malad?
+GROUNDING:
+  indravan mandir; in malad, malad; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In malad, these are the two the catalogue rates highest:
+- indravan mandir; in malad, malad; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in GOREGAON?
+GROUNDING:
+  BNHS Nature Reserve; in GOREGAON, GOREGAON; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In GOREGAON, these are the two the catalogue rates highest:
+- BNHS Nature Reserve; in GOREGAON, GOREGAON; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Naigaon, Old B.D.D. Chawl Dadar(East), Mumbai?
+GROUNDING:
+  Vyghreshwar Mandir; in Naigaon, Old B.D.D. Chawl Dadar(East), Mumbai, Naigaon, Old B.D.D. Chawl Dadar(East), Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Naigaon, Old B.D.D. Chawl Dadar(East), Mumbai, these are the two the catalogue rates highest:
+- Vyghreshwar Mandir; in Naigaon, Old B.D.D. Chawl Dadar(East), Mumbai, Naigaon, Old B.D.D. Chawl Dadar(East), Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Shell Colony, Sahakar Nagar?
+GROUNDING:
+  adarsha vidyalaya school ground; in Shell Colony, Sahakar Nagar, Shell Colony, Sahakar Nagar; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Shell Colony, Sahakar Nagar, these are the two the catalogue rates highest:
+- adarsha vidyalaya school ground; in Shell Colony, Sahakar Nagar, Shell Colony, Sahakar Nagar; — adventure, 180 minutes, outdoor, weather-sensitive to rain; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Chembur?
+GROUNDING:
+  Diamond Garden; in Chembur, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 06:00-13:00, 16:00-21:30; no access features recorded.
+ASSISTANT: In Chembur, these are the two the catalogue rates highest:
+- Diamond Garden; in Chembur, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 06:00-13:00, 16:00-21:30; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumbai,Kurla(East)?
+GROUNDING:
+  Shree Swami Samartha Math; in Mumbai,Kurla(East), Mumbai,Kurla(East); — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mumbai,Kurla(East), these are the two the catalogue rates highest:
+- Shree Swami Samartha Math; in Mumbai,Kurla(East), Mumbai,Kurla(East); — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Kandivali East?
+GROUNDING:
+  BAPS Swaminarayan Temple; in Kandivali East, Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Kandivali East, these are the two the catalogue rates highest:
+- BAPS Swaminarayan Temple; in Kandivali East, Mumbai; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Kanjur Marg (E)?
+GROUNDING:
+  Plan D Fine Dine Restaurant; in Kanjur Marg (E), Kanjur Marg (E); — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+ASSISTANT: In Kanjur Marg (E), these are the two the catalogue rates highest:
+- Plan D Fine Dine Restaurant; in Kanjur Marg (E), Kanjur Marg (E); — restaurant, 75 minutes, indoor; price not listed; hours: Mo-Su 10:00-22:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Navi Mumbai?
+GROUNDING:
+  St. Joseph Church, Airoli; in Navi Mumbai, Navi Mumbai; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Navi Mumbai, these are the two the catalogue rates highest:
+- St. Joseph Church, Airoli; in Navi Mumbai, Navi Mumbai; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mira-Bhayander?
+GROUNDING:
+  Geetanjali Gardens; in Mira-Bhayander, Mira-Bhayander; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mira-Bhayander, these are the two the catalogue rates highest:
+- Geetanjali Gardens; in Mira-Bhayander, Mira-Bhayander; — nature, 90 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Ghatkopar West, Mumbai?
+GROUNDING:
+  Shreyas Garden Park; in Ghatkopar West, Mumbai, Ghatkopar West, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 08:00-22:00; no access features recorded.
+ASSISTANT: In Ghatkopar West, Mumbai, these are the two the catalogue rates highest:
+- Shreyas Garden Park; in Ghatkopar West, Mumbai, Ghatkopar West, Mumbai; — nature, 90 minutes, outdoor; price not listed; hours: Mo-Su 08:00-22:00; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: What is there in Mumbai, Maharashtra?
+GROUNDING:
+  Anushaktinagar Kanchi kamakoti kainkarya Sabha; in Mumbai, Maharashtra, Mumbai, Maharashtra; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: In Mumbai, Maharashtra, these are the two the catalogue rates highest:
+- Anushaktinagar Kanchi kamakoti kainkarya Sabha; in Mumbai, Maharashtra, Mumbai, Maharashtra; — temple, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+Both come with the reasons, so you can see whether they fit your hours rather than taking my word for it.
+
+---
+TRAVELLER: Do you have anywhere for shopping?
+GROUNDING:
+  Nagori Tea stall; in MUMBAI, MUMBAI; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- Nagori Tea stall; in MUMBAI, MUMBAI; — shopping, 50 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+
+---
+TRAVELLER: Do you have anywhere for mosque?
+GROUNDING:
+  Racecourse Masjid; in Mumbai; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- Racecourse Masjid; in Mumbai; — mosque, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+
+---
+TRAVELLER: Do you have anywhere for hidden place?
+GROUNDING:
+  Lala Tulsiram Aggarwal; in Mumbai; — hidden place, 45 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- Lala Tulsiram Aggarwal; in Mumbai; — hidden place, 45 minutes, outdoor; price not listed; opening hours not verified; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+
+---
+TRAVELLER: Do you have anywhere for cafe?
+GROUNDING:
+  vidhi'; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 11:00-23:00; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- vidhi'; in Bandra, Mumbai, Bandra, Mumbai; — cafe, 45 minutes, indoor; price not listed; hours: Mo-Su 11:00-23:00; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+
+---
+TRAVELLER: Do you have anywhere for church?
+GROUNDING:
+  Holy Family Church; in Mumbai; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- Holy Family Church; in Mumbai; — church, 30 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+
+---
+TRAVELLER: Do you have anywhere for nightlife?
+GROUNDING:
+  Gateway Taproom; in Mumbai; — nightlife, 120 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- Gateway Taproom; in Mumbai; — nightlife, 120 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+
+---
+TRAVELLER: Do you have anywhere for market?
+GROUNDING:
+  Dhanlaxmi Shopping; in Mumbai; — market, 60 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+ASSISTANT: The best-rated one for that is this:
+- Dhanlaxmi Shopping; in Mumbai; — market, 60 minutes, indoor; price not listed; opening hours not verified; no access features recorded.
+If none of it fits the time you have, say so and I will look at what does.
+

@@ -1,0 +1,15 @@
+Worked examples: multi-turn.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: We lost about an hour, what now?
+USER: We have three hours in Bandra this afternoon.
+ASSISTANT: Three hours in Bandra fits a sea walk, one stop and a coffee stop, with travel between them. How much of it do you want indoors?
+ASSISTANT: That shortens the time budget by 60 minutes, and the plan re-solves against the smaller number rather than dropping a stop silently. Tell me the new total and I will re-fit it.
+
+---
+TRAVELLER: Make it work for my mother instead
+USER: We have two hours in Colaba and want to see the sea.
+ASSISTANT: Two hours in Colaba fits a sea walk and one stop nearby. Who is it for?
+ASSISTANT: Step-free access changes what fits, so tell me whether step-free or a low-stairs route is the requirement, and whether a restroom on site matters. Those three facts change the plan more than anything else you could add.
+

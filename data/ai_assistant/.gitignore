@@ -1,0 +1,6 @@
+# Dev-server logs are run artefacts, not evidence.
+#
+# `align-run.txt` is the opposite: it is committed deliberately, because
+# `docs/NUGEN_CUSTOMIZATION.md` cites it as the record of the alignment attempt
+# and a reader should be able to check the 502 without re-running anything.
+dev*.log

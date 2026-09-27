@@ -31,6 +31,21 @@ export type SqlMethod = "run" | "all" | "values" | "get";
  * we want. Booleans are stored as 0/1 and are mapped back in schema.ts's
  * column definitions rather than here, so that the mapping is visible where the
  * column is declared.
+ *
+ * `all` returns each row as an ARRAY OF VALUES, not as the object `node:sqlite`
+ * hands back, and that is not a stylistic choice. Drizzle's sqlite-proxy maps
+ * results **positionally** — `mapResultRow` in `drizzle-orm/utils.js` reads
+ * `row[columnIndex]` — so an object row hands every decoder `undefined`.
+ *
+ * A decoder that tolerates `undefined` hides this: `integer({mode:"boolean"})`
+ * turns `undefined` into `false` and nobody notices. `text({mode:"json"})` calls
+ * `JSON.parse(undefined)` and throws `SyntaxError: "undefined" is not valid
+ * JSON`, which is how this was found — the first Drizzle `select()` in the app
+ * that touched a JSON column. The catalogue was read from JSONL files, so no
+ * query had gone through here with one until the assistant's tables arrived.
+ *
+ * `Object.values` is safe because node:sqlite builds each row object in the
+ * order of the statement's result columns, which is the order Drizzle generated.
  */
 export function createRemoteCallback(db: DatabaseSync) {
   return async function remote(
@@ -38,8 +53,6 @@ export function createRemoteCallback(db: DatabaseSync) {
     params: unknown[],
     method: SqlMethod,
   ): Promise<{ rows: unknown[] }> {
-    // Drizzle emits a leading comment with the query kind; harmless, but we
-    // strip nothing because the statement cache keys on the exact string.
     const statement = db.prepare(sql);
     try {
       if (method === "run") {
@@ -48,13 +61,13 @@ export function createRemoteCallback(db: DatabaseSync) {
       }
       if (method === "get") {
         const row = statement.get(...(params as never[]));
-        return { rows: row === undefined ? [] : [row] };
+        return { rows: row === undefined ? [] : [Object.values(row)] };
       }
       const rows = statement.all(...(params as never[]));
       if (method === "values") {
         return { rows: rows.map((row) => Object.values(row as Record<string, unknown>)) };
       }
-      return { rows: rows as unknown[] };
+      return { rows: rows.map((row) => Object.values(row as Record<string, unknown>)) };
     } finally {
       // StatementSync is cheap and the driver handles finalisation, but being
       // explicit keeps memory flat across the 40k-row harvest.

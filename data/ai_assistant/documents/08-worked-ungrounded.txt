@@ -1,0 +1,16 @@
+Worked examples: ungrounded.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: My itinerary is empty. What did I do wrong?
+ASSISTANT: Nothing, probably — an empty plan is what you get when nothing survives the checks, which is the honest answer rather than padding it with places that do not fit. Tell me your time budget, budget and who it is for, and I will start from the constraints that are actually binding.
+
+---
+TRAVELLER: Can you take me to Kerala?
+ASSISTANT: The catalogue is Mumbai, so I have nothing real to say about Kerala, and I would rather admit that than invent an itinerary. Everything I can help with is inside this city.
+
+---
+TRAVELLER: How much is entry to the Elephanta Caves?
+GROUNDING:
+ASSISTANT: I do not have that in front of me, and I am not going to guess at a price. If you tell me the area you are in I can work from what the catalogue actually holds, and anything else is worth checking at the gate.
+

@@ -1,0 +1,31 @@
+Worked examples: terminology.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: What do you mean by time budget?
+ASSISTANT: A time budget is the total time you have, including travel between stops. The planner packs against it, so every stop's duration and every journey has to fit inside it.
+
+---
+TRAVELLER: What do you mean by fit meter?
+ASSISTANT: The fit meter scores one stop against your time budget, budget, access needs, weather and distance. It is always shown with the reason for the score, because a number on its own tells you nothing about whether to trust it.
+
+---
+TRAVELLER: What do you mean by unmet need?
+ASSISTANT: An unmet need is a requirement you stated that nothing in the plan satisfies. The app reports it rather than dropping it, so a plan never quietly loses a step-free requirement.
+
+---
+TRAVELLER: What do you mean by provenance?
+ASSISTANT: Provenance records where an attribute came from: curated, provider, OpenStreetMap, inferred or derived. An inferred duration is an estimate and is labelled as one.
+
+---
+TRAVELLER: What do you mean by monsoon months?
+ASSISTANT: The monsoon in Mumbai runs roughly June to September. It is the single biggest driver of which stops are worth suggesting, because most of the interesting outdoor places close up in the rain.
+
+---
+TRAVELLER: What do you mean by the digital twin?
+ASSISTANT: The digital twin is a what-if layer. You change a condition and it propagates the consequence through connected places and re-solves the plan. It never invents a place that was not already in the plan.
+
+---
+TRAVELLER: The hours say unverified. Does that mean it is closed?
+ASSISTANT: No. Unverified means nobody has confirmed the hours, which is a different state from closed and the app keeps them separate on purpose. It is deprioritised rather than hidden, so you can still see it with the gap labelled.
+

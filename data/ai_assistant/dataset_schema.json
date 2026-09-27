@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://travelbuddy.local/schemas/ai-assistant-dataset.json",
+  "title": "TravelBuddy assistant customization example",
+  "description": "One instruction/response pair for domain alignment. The shape is what scripts/assistant-align.ts formats for Nugen's benchmark upload and what scripts/assistant-eval.ts scores; the training documents in data/ai_assistant/raw are derived from the same examples, so a change to this schema is a change to both.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "instruction", "response", "tags"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable, deterministic. Same catalogue + same generator => same id, which is what makes a re-run diffable.",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "What the traveller said. Never contains assistant text or a role marker."
+    },
+    "context": {
+      "type": "array",
+      "description": "Earlier turns, oldest first. Present only for multi-turn and context-carry-over examples.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "content"],
+        "properties": {
+          "role": { "type": "string", "enum": ["user", "assistant"] },
+          "content": { "type": "string", "minLength": 1, "maxLength": 2000 }
+        }
+      }
+    },
+    "grounding": {
+      "type": "array",
+      "description": "The catalogue facts the response is allowed to state, verbatim. An empty array is meaningful: it is the 'you know nothing specific' case, and the response must say so rather than invent one.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "response": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000,
+      "description": "The ideal reply. Written by hand, not generated: it is the thing the model is being taught to produce."
+    },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/tag" }
+    },
+    "split": {
+      "type": "string",
+      "enum": ["train", "validation", "test"],
+      "description": "Assigned by the splitter, not by the author. test is disjoint from the other two and is never uploaded to Nugen."
+    }
+  },
+  "definitions": {
+    "tag": {
+      "type": "string",
+      "enum": [
+        "app-howto",
+        "domain-qa",
+        "terminology",
+        "multi-turn",
+        "ambiguous",
+        "out-of-scope",
+        "edge-case",
+        "grounded-fact",
+        "ungrounded",
+        "adversarial",
+        "terse",
+        "detailed",
+        "refusal"
+      ]
+    }
+  }
+}

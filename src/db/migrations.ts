@@ -192,6 +192,49 @@ const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    version: 5,
+    name: "assistant_conversations",
+    up(db) {
+      // The AI assistant's own tables, isolated from the catalogue above.
+      //
+      // `owner_id` is a SHA-256 of a 128-bit cookie secret, never the secret
+      // itself: possession of the cookie is the authorisation, and hashing means a
+      // database dump cannot be replayed as a live session. Every read and write
+      // in src/features/assistant/store.ts is scoped by it, so a conversation is
+      // unreachable without it — there is no query in that file that can return
+      // another owner's rows.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS assistant_conversation (
+          id TEXT PRIMARY KEY,
+          owner_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL,
+          metadata TEXT NOT NULL DEFAULT '{}'
+        );
+        CREATE INDEX IF NOT EXISTS idx_assistant_conv_owner
+          ON assistant_conversation (owner_id, updated_at DESC);
+
+        CREATE TABLE IF NOT EXISTS assistant_message (
+          id TEXT PRIMARY KEY,
+          conversation_id TEXT NOT NULL
+            REFERENCES assistant_conversation(id) ON DELETE CASCADE,
+          role TEXT NOT NULL CHECK (role IN ('user','assistant','system')),
+          content TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'complete'
+            CHECK (status IN ('complete','streaming','stopped','error')),
+          created_at TEXT NOT NULL,
+          model_id TEXT,
+          token_usage TEXT,
+          latency_ms INTEGER,
+          metadata TEXT NOT NULL DEFAULT '{}'
+        );
+        CREATE INDEX IF NOT EXISTS idx_assistant_msg_conversation
+          ON assistant_message (conversation_id, created_at);
+      `);
+    },
+  },
 ];
 
 const LATEST_VERSION = MIGRATIONS[MIGRATIONS.length - 1]!.version;

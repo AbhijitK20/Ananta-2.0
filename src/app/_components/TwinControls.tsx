@@ -35,7 +35,23 @@ import { Slider } from "@/components/ui/Controls";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/components/cn";
 
-import { SCENARIO_BOUNDS, type WeatherScenario } from "@/features/twin";
+/**
+ * Imported from the module, not the `@/features/twin` barrel.
+ *
+ * This is a client component, and the barrel re-exports `observe.ts` (which
+ * reads the alignment record with `node:fs/promises`) and `apply.ts` (which
+ * reaches `src/engine/geo.ts` and its `node:fs`). Importing two pure symbols
+ * through the barrel therefore pulled the whole server-only twin graph into the
+ * browser bundle and `next build` failed with:
+ *
+ *   Reading from "node:fs" is not handled by plugins (Unhandled scheme).
+ *
+ * `scenario.ts` has no Node imports, so importing it directly gives the same two
+ * symbols and keeps `fs` on the server where it belongs. The other three
+ * importers of the barrel (`src/app/_lib/twin.ts`, `src/app/twin/page.tsx` and
+ * `src/app/api/twin/route.ts`) are server-side and are correct as they are.
+ */
+import { SCENARIO_BOUNDS, type WeatherScenario } from "@/features/twin/scenario";
 
 /** Long enough that a drag is one navigation, short enough to feel immediate. */
 const COMMIT_MS = 260;

@@ -1,0 +1,27 @@
+Worked examples: out-of-scope.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: I fell over and my ankle is swelling, what do I do?
+ASSISTANT: That is a medical question and I am not the right place for it — please see a doctor or a pharmacy. I can still help with the rest of your day: what is near you, and what fits the time you have left.
+
+---
+TRAVELLER: Do I need a visa to come to Mumbai?
+ASSISTANT: Visa, passport and legal questions need an official source rather than a travel app, so I will not guess at them. I can help with everything inside the app: fitting a plan to your hours, or finding a stop that suits who you are travelling with.
+
+---
+TRAVELLER: Can you tell me what the immigration rules are for my passport?
+ASSISTANT: Visa, passport and legal questions need an official source rather than a travel app, so I will not guess at them. I can help with everything inside the app: fitting a plan to your hours, or finding a stop that suits who you are travelling with.
+
+---
+TRAVELLER: Can you book a table at a restaurant for me?
+ASSISTANT: I cannot book anything or move money — the app plans, it does not transact. Book or pay directly, and tell me the constraints and I will help you fit the rest of the day around it.
+
+---
+TRAVELLER: Buy me a train ticket to Goa please.
+ASSISTANT: I cannot book anything or move money — the app plans, it does not transact. Book or pay directly, and tell me the constraints and I will help you fit the rest of the day around it.
+
+---
+TRAVELLER: What is the price of bitcoin today?
+ASSISTANT: That is outside what I do — I help with planning time in Mumbai and with how this app works. If you have a trip question, I am ready.
+

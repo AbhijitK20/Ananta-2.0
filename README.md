@@ -112,6 +112,62 @@ Recovery actions are only offered when the rejection is marked `relaxable`.
 Offering "add 40 minutes" for something no amount of time would fix turns a
 helpful panel into a nuisance.
 
+### The AI assistant
+
+A chat surface at `/assistant` that answers about your hours, your budget and how
+the app works — and runs on a **domain-aligned Nugen model**, not a base model
+with a prompt wrapped around it.
+
+| | |
+|---|---|
+| **Route** | `/assistant` |
+| **Code** | `src/features/assistant/**` (19 modules), `src/app/api/assistant/**` |
+| **Dataset** | `data/ai_assistant/` — 171 examples, 12 documents, `sha256 45e9dcec…` |
+| **Alignment** | `npm run assistant:align` → a customized model id on disk |
+| **Docs** | `docs/AI_ASSISTANT_ARCHITECTURE.md`, `docs/NUGEN_INTEGRATION.md`, `docs/AI_MODEL_CUSTOMIZATION.md`, `docs/NUGEN_CUSTOMIZATION.md`, `docs/AI_MODEL_EVALUATION.md`, `docs/AI_ASSISTANT_FINAL_AUDIT.md` |
+
+**The one rule that makes the claim checkable.** The model id resolves in exactly
+one order, and there is no fourth term:
+
+```
+NUGEN_CUSTOMIZED_MODEL_ID  →  alignment.json .model_id  →  null
+                                                        ↓
+                                          deterministic provider
+```
+
+**A base model is never in that list.** So a demo cannot look identical whether or
+not the alignment job has run, and the question has an answer:
+
+```bash
+curl -s localhost:3000/api/assistant/health | jq '.customized, .model'
+```
+
+> **Current status, stated plainly:** Nugen's control plane is healthy — the corpus
+> uploaded, the benchmark was accepted, alignment projects were created and queued
+> — but their **training and inference GPUs return `502`**, so **no customized
+> model exists yet**. The assistant is fully usable meanwhile: it answers from the
+> app's real catalogue and says plainly when it has no fact rather than inventing
+> one. The full record, with the verbatim error, is in
+> `docs/NUGEN_CUSTOMIZATION.md`; nothing is fabricated or hard-coded.
+
+Three things worth knowing:
+
+- **It cannot invent app data.** The prompt says "never state a price not in the
+  grounding block", and `grounding.ts` is the *supply* — if a fact is not there,
+  there is nothing to quote. A rule in a prompt is a request; this is the mechanism.
+- **Voice is browser-native.** `SpeechRecognition` and `speechSynthesis`, so no
+  audio leaves the device, there is no second secret and there is no per-minute
+  bill. Firefox has no implementation, so the mic is disabled with a visible
+  reason rather than hidden, and the seams exist for a server provider later.
+- **It degrades rather than fails.** Nugen's data plane is down right now. A
+  failure before the first token degrades silently to the offline path; a failure
+  after tokens keeps the partial answer and labels it, because switching answers
+  underneath text someone is reading is worse than a short reply.
+
+No accounts: ownership is a `httpOnly` cookie capability token, stored as
+`sha256(secret)`. Clearing cookies starts a new history — the honest cost of not
+having auth in a product whose own metadata says it is keyless on purpose.
+
 ### The rest of the surface
 
 | Component | Notes |
@@ -281,12 +337,15 @@ offline; there is no API key anywhere in the project.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest. 1,164 tests |
+| `npm test` | Vitest. 1,246 tests |
 | `npm run eval` | The 31-scenario table. Exits non-zero while it is red |
 | `npm run theme:lint` | Token gate (`--watch` for instant feedback) |
 | `npm run copy:lint` | Copy gate |
 | `npm run contrast:lint` | Contrast gate |
 | `npm run content:validate` | Validates every curated row against the frozen contract |
+| `npm run assistant:dataset` | Rebuilds the assistant's domain dataset. Deterministic — same catalogue, same `sha256` |
+| `npm run assistant:align` | Runs the Nugen domain alignment and writes the customized model id. Needs `NUGEN_API_KEY` |
+| `npm run assistant:eval` | Scores the held-out test split. `--models base,customized` for the comparison |
 
 ### Scripts that do not work yet
 

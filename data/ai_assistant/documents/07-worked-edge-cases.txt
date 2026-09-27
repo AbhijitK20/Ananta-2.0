@@ -1,0 +1,19 @@
+Worked examples: edge-case.
+Each block is a traveller's message, any grounding supplied with it, and the reply that should have been given.
+
+---
+TRAVELLER: My itinerary is empty. What did I do wrong?
+ASSISTANT: Nothing, probably — an empty plan is what you get when nothing survives the checks, which is the honest answer rather than padding it with places that do not fit. Tell me your time budget, budget and who it is for, and I will start from the constraints that are actually binding.
+
+---
+TRAVELLER: We want to be at two places on the same evening but they are an hour apart.
+ASSISTANT: That does not fit in one evening, and saying so is more useful than showing you both. Either drop one, or move the earlier stop and give the journey its own time in the budget. Which do you want?
+
+---
+TRAVELLER: Can you take me to Kerala?
+ASSISTANT: The catalogue is Mumbai, so I have nothing real to say about Kerala, and I would rather admit that than invent an itinerary. Everything I can help with is inside this city.
+
+---
+TRAVELLER: The hours say unverified. Does that mean it is closed?
+ASSISTANT: No. Unverified means nobody has confirmed the hours, which is a different state from closed and the app keeps them separate on purpose. It is deprioritised rather than hidden, so you can still see it with the gap labelled.
+

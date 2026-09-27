@@ -1,0 +1,38 @@
+How the TravelBuddy app behaves, in the words the assistant should use.
+
+## What the fit meter means
+The fit meter is the score for a single stop, and it is only ever shown next to the reason it has that score. It combines how well the stop fits your time budget, your budget, your access needs, the weather and your distance from where you are now. A high score with a weak reason is not a good recommendation, so the app shows the breakdown and not just the number. Nothing is shown at all if it does not fit, which is why you may see fewer options than you expected.
+
+## Time budgets
+A time budget is how long you actually have, including travel between stops. The app packs a plan against it rather than against a wish list, and every stop carries its own typical duration. If you tell the assistant you have lost an hour, it shortens the budget and the plan re-solves; it does not drop a stop silently. The subtraction and the assignment are different operations, which is why "we have 90 minutes" and "we lost 90 minutes" produce different plans.
+
+## Why something was rejected
+A stop is dropped for a named reason, never quietly. The reasons are: too far, travel time over budget, duration over budget, closed now, closed during the visit window, opening hours unverified, over budget, over budget per person, capacity exceeded, not step free, not stroller safe, no low-stairs route, no hearing loop, no restroom, diet mismatch, sold out, booking required but unavailable, lead time too short, weather unsafe, or a duplicate. Most rejections are relaxable, and the app will tell you which constraint to relax to get the stop back.
+
+## Unmet needs
+An unmet need is a requirement you stated that no stop in the plan satisfies. The app reports it rather than relaxing it, because a plan that quietly drops a step-free requirement is worse than no plan. Access needs the app understands are wheelchair access, stroller access, a low-stairs route, a hearing loop and a restroom on site. Where a field is unknown it is reported as unknown, never as a yes, so it will not recommend a place as accessible on the strength of missing data.
+
+## Weather
+Weather is treated as a constraint, not a suggestion. Each stop declares how sensitive it is to rain, heat, wind or any of them, and outdoor stops in heavy rain are dropped for weather safety rather than suggested with a caveat. Mumbai's monsoon is roughly June to September, and the season changes which months a stop is worth going to. The app uses a real forecast when it can reach one and says which it used, so you can tell a live reading from a simulated one.
+
+## The digital twin
+The digital twin is a what-if layer over the plan. You change a condition, such as flooding at one place or a closure upstream, and it propagates the consequence through connected places and re-solves the plan. It is built on a graph of dependencies, so a change at one node reaches the nodes that depend on it and stops where there is no path. The twin is not a forecast and it does not invent new places; it only re-evaluates the ones already in your plan.
+
+## Why this was recommended
+Every recommendation carries a ledger of the facts behind it, and the app can show you that ledger. It records the source of each attribute, so you can see whether a duration was curated, came from OpenStreetMap, was inferred, or came from a provider. That distinction matters more than it sounds: an inferred duration is an estimate, and the app labels it as one rather than presenting it as measured.
+
+## Finding things
+Discovery works as a fit search rather than a keyword search. You say what you have, who it is for and what you want to avoid, and the app ranks candidates against those constraints and shows the reasons. Keyword search is still there, but it is a filter over the catalogue rather than the ranking, so a well-fitting stop beats a better-matching word.
+
+## Offering a place
+If you run a place, the provider surface is where you list it, set your availability and answer traveller requests. Listing a place does not put it in search by itself; it has to pass the same fit checks any other stop passes, so a listing with unverified hours is deprioritised rather than hidden. Requests arrive with the traveller's constraints, so you can see whether you actually fit before you answer.
+
+## What travellers wanted
+The analytics surface reads the gaps between what travellers asked for and what the catalogue could offer, which is the part of the product most people never see. It groups unmet demand by constraint, such as step-free access or a low-stairs route, and shows which of those gaps a new listing would close. It is for deciding what to open, not for planning a trip.
+
+## Talking to the app
+The assistant listens through your browser's own speech recognition, so voice works with no account and no audio leaving your device for transcription. Say what you want, and the transcript is treated exactly as typed text, including the stop button if you want to interrupt. Voice needs microphone permission; if you decline it, everything still works by typing.
+
+## What the app cannot do
+It cannot. The app plans and ranks; it does not book, hold a table, take a payment, or reach any airline, rail or immigration system. If you need a table held or a ticket bought, do that directly. Visa, passport and immigration questions need an official source, not a travel app.
+
