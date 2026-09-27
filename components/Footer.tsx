@@ -37,10 +37,10 @@ export function Footer() {
             the separators as inline entities rather than a flex list, which is
             what makes it 22px narrower as a list. */}
         <p className="lal-footer__legal">
-          <a href="/">Privacy Policy</a> &nbsp;&middot;&nbsp;{" "}
-          <a href="/">Terms &amp; Conditions</a> &nbsp;&middot;&nbsp;{" "}
-          <a href="/contact">Contact</a> &nbsp;&middot;&nbsp;{" "}
-          <a href="/">Small Business Toolkit</a>
+          <Link href="/privacy">Privacy Policy</Link> &nbsp;&middot;&nbsp;{" "}
+          <Link href="/terms">Terms &amp; Conditions</Link> &nbsp;&middot;&nbsp;{" "}
+          <Link href="/contact">Contact</Link> &nbsp;&middot;&nbsp;{" "}
+          <Link href="/small-business-toolkit">Small Business Toolkit</Link>
         </p>
 
         <p className="lal-footer__fine">
@@ -52,7 +52,7 @@ export function Footer() {
         <div className="lal-footer__publish-wrap">
           <p className="lal-footer__publish">
             Publish travel content?{" "}
-            <a href="https://likealocalguide.com/partners">Monetize it with Stay22.</a>
+            <Link href="/partners">Monetize it with Stay22.</Link>
             We may earn a referral bonus if you join through this link and qualify.
           </p>
         </div>

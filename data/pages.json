@@ -1,0 +1,166 @@
+{
+  "_comment": "Copy for the utility and legal pages the footer links to. Kept here rather than in the components so the wording can be edited, reviewed and translated without touching TSX. Shapes match the other data/ files: a slug-keyed map of records. The footer and the route folders both read this through lib/pages.ts, so a page exists for every key listed in PAGES below.",
+  "updated": "27 September 2026",
+  "pages": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "What Like A Local Guide collects, why, and what we never do with it.",
+      "lede": "We collect as little as we can get away with, and we do not sell any of it. This page says exactly what that means in practice.",
+      "sections": [
+        {
+          "heading": "Who we are",
+          "body": [
+            "Like A Local Guide (also referred to as LAL Guide) publishes free, curated city guides. We are the team behind Like A Local Tours.",
+            "For anything on this page, write to us at hello@likealocalguide.com."
+          ]
+        },
+        {
+          "heading": "What we collect",
+          "body": [
+            "If you email us or use the contact form, we keep your name, your email address and what you wrote. We use it to answer you. We do not add you to a list because you asked a question.",
+            "If you subscribe to a city alert, we keep your email address until you unsubscribe. Every email we send carries a one-click unsubscribe link.",
+            "We do not ask for, store or process card details. Payments happen on the provider's own checkout, never on this site."
+          ]
+        },
+        {
+          "heading": "Analytics",
+          "body": [
+            "We use privacy-respecting, cookie-free analytics to count visits and see which city guides are useful. These tools record the page and roughly where the visitor came from — not who you are.",
+            "You can block analytics in your browser without losing anything on this site. Nothing here stops working if you do."
+          ]
+        },
+        {
+          "heading": "Affiliate links",
+          "body": [
+            "Some links on this site are affiliate links. If you book through one, the provider may pay us a commission. It never costs you more, and it never changes which places we recommend.",
+            "Our booking partners include Hotels.com, GetYourGuide and Stay22. When you click through, you land on their site and their privacy policy applies from that point on. We have no access to anything you enter there."
+          ]
+        },
+        {
+          "heading": "Third parties",
+          "body": [
+            "We use hosting, analytics and email delivery services that necessarily process data on our behalf. Each is bound by its own privacy policy and our instructions to it.",
+            "We do not sell, rent or trade your data, and we have never shared it for advertising."
+          ]
+        },
+        {
+          "heading": "Your rights",
+          "body": [
+            "You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email hello@likealocalguide.com and we will action it within 30 days.",
+            "If you are in the EEA or UK, you also have the rights to object to processing and to lodge a complaint with your local data protection authority."
+          ]
+        },
+        {
+          "heading": "Children",
+          "body": [
+            "This site is not aimed at children under 13 and we do not knowingly collect their data."
+          ]
+        },
+        {
+          "heading": "Changes",
+          "body": [
+            "If this policy changes materially we will update the date at the top of the page and, where the change affects you directly, tell you by email."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms & Conditions",
+      "description": "The terms that apply when you read and use Like A Local Guide.",
+      "lede": "Plain terms for a free guide site. No walls of small print, and nothing here that tries to limit your rights more than it has to.",
+      "sections": [
+        {
+          "heading": "These guides are advice, not bookings",
+          "body": [
+            "Everything on this site is editorial. We tell you where we would send a friend, and why. We are not a travel agency and we do not sell accommodation, transport or tickets.",
+            "Opening hours, prices, accessibility and whether a place is still good change constantly. Treat anything here as a strong lead to check before you travel, not as a guarantee."
+          ]
+        },
+        {
+          "heading": "Bookings happen elsewhere",
+          "body": [
+            "Where you click through to Hotels.com, GetYourGuide, Stay22 or a venue's own site, the contract is between you and that provider, under their terms. We are not a party to it and cannot resolve a dispute with them.",
+            "If a booking goes wrong, contact the provider directly — they control the refund."
+          ]
+        },
+        {
+          "heading": "Affiliate disclosure",
+          "body": [
+            "Some links are affiliate links and we may earn a commission when you book through them. A commission never influences our recommendations, and it never changes the price you pay.",
+            "If a place is good, we list it whether or not anyone pays us. If it is not, a commission will not save it."
+          ]
+        },
+        {
+          "heading": "Our content",
+          "body": [
+            "The written guides, city copy, photographs and design on this site belong to us. You are welcome to quote short extracts with a link back. Please ask before reproducing a full guide or reusing our images commercially.",
+            "The directory listings describe businesses we did not write and do not own."
+          ]
+        },
+        {
+          "heading": "Liability",
+          "body": [
+            "We take care to keep the site accurate, but we cannot promise it is complete or current. To the extent the law allows, we are not liable for losses arising from relying on information published here.",
+            " Nothing in these terms limits liability that cannot lawfully be limited, including for fraud."
+          ]
+        },
+        {
+          "heading": "Your use of the site",
+          "body": [
+            "Please do not scrape the site at volume, republish the directories wholesale, or attempt to disrupt it. Personal and research use is fine.",
+            "You keep whatever rights you have in the content you send us, and you give us permission to publish it here."
+          ]
+        },
+        {
+          "heading": "Changes and governing law",
+          "body": [
+            "We may update these terms; the date at the top of the page tells you which version applies.",
+            "These terms are governed by the laws of England and Wales, and the courts of England and Wales have jurisdiction."
+          ]
+        }
+      ]
+    },
+    "small-business-toolkit": {
+      "title": "Small Business Toolkit",
+      "description": "Get your business into the guides, and publish travel content that earns.",
+      "lede": "Two ways to work with us: get the places you run into the city guides, or publish travel writing that earns a referral bonus. Both start with an email, not a contract.",
+      "sections": [
+        {
+          "heading": "Put your business in the guides",
+          "body": [
+            "We take recommendations for hotels, restaurants, shops, bars, tours and attractions across every city we cover. The bar we hold is simple: would we send a friend there?",
+            "Send us the name, the address, what makes it worth the trip, and one or two photographs. If it fits, we will place it in the right neighbourhood and category."
+          ]
+        },
+        {
+          "heading": "How we choose",
+          "body": [
+            "We are not paid to list a place. Nothing in this guide is on the basis of a commercial relationship, and being a paying partner does not buy a listing.",
+            "A spot in the directory is free. If we list you, we will say so plainly and we will correct anything you get wrong."
+          ]
+        },
+        {
+          "heading": "Publish travel content and earn",
+          "body": [
+            "We run a programme for writers and small publishers. You write the guide; we send readers your way.",
+            "Through our Stay22 partnership, qualifying referrals earn a bonus. There is no cost to join, no minimum volume, and no exclusivity."
+          ]
+        },
+        {
+          "heading": "What we look for",
+          "body": [
+            "Original writing rather than restated listings, and a point of view — the thing a visitor could not get from a search box.",
+            "Practical detail: what it costs, when to go, what to order, how long to allow, and how to avoid the queue.",
+            "Honest writing about the downsides. A guide that never mentions a crowd is not a guide anyone trusts."
+          ]
+        },
+        {
+          "heading": "Start here",
+          "body": [
+            "Pitch us a city, or send a correction to something already on the site. Partnerships go to partners@likealocalguide.com and press to press@likealocalguide.com."
+          ]
+        }
+      ]
+    }
+  }
+}
