@@ -3,29 +3,40 @@
 /**
  * The planner: Furkot's three panels, in Furkot's arrangement.
  *
- *   Plan drawer (left) · Map (centre) · Find/Sleep/Eat (right)
+ *   Weather twin (left, above) · Plan drawer (left) · Map (centre) · Find/Sleep/Eat (right)
+ *
+ * The weather twin sits at the top of the left column rather than on a page of its
+ * own, because the brief is explicit that this is an enhancement to the existing
+ * solution rather than a standalone application — and a traveller would have to
+ * leave the planner to look at the weather, at which point the two would disagree
+ * the moment either changed. It reads the trip below it and writes nothing back.
  *
  * On a narrow screen the panels stack under the map, because a 320px map with a
  * drawer either side of it is three unusable columns rather than a responsive
  * layout.
  *
  * The whole page is a client component because all of it is derived from the saved
- * trip: legs come from a network call, days from the split, the map from the two.
- * There is nothing here worth prerendering — the first paint is an empty itinerary
- * either way, and a map cannot exist without a window.
+ * trip: legs come from a network call, days from the split, the map from the two,
+ * and the twin's simulation from the trip plus a weather reading. There is nothing
+ * here worth prerendering — the first paint is an empty itinerary either way, and
+ * a map cannot exist without a window.
  */
 
 import { PoiDrawer } from "../../components/plan/PoiDrawer";
 import { PlanDrawer } from "../../components/plan/PlanDrawer";
 import { TripMap } from "../../components/plan/TripMap";
 import { TripSettings } from "../../components/plan/TripSettings";
+import { WeatherTwin } from "../../components/twin/WeatherTwin";
 import { PLACE_TOTALS } from "../../lib/plan/places";
 import { PlanProvider, usePlan } from "../../lib/plan/store";
+import { TwinProvider } from "../../lib/twin/store";
 
 export function PlanView() {
   return (
     <PlanProvider>
-      <PlanShell />
+      <TwinProvider>
+        <PlanShell />
+      </TwinProvider>
     </PlanProvider>
   );
 }
@@ -61,6 +72,7 @@ function PlanShell() {
 
       <div className="lp-grid">
         <div className="lp-col lp-col--left">
+          <WeatherTwin />
           <PlanDrawer />
         </div>
 

@@ -11,6 +11,7 @@
     "capture": "node tools/capture.mjs",
     "check:plan": "tsx tools/check-plan.mjs",
     "check:sync": "tsx tools/check-sync.mjs",
+    "check:twin": "node tools/check-twin.mjs",
     "auth:migrate": "tsx --env-file-if-exists=.env.local tools/migrate.mjs",
     "smoke:plan": "node tools/smoke-plan.mjs",
     "verify": "node tools/verify.mjs",

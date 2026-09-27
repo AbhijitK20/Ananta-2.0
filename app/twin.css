@@ -1,0 +1,823 @@
+/* ==========================================================================
+   WEATHER TWIN
+
+   A third stylesheet in the same family as app/plan.css and app/game.css: a
+   namespace of its own (`--wt-*` / `.wt-*`) and nothing outside it. The
+   planner's stylesheet states the reason — its rules are captured off the live
+   site and verified element-by-element by tools/verify.mjs, so a bare `.panel`
+   or a `:root` addition can move something that is measured.
+
+   The panel composes with the planner rather than replacing it: the <section>
+   carries `lp-panel` for the frame and everything inside is `wt-`. That split is
+   deliberate — the frame is the planner's, the content is the twin's, and
+   neither file has to know about the other.
+
+   Colours are read from the `--lal-*` tokens so the twin follows the site
+   palette. The severity ramp borrows the exact data colours app/plan's map
+   already draws with — `--lal-amber` for degraded, and the same #b8330a red the
+   day-colour list uses for its fourth day — because inventing a new red here
+   would put two reds on one page.
+   ========================================================================== */
+
+.wt-panel {
+  --wt-sev-0: var(--lal-ink-3);
+  --wt-sev-1: var(--lal-amber);
+  --wt-sev-2: #b8330a;
+  --wt-sev-3: #7d2206;
+  --wt-good: #0a7c5a;
+  --wt-line: var(--lal-line);
+  --wt-ink: var(--lal-ink);
+  --wt-ink-2: var(--lal-ink-2);
+  --wt-ink-3: var(--lal-ink-3);
+  --wt-ui: var(--lal-ui);
+  --wt-display: var(--lal-display);
+  --wt-soft: var(--lal-accent-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Shared atoms
+   -------------------------------------------------------------------------- */
+
+/* Matches the planner's `.lp-sub`, which is a rule this file must not redefine. */
+.wt-sub {
+  font-family: var(--wt-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--wt-ink-3);
+  margin: 18px 0 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--wt-line);
+}
+
+.wt-sub--last {
+  margin-bottom: 6px;
+}
+
+.wt-note {
+  font-family: var(--wt-ui);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--wt-ink-2);
+  margin: 0 0 8px;
+}
+
+.wt-note--lead {
+  color: var(--wt-ink-2);
+  margin-bottom: 4px;
+}
+
+.wt-error {
+  font-family: var(--wt-ui);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--wt-sev-2);
+  background: #fdf1ea;
+  border-left: 3px solid var(--wt-sev-2);
+  padding: 8px 10px;
+  margin: 8px 0;
+}
+
+.wt-warn {
+  font-family: var(--wt-ui);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--wt-ink);
+  background: #fff6e6;
+  border-left: 3px solid var(--lal-amber);
+  padding: 9px 11px;
+  margin: 8px 0;
+}
+
+.wt-headline {
+  font-family: var(--wt-display);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--wt-ink);
+  margin: 0 0 10px;
+  padding: 10px 11px;
+  background: var(--wt-soft);
+  border-radius: 8px;
+}
+
+.wt-badge {
+  font-family: var(--wt-ui);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 4px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+/* "As observed" is a quieter claim than "counterfactual", so it is the quieter
+   badge. The counterfactual badge is the accent, because it is the one a reader
+   must not skim past. */
+.wt-badge--live {
+  background: var(--lal-shell);
+  color: var(--wt-ink-2);
+}
+
+.wt-badge--counterfactual {
+  background: var(--lal-accent);
+  color: #fff;
+}
+
+.wt-panel__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wt-delta.is-worse,
+.wt-impact__delta.is-worse {
+  color: var(--wt-sev-2);
+}
+
+.wt-delta.is-better,
+.wt-impact__delta.is-better {
+  color: var(--wt-good);
+}
+
+/* --------------------------------------------------------------------------
+   Live conditions
+   -------------------------------------------------------------------------- */
+
+.wt-cities {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wt-city {
+  border: 1px solid var(--wt-line);
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+
+.wt-city--failed {
+  background: #fdf1ea;
+  border-color: #f0cdbb;
+}
+
+.wt-city__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.wt-city__name {
+  font-family: var(--wt-display);
+  font-size: 0.95rem;
+  color: var(--wt-ink);
+}
+
+.wt-city__cond {
+  font-family: var(--wt-ui);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--wt-ink-2);
+}
+
+.wt-city__temp {
+  font-family: var(--wt-ui);
+  font-size: 0.74rem;
+  color: var(--wt-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-city__error {
+  display: block;
+  font-family: var(--wt-ui);
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--wt-sev-2);
+}
+
+.wt-city__meta {
+  font-family: var(--wt-ui);
+  font-size: 0.68rem;
+  color: var(--wt-ink-3);
+  margin: 7px 0 0;
+}
+
+/* One row per hazard, with a severity block that is readable as text and not
+   only as colour — `■` repeated is deliberately a character, so the severity
+   survives a monochrome print and a screen reader alike. */
+.wt-hazards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  margin: 0;
+}
+
+.wt-hazard {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--wt-ui);
+  font-size: 0.74rem;
+  padding: 2px 0 2px 8px;
+  border-left: 3px solid var(--wt-sev-0);
+}
+
+.wt-hazard[data-severity="1"] { border-left-color: var(--wt-sev-1); }
+.wt-hazard[data-severity="2"] { border-left-color: var(--wt-sev-2); }
+.wt-hazard[data-severity="3"] { border-left-color: var(--wt-sev-3); }
+
+.wt-hazard dt {
+  color: var(--wt-ink-2);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.wt-hazard dd {
+  margin: 0;
+  color: var(--wt-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.wt-hazard__sev {
+  color: var(--wt-sev-1);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+}
+
+.wt-hazard[data-severity="2"] .wt-hazard__sev { color: var(--wt-sev-2); }
+.wt-hazard[data-severity="3"] .wt-hazard__sev { color: var(--wt-sev-3); }
+
+.wt-hazard__none {
+  color: var(--wt-ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   The effect on the plan
+   -------------------------------------------------------------------------- */
+
+.wt-plan-delta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+  margin: 0 0 8px;
+}
+
+.wt-plan-delta div {
+  border: 1px solid var(--wt-line);
+  border-radius: 7px;
+  padding: 7px 9px;
+}
+
+.wt-plan-delta dt {
+  font-family: var(--wt-ui);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--wt-ink-3);
+}
+
+.wt-plan-delta dd {
+  margin: 2px 0 0;
+  font-family: var(--wt-ui);
+  font-size: 0.84rem;
+  color: var(--wt-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   What-if
+   -------------------------------------------------------------------------- */
+
+.wt-scenario__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wt-scenario__head .wt-sub {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.wt-scenario__note {
+  font-family: var(--wt-ui);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--wt-ink-2);
+  background: var(--lal-accent-soft);
+  border-radius: 6px;
+  padding: 7px 9px;
+  margin: 10px 0 0;
+}
+
+.wt-presets {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.wt-preset {
+  font-family: var(--wt-ui);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--wt-ink);
+  background: var(--lal-shell);
+  border: 1px solid var(--wt-line);
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+}
+
+.wt-preset:hover {
+  border-color: var(--lal-accent);
+  background: var(--wt-soft);
+}
+
+.wt-sliders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wt-slider__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--wt-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--wt-ink);
+  margin-bottom: 3px;
+}
+
+.wt-slider__now {
+  font-weight: 500;
+  font-size: 0.72rem;
+  color: var(--wt-ink-2);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.wt-slider__input {
+  width: 100%;
+  accent-color: var(--lal-accent);
+  cursor: pointer;
+}
+
+.wt-slider__abs {
+  font-family: var(--wt-ui);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: var(--wt-ink-2);
+  margin: 3px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-slider__offset {
+  display: block;
+  color: var(--wt-ink-3);
+}
+
+/* The scenario resolved into units, per city. This is the panel's own promise
+   kept: the control is a ratio and the consequence is a number, and both are on
+   screen at once. */
+.wt-resolved {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wt-resolved__city {
+  border: 1px dashed var(--wt-line);
+  border-radius: 7px;
+  padding: 7px 9px;
+}
+
+.wt-resolved__name {
+  font-family: var(--wt-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--wt-ink-3);
+}
+
+.wt-resolved__list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  font-family: var(--wt-ui);
+  font-size: 0.72rem;
+}
+
+.wt-resolved__list li {
+  display: contents;
+}
+
+.wt-resolved__list li span:first-child {
+  color: var(--wt-ink-3);
+  padding-left: 7px;
+  border-left: 3px solid var(--wt-sev-0);
+}
+
+.wt-resolved__list li[data-severity="1"] span:first-child { border-left-color: var(--wt-sev-1); }
+.wt-resolved__list li[data-severity="2"] span:first-child { border-left-color: var(--wt-sev-2); }
+.wt-resolved__list li[data-severity="3"] span:first-child { border-left-color: var(--wt-sev-3); }
+
+.wt-resolved__list li span:last-child {
+  color: var(--wt-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Per-stop impacts
+   -------------------------------------------------------------------------- */
+
+.wt-impacts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wt-impact {
+  border: 1px solid var(--wt-line);
+  border-left-width: 3px;
+  border-left-color: var(--wt-sev-0);
+  border-radius: 7px;
+  padding: 7px 9px;
+}
+
+.wt-impact[data-severity="1"] { border-left-color: var(--wt-sev-1); }
+.wt-impact[data-severity="2"] { border-left-color: var(--wt-sev-2); }
+.wt-impact[data-severity="3"] { border-left-color: var(--wt-sev-3); }
+
+.wt-impact__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 8px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--wt-ui);
+}
+
+.wt-impact__name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--wt-ink);
+}
+
+.wt-impact__where {
+  grid-column: 1;
+  font-size: 0.68rem;
+  color: var(--wt-ink-3);
+}
+
+.wt-impact__figure {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  align-self: center;
+}
+
+.wt-impact__value {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--wt-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-impact__delta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-impact__range {
+  font-family: var(--wt-ui);
+  font-size: 0.7rem;
+  color: var(--wt-ink-2);
+  margin: 4px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-impact__driver {
+  color: var(--wt-ink-3);
+}
+
+.wt-impact__evidence {
+  color: var(--wt-ink-3);
+}
+
+.wt-impact__detail {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--wt-line);
+}
+
+.wt-impact__reason {
+  font-family: var(--wt-ui);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--wt-ink-2);
+  margin: 0 0 8px;
+}
+
+.wt-channels {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--wt-ui);
+  font-size: 0.72rem;
+}
+
+.wt-channels th,
+.wt-channels td {
+  text-align: left;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--lal-shell);
+  font-weight: 400;
+  color: var(--wt-ink);
+}
+
+.wt-channels th {
+  color: var(--wt-ink-2);
+  width: 42%;
+}
+
+.wt-channels tr.is-bad td { color: var(--wt-sev-2); }
+.wt-channels tr.is-good td { color: var(--wt-good); }
+
+.wt-channels__conf {
+  color: var(--wt-ink-3);
+  font-size: 0.66rem;
+}
+
+.wt-chain {
+  font-family: var(--wt-ui);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--wt-ink-2);
+  margin: 8px 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   Public signals
+   -------------------------------------------------------------------------- */
+
+.wt-sources {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0 0 9px;
+  padding: 0;
+}
+
+.wt-sources li {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-family: var(--wt-ui);
+  font-size: 0.66rem;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--wt-line);
+  background: var(--lal-shell);
+  color: var(--wt-ink-3);
+}
+
+.wt-sources li.is-ok {
+  background: #e8f4ef;
+  border-color: #bfe0d2;
+  color: #0a5c44;
+}
+
+/* A source that did not answer is styled as absent rather than as zero, so
+   "rate-limited" never reads as "nothing is happening". */
+.wt-sources li.is-down {
+  background: #fdf1ea;
+  border-color: #f0cdbb;
+  color: var(--wt-sev-2);
+}
+
+.wt-sources__count {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-signals {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.wt-signal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  border: 1px solid var(--wt-line);
+  border-radius: 7px;
+  padding: 7px 9px;
+  font-family: var(--wt-ui);
+  font-size: 0.72rem;
+}
+
+.wt-signal.is-alert {
+  border-color: #f0cdbb;
+  background: #fdf1ea;
+}
+
+.wt-signal__source {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--wt-ink-3);
+}
+
+.wt-signal__level {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--wt-sev-2);
+}
+
+.wt-signal__level--2 { color: var(--wt-sev-3); }
+
+.wt-signal__title {
+  color: var(--wt-ink);
+  line-height: 1.45;
+}
+
+.wt-signal__title a {
+  color: inherit;
+  text-decoration-color: var(--wt-line);
+  text-underline-offset: 2px;
+}
+
+.wt-signal__title a:hover {
+  text-decoration-color: var(--lal-accent);
+}
+
+.wt-signal__meta {
+  font-size: 0.66rem;
+  color: var(--wt-ink-3);
+}
+
+.wt-calib {
+  font-family: var(--wt-ui);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--wt-ink-2);
+  background: var(--lal-shell);
+  border-radius: 7px;
+  padding: 8px 10px;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Provenance
+   -------------------------------------------------------------------------- */
+
+.wt-prov__list {
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: var(--wt-ui);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--wt-ink-2);
+}
+
+.wt-prov__list code {
+  font-size: 0.66rem;
+  background: var(--lal-shell);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.wt-prov__stamp {
+  font-family: var(--wt-ui);
+  font-size: 0.66rem;
+  color: var(--wt-ink-3);
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   The map's twin legend
+
+   Lives in twin.css rather than plan.css because it is the twin's vocabulary on
+   the planner's map, and the planner's file states that nothing in it can reach
+   outside the `lp-` namespace. An `.lp-` rule for a twin legend would break that.
+   -------------------------------------------------------------------------- */
+
+.wt-maplegend {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 260px;
+  padding: 8px 10px;
+  background: rgb(255 255 255 / 0.94);
+  border: 1px solid var(--lal-line);
+  border-radius: 8px;
+  box-shadow: var(--lal-shadow-tile);
+  font-family: var(--lal-ui);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--lal-ink-2);
+  pointer-events: none;
+}
+
+.wt-maplegend__title {
+  font-weight: 600;
+  color: var(--lal-ink);
+}
+
+.wt-maplegend__ramp {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.wt-maplegend__ramp span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--lal-ink-3);
+}
+
+.wt-maplegend__ramp span::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--wt-sev-0);
+}
+
+.wt-maplegend__ramp span[data-severity="1"]::before { background: var(--wt-sev-1); }
+.wt-maplegend__ramp span[data-severity="2"]::before { background: var(--wt-sev-2); }
+.wt-maplegend__ramp span[data-severity="3"]::before { background: var(--wt-sev-3); }
+
+/* The legend's colours are declared on the panel, and the map is not inside it. */
+.lp-map {
+  --wt-sev-0: var(--lal-ink-3);
+  --wt-sev-1: var(--lal-amber);
+  --wt-sev-2: #b8330a;
+  --wt-sev-3: #7d2206;
+}
+
+.wt-scenario__label {
+  font-family: var(--wt-ui);
+  font-size: 0.68rem;
+  color: var(--wt-ink-3);
+}
+
+/* "Nothing to scale" is a different kind of note from "you are imagining a
+   world": it is about a control that cannot do anything, so it wears the quiet
+   neutral rather than the accent the counterfactual badge uses. */
+.wt-scenario__note--dead {
+  background: var(--lal-shell);
+  color: var(--wt-ink-2);
+}

@@ -416,7 +416,6 @@ lets another site drive a sign-in. Note the check only runs on requests that
 carry a cookie, which is Better Auth's reasoning: a cookieless request cannot be
 a forged authenticated action.
 
-
 2. Create Better Auth's four tables:
 
    ```bash
@@ -480,6 +479,123 @@ deploy — anyone can sign up as anyone.
 
 ---
 
+## The weather twin
+
+`/plan` carries a weather-driven digital twin in the top of its left column, above
+the itinerary drawer. It is a panel and not a route, because the brief is explicit
+that this is an enhancement to the existing solution rather than a new
+application — and a traveller who had to leave the planner to look at the weather
+would be looking at two things that disagree the moment either changed.
+
+It reads the trip you have already built: your stops, the cities they sit in, the
+legs the planner has already routed, and the directory entries behind them. It
+writes nothing back, ever.
+
+```bash
+npm run check:twin   # 20 browser assertions, needs a dev or start server
+```
+
+### What it does, against the four requirements
+
+| Requirement | How |
+| --- | --- |
+| Live weather | OpenWeather current conditions **and** the 3-hour forecast, per city, through `app/api/twin/observe` |
+| Geospatial map | Impact halos on the planner's own MapLibre map, over the same markers, plus a legend |
+| Social signals | GDACS alerts (with coordinates), Reddit and Hacker News, bucketed to your cities |
+| What-if | Five continuous controls — rainfall, temperature, wind, standing water, storm hours — and four named presets |
+
+### Why the API key is not in the browser
+
+`OWM_API_KEY` is read inside the route handler and nowhere else. The route is
+server-only, so the key never reaches the client bundle. That is also why the
+three public feeds are fetched server-side rather than in the browser: Reddit
+answers a burst from a shared address with HTTP 429 for minutes at a time, and a
+page full of client-side polling would get this project cut off from all three
+within a day. A key in a `NEXT_PUBLIC_` variable would be spent by somebody else
+by the morning.
+
+### The model, and what it is not
+
+Five hazards in real units — `rain` mm/h, `heat` °C over 30, `wind` km/h gust,
+`flood` cm standing, `storm` hours remaining — and six operational channels, kept
+apart on purpose: `availability`, `capacity`, `movement`, `demand`, `duration`,
+`workforce`. "Impact" as one number is the step that makes a twin
+unfalsifiable, and six quantities with different signs are not one quantity.
+
+The **prior** is a stated engineering judgement, written down in
+`lib/twin/impact.ts` as a table of what each hazard does to each channel at each
+shelter level, with its reasoning. It is not a trained regressor, and it is not
+presented as one: a regression over what this project actually has would memorise
+noise and print a number nobody can interrogate. The **correction** comes from
+real records — an official alert, or public reports that name your city — and it
+is small, clamped, and smoothed by `n / (n + 4)`, so a cell with one report is
+overwhelmingly prior and a cell with forty is mostly evidence. The panel prints
+that count on every load.
+
+Effects **cascade in four named orders** and no further: direct, access (the road
+between you and the place — which is why a flooded road closes a dry café),
+workforce (the city, not the venue), and reroute (the only order that improves
+anything, because people whose plans break do not disappear, they go somewhere
+else). Each hop damps both the effect and its confidence, so an effect that has
+travelled three links is visibly less certain than the hazard that started it.
+
+### The three decisions that matter most
+
+**The what-if is a ratio, and prints the unit it resolves to.** A slider set to
+"40 mm/h" means nothing at your current conditions — in clear air it is a
+catastrophe and in a downpour it is Tuesday. Every control multiplies the
+observed reading and prints the absolute value next to it, so you never have to
+do the arithmetic to know whether what you are imagining is a real change. Depth
+is the exception and carries its own unit: water accumulates, so it has an origin
+that is not "clear skies".
+
+**The days and nights come from the planner's own split.** Not a weather-shaped
+reimplementation of it. `lib/twin/itinerary.ts` hands the inflated leg times back
+to `splitIntoDays` and `totalsFor` — the same functions, the same daily limit, the
+same "a leg longer than the cap cannot be split" rule — and reports the
+difference. If the planner's rules move, the twin's answer moves with them,
+because there is only one rule. And when a middle stop is closed the two legs
+either side of it **join** into one, which is the honest consequence of not going
+somewhere rather than quietly dropping a leg.
+
+**Flooding is never read from a forecast.** No weather response carries standing
+water, and deriving it from rainfall would be the most confident wrong number in
+the layer: depth depends on drainage, terrain and hours of accumulation. So
+`flood` arrives from exactly two places — an official alert, or your own control
+— and the panel says which.
+
+### What it refuses to do
+
+- **It will not invent a trip.** The graph is empty until there is one. A twin
+  that populated itself so the panel had something to draw would be answering a
+  question nobody asked.
+- **It will not guess a pin's shelter.** A coordinate you dropped has no category
+  and no prose, so it is classed `unknown` and labelled as such, rather than
+  assumed safe or assumed exposed.
+- **It will not report an outage as calm.** A source that did not answer is shown
+  as "no answer", a source that answered with nothing near your trip is shown as
+  "nothing near", and a weather service that fails for a city is rendered as
+  *unaffected* with the reason attached. The `±` on every figure is
+  confidence-derived, not a fitted interval, and is labelled as such.
+- **A ratio on a zero does nothing, and the panel says so.** A "Downpour" preset
+  on a clear day triples a rainfall of nothing. The controls report which of them
+  are inert rather than implying a response the model does not have.
+
+### Files
+
+```
+lib/twin/hazard-scale.ts   the eleven thresholds, in units, in one place
+lib/twin/impact.ts         the prior, and the calibrated correction
+lib/twin/graph.ts          the twin's graph, built from your trip
+lib/twin/propagate.ts      the four cascade orders
+lib/twin/itinerary.ts      the effect on days and nights, via the planner's split
+lib/twin/weather.ts        OpenWeather shapes, unit conversion, the condition word
+lib/twin/feeds.ts          the three public feeds, server-only
+lib/twin/signals.ts        bucketing, the keyword-count polarity, calibration
+app/api/twin/observe/      the route: the only place the key exists
+components/twin/           the panel, the controls, the impacts, the feed
+```
+
 ## Known gaps
 
 - **Accounts are wired but unconfigured.** Auth and cloud saves are complete and
@@ -487,6 +603,20 @@ deploy — anyone can sign up as anyone.
   the sync round trip have never run against a real database. The migration
   script's path to Postgres is verified; the happy path is not. See "Accounts and
   cloud saves" above.
+- **The weather twin needs a server, so it cannot be statically exported.**
+  `app/api/twin/observe` is a `force-dynamic` POST that pulls live weather, and a
+  route handler cannot be emitted as a static file at all. Any future static
+  export — for a native app, an offline bundle, or a CDN-only deploy — has to
+  exclude this route or it will fail somewhere considerably less legible than
+  here. The web build is unaffected, and is the product the twin ships in.
+- **The twin's model is a prior, not a trained regressor, and it says so on the
+  panel.** The thresholds in `lib/twin/hazard-scale.ts` and the table in
+  `lib/twin/impact.ts` are a stated engineering judgement about outdoor
+  hospitality. The real records that exist — a handful of alerts and public posts
+  — are used to calibrate it within a third of a severity step, smoothed by
+  `n / (n + 4)`, and the panel prints how many there were. Anyone who wants the
+  numbers to mean something other than judgement needs the observations to reach
+  a few hundred, and the table should be revisited when they do.
 - **No filmstrip footage yet.** The architecture and the mount/unmount window
   are done and verified; `data/place-videos.json` is empty because no
   free-licensed clip has been sourced. See "Adding video" above.
