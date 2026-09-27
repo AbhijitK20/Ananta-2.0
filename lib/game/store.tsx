@@ -54,6 +54,7 @@ import { evaluateQuests, questById } from "./quests";
 import { clear, isStorageAvailable, load, persist } from "./storage";
 import { emptySave, type AchievementState, type DayKey, type QuestState, type Save } from "./types";
 import { levelState, XP_DAILY_BONUS, XP_PER_CITY, XP_PER_STAMP } from "./xp";
+import { cityBonusFor, computeXp } from "./progress";
 
 /* -------------------------------------------------------------------------- *
  * Actions and rewards
@@ -150,11 +151,6 @@ function dayKeyOf(iso: string): DayKey | null {
  * A city of one is not a city cleared — it is a place stamped, which the base
  * 10 XP already pays for. The floor is 2.
  */
-function cityBonusFor(total: number, have: number): number {
-  if (total < 2) return 0;
-  return have >= total ? XP_PER_CITY : 0;
-}
-
 /**
  * The single write path for player progress.
  *
@@ -344,34 +340,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   // nominated that day, and only the current nomination is kept, so it cannot
   // be re-derived and has to be recorded. It is recorded on the same write path
   // that grants it, in the reducer, so the toast and this total cannot drift.
-  const xp = useMemo(() => {
-    let total = stamps.size * XP_PER_STAMP;
-
-    // Deduplicated even though the reducer already prevents a double claim.
-    // The reducer's guard lives on the write path and this is the read path;
-    // if they ever disagreed, a duplicated entry in the array would pay a
-    // quest's reward twice and nothing in the UI would look wrong. One set
-    // here costs nothing and makes the derivation total on its own terms.
-    for (const questId of new Set(save.claimedQuests)) {
-      total += questById(questId)?.reward ?? 0;
-    }
-
-    // Cities where the stamped count reaches the city's total are complete by
-    // definition, so this bonus is re-derivable after all — which is why it is
-    // computed here rather than banked at stamp time. `cityBonusFor` keeps the
-    // floor at two places so it agrees with what the toast reported.
-    for (const city of CITY_BY_SLUG.values()) {
-      let have = 0;
-      for (const place of city.places) {
-        if (stamps.has(place.id)) have += 1;
-      }
-      total += cityBonusFor(city.places.length, have);
-    }
-
-    total += new Set(save.dailiesDone).size * XP_DAILY_BONUS;
-
-    return total;
-  }, [stamps, save.claimedQuests, save.dailiesDone]);
+  // The arithmetic lives in `computeXp` so the assistant and this stamp book are
+  // reading the same function rather than two implementations that have to be
+  // kept in agreement by hand. See the note at the top of progress.ts for what
+  // happens when they are not.
+  const xp = useMemo(
+    () =>
+      computeXp({
+        stamps,
+        claimedQuests: save.claimedQuests,
+        dailiesDone: save.dailiesDone,
+      }).total,
+    [stamps, save.claimedQuests, save.dailiesDone],
+  );
 
   const daily = useMemo(() => {
     const stored = save.dailyPick?.day === today ? save.dailyPick : null;

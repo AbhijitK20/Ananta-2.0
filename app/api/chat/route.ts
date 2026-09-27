@@ -49,6 +49,7 @@ import type { ReadableStreamDefaultController } from "node:stream/web";
 
 import { NugenError, stream, type ChatMessage } from "@/lib/nugen/client";
 import { apiKey, providerDisabled, resolveModel } from "@/lib/nugen/config";
+import { answerFromEngine } from "@/lib/nugen/engine-answer";
 import { runTool, SYSTEM_PROMPT, TOOL_SPECS, type PlayerSave } from "@/lib/nugen/tools";
 
 export const runtime = "nodejs";
@@ -63,6 +64,13 @@ type Frame =
   | { type: "text"; delta: string }
   | { type: "confidence"; score: number; spans: number }
   | { type: "tool"; name: string; summary: string }
+  /**
+   * The provider did not answer, so the deterministic engine did. `via` names the
+   * rule that produced it and `unmatched` says whether it was a real answer or a
+   * refusal. The client renders both as a visible "the model did not respond"
+   * marker, and shows no confidence score, because no model generated this.
+   */
+  | { type: "degraded"; reason: string; via: string; unmatched: boolean; text: string }
   | { type: "done"; model: string; customized: true; confidence: number | null; rounds: number; latencyMs: number }
   | { type: "error"; message: string; code: string };
 
@@ -143,6 +151,7 @@ export async function POST(req: Request) {
     stamped: Array.isArray(body.save?.stamped) ? body.save.stamped : [],
     claimed: Array.isArray(body.save?.claimed) ? body.save.claimed : [],
     activeDays: Array.isArray(body.save?.activeDays) ? body.save.activeDays : [],
+    dailiesDone: Array.isArray(body.save?.dailiesDone) ? body.save.dailiesDone : [],
   };
 
   // Trimmed so a long conversation cannot walk the model out of its context
@@ -244,11 +253,26 @@ export async function POST(req: Request) {
         });
       } catch (err) {
         const e = err as NugenError;
-        send({
-          type: "error",
-          message: e instanceof NugenError ? e.message : String(err),
-          code: e instanceof NugenError ? (e.retryable ? "provider" : "bad_request") : "unknown",
-        });
+        const why = e instanceof NugenError ? e.message : String(err);
+
+        // The model is the preferred path and the alignment is the point of the
+        // project, so it is tried first and its failure is not hidden. But the
+        // questions this panel asks are answerable exactly by the deterministic
+        // layer, and Nugen has been refusing inference for long stretches -- a
+        // vendor outage should not make the product unusable, especially when the
+        // engine path is *more* trustworthy than a 3B model's memory.
+        //
+        // What matters is that the answer is labelled. `degraded` tells the client
+        // no model generated this, and the client shows that to the player. There
+        // is deliberately no confidence score on this path: a number here would be
+        // invented, which is the one thing this feature must never do.
+        const last = [...trimmed].reverse().find((m) => m.role === "user");
+        if (last) {
+          const answer = answerFromEngine(last.content, save);
+          send({ type: "degraded", reason: why, via: answer.via, unmatched: answer.unmatched, text: answer.text });
+        } else {
+          send({ type: "error", message: why, code: e instanceof NugenError ? (e.retryable ? "provider" : "bad_request") : "unknown" });
+        }
       } finally {
         controller.close();
       }

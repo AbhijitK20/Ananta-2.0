@@ -1420,3 +1420,14 @@
   border-color: var(--lq-line);
   color: var(--lq-ink-3);
 }
+
+/* An answer the game engine produced because the model did not respond.
+   Deliberately a different colour from both confidence states, and never paired
+   with a confidence number: no model generated it, so there is no uncertainty to
+   report and inventing one would be the exact failure this project exists to
+   avoid. */
+.lq-oracle__conf--engine {
+  background: var(--lq-silver-soft);
+  color: #4a5560;
+  border: 1px dashed var(--lq-silver);
+}

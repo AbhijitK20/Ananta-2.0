@@ -51,7 +51,8 @@ import {
 import { satisfiedAchievements, ACHIEVEMENTS } from "../game/achievements";
 import { streakState, type StreakState } from "../game/daily";
 import { evaluateQuests, TIER_LABELS, sortForBoard } from "../game/quests";
-import { levelState, XP_PER_STAMP, XP_PER_CITY } from "../game/xp";
+import { levelState } from "../game/xp";
+import { computeXp } from "../game/progress";
 import type { ToolSpec } from "./client";
 
 /** The player's save, as the client reports it. */
@@ -62,6 +63,14 @@ export type PlayerSave = {
   claimed: string[];
   /** `YYYY-MM-DD` day keys on which at least one place was stamped. */
   activeDays: string[];
+  /**
+   * `YYYY-MM-DD` day keys on which the daily challenge was completed.
+   *
+   * Carried because XP is not derivable without it -- `computeXp` pays a daily
+   * bonus per completed challenge. A player with claimed quests and finished
+   * dailies would otherwise be quoted a total the stamp book does not show.
+   */
+  dailiesDone: string[];
 };
 
 export type ToolResult = Record<string, unknown>;
@@ -165,6 +174,7 @@ export const TOOL_SPECS: ToolSpec[] = [
               stamped: { type: "array", items: { type: "string" } },
               claimed: { type: "array", items: { type: "string" } },
               activeDays: { type: "array", items: { type: "string" } },
+              dailiesDone: { type: "array", items: { type: "string" } },
             },
             required: ["stamped"],
           },
@@ -240,6 +250,14 @@ export function runTool(name: string, rawArgs: string | undefined, save: PlayerS
   const stamped = asSet(args.save && typeof args.save === "object"
     ? ((args.save as Record<string, unknown>).stamped as string[] | undefined)
     : save.stamped);
+  // The save rides along on every call, so a model that omits it from `args` or
+  // drops `dailiesDone` from it still gets the player's real XP.
+  if (args.save && typeof args.save === "object") {
+    const s = args.save as Record<string, unknown>;
+    if (Array.isArray(s.claimed)) save.claimed = s.claimed as string[];
+    if (Array.isArray(s.activeDays)) save.activeDays = s.activeDays as string[];
+    if (Array.isArray(s.dailiesDone)) save.dailiesDone = s.dailiesDone as string[];
+  }
 
   switch (name) {
     case "lookup_place":
@@ -317,8 +335,14 @@ function playerProgress(save: PlayerSave, stamped: Set<string>): ToolResult {
   const citiesDone = new Set(stampedPlaces.map((p) => p.city));
   const clearedCities = CITIES.filter((c) => c.places.every((p) => stamped.has(p.id)));
 
-  const xp =
-    stampedPlaces.length * XP_PER_STAMP + clearedCities.length * XP_PER_CITY;
+  // The shared derivation, not arithmetic redone here. The stamp book calls the
+  // same function, so the two cannot disagree about a player's XP.
+  const xpBreakdown = computeXp({
+    stamps: stamped,
+    claimedQuests: save.claimed,
+    dailiesDone: save.dailiesDone,
+  });
+  const xp = xpBreakdown.total;
   const level = levelState(xp);
   const streak: StreakState = streakState(save.activeDays ?? []);
   const earned = satisfiedAchievements({ stamps: stamped, bestStreak: streak.best });
@@ -326,12 +350,17 @@ function playerProgress(save: PlayerSave, stamped: Set<string>): ToolResult {
   const quests = evaluateQuests(stamped, asSet(save.claimed));
 
   return {
-    stamped: stampedPlaces.length,
+    // `stampedPlaces.length` would exclude stale ids, but the album header, the
+    // progress bar and the XP figure all count every id in the save. Reported the
+    // way the stamp book reports it, or the assistant contradicts the page.
+    stamped: save.stamped.length,
     ofTotal: TOTALS.places,
     xp,
     xpBreakdown: {
-      perStamp: `${stampedPlaces.length} x ${XP_PER_STAMP}`,
-      cityClearance: `${clearedCities.length} x ${XP_PER_CITY}`,
+      perStamp: xpBreakdown.fromStamps,
+      questRewards: xpBreakdown.fromQuests,
+      cityClearance: xpBreakdown.fromCities,
+      dailyBonus: xpBreakdown.fromDailies,
     },
     level: {
       // `Level.index` is zero-based -- index 0 is level 1 -- so the number a
@@ -350,7 +379,7 @@ function playerProgress(save: PlayerSave, stamped: Set<string>): ToolResult {
       lastActive: streak.lastActive,
     },
     citiesTouched: citiesDone.size,
-    citiesCleared: clearedCities.length,
+    citiesCleared: xpBreakdown.citiesCleared,
     questsComplete: quests.filter((q) => q.complete).length,
     questsTotal: quests.length,
     questsClaimable: quests.filter((q) => q.claimable).map((q) => q.quest.title),

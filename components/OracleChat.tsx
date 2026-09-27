@@ -51,6 +51,8 @@ type Turn = {
   error?: string;
   model?: string;
   latencyMs?: number;
+  /** Set when the provider failed and the deterministic engine answered instead. */
+  degraded?: { reason: string; via: string; unmatched: boolean };
 };
 
 type Health = {
@@ -131,6 +133,9 @@ export function OracleChat() {
               stamped: [...stamps],
               claimed: save.claimedQuests,
               activeDays: save.activeDays,
+              // XP pays a bonus per completed daily, so omitting this would
+              // quote a total the stamp book disagrees with.
+              dailiesDone: save.dailiesDone,
             },
           }),
         });
@@ -184,6 +189,12 @@ export function OracleChat() {
               patch((t) => ({ ...t, tools: [...t.tools, f.summary ? `${label} (${f.summary})` : label] }));
             } else if (f.type === "done") {
               patch((t) => ({ ...t, model: String(f.model), latencyMs: Number(f.latencyMs) }));
+            } else if (f.type === "degraded") {
+              patch((t) => ({
+                ...t,
+                text: String(f.text),
+                degraded: { reason: String(f.reason), via: String(f.via), unmatched: Boolean(f.unmatched) },
+              }));
             } else if (f.type === "error") {
               patch((t) => ({ ...t, error: String(f.message) }));
             }
@@ -310,7 +321,18 @@ export function OracleChat() {
 
               {t.error ? <p className="lq-oracle__error">{t.error}</p> : null}
 
-              {t.text && !t.error ? (
+              {t.degraded ? (
+                <p className="lq-oracle__meta">
+                  <span className="lq-oracle__conf lq-oracle__conf--engine">
+                    {t.degraded.unmatched
+                      ? "no rule matched — model unavailable"
+                      : "answered from the game engine — the model did not respond"}
+                  </span>
+                  {t.degraded.via !== "none" ? <code className="lq-oracle__model">{t.degraded.via}</code> : null}
+                </p>
+              ) : null}
+
+              {t.text && !t.error && !t.degraded ? (
                 <p className="lq-oracle__meta">
                   {t.confidence == null ? (
                     <span className="lq-oracle__conf lq-oracle__conf--none">confidence: not reported — not aligned</span>
