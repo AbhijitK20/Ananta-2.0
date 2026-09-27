@@ -6,6 +6,8 @@ import { GAME_LINK, NAV } from "../lib/data";
 
 import { useState } from "react";
 
+import { AccountMenu } from "./AccountMenu";
+
 export function Header() {
   const [open, setOpen] = useState(false);
 
@@ -48,6 +50,7 @@ export function Header() {
           </nav>
 
           <span className="lal-cta-wrap">
+            <AccountMenu />
             <Link href="/cities" className="lal-cta">
               Explore Places
             </Link>

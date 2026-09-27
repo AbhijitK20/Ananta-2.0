@@ -1114,6 +1114,102 @@ a {
   outline-offset: 2px;
 }
 
+/* account */
+
+.lal-account {
+  position: relative;
+  display: inline-flex;
+  /* The CTA wrapper is a flex row tuned around one 45px button. The trigger is
+     a line of text, so it is centred on that button's box rather than sitting on
+     the wrapper's baseline, which the wrapper's inherited line-height would
+     otherwise pull it down. */
+  align-items: center;
+  line-height: 1;
+}
+
+.lal-account__trigger {
+  border: 0;
+  background: none;
+  padding: 8px 2px;
+  cursor: pointer;
+  font-family: var(--lal-ui);
+  font-size: 14px;
+  color: var(--lal-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.lal-account__trigger:hover {
+  color: var(--lal-accent);
+}
+
+.lal-account__trigger:focus-visible,
+.lal-account__switch:focus-visible {
+  outline: 2px solid var(--lal-accent);
+  outline-offset: 2px;
+}
+
+.lal-account__panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  border: 1px solid var(--lal-line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 18px;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.14);
+}
+
+/* Narrower and tighter than the page-level .lal-form, which is a 640px
+   editorial form. This one is a dropdown. */
+.lal-account__form {
+  gap: 12px;
+  max-width: none;
+}
+
+.lal-account__form .lal-field input {
+  padding: 9px 12px;
+}
+
+.lal-account__note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lal-muted, #5a5f66);
+}
+
+.lal-account__error {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #b3261e;
+}
+
+.lal-account__switch {
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--lal-ui);
+  font-size: 13px;
+  color: var(--lal-accent);
+  text-align: left;
+}
+
+/* The panel hangs off the right edge; on a narrow screen that would push it off
+   screen entirely, so it is pinned to the viewport's left edge instead. */
+@media (max-width: 480px) {
+  .lal-account__panel {
+    right: auto;
+    left: 0;
+    width: min(320px, calc(100vw - 32px));
+  }
+}
+
 /* ============================ responsive =============================== */
 
 /* Breakpoints and every value below were measured on the live site at 1024 and

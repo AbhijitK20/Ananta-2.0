@@ -49,6 +49,7 @@ import {
   selectAchievements,
   type AchievementInputs,
 } from "./achievements";
+import { queuePush, syncOnLoad } from "../auth/sync";
 import { dailyPickFor, streakState, todayKey } from "./daily";
 import { evaluateQuests, questById } from "./quests";
 import { clear, isStorageAvailable, load, persist } from "./storage";
@@ -301,14 +302,23 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     if (result.discarded) {
       console.warn("[lal-quest] stored save discarded:", result.reason);
     }
+    // The cloud copy is pulled after the local one has been read, and lands
+    // through `hydrate` like any other write, so it meets the same reducer.
+    void syncOnLoad("game", result.save, (data) =>
+      dispatch({ type: "hydrate", save: data as Save }),
+    );
   }, []);
 
   // Persist on every change *after* hydration. Guarding on `hydrated` is what
   // stops the first effect — which dispatches the loaded save — from writing an
   // empty save back over it before it has been read.
+  //
+  // The same effect feeds the cloud. It is a no-op while signed out, so a player
+  // who never signs in never makes a request.
   useEffect(() => {
     if (!hydrated) return;
     persist(save);
+    queuePush("game", save);
   }, [save, hydrated]);
 
   const stamps = useMemo(() => new Set(Object.keys(save.stamps)), [save.stamps]);
