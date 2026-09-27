@@ -11,6 +11,7 @@ import "./interior.css";
 import "./filmstrip.css";
 import "./globe.css";
 import "./parallax.css";
+import "./crowd.css";
 
 /* The two families the live design actually uses, self-hosted by next/font so
    the clone makes no third-party request at runtime. */

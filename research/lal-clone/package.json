@@ -11,8 +11,8 @@
     "capture": "node tools/capture.mjs",
     "verify": "node tools/verify.mjs",
     "verify:places": "node tools/verify-places.mjs",
-    "predev": "node tools/copy-cesium-assets.mjs",
-    "prebuild": "node tools/copy-cesium-assets.mjs"
+    "predev": "node tools/copy-cesium-assets.mjs && node tools/generate-crowd-sheet.mjs",
+    "prebuild": "node tools/copy-cesium-assets.mjs && node tools/generate-crowd-sheet.mjs"
   },
   "dependencies": {
     "cesium": "^1.145.0",

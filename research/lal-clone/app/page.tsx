@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CityPicker } from "../components/CityPicker";
+import CrowdCanvas from "../components/CrowdCanvas";
 import { CountryFilmstrip } from "../components/CountryFilmstrip";
 import { ParallaxHero } from "../components/ParallaxHero";
 import { Promise, Tips } from "../components/Sections";
@@ -28,6 +29,21 @@ export default function HomePage() {
       </section>
       <Promise />
       <Tips />
+      {/* Closing band. Deliberately last: it is the page's sign-off, and the
+          canvas only ticks while it is on screen. */}
+      <section className="lal-crowd" aria-labelledby="lal-crowd-title">
+        <div className="lal-crowd__inner">
+          <p className="lal-crowd__eyebrow">People, not places</p>
+          <h2 className="lal-crowd__title" id="lal-crowd-title">
+            Someone local is already there
+          </h2>
+          <p className="lal-crowd__sub">
+            Every itinerary on this site is written by someone who lives in the city they are
+            showing you around.
+          </p>
+        </div>
+        <CrowdCanvas />
+      </section>
     </>
   );
 }
