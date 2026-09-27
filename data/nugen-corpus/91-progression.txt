@@ -1,0 +1,60 @@
+# Progression
+
+Only one thing is stored: the set of stamped place ids, and the day keys on
+which a stamp happened. Everything else below is derived from that set at
+read time, so none of it can disagree with the stamp book.
+
+## XP
+
+- Per stamp: **10 XP**.
+- Clearing an entire city: **50 XP**.
+- Completing the daily challenge: **15 XP**.
+
+## Levels
+
+| Level | Title | XP required |
+| ---: | --- | ---: |
+| undefined | Tourist | 0 |
+| undefined | Visitor | 40 |
+| undefined | Wayfinder | 120 |
+| undefined | Regular | 280 |
+| undefined | Local | 520 |
+| undefined | Insider | 860 |
+| undefined | Native | 1320 |
+| undefined | Fixture | 2000 |
+| undefined | Legend | 3000 |
+| undefined | Local Legend | 6000 |
+
+## Streaks
+
+A streak is the run of consecutive days on which at least one place was
+stamped. Stamping on consecutive days extends it; a day with no stamp ends
+it. The current streak, the best streak and the days kept are all read off
+the stored day keys.
+
+## Achievements
+
+15 achievements in three tiers. Tiers differ in lightness and
+saturation as well as hue, so they stay distinguishable in greyscale.
+
+- **Doorway** (`ach-first`, bronze) — Stamped the first place.
+- **Getting the Hang of It** (`ach-ten`, bronze) — Ten places stamped.
+- **Regular** (`ach-fifty`, silver) — Fifty places stamped.
+- **Well Travelled** (`ach-two-hundred`, gold) — Two hundred places stamped.
+- **Somewhere to Start** (`ach-first-city`, bronze) — Stamped a place in a new city.
+- **Ten Cities** (`ach-ten-cities`, silver) — Collected in ten cities.
+- **Continental** (`ach-thirty-cities`, gold) — Collected in thirty cities.
+- **Eclectic** (`ach-five-categories`, silver) — Five categories collected in.
+- **Full Inventory** (`ach-every-category`, gold) — One place in every category, unfiled included.
+- **Three in a Row** (`ach-streak-three`, bronze) — A three-day collecting streak.
+- **A Full Week** (`ach-streak-seven`, silver) — A seven-day collecting streak.
+- **Habit Formed** (`ach-streak-thirty`, gold) — A thirty-day collecting streak.
+- **Unmarked Map** (`ach-unfiled-ten`, silver) — Ten places the dataset could not categorise.
+- **Middle of the Road** (`ach-mid-range`, bronze) — Fifteen mid-range places.
+- **Treating Yourself** (`ach-high-end`, silver) — All five high-end places in the dataset.
+
+## Stamps
+
+A stamp is the only stored fact. There are 890 of them to collect,
+across 202 cities and 8 categories. Stamps are keyed
+`city/slug`, so a place is identified by its city and its slug together.

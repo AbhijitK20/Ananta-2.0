@@ -11,6 +11,14 @@ import "./interior.css";
 import "./filmstrip.css";
 import "./globe.css";
 import "./parallax.css";
+/*
+  The gamified layer's stylesheet. It is loaded here rather than inside the
+  game route group because a Next layout cannot import CSS that a sibling
+  branch needs, and because every rule in it is either an `--lq-*` token or a
+  `.lq-*` class, so it is inert until a game route renders one. See the note at
+  the top of game.css about why its reset is scoped rather than global.
+*/
+import "./game.css";
 
 /* The two families the live design actually uses, self-hosted by next/font so
    the clone makes no third-party request at runtime. */

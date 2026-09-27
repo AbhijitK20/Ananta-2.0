@@ -1,0 +1,730 @@
+# Local picks — part 7
+
+## Porto (`porto`) — 4 places
+
+- **Circus Network** (Porto)
+  id: porto/circus-network
+  neighbourhood: Cedofeita (Art District)
+  category: Unfiled
+  budget: Mid-range
+  note: In the heart of Portos Art District on Rua do Rosario, Circus Network is a gallery and shop championing urban […]
+- **Coracao Alecrim** (Porto)
+  id: porto/coracao-alecrim
+  neighbourhood: Cedofeita
+  category: Unfiled
+  budget: Budget
+  note: A bohemian little concept store in Cedofeita, Coracao Alecrim gathers sustainable, ethically made and vintage pieces under one roof, from […]
+- **CRU Creative Hub** (Porto)
+  id: porto/cru-creative-hub
+  neighbourhood: Cedofeita
+  category: Unfiled
+  budget: Mid-range
+  note: CRU is a creative hub and concept store gathering around fifty Portuguese brands under one roof, from independent jewellery and […]
+- **The Feeting Room** (Porto)
+  id: porto/the-feeting-room
+  neighbourhood: Baixa (Largo dos Loios)
+  category: Unfiled
+  budget: Mid-range
+  note: Set on the pretty Largo dos Loios in the heart of Baixa, The Feeting Room is a concept store built […]
+
+## Prague (`prague`) — 4 places
+
+- **Bila Vrana** (Prague)
+  id: prague/bila-vrana
+  neighbourhood: New Town
+  category: Unfiled
+  budget: Budget
+  note: A friendly cafe-bistro (the name means “White Crow”) with a blended team of staff with and without disabilities, providing dignified jobs since 2011. Come for the…
+- **Cafe Therapy** (Prague)
+  id: prague/cafe-therapy
+  neighbourhood: New Town
+  category: Unfiled
+  budget: Budget
+  note: The Czech Republic's first work-integration social enterprise, opened in 2005, employing and retraining people rebuilding their lives after addiction or prison. A warm cafe-restaurant where a…
+- **Naplavka Farmers Market** (Prague)
+  id: prague/naplavka-farmers-market
+  neighbourhood: Nove Mesto
+  category: Unfiled
+  budget: Budget
+  note: A hugely popular Saturday farmers market strung along the Rasinovo nabrezi embankment (Naplavka) on the Vltava, where local growers and […]
+- **Ticha Kavarna** (Prague)
+  id: prague/ticha-kavarna
+  neighbourhood: Liben
+  category: Unfiled
+  budget: Budget
+  note: A gentle “quiet cafe” staffed since 2011 by deaf and hard-of-hearing baristas - order by pointing or signing, and enjoy good coffee and cake in a…
+
+## Punta Cana (`punta-cana`) — 4 places
+
+- **ChocoMuseo Punta Cana** (Punta Cana)
+  id: punta-cana/chocomuseo-punta-cana
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: ChocoMuseo turns Dominican cacao into hands-on fun, with bean-to-bar workshops where you make your own chocolate from scratch. Visitors love learning how local growers' beans become…
+- **Fundación Grupo Puntacana** (Punta Cana)
+  id: punta-cana/fundacion-grupo-puntacana
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This pioneering foundation has shaped sustainable tourism here for decades, running coral-reef restoration across dozens of coastal sites plus health and education programmes. Travellers value the…
+- **The Organic Caribbean** (Punta Cana)
+  id: punta-cana/the-organic-caribbean
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This small local shop makes natural cosmetics from tropical-fruit oils and extracts, and sells locally crafted larimar and amber. Shoppers love the ethical, made-in-the-Dominican-Republic ethos and…
+- **WASH Foundation** (Punta Cana)
+  id: punta-cana/wash-foundation
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This grassroots charity improves water, sanitation and hygiene in local schools around Bávaro and Verón, reaching thousands of children. Visitors who want to give back appreciate…
+
+## Quebec (`quebec`) — 4 places
+
+- **Boutique Awen’ (Tourisme Wendake)** (Quebec)
+  id: quebec/boutique-awen-tourisme-wendake
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An Indigenous-owned boutique in Wendake, the urban Huron-Wendat community just north of downtown, selling authentic First Nations crafts, art and products alongside the Huron-Wendat Museum. Buying…
+- **Comptoir Emmaüs** (Quebec)
+  id: quebec/comptoir-emmaus
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A long-running social-economy second-hand shop, furniture, clothing, books and bric-a-brac, run on the Emmaüs model where sales fund community reintegration and give goods a second life.…
+- **Friperie du Café Rencontre** (Quebec)
+  id: quebec/friperie-du-cafe-rencontre
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A thrift shop run by a downtown social-enterprise community organisation, where proceeds fund its soup kitchen and services for people in need. Second-hand clothing and goods…
+- **La Carotte Joyeuse** (Quebec)
+  id: quebec/la-carotte-joyeuse
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An independent organic health grocer on Rue Saint-Jean with bulk and low-waste options, bring your own containers and stock up plastic-free. A neighbourhood fixture for conscious,…
+
+## Quito (`quito`) — 4 places
+
+- **Andean Handicrafts** (Quito)
+  id: quito/andean-handicrafts
+  neighbourhood: La Mariscal
+  category: Unfiled
+  budget: Budget
+  note: Ecuador is famous for its rich indigenous craft traditions, above all the vibrant textiles, weavings, ponchos and the woven hats […]
+- **Camari** (Quito)
+  id: quito/camari
+  neighbourhood: Santa Clara
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: founded in 1981 by the FEPP as Ecuador's pioneering fair-trade retailer, Camari markets crafts and food from roughly 15,000 small-producer families across 18…
+- **Tianguez** (Quito)
+  id: quito/tianguez
+  neighbourhood: Centro Historico (Old Town)
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: run since the mid-1990s by the Sinchi Sacha Foundation, Tianguez is a certified World Fair Trade Organization member whose cafe and craft-shop earnings…
+- **Tianguez Fair-Trade Crafts** (Quito)
+  id: quito/tianguez-fair-trade-crafts
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: Tianguez, set beneath the Plaza San Francisco in Quito’s old town, is a fair-trade shop and cultural centre showcasing the […]
+
+## Reykjavik (`reykjavik`) — 4 places
+
+- **Góði hirðirinn** (Reykjavik)
+  id: reykjavik/go-i-hir-irinn
+  neighbourhood: Outside centre
+  category: Unfiled
+  budget: Budget
+  note: “The Good Shepherd” is Reykjavík’s much-loved charity thrift store — the retail arm of the city’s recycling company SORPA, with […]
+- **Hertex Salvation Army Second-Hand Shop** (Reykjavik)
+  id: reykjavik/hertex-salvation-army-second-hand-shop
+  neighbourhood: Vinlandsleid
+  category: Unfiled
+  budget: Budget
+  note: Hertex is the Salvation Armys second-hand shop in Reykjavik, a well-loved spot that has previously carried off the citys best […]
+- **Raudi Krossinn Red Cross Shop** (Reykjavik)
+  id: reykjavik/raudi-krossinn-red-cross-shop
+  neighbourhood: Laugavegur
+  category: Unfiled
+  budget: Budget
+  note: The Icelandic Red Cross runs the countrys largest chain of charity shops, and its central branch on Laugavegur has carried […]
+- **Spuutnik Vintage** (Reykjavik)
+  id: reykjavik/spuutnik-vintage
+  neighbourhood: Laugavegur
+  category: Unfiled
+  budget: Mid-range
+  note: Spuutnik has been Reykjaviks favourite vintage store since 1986, a treasure trove of retro fashion on Laugavegur crammed with carefully […]
+
+## Riga (`riga`) — 4 places
+
+- **Kalnciema Quarter** (Riga)
+  id: riga/kalnciema-quarter
+  neighbourhood: Āgenskalns
+  category: Shops & Markets, Sightseeing
+  budget: Budget
+  note: Why it matters: this cluster of 19th-century wooden houses in Āgenskalns was rescued from decades of Soviet-era neglect by a private restoration initiative in the early…
+- **Otrā Elpa** (Riga)
+  id: riga/otra-elpa
+  neighbourhood: Centrs
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: founded in 2009 as Riga's first charity shop, Otrā Elpa ('Second Breath') donates all its profits - more than 150,000 euros and 2…
+- **RB Cafe** (Riga)
+  id: riga/rb-cafe
+  neighbourhood: Centrs
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in 2018 by the Rūpju bērns association, RB Cafe is the first cafe in the Baltics where the majority of staff are…
+- **Tallinas ielas kvartals** (Riga)
+  id: riga/tallinas-ielas-kvartals
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A courtyard complex of formerly derelict buildings, once an ambulance station and residential blocks, brought back into use from 2018 […]
+
+## Rio de Janeiro (`rio-de-janeiro`) — 4 places
+
+- **Coopa-Roca** (Rio de Janeiro)
+  id: rio-de-janeiro/coopa-roca
+  neighbourhood: Centro
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: founded in 1987 by Maria Teresa Leal (with roots reaching back to 1981), Coopa-Roca is a textile cooperative built to let women in…
+- **Favela Tour – Marcelo Armstrong** (Rio de Janeiro)
+  id: rio-de-janeiro/favela-tour-marcelo-armstrong
+  neighbourhood: Rocinha & Vila Canoas
+  category: Tours
+  budget: Mid-range
+  note: Why it matters: Marcelo Armstrong pioneered favela tourism in Rio in 1992, and roughly a quarter of every tour's price still goes to fund two community…
+- **Feira Hippie de Ipanema** (Rio de Janeiro)
+  id: rio-de-janeiro/feira-hippie-de-ipanema
+  neighbourhood: Ipanema
+  category: Unfiled
+  budget: Budget
+  note: The Feira Hippie de Ipanema is a beloved open-air arts and crafts fair held every Sunday in Ipanema’s Praca General […]
+- **Refettorio Gastromotiva** (Rio de Janeiro)
+  id: rio-de-janeiro/refettorio-gastromotiva
+  neighbourhood: Lapa
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: opened in 2016 during the Rio Olympics by the NGO Gastromotiva (founded 2006 by chef David Hertz) in partnership with Massimo Bottura's Food…
+
+## Rotterdam (`rotterdam`) — 4 places
+
+- **BlueCity** (Rotterdam)
+  id: rotterdam/bluecity
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This circular-economy hub inside a former subtropical swimming pool is a local favourite for its inventive startups turning waste into new products. Visitors love its optimistic,…
+- **De Groene Passage** (Rotterdam)
+  id: rotterdam/de-groene-passage
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This sustainable shopping arcade gathers a fair-trade Wereldwinkel, an organic bulk supermarket and a vegetarian restaurant under one roof. Conscious shoppers love ticking off ethical errands…
+- **Ecomondo** (Rotterdam)
+  id: rotterdam/ecomondo
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This independent eco shop is a neighbourhood favourite for low-packaging groceries, natural cosmetics and greener household goods. Regulars appreciate its practical, no-fuss approach to sustainable living.
+- **RataPlan** (Rotterdam)
+  id: rotterdam/rataplan
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This big second-hand and recycling store is a local favourite for thrifty furniture, clothing and bric-a-brac, all backed by a social-employment mission. Bargain-hunters love the ever-changing,…
+
+## Rovaniemi (`rovaniemi`) — 4 places
+
+- **Forestry Museum of Lapland** (Rovaniemi)
+  id: rovaniemi/forestry-museum-of-lapland
+  neighbourhood: Poykkola
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: run by a local museum association rather than the state, this labour-of-love museum preserves the story of Lapland's logging camps and log-floating era…
+- **Lauri Tuotteet** (Rovaniemi)
+  id: rovaniemi/lauri-tuotteet
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Mid-range
+  note: Lauri Tuotteet is a historic Rovaniemi handicraft company, founded in 1900, that keeps traditional Lappish woodcraft alive. Its workshop and […]
+- **Rovaniemi Local Heritage Museum** (Rovaniemi)
+  id: rovaniemi/rovaniemi-local-heritage-museum
+  neighbourhood: Poykkola
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: this open-air museum on the Kemijoki riverbank has been kept alive since 1951 by volunteer heritage association Totto ry - locals restore the…
+- **SPR Kontti Secondhand** (Rovaniemi)
+  id: rovaniemi/spr-kontti-secondhand
+  neighbourhood: Teollisuustie
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: this warehouse-sized secondhand department store is run by the Finnish Red Cross, and its profits fund Red Cross aid work in Finland and…
+
+## Sagada (`sagada`) — 4 places
+
+- **Baw-Eng Coffee Shop** (Sagada)
+  id: sagada/baw-eng-coffee-shop
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Baw-Eng is a small, family-run coffee shop tied into Sagada's Coffee Heritage Project, a community initiative working to preserve heritage organic arabica farming among local Igorot…
+- **Caveman Coffee Farms** (Sagada)
+  id: sagada/caveman-coffee-farms
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Caveman Coffee Farms grows and roasts heritage arabica on a smallholding in the hills outside town, part of the same Coffee Heritage Project push to keep…
+- **Dapliyan Coffee** (Sagada)
+  id: sagada/dapliyan-coffee
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Dapliyan is a small-batch coffee grower and roaster in Demang, another link in Sagada's Coffee Heritage Project network that connects smallholder Igorot farmers directly to visitors.…
+- **Echo Valley Farm** (Sagada)
+  id: sagada/echo-valley-farm
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Echo Valley Farm is a small community-linked organic farm near the valley of the same name, part of the wider push in Sagada to keep traditional,…
+
+## San Diego (`san-diego`) — 4 places
+
+- **Father Joe’s Villages Thrift Store** (San Diego)
+  id: san-diego/father-joes-villages-thrift-store
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: One of three charity shops run by Father Joe's Villages, the San Diego organisation that provides emergency and permanent housing […]
+- **Ocean Beach People’s Organic Food Market** (San Diego)
+  id: san-diego/ocean-beach-peoples-organic-food-market
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A grocery on Voltaire Street trading since 1971 and reconstituted as a food co-operative in 1985, with roughly 14,000 member-owners. […]
+- **Olivewood Gardens and Learning Center** (San Diego)
+  id: san-diego/olivewood-gardens-and-learning-center
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A 7.85-acre organic garden and education centre in National City, established in 2008 after Christy and John Walton gave their […]
+- **The Front Arte & Cultura** (San Diego)
+  id: san-diego/the-front-arte-cultura
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A community gallery and arts venue run by Casa Familiar, a nonprofit that has worked in San Ysidro since the […]
+
+## Santiago (`santiago`) — 4 places
+
+- **Centro de Exposición y Venta de Arte Indígena** (Santiago)
+  id: santiago/centro-de-exposicion-y-venta-de-arte-indigena
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Tucked into a cave carved into the side of Cerro Santa Lucía, this small artisan market puts you face to face with the makers themselves. Aymara,…
+- **Fundación Artesanías de Chile** (Santiago)
+  id: santiago/fundacion-artesanias-de-chile
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Fundación Artesanías de Chile is a non-profit, fair-trade-accredited foundation set up to give more than 2,000 Chilean artisans — Mapuche weavers, potters, basket-makers, stone carvers —…
+- **La Nacional Granel Selecto** (Santiago)
+  id: santiago/la-nacional-granel-selecto
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This zero-waste corner shop in Providencia sells nuts, grains, olive oil, spices and biodegradable detergent by weight, and encourages customers to bring their own jars, tins…
+- **Recuerda Chile** (Santiago)
+  id: santiago/recuerda-chile
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Recuerda Chile is a non-profit project started in 2016 by Antonia González to keep traditional Chilean craft skills alive and pay artisans fairly for their work.…
+
+## Santo Domingo (`santo-domingo`) — 4 places
+
+- **Casa de Teatro** (Santo Domingo)
+  id: santo-domingo/casa-de-teatro
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Casa de Teatro has run as an independent, artist-led cultural centre on Arzobispo Meriño since 1974, founded by Dominican writer and publisher Freddy Ginebra as a…
+- **Escuela Taller Santo Domingo** (Santo Domingo)
+  id: santo-domingo/escuela-taller-santo-domingo
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Escuela Taller Santo Domingo has trained young Dominicans since 1998 in the traditional trades - carpentry, masonry, ironwork, cabinetmaking - needed to restore the Colonial Zone's…
+- **Kahkow Experience** (Santo Domingo)
+  id: santo-domingo/kahkow-experience
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Kahkow Experience runs a guided walk through cacao-to-chocolate production from a base on Calle Las Damas, sourcing beans directly from Dominican farmers to ensure fairer pay…
+- **Museo Memorial de la Resistencia Dominicana** (Santo Domingo)
+  id: santo-domingo/museo-memorial-de-la-resistencia-dominicana
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Museo Memorial de la Resistencia Dominicana is a nonprofit museum dedicated to the victims of the Trujillo dictatorship, holding more than 160,000 files, photographs and…
+
+## Sao Paulo (`sao-paulo`) — 4 places
+
+- **Aparelha Luzia** (Sao Paulo)
+  id: sao-paulo/aparelha-luzia
+  neighbourhood: Campos Eliseos
+  category: Nightlife
+  budget: Budget
+  note: Part bar, part gallery, part political salon, Aparelha Luzia is Sao Paulo's self-declared urban quilombo - a gathering space for Black art, music and thought in…
+- **Cozinha Ocupacao 9 de Julho** (Sao Paulo)
+  id: sao-paulo/cozinha-ocupacao-9-de-julho
+  neighbourhood: Bela Vista
+  category: Restaurants
+  budget: Budget
+  note: Every Sunday, the ground floor of a nine-story occupied building in Bela Vista turns into one of Sao Paulo's most talked-about lunch spots, where residents of…
+- **Feira Benedito Calixto** (Sao Paulo)
+  id: sao-paulo/feira-benedito-calixto
+  neighbourhood: Pinheiros
+  category: Unfiled
+  budget: Budget
+  note: The Benedito Calixto fair is a much-loved weekly market held each Saturday in the Pinheiros district, where local artisans, antique […]
+- **Instituto Chao** (Sao Paulo)
+  id: sao-paulo/instituto-chao
+  neighbourhood: Vila Madalena
+  category: Shops & Markets
+  budget: Budget
+  note: This nonprofit grocery in Vila Madalena sells organic produce, grains, bread and cheese at cost price - exactly what it pays small farmers, with zero markup.…
+
+## Sarajevo (`sarajevo`) — 4 places
+
+- **Bazerdzan** (Sarajevo)
+  id: sarajevo/bazerdzan
+  neighbourhood: Bascarsija
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: founded in 2016 by Zana Karkin, who got tired of watching generic plastic souvenirs crowd out real Bosnian craft, this Bascarsija concept store…
+- **Bosnian Handmade Crafts** (Sarajevo)
+  id: sarajevo/bosnian-handmade-crafts
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Mid-range
+  note: The traditional workshops of Sarajevo’s Bascarsija keep centuries-old crafts alive, from coppersmithing and kazaz filigree to woodwork and textiles, often […]
+- **Green Visions** (Sarajevo)
+  id: sarajevo/green-visions
+  neighbourhood: Mojmilo (Olympic Village)
+  category: Tours
+  budget: Price unknown
+  note: Why it matters: Bosnia and Herzegovina's first ecotourism company, started in 2000 by Thierry Joubert and a group of friends after he spent eight years on…
+- **War Childhood Museum** (Sarajevo)
+  id: sarajevo/war-childhood-museum
+  neighbourhood: Stari Grad
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: an independent, non-profit museum founded by Jasminko Halilovic, who was four when the siege began - it started in 2010 as an online…
+
+## Semarang (`semarang`) — 4 places
+
+- **Bank Sampah Resik Becik** (Semarang)
+  id: semarang/bank-sampah-resik-becik
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A community waste bank running since 2012, where residents trade plastic packaging and used cooking oil for cash or food […]
+- **Kampung Batik Semarang** (Semarang)
+  id: semarang/kampung-batik-semarang
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A historic neighbourhood where community-run workshops revived Semarang's distinctive batik, offering hand-drawn pieces and hands-on classes that sustain local artisans. […]
+- **Kampung Pelangi** (Semarang)
+  id: semarang/kampung-pelangi
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A hillside kampung opposite the Kalisari flower market, painted in bright colours in 2017 and still very much a lived-in […]
+- **Maroon Mangrove Edu Park** (Semarang)
+  id: semarang/maroon-mangrove-edu-park
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A community-supported mangrove conservation and education park on Semarang's coast, protecting the shoreline while offering eco-tourism that helps fund local […]
+
+## Sevilla (`sevilla`) — 4 places
+
+- **Gallo Rojo** (Sevilla)
+  id: sevilla/gallo-rojo
+  neighbourhood: San Julian (Casco Antiguo)
+  category: Nightlife
+  budget: Budget
+  note: Part cultural factory, part neighborhood living room, Gallo Rojo fills a former convent-area warehouse in San Julian with jazz jams, art shows, coworking desks and craft…
+- **La Ortiga** (Sevilla)
+  id: sevilla/la-ortiga
+  neighbourhood: San Vicente
+  category: Unfiled
+  budget: Budget
+  note: La Ortiga is a consumer cooperative in central Seville dedicated to organic food and responsible consumption. On Calle Goles it […]
+- **Moda re-** (Sevilla)
+  id: sevilla/moda-re
+  neighbourhood: Centro (Plaza del Salvador)
+  category: Shops & Markets
+  budget: Budget
+  note: Right on Plaza del Salvador beside the baroque church, Moda re- is a bright secondhand clothing store that looks like any modern vintage boutique - until…
+- **Tienda Oxfam Intermon** (Sevilla)
+  id: sevilla/tienda-oxfam-intermon
+  neighbourhood: San Vicente / Museo
+  category: Shops & Markets
+  budget: Budget
+  note: A five-minute walk from the Museo de Bellas Artes, this small shop on Calle Banos stocks fair-trade coffee, chocolate, textiles and crafts made by producer cooperatives…
+
+## Shkoder (`shkoder`) — 4 places
+
+- **Arti Zanave** (Shkoder)
+  id: shkoder/arti-zanave
+  neighbourhood: Centre
+  category: Restaurants
+  budget: Mid-range
+  note: A special local favourite for traditional Shkodran home cooking.
+- **Mrizi i Zanave** (Shkoder)
+  id: shkoder/mrizi-i-zanave
+  neighbourhood: Shkodra region
+  category: Unfiled
+  budget: Mid-range
+  note: Mrizi i Zanave is Albania’s celebrated Slow Food agrotourism, set on a farm in the countryside near Shkodra. A pioneer […]
+- **Pazari i Ri** (Shkoder)
+  id: shkoder/pazari-i-ri
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Budget
+  note: Pazari i Ri, Shkodra’s revamped market, is where the city shops for fresh, local and seasonal produce. Its stalls overflow […]
+- **Zogaj Kilim Weaving Workshop** (Shkoder)
+  id: shkoder/zogaj-kilim-weaving-workshop
+  neighbourhood: Zogaj
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: after Zogaj's state rug factory was destroyed in the collapse of communism, master weaver Nebija Qotaj - at a loom since age 10…
+
+## Sibenik (`sibenik`) — 4 places
+
+- **Croatian Handicraft Cooperative** (Sibenik)
+  id: sibenik/croatian-handicraft-cooperative
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: Artisan cooperatives in Šibenik keep traditional Dalmatian crafts alive, from the filigree Šibenik button and lacework to ceramics and hand-woven […]
+- **Dalmatian Olive Oil Producers** (Sibenik)
+  id: sibenik/dalmatian-olive-oil-producers
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The Šibenik region has a centuries-old olive-growing tradition, with family groves producing award-winning extra-virgin olive oil on the karst slopes. […]
+- **Local Vineyard & Wine Cooperative** (Sibenik)
+  id: sibenik/local-vineyard-wine-cooperative
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The hills around Šibenik and the Krka valley produce indigenous Croatian grape varieties such as Debit, Babić and Lasin, grown […]
+- **Šibenik Green Market Producers** (Sibenik)
+  id: sibenik/sibenik-green-market-producers
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The Šibenik green market brings together small-scale growers from across the Dalmatian hinterland who sell seasonal, locally grown produce directly […]
+
+## Sibiu (`sibiu`) — 4 places
+
+- **Cibin Market** (Sibiu)
+  id: sibiu/cibin-market
+  neighbourhood: Lower Town
+  category: Unfiled
+  budget: Budget
+  note: The Cibin Market is Sibiu’s traditional farmers market, a lively and colourful place where growers and producers from the surrounding […]
+- **Marginimea Sibiului Products** (Sibiu)
+  id: sibiu/marginimea-sibiului-products
+  neighbourhood: Marginime
+  category: Unfiled
+  budget: Budget
+  note: Marginimea Sibiului is a group of traditional villages in the hills west of Sibiu, famous for their centuries-old shepherding culture […]
+- **Saxon Craft Heritage** (Sibiu)
+  id: sibiu/saxon-craft-heritage
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: The Transylvanian Saxons who founded and shaped Sibiu over 800 years left a rich legacy of craft and building tradition, […]
+- **Transylvanian Ceramics & Icons** (Sibiu)
+  id: sibiu/transylvanian-ceramics-icons
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Mid-range
+  note: Transylvania has a rich heritage of folk craft, from the distinctive Saxon and Romanian ceramics and pottery to the beautiful […]
+
+## Sigulda (`sigulda`) — 4 places
+
+- **Ādas artelis** (Sigulda)
+  id: sigulda/adas-artelis
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A small leatherworking cooperative in the Castle Quarter, keeping one of the oldest crafts going and teaching it to anyone […]
+- **Biedrība Cerību spārni** (Sigulda)
+  id: sigulda/biedriba-ceribu-sparni
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Sigulda's best-known disability charity, running day centres, group homes, rehabilitation, home care and family assistant services. The social services centre […]
+- **Mūsu Bio Tirgus** (Sigulda)
+  id: sigulda/musu-bio-tirgus
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Organised by the association Uz zaļā zara to back Latvian organic farms and craft makers, held on the Sigulda market […]
+- **Sociālais uzņēmums Visi Var** (Sigulda)
+  id: sigulda/socialais-uznemums-visi-var
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A work-integration social enterprise founded in 2018 to create jobs for people with disabilities, their families and others facing barriers. […]
+
+## Singapore (`singapore`) — 4 places
+
+- **Bettr Coffee @ The Foundry** (Singapore)
+  id: singapore/bettr-coffee-the-foundry
+  neighbourhood: Prinsep Street
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Bettr Coffee is a certified B Corp that trains marginalised women and at-risk youth as baristas through its own academy, reinvesting profits back…
+- **Dignity Kitchen** (Singapore)
+  id: singapore/dignity-kitchen
+  neighbourhood: Boon Keng
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2010 by social entrepreneur Koh Seng Choon, this Boon Keng hawker centre runs all seven of its stalls with differently-abled and…
+- **Eighteen Chefs** (Singapore)
+  id: singapore/eighteen-chefs
+  neighbourhood: Bugis
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2007 by ex-offender Benny Se Teo, this affordable Western-food chain builds its social mission into its franchise agreements - every outlet,…
+- **The Social Space** (Singapore)
+  id: singapore/the-social-space
+  neighbourhood: Tanjong Pagar
+  category: Unfiled
+  budget: Mid-range
+  note: The Social Space is a pioneering multi-concept social enterprise in Singapore, combining a cafe, a fair-trade retail store and even […]
+
+## Skopje (`skopje`) — 4 places
+
+- **Bit Pazar** (Skopje)
+  id: skopje/bit-pazar
+  neighbourhood: Old Bazaar
+  category: Unfiled
+  budget: Budget
+  note: Bit Pazar is Skopje’s largest and liveliest green market, a sprawling, chaotic and colourful bazaar beside the Old Town where […]
+- **Holocaust Memorial Center for the Jews of Macedonia** (Skopje)
+  id: skopje/holocaust-memorial-center-for-the-jews-of-macedonia
+  neighbourhood: Evrejsko Maalo (Jewish Quarter)
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: Why it matters: this is a Holocaust museum built with money that belonged to the victims. In 2002 the government made the Holocaust Fund of the…
+- **Kopche** (Skopje)
+  id: skopje/kopche
+  neighbourhood: Centar
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by the Red Cross of the City of Skopje since 2018, Kopche is a second-hand shop where one rack of donated clothes…
+- **Macedonian Filigree Artisans** (Skopje)
+  id: skopje/macedonian-filigree-artisans
+  neighbourhood: Old Bazaar
+  category: Unfiled
+  budget: Mid-range
+  note: Fine filigree, the delicate craft of working silver and gold into intricate lace-like jewellery, is one of North Macedonia’s proudest […]
+
+## Sodankyla (`sodankyla`) — 4 places
+
+- **Ajan Patina** (Sodankyla)
+  id: sodankyla/ajan-patina
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Sodankylä's second-hand and antiques shop on the main street, keeping household goods, tools and Lappish oddments in circulation locally. A […]
+- **Järjestökeskus Kitinen** (Sodankyla)
+  id: sodankyla/jarjestokeskus-kitinen
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The shared home of Sodankylä's voluntary sector, giving local associations office space, meeting rooms and practical technical support. A working […]
+- **Leader Pohjoisin Lappi** (Sodankyla)
+  id: sodankyla/leader-pohjoisin-lappi
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The rural development group that funds village and youth projects across seven northern municipalities, with its office here in Sodankylä. […]
+- **Sodankylän työpaja** (Sodankyla)
+  id: sodankyla/sodankylan-tyopaja
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The municipal work-training workshop, helping residents back towards study or employment through four supervised trades with individual coaching. Four workshops […]
+
+## Sofia (`sofia`) — 4 places
+
+- **Bez Opakovka** (Sofia)
+  id: sofia/bez-opakovka
+  neighbourhood: Centar
+  category: Shops & Markets
+  budget: Budget
+  note: Bulgaria’s first package-free shop, selling grains, pulses, oils, cleaning products and toiletries loose so customers refill their own containers and […]
+- **Fabrika Daga** (Sofia)
+  id: sofia/fabrika-daga
+  neighbourhood: Centar
+  category: Unfiled
+  budget: Budget
+  note: A social-enterprise cafe and workshop that trains and employs people with intellectual disabilities, giving them meaningful work in a welcoming […]
+- **Hlebna Kashta (The Bread House)** (Sofia)
+  id: sofia/hlebna-kashta-the-bread-house
+  neighbourhood: Centar
+  category: Unfiled
+  budget: Budget
+  note: A community bakery and cultural space where visitors and locals bake bread together as part of an international breaking-bread movement […]
+- **Sun & Moon** (Sofia)
+  id: sofia/sun-moon
+  neighbourhood: Centar
+  category: Restaurants
+  budget: Mid-range
+  note: A well-loved organic bakery and vegetarian restaurant using stone-milled flours and local, seasonal ingredients, with a strong focus on sustainability […]
+
+## Split (`split`) — 4 places
+
+- **Društvo Crvenog križa Split** (Split)
+  id: split/drustvo-crvenog-kriza-split
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The city's Red Cross branch runs Split's everyday safety net: food and clothing distribution, social and health programmes, and first […]
+- **Društvo Marjan** (Split)
+  id: split/drustvo-marjan
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Founded in 1903 to plant and defend the Marjan pine forest, this citizens' society still campaigns against felling and building […]
+- **Sunce – Udruga za prirodu, okoliš i održivi razvoj** (Split)
+  id: split/sunce-udruga-za-prirodu-okolis-i-odrzivi-razvoj
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Sunce works on nature, environment and sustainable development across Dalmatia, and operates a Green Phone line for reporting environmental problems. […]
+- **Udruga Anđeli** (Split)
+  id: split/udruga-an-eli
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Anđeli supports children and young people with disabilities in Split, running a rehabilitation centre and the Mali dupin kindergarten. The […]

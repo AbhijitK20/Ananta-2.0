@@ -1,0 +1,730 @@
+# Local picks — part 5
+
+## Honolulu (`honolulu`) — 4 places
+
+- **Hawaii Foodbank** (Honolulu)
+  id: honolulu/hawaii-foodbank
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The state's principal food-distribution charity, supplying a network of several hundred agencies and programmes across Oahu and coordinating with the […]
+- **Hooulu Aina** (Honolulu)
+  id: honolulu/hooulu-aina
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A 100-acre nature preserve at the head of Kalihi Valley, run by Kokua Kalihi Valley Comprehensive Family Services, a community […]
+- **Ka Papa Loi o Kanewai** (Honolulu)
+  id: honolulu/ka-papa-loi-o-kanewai
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A restored complex of terraced taro pondfields on the eastern edge of the University of Hawaii at Manoa campus, fed […]
+- **Malama Maunalua** (Honolulu)
+  id: honolulu/malama-maunalua
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A community organisation working to restore Maunalua Bay, the long stretch of reef and shallow water between Diamond Head and […]
+
+## Inari (`inari`) — 4 places
+
+- **Authentic Sami Duodji Craft** (Inari)
+  id: inari/authentic-sami-duodji-craft
+  neighbourhood: Inari
+  category: Unfiled
+  budget: Mid-range
+  note: Sami duodji, the traditional handicraft of the indigenous Sami people, represents centuries of skill, culture and connection to nature, and […]
+- **Duodji Shop (Sami Duodji) at Sajos** (Inari)
+  id: inari/duodji-shop-sami-duodji-at-sajos
+  neighbourhood: Inari village (Sajos)
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: run by the Sami crafts association Sami Duodji, this shop inside the Sajos cultural centre sells only pieces carrying the Sami Duodji trademark…
+- **Restaurant Aanaar** (Inari)
+  id: inari/restaurant-aanaar
+  neighbourhood: Inari village (riverside)
+  category: Restaurants
+  budget: High-end
+  note: Why it matters: chef and second-generation owner Heikki Nikula is Indigenous Sami on his father's side, and Aanaar - the Inari Sami word for Inari -…
+- **Siida – The Sami Museum and Nature Centre** (Inari)
+  id: inari/siida-the-sami-museum-and-nature-centre
+  neighbourhood: Inari village
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: opened in 1963 as the first independent Sami museum in the Nordic countries, Siida is run by the non-profit Sami Museum Foundation and…
+
+## Isfahan (`isfahan`) — 4 places
+
+- **Enamel and Khatam Artisans** (Isfahan)
+  id: isfahan/enamel-and-khatam-artisans
+  neighbourhood: Qeysarie
+  category: Unfiled
+  budget: Price unknown
+  note: Isfahans mastercraftsmen produce exquisite mina enamelware and khatam marquetry, intricate inlaid work using tiny pieces of wood, bone and metal, […]
+- **Gaz and Sweets Producers** (Isfahan)
+  id: isfahan/gaz-and-sweets-producers
+  neighbourhood: Bazaar
+  category: Unfiled
+  budget: Price unknown
+  note: Isfahan is famous for gaz, a nougat flavoured with rosewater and pistachio, and other traditional sweets, made by local family […]
+- **Grand Bazaar Artisans** (Isfahan)
+  id: isfahan/grand-bazaar-artisans
+  neighbourhood: Bazaar
+  category: Unfiled
+  budget: Price unknown
+  note: Within Isfahans Grand Bazaar, artisans in tiny workshops create the citys famous handicrafts, from enamelling and engraving to miniature painting […]
+- **Persian Carpet Weavers** (Isfahan)
+  id: isfahan/persian-carpet-weavers
+  neighbourhood: Bazaar
+  category: Unfiled
+  budget: Price unknown
+  note: Isfahans carpet workshops and cooperatives sustain the demanding art of hand-knotting fine Persian rugs, employing skilled weavers who spend months […]
+
+## Istanbul (`istanbul`) — 4 places
+
+- **By Retro** (Istanbul)
+  id: istanbul/by-retro
+  neighbourhood: Beyoğlu
+  category: Unfiled
+  budget: Mid-range
+  note: By Retro is a beloved vintage and second-hand emporium near İstiklal in Beyoğlu, spread over several floors packed with retro […]
+- **Feriköy Organic Market** (Istanbul)
+  id: istanbul/ferikoy-organic-market
+  neighbourhood: Şişli
+  category: Unfiled
+  budget: Mid-range
+  note: The Feriköy Organic Market is Istanbul’s premier certified-organic bazaar, held every Saturday in a covered car park in the Bomonti […]
+- **Impact Hub Istanbul** (Istanbul)
+  id: istanbul/impact-hub-istanbul
+  neighbourhood: Sisli
+  category: Unfiled
+  budget: Budget
+  note: A coworking and community hub for people building social and environmental projects, with events, incubators and a network of changemakers. A window into Istanbul's growing social-enterprise…
+- **Komsu Kafe Kollektifi** (Istanbul)
+  id: istanbul/komsu-kafe-kollektifi
+  neighbourhood: Kadikoy
+  category: Unfiled
+  budget: Budget
+  note: A worker-run cooperative cafe in creative Yeldegirmeni on the Asian side, owned and run collectively with no bosses, doubling as a community space for events, film…
+
+## Izmir (`izmir`) — 4 places
+
+- **Kemeralti Local Producers** (Izmir)
+  id: izmir/kemeralti-local-producers
+  neighbourhood: Konak
+  category: Unfiled
+  budget: Budget
+  note: The markets around Kemeralti bring together growers and producers from the fertile Aegean hinterland selling seasonal fruit, vegetables, olives, cheeses, […]
+- **Sirince Village Producers** (Izmir)
+  id: izmir/sirince-village-producers
+  neighbourhood: Sirince
+  category: Unfiled
+  budget: Budget
+  note: The hillside village of Sirince, in the hills above Selcuk near Izmir, is famous for its fruit wines, olive oil […]
+- **Tarihi Asansör (Historic Elevator)** (Izmir)
+  id: izmir/tarihi-asansor-historic-elevator
+  neighbourhood: Karataş
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: built in 1907 by Jewish banker Nesim Levi Bayraklıoğlu as a free public service - so Karataş residents could skip the 155-step climb…
+- **Urla Women’s Cooperative (Urla Kadın Kooperatifi)** (Izmir)
+  id: izmir/urla-womens-cooperative-urla-kad-n-kooperatifi
+  neighbourhood: Urla
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by roughly 170 women of the Urla peninsula, this producer cooperative turns the region's famous artichokes, wild herbs and heirloom recipes into…
+
+## Johannesburg (`johannesburg`) — 4 places
+
+- **Local Designer Collective** (Johannesburg)
+  id: johannesburg/local-designer-collective
+  neighbourhood: Braamfontein
+  category: Unfiled
+  budget: Price unknown
+  note: Johannesburgs vibrant design scene, centred on Braamfontein and Maboneng, features collectives and stores championing local fashion, jewellery and homeware from […]
+- **Rosebank Market Artisans** (Johannesburg)
+  id: johannesburg/rosebank-market-artisans
+  neighbourhood: Rosebank
+  category: Unfiled
+  budget: Price unknown
+  note: At the Rosebank craft and Sunday markets, artisans and traders from across Africa sell handmade beadwork, baskets, carvings, textiles and […]
+- **Soweto Township Crafts** (Johannesburg)
+  id: johannesburg/soweto-township-crafts
+  neighbourhood: Soweto
+  category: Unfiled
+  budget: Price unknown
+  note: Community craft stalls and cooperatives in Soweto sell beadwork, wire art, ceramics and recycled crafts made by local artisans, often […]
+- **Township Food and Producers** (Johannesburg)
+  id: johannesburg/township-food-and-producers
+  neighbourhood: Soweto
+  category: Unfiled
+  budget: Price unknown
+  note: Small food producers, spaza shops and community kitchens across Sowetos townships sell traditional foods, home brews and produce, and community […]
+
+## Karachi (`karachi`) — 4 places
+
+- **Behbud Creations** (Karachi)
+  id: karachi/behbud-creations
+  neighbourhood: Zamzama, DHA Phase V
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: run by the Behbud Association, a women's welfare nonprofit working in Karachi since 1970, this Zamzama shop sells 100% handcrafted pieces made by…
+- **Koel Cafe & Gallery** (Karachi)
+  id: karachi/koel-cafe-gallery
+  neighbourhood: Clifton Block 4
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: artist Noorjehan Bilgrami started Koel in 1977 to revive Pakistan's fading craft of hand block printing, and her atelier still works with master…
+- **Sindhi Handicrafts & Ajrak** (Karachi)
+  id: karachi/sindhi-handicrafts-ajrak
+  neighbourhood: Karachi
+  category: Unfiled
+  budget: Mid-range
+  note: The province of Sindh, of which Karachi is the capital, has a rich heritage of handicraft, above all the ajrak, […]
+- **T2F (The Second Floor)** (Karachi)
+  id: karachi/t2f-the-second-floor
+  neighbourhood: DHA Phase II Extension
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: founded in 2007 by the late activist Sabeen Mahmud under the nonprofit PeaceNiche, T2F is Karachi's living room for open dialogue - a…
+
+## Kaunas (`kaunas`) — 4 places
+
+- **Humana Vintage** (Kaunas)
+  id: kaunas/humana-vintage
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A second-hand and vintage clothing store in the Old Town where proceeds support the Humana network's international development-aid work. Rails […]
+- **Kaunas Makerspace** (Kaunas)
+  id: kaunas/kaunas-makerspace
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A community maker-and-repair workshop championing the circular economy through reuse, repair and shared skills. It's a grassroots space where locals […]
+- **Oak Ceramics** (Kaunas)
+  id: kaunas/oak-ceramics
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A small local ceramics studio running hand-building and wheel-throwing workshops for all levels, in a relaxed and unhurried setting. It's […]
+- **Rojaus molis** (Kaunas)
+  id: kaunas/rojaus-molis
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A ceramics studio known for its calm, meditative approach, offering themed workshops and regular clay sessions for beginners and returners […]
+
+## Kemi (`kemi`) — 4 places
+
+- **Goodwill Kemi** (Kemi)
+  id: kemi/goodwill-kemi
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit recycling shop run by the Meriva foundation as a work-training environment, helping local people back towards employment. Two […]
+- **Kemikammari – Kemin Kansalaistalo** (Kemi)
+  id: kemi/kemikammari-kemin-kansalaistalo
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Kemi's citizens' house, run by the Meriva foundation in the cultural centre as an open meeting place for residents and […]
+- **Ohjaamo Kemi** (Kemi)
+  id: kemi/ohjaamo-kemi
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A free one-stop guidance centre on Valtakatu for anyone under thirty, covering study, work, money, housing and health in one […]
+- **Tebis Second Hand & Cafe** (Kemi)
+  id: kemi/tebis-second-hand-cafe
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A second-hand shop with a café attached on Torniontie in Keminmaa, keeping clothing and household goods in circulation locally. Racks […]
+
+## Kittila (`kittila`) — 4 places
+
+- **Levi Reindeer Farm** (Kittila)
+  id: kittila/levi-reindeer-farm
+  neighbourhood: Kittila
+  category: Unfiled
+  budget: Mid-range
+  note: The reindeer farms around Levi are working, often family-run enterprises where herders continue the traditional Lappish and Sami livelihood of […]
+- **Sami Duodji Handicrafts** (Kittila)
+  id: kittila/sami-duodji-handicrafts
+  neighbourhood: Kittila
+  category: Unfiled
+  budget: Mid-range
+  note: Authentic Sami handicraft, known as duodji, represents centuries of tradition among the indigenous people of Lapland, and shops around Levi […]
+- **Samiland** (Kittila)
+  id: kittila/samiland
+  neighbourhood: Levi fell (Levi Summit)
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: part of the UNESCO Observatory Cultural Village programme, Samiland is Levi's dedicated exhibition on the Sami - the European Union's only Indigenous people.…
+- **Sarestoniemi Museum** (Kittila)
+  id: kittila/sarestoniemi-museum
+  neighbourhood: Kaukonen
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: named Finland's Museum of the Year 2026, this foundation-run nonprofit museum is the preserved forest home and self-built studio of Reidar Sarestoniemi (1925-1981),…
+
+## Kobe (`kobe`) — 4 places
+
+- **Disaster Reduction and Human Renovation Institution** (Kobe)
+  id: kobe/disaster-reduction-and-human-renovation-institution
+  neighbourhood: HAT Kobe
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: established in April 2002 by Hyogo Prefecture to preserve and pass on what the 1995 Great Hanshin-Awaji earthquake taught a city that lost…
+- **EAT LOCAL KOBE Farmers Market** (Kobe)
+  id: kobe/eat-local-kobe-farmers-market
+  neighbourhood: Sannomiya
+  category: Unfiled
+  budget: Budget
+  note: EAT LOCAL KOBE is a much-loved farmers market and community initiative that connects the city’s residents and visitors directly with […]
+- **Kobe Mosque** (Kobe)
+  id: kobe/kobe-mosque
+  neighbourhood: Kitano
+  category: Sightseeing
+  budget: Price unknown
+  note: Why it matters: opened in October 1935 with donations gathered by the Islamic Committee of Kobe, this is Japan's first mosque - and it has outlasted…
+- **Link tree** (Kobe)
+  id: kobe/link-tree
+  neighbourhood: Sannomiya
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: run since March 2023 by the social welfare corporation Mikari-kai as a Type B employment-support workplace, this is a real cafe where people…
+
+## Kolari (`kolari`) — 4 places
+
+- **Husky Ranch Lapland** (Kolari)
+  id: kolari/husky-ranch-lapland
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Husky Ranch Lapland is a small, family-owned husky farm in Kurtakko, run by Juho and Hanna together with a pack of more than 40 Alaskan huskies.…
+- **Konijänkkä** (Kolari)
+  id: kolari/konijankka
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Konijänkkä is a small family-run farm at the foot of Ylläs fell in Äkäslompolo, home to around 40 sled dogs and 15 horses, most of them…
+- **Samin Porotila (Sami’s Reindeer Farm)** (Kolari)
+  id: kolari/samin-porotila-samis-reindeer-farm
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Samin Porotila is a working reindeer farm in Venejärvi run by local herder Sami Tiensuu, one of a handful of families in the Kolari area whose…
+- **Seven Fells Up** (Kolari)
+  id: kolari/seven-fells-up
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Seven Fells Up is a small, independent guiding company based in Äkäslompolo, named for the seven fells that ring the village - Ylläs, Kesänki, Kukas, Kuer,…
+
+## Konstanz (`konstanz`) — 4 places
+
+- **Baden & Bodensee Wine Producers** (Konstanz)
+  id: konstanz/baden-bodensee-wine-producers
+  neighbourhood: Lake Constance
+  category: Unfiled
+  budget: Mid-range
+  note: The shores of Lake Constance, including the terraced vineyards around Meersburg across the water, form one of Germanys southernmost wine […]
+- **Konstanz Farmers Market** (Konstanz)
+  id: konstanz/konstanz-farmers-market
+  neighbourhood: Altstadt
+  category: Unfiled
+  budget: Budget
+  note: The weekly markets of Konstanz bring together growers and producers from the fertile Lake Constance region selling fresh fruit, especially […]
+- **Lake Constance Orchard Producers** (Konstanz)
+  id: konstanz/lake-constance-orchard-producers
+  neighbourhood: Lake Constance
+  category: Unfiled
+  budget: Budget
+  note: The mild climate of Lake Constance makes it one of Germanys most important fruit-growing regions, especially for apples, and family […]
+- **Regional Craft Cooperative** (Konstanz)
+  id: konstanz/regional-craft-cooperative
+  neighbourhood: Niederburg
+  category: Unfiled
+  budget: Budget
+  note: Around Konstanz and the Lake Constance region, artisans keep alive traditional crafts from woodwork and ceramics to textiles and glass, […]
+
+## Krakow (`krakow`) — 4 places
+
+- **JCC Krakow** (Krakow)
+  id: krakow/jcc-krakow
+  neighbourhood: Kazimierz
+  category: Sightseeing
+  budget: Price unknown
+  note: Why it matters: opened in 2008 as a Prince of Wales initiative to serve both Holocaust survivors and Kraków's small, re-emerging Jewish community, JCC Krakow is…
+- **Luzem** (Krakow)
+  id: krakow/luzem
+  neighbourhood: Kraków
+  category: Unfiled
+  budget: Budget
+  note: Luzem is a zero-waste shop where customers bring their own containers to buy dry goods, cleaning products, cosmetics and household […]
+- **Pensjonat u Pana Cogito** (Krakow)
+  id: krakow/pensjonat-u-pana-cogito
+  neighbourhood: Salwator
+  category: Unfiled
+  budget: Mid-range
+  note: Pensjonat u Pana Cogito is a guesthouse and social enterprise in the leafy Salwator district, run to provide training and […]
+- **Społeczna Kaffka** (Krakow)
+  id: krakow/spo-eczna-kaffka
+  neighbourhood: Podgórze
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in January 2023 by Społeczna 21, the social enterprise wing of Kraków's Tęcza Association, this was Poland's first cafe built to employ…
+
+## Kutaisi (`kutaisi`) — 4 places
+
+- **Georgian Supra Food Heritage** (Kutaisi)
+  id: kutaisi/georgian-supra-food-heritage
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: The Georgian supra, with its shared dishes, wine and ritual toasting, is at the heart of the countrys culture and […]
+- **Georgian Wine & Qvevri Producers** (Kutaisi)
+  id: kutaisi/georgian-wine-qvevri-producers
+  neighbourhood: Imereti
+  category: Unfiled
+  budget: Mid-range
+  note: The Imereti region around Kutaisi is an ancient winemaking area where families still ferment wine in traditional clay qvevri buried […]
+- **Imeretian Craft Cooperative** (Kutaisi)
+  id: kutaisi/imeretian-craft-cooperative
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: Artisans in and around Kutaisi keep alive Georgian craft traditions such as cloisonne enamelling, ceramics, felt-making and weaving, often working […]
+- **Kutaisi Bazaar Producers** (Kutaisi)
+  id: kutaisi/kutaisi-bazaar-producers
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: The central bazaar of Kutaisi brings together smallholder farmers and producers from across the fertile Imereti region, selling seasonal fruit, […]
+
+## Kuusamo (`kuusamo`) — 4 places
+
+- **Hannu Hautala Nature Photography Centre** (Kuusamo)
+  id: kuusamo/hannu-hautala-nature-photography-centre
+  neighbourhood: Karhuntassu
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: owned and run by the City of Kuusamo, this municipal centre is Finland's public tribute to Hannu Hautala, the country's most celebrated nature…
+- **Kuusamo Local Produce** (Kuusamo)
+  id: kuusamo/kuusamo-local-produce
+  neighbourhood: Kuusamo
+  category: Unfiled
+  budget: Budget
+  note: The Kuusamo region is renowned for its pure, wild Arctic produce, from reindeer and freshwater fish to the prized cloudberries, […]
+- **Lappish Handicrafts** (Kuusamo)
+  id: kuusamo/lappish-handicrafts
+  neighbourhood: Ruka
+  category: Unfiled
+  budget: Mid-range
+  note: The Kuusamo and Ruka area offers a range of authentic Lappish and Sami-influenced handicrafts, from items made of reindeer leather, […]
+- **Oulanka Visitor Centre** (Kuusamo)
+  id: kuusamo/oulanka-visitor-centre
+  neighbourhood: Oulanka National Park
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: run free of charge by Metsahallitus (Parks & Wildlife Finland), this is the conservation gateway to Oulanka National Park - protected since 1956…
+
+## Kuwait City (`kuwait-city`) — 4 places
+
+- **Al Sadu Society** (Kuwait City)
+  id: kuwait-city/al-sadu-society
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit co-operative safeguarding Bedouin Al-Sadu weaving and the women artisans who keep it alive. Locals cherish it for authentic, […]
+- **GracesList Kuwait** (Kuwait City)
+  id: kuwait-city/graceslist-kuwait
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A grassroots charity network that helps Kuwait residents donate and rehome goods rather than bin them. Locals turn to it […]
+- **Sustainable Living Kuwait** (Kuwait City)
+  id: kuwait-city/sustainable-living-kuwait
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A pioneering local sustainability platform that has championed eco living in Kuwait for years. Green-minded locals value its workshops, events […]
+- **Thrifty M.E.** (Kuwait City)
+  id: kuwait-city/thrifty-m-e
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A rare Kuwait thrift shop with a conscience, channelling a share of its proceeds to charity. Bargain-hunters and sustainability-minded locals […]
+
+## Kyiv (`kyiv`) — 4 places
+
+- **Kurazh Bazar Flea Market** (Kyiv)
+  id: kyiv/kurazh-bazar-flea-market
+  neighbourhood: Platforma Art Factory
+  category: Unfiled
+  budget: Budget
+  note: Ukraine’s biggest and most joyful charity flea market — a monthly, festival-like event at the Platforma Art Factory that’s as […]
+- **Laska Charity Store** (Kyiv)
+  id: kyiv/laska-charity-store
+  neighbourhood: Zoloti Vorota
+  category: Unfiled
+  budget: Budget
+  note: Laska, the Ukrainian word for kindness, is a charity shop and cosy coffee spot near the Golden Gate that has […]
+- **NoWaste Shop** (Kyiv)
+  id: kyiv/nowaste-shop
+  neighbourhood: City Centre
+  category: Unfiled
+  budget: Mid-range
+  note: NoWaste is a small social enterprise selling the everyday kit of a lower-waste life, from refillable bottles and beeswax wraps […]
+- **Vsi Svoi** (Kyiv)
+  id: kyiv/vsi-svoi
+  neighbourhood: Khreshchatyk
+  category: Unfiled
+  budget: Mid-range
+  note: Vsi Svoi, meaning all our own, is a two-level concept store on Khreshchatyk gathering more than a hundred Ukrainian brands […]
+
+## Lafayette (`lafayette`) — 4 places
+
+- **Cajun & Zydeco Music Community** (Lafayette)
+  id: lafayette/cajun-zydeco-music-community
+  neighbourhood: Acadiana
+  category: Unfiled
+  budget: Budget
+  note: Music is the lifeblood of Acadiana, and Lafayette supports a vibrant community of Cajun and zydeco musicians, instrument makers and […]
+- **Cajun Food Producers** (Lafayette)
+  id: lafayette/cajun-food-producers
+  neighbourhood: Acadiana
+  category: Unfiled
+  budget: Budget
+  note: The meat markets, smokehouses and small producers of the Lafayette area craft the boudin, andouille, cracklins and Cajun seasonings that […]
+- **Lafayette Farmers Market** (Lafayette)
+  id: lafayette/lafayette-farmers-market
+  neighbourhood: Lafayette
+  category: Unfiled
+  budget: Budget
+  note: Lafayettes farmers markets bring together growers and producers from across Acadiana selling seasonal produce, local meats, seafood, boudin, baked goods […]
+- **Louisiana Craft & Culture** (Lafayette)
+  id: lafayette/louisiana-craft-culture
+  neighbourhood: Lafayette
+  category: Unfiled
+  budget: Budget
+  note: Around Lafayette, artisans and cultural organisations preserve the crafts of Acadiana, from boat-building and woodwork to weaving, quilting and folk […]
+
+## Lagos (`lagos`) — 4 places
+
+- **Freedom Park Lagos** (Lagos)
+  id: lagos/freedom-park-lagos
+  neighbourhood: Lagos Island
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: this was Her Majesty's Broad Street Prison, where Nigeria's independence heroes were jailed under colonial rule - reborn as a memorial and community…
+- **Lekki Conservation Centre** (Lagos)
+  id: lagos/lekki-conservation-centre
+  neighbourhood: Lekki
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: this 78-hectare wetland reserve is run by the Nigerian Conservation Foundation, the country's leading environmental nonprofit, which has protected it from Lekki's relentless…
+- **Lekki Craft Makers Cooperative** (Lagos)
+  id: lagos/lekki-craft-makers-cooperative
+  neighbourhood: Lekki
+  category: Unfiled
+  budget: Budget
+  note: Lagos has a thriving community of artisans producing wood carvings, beadwork, textiles and calabash art, much of it sold through […]
+- **Nike Art Gallery** (Lagos)
+  id: lagos/nike-art-gallery
+  neighbourhood: Lekki Phase I
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: owner Nike Davies-Okundaye - the doyenne of Nigerian textile art - has trained over 3,000 artists for free through her foundation since 1983,…
+
+## Las Vegas (`las-vegas`) — 4 places
+
+- **Opportunity Village Thrift Store** (Las Vegas)
+  id: las-vegas/opportunity-village-thrift-store
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A charity shop on South Decatur Boulevard run by Opportunity Village, a Las Vegas non-profit founded in 1954 that provides […]
+- **The Beverly Theater** (Las Vegas)
+  id: las-vegas/the-beverly-theater
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit cinema and performance venue on South 6th Street, opened in 2023 and funded by the Rogers Foundation, a […]
+- **The Writer’s Block** (Las Vegas)
+  id: las-vegas/the-writers-block
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An independent bookshop on South 6th Street, opened in 2014 and reconstituted as a non-profit that also operates Codex, a […]
+- **Vegas Roots Community Garden** (Las Vegas)
+  id: las-vegas/vegas-roots-community-garden
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit urban farm on Tonopah Drive in the Historic Westside, founded in 2010 and run by the organisation Together […]
+
+## Leon (`leon`) — 4 places
+
+- **Albergue de las Carbajalas** (Leon)
+  id: leon/albergue-de-las-carbajalas
+  neighbourhood: Old Town
+  category: Hotels
+  budget: Budget
+  note: Why it matters: the Benedictine nuns of the Santa Maria de Carbajal monastery have run this pilgrim albergue since 1993, non-profit from the start and still…
+- **Cecina de Leon Producers** (Leon)
+  id: leon/cecina-de-leon-producers
+  neighbourhood: Leon
+  category: Unfiled
+  budget: Budget
+  note: Cecina de Leon, the region’s prized air-dried, smoked cured beef, holds protected geographical status and is one of the great […]
+- **Museo Sierra Pambley** (Leon)
+  id: leon/museo-sierra-pambley
+  neighbourhood: Centre
+  category: Ticketed Attractions
+  budget: Budget
+  note: Why it matters: Francisco Fernandez Blanco de Sierra-Pambley, born in Villablino in 1827 into a family of means, chose to spend his inheritance founding free schools…
+- **Oxfam Intermon Leon** (Leon)
+  id: leon/oxfam-intermon-leon
+  neighbourhood: Barrio Romantico
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: opened in 1995, this was the first shop in Leon dedicated to fair trade, and three decades on it is still run entirely…
+
+## Ljubljana (`ljubljana`) — 4 places
+
+- **Cafe Čokl** (Ljubljana)
+  id: ljubljana/cafe-cokl
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: owner Tine Čokl discovered fair-trade coffee in 2012 and built the city's most rigorous sourcing around it - importing raw, unroasted fair-trade beans,…
+- **Druga Violina** (Ljubljana)
+  id: ljubljana/druga-violina
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: opened in summer 2012 by the Dolfke Boštjančič Centre (CUDV), this Stari trg gostilna is staffed by adults with intellectual disabilities who train…
+- **Metelkova** (Ljubljana)
+  id: ljubljana/metelkova
+  neighbourhood: Metelkova
+  category: Nightlife, Sightseeing
+  budget: Budget
+  note: Metelkova is Ljubljana’s autonomous cultural centre, a former army barracks transformed into a colourful, graffiti-covered warren of clubs, bars, galleries […]
+- **Skuhna** (Ljubljana)
+  id: ljubljana/skuhna
+  neighbourhood: City centre
+  category: Unfiled
+  budget: Mid-range
+  note: Skuhna is a social-enterprise restaurant in Ljubljana serving world cuisine cooked by migrants and refugees from across Africa, Asia and […]
+
+## Los Angeles (`los-angeles`) — 4 places
+
+- **Homegirl Cafe** (Los Angeles)
+  id: los-angeles/homegirl-cafe
+  neighbourhood: Chinatown
+  category: Unfiled
+  budget: Mid-range
+  note: Part of Homeboy Industries, the world’s largest gang-rehabilitation programme, Homegirl Cafe serves bright Mexican-inspired food cooked and served by trainees […]
+- **Individual Medley** (Los Angeles)
+  id: los-angeles/individual-medley
+  neighbourhood: Atwater Village
+  category: Unfiled
+  budget: Mid-range
+  note: This Atwater Village boutique curates thoughtfully made, long-lasting clothing and goods from independent and sustainable labels. It’s an easy place […]
+- **P.F. Candle Co.** (Los Angeles)
+  id: los-angeles/p-f-candle-co
+  neighbourhood: Echo Park
+  category: Unfiled
+  budget: Budget
+  note: Founded in LA, P.F. Candle Co.’s Echo Park shop sells its hand-poured, cruelty-free soy candles and home fragrance made locally. […]
+- **Suay Sew Shop** (Los Angeles)
+  id: los-angeles/suay-sew-shop
+  neighbourhood: Frogtown
+  category: Unfiled
+  budget: Mid-range
+  note: Suay rescues discarded textiles and remakes them into new clothing and homeware at its Frogtown workshop, tackling fashion waste head-on. […]
+
+## Lugano (`lugano`) — 4 places
+
+- **Bottega del Mondo Lugano** (Lugano)
+  id: lugano/bottega-del-mondo-lugano
+  neighbourhood: Quartiere Maghetti
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Lugano went two years without a fair-trade shop until this Bottega del Mondo opened in the Quartiere Maghetti on 1 June 2021, staffed…
+- **Canvetto Luganese** (Lugano)
+  id: lugano/canvetto-luganese
+  neighbourhood: Molino Nuovo
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: reopened in December 2000 by Fondazione Diamante - a Ticino foundation founded in 1978 that accompanies over 600 people with disabilities - this…
+- **CATISHOP.CH – Caritas Ticino** (Lugano)
+  id: lugano/catishop-ch-caritas-ticino
+  neighbourhood: Pregassona
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by Caritas Ticino - an anti-poverty association founded in 1942 - this second-hand shop doubles as an occupational programme, staffed by people…
+- **Mercato di Lugano** (Lugano)
+  id: lugano/mercato-di-lugano
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: Lugano’s traditional market, held on Tuesday and Friday mornings in and around the Piazza della Riforma, brings local farmers and […]
+
+## Luxembourg (`luxembourg`) — 4 places
+
+- **Beet** (Luxembourg)
+  id: luxembourg/beet
+  neighbourhood: Ville Haute
+  category: Unfiled
+  budget: Budget
+  note: A popular vegetarian and vegan restaurant in the old town serving colourful, health-focused bowls, salads and plant-based dishes made with […]
+- **Caritas Kleederkescht** (Luxembourg)
+  id: luxembourg/caritas-kleederkescht
+  neighbourhood: Ville Haute
+  category: Unfiled
+  budget: Budget
+  note: A charity second-hand shop run by Caritas Luxembourg, selling donated clothes and goods to fund social projects and support people […]
+- **Naturata** (Luxembourg)
+  id: luxembourg/naturata
+  neighbourhood: Ville Haute
+  category: Unfiled
+  budget: Budget
+  note: An organic supermarket and shop selling certified bio produce, wholefoods and eco household goods, part of a Luxembourg cooperative supporting […]
+- **neimenster Cultural Centre** (Luxembourg)
+  id: luxembourg/neimenster-cultural-centre
+  neighbourhood: Grund
+  category: Unfiled
+  budget: Budget
+  note: A cultural and community centre in the restored Neumunster Abbey down in the Grund, hosting concerts, exhibitions, debates and community […]
+
+## Madrid (`madrid`) — 4 places
+
+- **El Fogon Verde** (Madrid)
+  id: madrid/el-fogon-verde
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: A worker-owned cooperative restaurant built on agroecology, sourcing from local eco-friendly producers and run by assembly with equal pay, including members who came to Madrid as…
+- **Impact Hub Madrid** (Madrid)
+  id: madrid/impact-hub-madrid
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Budget
+  note: A coworking and community hub for people building social and environmental projects, with events, incubators and a network of changemakers. A window into Madrid's lively social-enterprise…
+- **La Antigua Casa Talavera** (Madrid)
+  id: madrid/la-antigua-casa-talavera
+  neighbourhood: Centro
+  category: Unfiled
+  budget: Mid-range
+  note: La Antigua Casa Talavera is a historic Madrid shop, open since the early 20th century, dedicated to authentic hand-painted Spanish […]
+- **Robin Hood Restaurant** (Madrid)
+  id: madrid/robin-hood-restaurant
+  neighbourhood: Lavapies
+  category: Unfiled
+  budget: Mid-range
+  note: A restaurant with a twist, run by the charity Mensajeros de la Paz: paying diners at lunch fund a proper sit-down dinner, served with waiters and…

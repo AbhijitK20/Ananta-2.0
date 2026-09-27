@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { GAME_LINK, NAV } from "../lib/data";
+import { NAV } from "../lib/data";
 
 import { useState } from "react";
 
@@ -39,11 +39,11 @@ export function Header() {
                   <Link href={item.href}>{item.label}</Link>
                 </li>
               ))}
-              {/* Absolutely positioned, so it is out of flow and cannot move the
-                  list or any link the replica is measured on. See GAME_LINK. */}
-              <li className="lal-nav__game">
-                <Link href={GAME_LINK.href}>{GAME_LINK.label}</Link>
-              </li>
+              {/* GAME_LINK used to sit here, absolutely positioned so it could not
+                  move the measured list. It is gone because NAV now ends in
+                  "Local Legends", and two links with the same label a few pixels
+                  apart read as a rendering bug. NAV carries 5 items in flow,
+                  the same count GAME_LINK was added to keep it at. */}
             </ul>
           </nav>
 

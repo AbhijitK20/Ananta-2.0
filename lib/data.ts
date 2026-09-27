@@ -171,8 +171,21 @@ export const NAV = [
   { href: "/plan", label: "Plan a Trip" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-  { href: "/partners", label: "Partner With Us" },
+  // Replaces the Contact entry. The assistant is the one part of this site that
+  // is actually ours rather than reconstructed, and it is unreachable by
+  // browsing if the only route to it is /oracle. /contact still exists and still
+  // routes; it just is not what the nav advertises.
+  { href: "/oracle", label: "Ask the AI" },
+  // Local Legends is the gamified layer -- the stamp album over the 890 picks,
+  // with quests, XP and streaks. /stamps is the collection itself, which is what
+  // the product is, and it is the one game route that shows the whole shape of a
+  // player's progress at a glance.
+  //
+  // This replaces "Partner With Us". Two reasons, one of them practical: the nav
+  // has a finite width and a sixth item is the point at which it starts wrapping
+  // on a laptop, and a marketing page for partners is a worse use of the last
+  // slot than the thing visitors actually came for. /partners still routes.
+  { href: "/stamps", label: "Local Legends" },
 ];
 
 /**
@@ -184,6 +197,12 @@ export const NAV = [
  * It is rendered separately as an absolutely positioned child of the same list,
  * so it is out of flow: the list's box and every measured link keep their
  * geometry, and it sits in the free gap between the logo and the nav.
+ */
+/**
+ * Was the header's absolutely positioned "Local Legends" link, pointing at the
+ * marketing page for the game. It is no longer rendered: NAV ends in a
+ * "Local Legends" item and two identical labels in one header look broken.
+ * /local-legends still routes.
  */
 export const GAME_LINK = { href: "/local-legends", label: "Local Legends" };
 

@@ -1,0 +1,1130 @@
+# Quests
+
+222 quests in four tiers. A quest pays its reward once, on claim, and its
+goal is always a statement about what has been stamped — never about
+distance, time or money.
+
+## Tiers
+
+- **Getting started** (`warmup`) — 9 quests.
+- **City clearance** (`city`) — 200 quests.
+- **Category hunts** (`category`) — 8 quests.
+- **Long game** (`grand`) — 5 quests.
+
+## Getting started
+
+- **First Footfall** (`warmup-first-stamp`)
+  Stamp your first place.
+  Goal: stamp 1 places in total.
+  Reward: 10 XP.
+
+- **Getting Oriented** (`warmup-five`)
+  Stamp five places, anywhere.
+  Goal: stamp 5 places in total.
+  Reward: 40 XP.
+
+- **Well Rounded** (`warmup-variety`)
+  Collect from four different categories.
+  Goal: stamp places across 4 different categories.
+  Reward: 60 XP.
+
+- **Eat, Drink, Shop, See, Do** (`warmup-spread-five`)
+  One place in each of five categories.
+  Goal: stamp one place in each of 5 categories.
+  Reward: 120 XP.
+
+- **Widely Travelled** (`warmup-ten-cities`)
+  Collect in ten different cities.
+  Goal: stamp places in 10 different cities.
+  Reward: 150 XP.
+
+- **Unmarked Map** (`warmup-unfiled`)
+  Stamp five places the dataset could not categorise.
+  Goal: stamp 5 Unfiled places.
+  Reward: 80 XP.
+
+- **Cheap Eats, Real Places** (`budget-budget`)
+  Stamp ten budget places.
+  Goal: stamp 10 Budget places.
+  Reward: 120 XP.
+
+- **The Comfortable Middle** (`budget-mid-range`)
+  Stamp ten mid-range places.
+  Goal: stamp 10 Mid-range places.
+  Reward: 120 XP.
+
+- **Treating Yourself** (`budget-high-end`)
+  Stamp five high-end places.
+  Goal: stamp 5 High-end places.
+  Reward: 120 XP.
+
+## City clearance
+
+- **All of Paris** (`city-paris`)
+  Stamp all 22 places in Paris — 2% of the dataset.
+  Goal: stamp 22 places in Paris.
+  Reward: 280 XP.
+
+- **All of London** (`city-london`)
+  Stamp all 16 places in London — 2% of the dataset.
+  Goal: stamp 16 places in London.
+  Reward: 220 XP.
+
+- **All of Lisbon** (`city-lisbon`)
+  Stamp all 14 places in Lisbon — 2% of the dataset.
+  Goal: stamp 14 places in Lisbon.
+  Reward: 200 XP.
+
+- **All of Miami** (`city-miami`)
+  Stamp all 14 places in Miami — 2% of the dataset.
+  Goal: stamp 14 places in Miami.
+  Reward: 200 XP.
+
+- **All of Nyc** (`city-nyc`)
+  Stamp all 11 places in Nyc — 1% of the dataset.
+  Goal: stamp 11 places in Nyc.
+  Reward: 170 XP.
+
+- **All of San Francisco** (`city-san-francisco`)
+  Stamp all 11 places in San Francisco — 1% of the dataset.
+  Goal: stamp 11 places in San Francisco.
+  Reward: 170 XP.
+
+- **All of Amsterdam** (`city-amsterdam`)
+  Stamp all 9 places in Amsterdam — 1% of the dataset.
+  Goal: stamp 9 places in Amsterdam.
+  Reward: 150 XP.
+
+- **All of Barcelona** (`city-barcelona`)
+  Stamp all 9 places in Barcelona — 1% of the dataset.
+  Goal: stamp 9 places in Barcelona.
+  Reward: 150 XP.
+
+- **All of Rome** (`city-rome`)
+  Stamp all 9 places in Rome — 1% of the dataset.
+  Goal: stamp 9 places in Rome.
+  Reward: 150 XP.
+
+- **All of Kathmandu** (`city-kathmandu`)
+  Stamp all 8 places in Kathmandu — 1% of the dataset.
+  Goal: stamp 8 places in Kathmandu.
+  Reward: 140 XP.
+
+- **All of New Orleans** (`city-new-orleans`)
+  Stamp all 7 places in New Orleans — 1% of the dataset.
+  Goal: stamp 7 places in New Orleans.
+  Reward: 130 XP.
+
+- **All of Nashville** (`city-nashville`)
+  Stamp all 6 places in Nashville — 1% of the dataset.
+  Goal: stamp 6 places in Nashville.
+  Reward: 120 XP.
+
+- **All of Seattle** (`city-seattle`)
+  Stamp all 6 places in Seattle — 1% of the dataset.
+  Goal: stamp 6 places in Seattle.
+  Reward: 120 XP.
+
+- **All of Kolkata** (`city-kolkata`)
+  Stamp all 5 places in Kolkata — 1% of the dataset.
+  Goal: stamp 5 places in Kolkata.
+  Reward: 110 XP.
+
+- **All of Ohrid** (`city-ohrid`)
+  Stamp all 5 places in Ohrid — 1% of the dataset.
+  Goal: stamp 5 places in Ohrid.
+  Reward: 110 XP.
+
+- **All of Port au Prince** (`city-port-au-prince`)
+  Stamp all 5 places in Port au Prince — 1% of the dataset.
+  Goal: stamp 5 places in Port au Prince.
+  Reward: 110 XP.
+
+- **All of Aalborg** (`city-aalborg`)
+  Stamp all 4 places in Aalborg — 0% of the dataset.
+  Goal: stamp 4 places in Aalborg.
+  Reward: 100 XP.
+
+- **All of Abu Dhabi** (`city-abu-dhabi`)
+  Stamp all 4 places in Abu Dhabi — 0% of the dataset.
+  Goal: stamp 4 places in Abu Dhabi.
+  Reward: 100 XP.
+
+- **All of Addis Ababa** (`city-addis-ababa`)
+  Stamp all 4 places in Addis Ababa — 0% of the dataset.
+  Goal: stamp 4 places in Addis Ababa.
+  Reward: 100 XP.
+
+- **All of Adelaide** (`city-adelaide`)
+  Stamp all 4 places in Adelaide — 0% of the dataset.
+  Goal: stamp 4 places in Adelaide.
+  Reward: 100 XP.
+
+- **All of Alanya** (`city-alanya`)
+  Stamp all 4 places in Alanya — 0% of the dataset.
+  Goal: stamp 4 places in Alanya.
+  Reward: 100 XP.
+
+- **All of Amman** (`city-amman`)
+  Stamp all 4 places in Amman — 0% of the dataset.
+  Goal: stamp 4 places in Amman.
+  Reward: 100 XP.
+
+- **All of Anchorage ak** (`city-anchorage-ak`)
+  Stamp all 4 places in Anchorage ak — 0% of the dataset.
+  Goal: stamp 4 places in Anchorage ak.
+  Reward: 100 XP.
+
+- **All of Arezzo** (`city-arezzo`)
+  Stamp all 4 places in Arezzo — 0% of the dataset.
+  Goal: stamp 4 places in Arezzo.
+  Reward: 100 XP.
+
+- **All of Athens** (`city-athens`)
+  Stamp all 4 places in Athens — 0% of the dataset.
+  Goal: stamp 4 places in Athens.
+  Reward: 100 XP.
+
+- **All of Austin** (`city-austin`)
+  Stamp all 4 places in Austin — 0% of the dataset.
+  Goal: stamp 4 places in Austin.
+  Reward: 100 XP.
+
+- **All of Baku** (`city-baku`)
+  Stamp all 4 places in Baku — 0% of the dataset.
+  Goal: stamp 4 places in Baku.
+  Reward: 100 XP.
+
+- **All of Bangkok** (`city-bangkok`)
+  Stamp all 4 places in Bangkok — 0% of the dataset.
+  Goal: stamp 4 places in Bangkok.
+  Reward: 100 XP.
+
+- **All of Batumi** (`city-batumi`)
+  Stamp all 4 places in Batumi — 0% of the dataset.
+  Goal: stamp 4 places in Batumi.
+  Reward: 100 XP.
+
+- **All of Beau Bassin Rose Hill** (`city-beau-bassin-rose-hill`)
+  Stamp all 4 places in Beau Bassin Rose Hill — 0% of the dataset.
+  Goal: stamp 4 places in Beau Bassin Rose Hill.
+  Reward: 100 XP.
+
+- **All of Beijing** (`city-beijing`)
+  Stamp all 4 places in Beijing — 0% of the dataset.
+  Goal: stamp 4 places in Beijing.
+  Reward: 100 XP.
+
+- **All of Beirut** (`city-beirut`)
+  Stamp all 4 places in Beirut — 0% of the dataset.
+  Goal: stamp 4 places in Beirut.
+  Reward: 100 XP.
+
+- **All of Belfast** (`city-belfast`)
+  Stamp all 4 places in Belfast — 0% of the dataset.
+  Goal: stamp 4 places in Belfast.
+  Reward: 100 XP.
+
+- **All of Belgrade** (`city-belgrade`)
+  Stamp all 4 places in Belgrade — 0% of the dataset.
+  Goal: stamp 4 places in Belgrade.
+  Reward: 100 XP.
+
+- **All of Belo Horizonte** (`city-belo-horizonte`)
+  Stamp all 4 places in Belo Horizonte — 0% of the dataset.
+  Goal: stamp 4 places in Belo Horizonte.
+  Reward: 100 XP.
+
+- **All of Bergen** (`city-bergen`)
+  Stamp all 4 places in Bergen — 0% of the dataset.
+  Goal: stamp 4 places in Bergen.
+  Reward: 100 XP.
+
+- **All of Berlin** (`city-berlin`)
+  Stamp all 4 places in Berlin — 0% of the dataset.
+  Goal: stamp 4 places in Berlin.
+  Reward: 100 XP.
+
+- **All of Bologna** (`city-bologna`)
+  Stamp all 4 places in Bologna — 0% of the dataset.
+  Goal: stamp 4 places in Bologna.
+  Reward: 100 XP.
+
+- **All of Boston** (`city-boston`)
+  Stamp all 4 places in Boston — 0% of the dataset.
+  Goal: stamp 4 places in Boston.
+  Reward: 100 XP.
+
+- **All of Boulder** (`city-boulder`)
+  Stamp all 4 places in Boulder — 0% of the dataset.
+  Goal: stamp 4 places in Boulder.
+  Reward: 100 XP.
+
+- **All of Brasov** (`city-brasov`)
+  Stamp all 4 places in Brasov — 0% of the dataset.
+  Goal: stamp 4 places in Brasov.
+  Reward: 100 XP.
+
+- **All of Bratislava** (`city-bratislava`)
+  Stamp all 4 places in Bratislava — 0% of the dataset.
+  Goal: stamp 4 places in Bratislava.
+  Reward: 100 XP.
+
+- **All of Breda** (`city-breda`)
+  Stamp all 4 places in Breda — 0% of the dataset.
+  Goal: stamp 4 places in Breda.
+  Reward: 100 XP.
+
+- **All of Brisbane** (`city-brisbane`)
+  Stamp all 4 places in Brisbane — 0% of the dataset.
+  Goal: stamp 4 places in Brisbane.
+  Reward: 100 XP.
+
+- **All of Brussels** (`city-brussels`)
+  Stamp all 4 places in Brussels — 0% of the dataset.
+  Goal: stamp 4 places in Brussels.
+  Reward: 100 XP.
+
+- **All of Bucharest** (`city-bucharest`)
+  Stamp all 4 places in Bucharest — 0% of the dataset.
+  Goal: stamp 4 places in Bucharest.
+  Reward: 100 XP.
+
+- **All of Budapest** (`city-budapest`)
+  Stamp all 4 places in Budapest — 0% of the dataset.
+  Goal: stamp 4 places in Budapest.
+  Reward: 100 XP.
+
+- **All of Budva** (`city-budva`)
+  Stamp all 4 places in Budva — 0% of the dataset.
+  Goal: stamp 4 places in Budva.
+  Reward: 100 XP.
+
+- **All of Buenos Aires** (`city-buenos-aires`)
+  Stamp all 4 places in Buenos Aires — 0% of the dataset.
+  Goal: stamp 4 places in Buenos Aires.
+  Reward: 100 XP.
+
+- **All of Busan** (`city-busan`)
+  Stamp all 4 places in Busan — 0% of the dataset.
+  Goal: stamp 4 places in Busan.
+  Reward: 100 XP.
+
+- **All of Cairo** (`city-cairo`)
+  Stamp all 4 places in Cairo — 0% of the dataset.
+  Goal: stamp 4 places in Cairo.
+  Reward: 100 XP.
+
+- **All of Cape Town** (`city-cape-town`)
+  Stamp all 4 places in Cape Town — 0% of the dataset.
+  Goal: stamp 4 places in Cape Town.
+  Reward: 100 XP.
+
+- **All of Caracas** (`city-caracas`)
+  Stamp all 4 places in Caracas — 0% of the dataset.
+  Goal: stamp 4 places in Caracas.
+  Reward: 100 XP.
+
+- **All of Cardiff** (`city-cardiff`)
+  Stamp all 4 places in Cardiff — 0% of the dataset.
+  Goal: stamp 4 places in Cardiff.
+  Reward: 100 XP.
+
+- **All of Catania** (`city-catania`)
+  Stamp all 4 places in Catania — 0% of the dataset.
+  Goal: stamp 4 places in Catania.
+  Reward: 100 XP.
+
+- **All of Chania** (`city-chania`)
+  Stamp all 4 places in Chania — 0% of the dataset.
+  Goal: stamp 4 places in Chania.
+  Reward: 100 XP.
+
+- **All of Chennai** (`city-chennai`)
+  Stamp all 4 places in Chennai — 0% of the dataset.
+  Goal: stamp 4 places in Chennai.
+  Reward: 100 XP.
+
+- **All of Chicago** (`city-chicago`)
+  Stamp all 4 places in Chicago — 0% of the dataset.
+  Goal: stamp 4 places in Chicago.
+  Reward: 100 XP.
+
+- **All of Chisinau** (`city-chisinau`)
+  Stamp all 4 places in Chisinau — 0% of the dataset.
+  Goal: stamp 4 places in Chisinau.
+  Reward: 100 XP.
+
+- **All of Cluj Napoca** (`city-cluj-napoca`)
+  Stamp all 4 places in Cluj Napoca — 0% of the dataset.
+  Goal: stamp 4 places in Cluj Napoca.
+  Reward: 100 XP.
+
+- **All of Cologne** (`city-cologne`)
+  Stamp all 4 places in Cologne — 0% of the dataset.
+  Goal: stamp 4 places in Cologne.
+  Reward: 100 XP.
+
+- **All of Colombo** (`city-colombo`)
+  Stamp all 4 places in Colombo — 0% of the dataset.
+  Goal: stamp 4 places in Colombo.
+  Reward: 100 XP.
+
+- **All of Como** (`city-como`)
+  Stamp all 4 places in Como — 0% of the dataset.
+  Goal: stamp 4 places in Como.
+  Reward: 100 XP.
+
+- **All of Copenhagen** (`city-copenhagen`)
+  Stamp all 4 places in Copenhagen — 0% of the dataset.
+  Goal: stamp 4 places in Copenhagen.
+  Reward: 100 XP.
+
+- **All of Curitiba** (`city-curitiba`)
+  Stamp all 4 places in Curitiba — 0% of the dataset.
+  Goal: stamp 4 places in Curitiba.
+  Reward: 100 XP.
+
+- **All of da Nang** (`city-da-nang`)
+  Stamp all 4 places in da Nang — 0% of the dataset.
+  Goal: stamp 4 places in da Nang.
+  Reward: 100 XP.
+
+- **All of Delhi** (`city-delhi`)
+  Stamp all 4 places in Delhi — 0% of the dataset.
+  Goal: stamp 4 places in Delhi.
+  Reward: 100 XP.
+
+- **All of Dubai** (`city-dubai`)
+  Stamp all 4 places in Dubai — 0% of the dataset.
+  Goal: stamp 4 places in Dubai.
+  Reward: 100 XP.
+
+- **All of Dublin** (`city-dublin`)
+  Stamp all 4 places in Dublin — 0% of the dataset.
+  Goal: stamp 4 places in Dublin.
+  Reward: 100 XP.
+
+- **All of Dubrovnik** (`city-dubrovnik`)
+  Stamp all 4 places in Dubrovnik — 0% of the dataset.
+  Goal: stamp 4 places in Dubrovnik.
+  Reward: 100 XP.
+
+- **All of Edinburgh** (`city-edinburgh`)
+  Stamp all 4 places in Edinburgh — 0% of the dataset.
+  Goal: stamp 4 places in Edinburgh.
+  Reward: 100 XP.
+
+- **All of Enontekio** (`city-enontekio`)
+  Stamp all 4 places in Enontekio — 0% of the dataset.
+  Goal: stamp 4 places in Enontekio.
+  Reward: 100 XP.
+
+- **All of Espoo** (`city-espoo`)
+  Stamp all 4 places in Espoo — 0% of the dataset.
+  Goal: stamp 4 places in Espoo.
+  Reward: 100 XP.
+
+- **All of Florence** (`city-florence`)
+  Stamp all 4 places in Florence — 0% of the dataset.
+  Goal: stamp 4 places in Florence.
+  Reward: 100 XP.
+
+- **All of Frankfurt** (`city-frankfurt`)
+  Stamp all 4 places in Frankfurt — 0% of the dataset.
+  Goal: stamp 4 places in Frankfurt.
+  Reward: 100 XP.
+
+- **All of Garmisch Partenkirchen** (`city-garmisch-partenkirchen`)
+  Stamp all 4 places in Garmisch Partenkirchen — 0% of the dataset.
+  Goal: stamp 4 places in Garmisch Partenkirchen.
+  Reward: 100 XP.
+
+- **All of Ghent** (`city-ghent`)
+  Stamp all 4 places in Ghent — 0% of the dataset.
+  Goal: stamp 4 places in Ghent.
+  Reward: 100 XP.
+
+- **All of Gothenburg** (`city-gothenburg`)
+  Stamp all 4 places in Gothenburg — 0% of the dataset.
+  Goal: stamp 4 places in Gothenburg.
+  Reward: 100 XP.
+
+- **All of Guangzhou** (`city-guangzhou`)
+  Stamp all 4 places in Guangzhou — 0% of the dataset.
+  Goal: stamp 4 places in Guangzhou.
+  Reward: 100 XP.
+
+- **All of Hague** (`city-hague`)
+  Stamp all 4 places in Hague — 0% of the dataset.
+  Goal: stamp 4 places in Hague.
+  Reward: 100 XP.
+
+- **All of Halifax ca** (`city-halifax-ca`)
+  Stamp all 4 places in Halifax ca — 0% of the dataset.
+  Goal: stamp 4 places in Halifax ca.
+  Reward: 100 XP.
+
+- **All of Hamburg** (`city-hamburg`)
+  Stamp all 4 places in Hamburg — 0% of the dataset.
+  Goal: stamp 4 places in Hamburg.
+  Reward: 100 XP.
+
+- **All of Hanoi** (`city-hanoi`)
+  Stamp all 4 places in Hanoi — 0% of the dataset.
+  Goal: stamp 4 places in Hanoi.
+  Reward: 100 XP.
+
+- **All of Helsinki** (`city-helsinki`)
+  Stamp all 4 places in Helsinki — 0% of the dataset.
+  Goal: stamp 4 places in Helsinki.
+  Reward: 100 XP.
+
+- **All of Hoi** (`city-hoi`)
+  Stamp all 4 places in Hoi — 0% of the dataset.
+  Goal: stamp 4 places in Hoi.
+  Reward: 100 XP.
+
+- **All of Hong Kong** (`city-hong-kong`)
+  Stamp all 4 places in Hong Kong — 0% of the dataset.
+  Goal: stamp 4 places in Hong Kong.
+  Reward: 100 XP.
+
+- **All of Honolulu** (`city-honolulu`)
+  Stamp all 4 places in Honolulu — 0% of the dataset.
+  Goal: stamp 4 places in Honolulu.
+  Reward: 100 XP.
+
+- **All of Inari** (`city-inari`)
+  Stamp all 4 places in Inari — 0% of the dataset.
+  Goal: stamp 4 places in Inari.
+  Reward: 100 XP.
+
+- **All of Isfahan** (`city-isfahan`)
+  Stamp all 4 places in Isfahan — 0% of the dataset.
+  Goal: stamp 4 places in Isfahan.
+  Reward: 100 XP.
+
+- **All of Istanbul** (`city-istanbul`)
+  Stamp all 4 places in Istanbul — 0% of the dataset.
+  Goal: stamp 4 places in Istanbul.
+  Reward: 100 XP.
+
+- **All of Izmir** (`city-izmir`)
+  Stamp all 4 places in Izmir — 0% of the dataset.
+  Goal: stamp 4 places in Izmir.
+  Reward: 100 XP.
+
+- **All of Johannesburg** (`city-johannesburg`)
+  Stamp all 4 places in Johannesburg — 0% of the dataset.
+  Goal: stamp 4 places in Johannesburg.
+  Reward: 100 XP.
+
+- **All of Karachi** (`city-karachi`)
+  Stamp all 4 places in Karachi — 0% of the dataset.
+  Goal: stamp 4 places in Karachi.
+  Reward: 100 XP.
+
+- **All of Kaunas** (`city-kaunas`)
+  Stamp all 4 places in Kaunas — 0% of the dataset.
+  Goal: stamp 4 places in Kaunas.
+  Reward: 100 XP.
+
+- **All of Kemi** (`city-kemi`)
+  Stamp all 4 places in Kemi — 0% of the dataset.
+  Goal: stamp 4 places in Kemi.
+  Reward: 100 XP.
+
+- **All of Kittila** (`city-kittila`)
+  Stamp all 4 places in Kittila — 0% of the dataset.
+  Goal: stamp 4 places in Kittila.
+  Reward: 100 XP.
+
+- **All of Kobe** (`city-kobe`)
+  Stamp all 4 places in Kobe — 0% of the dataset.
+  Goal: stamp 4 places in Kobe.
+  Reward: 100 XP.
+
+- **All of Kolari** (`city-kolari`)
+  Stamp all 4 places in Kolari — 0% of the dataset.
+  Goal: stamp 4 places in Kolari.
+  Reward: 100 XP.
+
+- **All of Konstanz** (`city-konstanz`)
+  Stamp all 4 places in Konstanz — 0% of the dataset.
+  Goal: stamp 4 places in Konstanz.
+  Reward: 100 XP.
+
+- **All of Krakow** (`city-krakow`)
+  Stamp all 4 places in Krakow — 0% of the dataset.
+  Goal: stamp 4 places in Krakow.
+  Reward: 100 XP.
+
+- **All of Kutaisi** (`city-kutaisi`)
+  Stamp all 4 places in Kutaisi — 0% of the dataset.
+  Goal: stamp 4 places in Kutaisi.
+  Reward: 100 XP.
+
+- **All of Kuusamo** (`city-kuusamo`)
+  Stamp all 4 places in Kuusamo — 0% of the dataset.
+  Goal: stamp 4 places in Kuusamo.
+  Reward: 100 XP.
+
+- **All of Kuwait City** (`city-kuwait-city`)
+  Stamp all 4 places in Kuwait City — 0% of the dataset.
+  Goal: stamp 4 places in Kuwait City.
+  Reward: 100 XP.
+
+- **All of Kyiv** (`city-kyiv`)
+  Stamp all 4 places in Kyiv — 0% of the dataset.
+  Goal: stamp 4 places in Kyiv.
+  Reward: 100 XP.
+
+- **All of Lafayette** (`city-lafayette`)
+  Stamp all 4 places in Lafayette — 0% of the dataset.
+  Goal: stamp 4 places in Lafayette.
+  Reward: 100 XP.
+
+- **All of Lagos** (`city-lagos`)
+  Stamp all 4 places in Lagos — 0% of the dataset.
+  Goal: stamp 4 places in Lagos.
+  Reward: 100 XP.
+
+- **All of Las Vegas** (`city-las-vegas`)
+  Stamp all 4 places in Las Vegas — 0% of the dataset.
+  Goal: stamp 4 places in Las Vegas.
+  Reward: 100 XP.
+
+- **All of Leon** (`city-leon`)
+  Stamp all 4 places in Leon — 0% of the dataset.
+  Goal: stamp 4 places in Leon.
+  Reward: 100 XP.
+
+- **All of Ljubljana** (`city-ljubljana`)
+  Stamp all 4 places in Ljubljana — 0% of the dataset.
+  Goal: stamp 4 places in Ljubljana.
+  Reward: 100 XP.
+
+- **All of Los Angeles** (`city-los-angeles`)
+  Stamp all 4 places in Los Angeles — 0% of the dataset.
+  Goal: stamp 4 places in Los Angeles.
+  Reward: 100 XP.
+
+- **All of Lugano** (`city-lugano`)
+  Stamp all 4 places in Lugano — 0% of the dataset.
+  Goal: stamp 4 places in Lugano.
+  Reward: 100 XP.
+
+- **All of Luxembourg** (`city-luxembourg`)
+  Stamp all 4 places in Luxembourg — 0% of the dataset.
+  Goal: stamp 4 places in Luxembourg.
+  Reward: 100 XP.
+
+- **All of Madrid** (`city-madrid`)
+  Stamp all 4 places in Madrid — 0% of the dataset.
+  Goal: stamp 4 places in Madrid.
+  Reward: 100 XP.
+
+- **All of Marseille** (`city-marseille`)
+  Stamp all 4 places in Marseille — 0% of the dataset.
+  Goal: stamp 4 places in Marseille.
+  Reward: 100 XP.
+
+- **All of Mauritius** (`city-mauritius`)
+  Stamp all 4 places in Mauritius — 0% of the dataset.
+  Goal: stamp 4 places in Mauritius.
+  Reward: 100 XP.
+
+- **All of Melbourne** (`city-melbourne`)
+  Stamp all 4 places in Melbourne — 0% of the dataset.
+  Goal: stamp 4 places in Melbourne.
+  Reward: 100 XP.
+
+- **All of Mexico City** (`city-mexico-city`)
+  Stamp all 4 places in Mexico City — 0% of the dataset.
+  Goal: stamp 4 places in Mexico City.
+  Reward: 100 XP.
+
+- **All of Milan** (`city-milan`)
+  Stamp all 4 places in Milan — 0% of the dataset.
+  Goal: stamp 4 places in Milan.
+  Reward: 100 XP.
+
+- **All of Montreal** (`city-montreal`)
+  Stamp all 4 places in Montreal — 0% of the dataset.
+  Goal: stamp 4 places in Montreal.
+  Reward: 100 XP.
+
+- **All of Moscow** (`city-moscow`)
+  Stamp all 4 places in Moscow — 0% of the dataset.
+  Goal: stamp 4 places in Moscow.
+  Reward: 100 XP.
+
+- **All of Mostar** (`city-mostar`)
+  Stamp all 4 places in Mostar — 0% of the dataset.
+  Goal: stamp 4 places in Mostar.
+  Reward: 100 XP.
+
+- **All of Mumbai** (`city-mumbai`)
+  Stamp all 4 places in Mumbai — 0% of the dataset.
+  Goal: stamp 4 places in Mumbai.
+  Reward: 100 XP.
+
+- **All of Munich** (`city-munich`)
+  Stamp all 4 places in Munich — 0% of the dataset.
+  Goal: stamp 4 places in Munich.
+  Reward: 100 XP.
+
+- **All of Nairobi** (`city-nairobi`)
+  Stamp all 4 places in Nairobi — 0% of the dataset.
+  Goal: stamp 4 places in Nairobi.
+  Reward: 100 XP.
+
+- **All of Naples** (`city-naples`)
+  Stamp all 4 places in Naples — 0% of the dataset.
+  Goal: stamp 4 places in Naples.
+  Reward: 100 XP.
+
+- **All of Netanya** (`city-netanya`)
+  Stamp all 4 places in Netanya — 0% of the dataset.
+  Goal: stamp 4 places in Netanya.
+  Reward: 100 XP.
+
+- **All of Nice** (`city-nice`)
+  Stamp all 4 places in Nice — 0% of the dataset.
+  Goal: stamp 4 places in Nice.
+  Reward: 100 XP.
+
+- **All of Nicosia** (`city-nicosia`)
+  Stamp all 4 places in Nicosia — 0% of the dataset.
+  Goal: stamp 4 places in Nicosia.
+  Reward: 100 XP.
+
+- **All of Orlando** (`city-orlando`)
+  Stamp all 4 places in Orlando — 0% of the dataset.
+  Goal: stamp 4 places in Orlando.
+  Reward: 100 XP.
+
+- **All of Oslo** (`city-oslo`)
+  Stamp all 4 places in Oslo — 0% of the dataset.
+  Goal: stamp 4 places in Oslo.
+  Reward: 100 XP.
+
+- **All of Ottawa** (`city-ottawa`)
+  Stamp all 4 places in Ottawa — 0% of the dataset.
+  Goal: stamp 4 places in Ottawa.
+  Reward: 100 XP.
+
+- **All of Palma de Mallorca** (`city-palma-de-mallorca`)
+  Stamp all 4 places in Palma de Mallorca — 0% of the dataset.
+  Goal: stamp 4 places in Palma de Mallorca.
+  Reward: 100 XP.
+
+- **All of Penang** (`city-penang`)
+  Stamp all 4 places in Penang — 0% of the dataset.
+  Goal: stamp 4 places in Penang.
+  Reward: 100 XP.
+
+- **All of Philadelphia** (`city-philadelphia`)
+  Stamp all 4 places in Philadelphia — 0% of the dataset.
+  Goal: stamp 4 places in Philadelphia.
+  Reward: 100 XP.
+
+- **All of Phoenix** (`city-phoenix`)
+  Stamp all 4 places in Phoenix — 0% of the dataset.
+  Goal: stamp 4 places in Phoenix.
+  Reward: 100 XP.
+
+- **All of Ploiesti** (`city-ploiesti`)
+  Stamp all 4 places in Ploiesti — 0% of the dataset.
+  Goal: stamp 4 places in Ploiesti.
+  Reward: 100 XP.
+
+- **All of Podgorica** (`city-podgorica`)
+  Stamp all 4 places in Podgorica — 0% of the dataset.
+  Goal: stamp 4 places in Podgorica.
+  Reward: 100 XP.
+
+- **All of Port Douglas** (`city-port-douglas`)
+  Stamp all 4 places in Port Douglas — 0% of the dataset.
+  Goal: stamp 4 places in Port Douglas.
+  Reward: 100 XP.
+
+- **All of Port Elizabeth** (`city-port-elizabeth`)
+  Stamp all 4 places in Port Elizabeth — 0% of the dataset.
+  Goal: stamp 4 places in Port Elizabeth.
+  Reward: 100 XP.
+
+- **All of Portland** (`city-portland`)
+  Stamp all 4 places in Portland — 0% of the dataset.
+  Goal: stamp 4 places in Portland.
+  Reward: 100 XP.
+
+- **All of Porto** (`city-porto`)
+  Stamp all 4 places in Porto — 0% of the dataset.
+  Goal: stamp 4 places in Porto.
+  Reward: 100 XP.
+
+- **All of Prague** (`city-prague`)
+  Stamp all 4 places in Prague — 0% of the dataset.
+  Goal: stamp 4 places in Prague.
+  Reward: 100 XP.
+
+- **All of Punta Cana** (`city-punta-cana`)
+  Stamp all 4 places in Punta Cana — 0% of the dataset.
+  Goal: stamp 4 places in Punta Cana.
+  Reward: 100 XP.
+
+- **All of Quebec** (`city-quebec`)
+  Stamp all 4 places in Quebec — 0% of the dataset.
+  Goal: stamp 4 places in Quebec.
+  Reward: 100 XP.
+
+- **All of Quito** (`city-quito`)
+  Stamp all 4 places in Quito — 0% of the dataset.
+  Goal: stamp 4 places in Quito.
+  Reward: 100 XP.
+
+- **All of Reykjavik** (`city-reykjavik`)
+  Stamp all 4 places in Reykjavik — 0% of the dataset.
+  Goal: stamp 4 places in Reykjavik.
+  Reward: 100 XP.
+
+- **All of Riga** (`city-riga`)
+  Stamp all 4 places in Riga — 0% of the dataset.
+  Goal: stamp 4 places in Riga.
+  Reward: 100 XP.
+
+- **All of Rio de Janeiro** (`city-rio-de-janeiro`)
+  Stamp all 4 places in Rio de Janeiro — 0% of the dataset.
+  Goal: stamp 4 places in Rio de Janeiro.
+  Reward: 100 XP.
+
+- **All of Rotterdam** (`city-rotterdam`)
+  Stamp all 4 places in Rotterdam — 0% of the dataset.
+  Goal: stamp 4 places in Rotterdam.
+  Reward: 100 XP.
+
+- **All of Rovaniemi** (`city-rovaniemi`)
+  Stamp all 4 places in Rovaniemi — 0% of the dataset.
+  Goal: stamp 4 places in Rovaniemi.
+  Reward: 100 XP.
+
+- **All of Sagada** (`city-sagada`)
+  Stamp all 4 places in Sagada — 0% of the dataset.
+  Goal: stamp 4 places in Sagada.
+  Reward: 100 XP.
+
+- **All of San Diego** (`city-san-diego`)
+  Stamp all 4 places in San Diego — 0% of the dataset.
+  Goal: stamp 4 places in San Diego.
+  Reward: 100 XP.
+
+- **All of Santiago** (`city-santiago`)
+  Stamp all 4 places in Santiago — 0% of the dataset.
+  Goal: stamp 4 places in Santiago.
+  Reward: 100 XP.
+
+- **All of Santo Domingo** (`city-santo-domingo`)
+  Stamp all 4 places in Santo Domingo — 0% of the dataset.
+  Goal: stamp 4 places in Santo Domingo.
+  Reward: 100 XP.
+
+- **All of Sao Paulo** (`city-sao-paulo`)
+  Stamp all 4 places in Sao Paulo — 0% of the dataset.
+  Goal: stamp 4 places in Sao Paulo.
+  Reward: 100 XP.
+
+- **All of Sarajevo** (`city-sarajevo`)
+  Stamp all 4 places in Sarajevo — 0% of the dataset.
+  Goal: stamp 4 places in Sarajevo.
+  Reward: 100 XP.
+
+- **All of Semarang** (`city-semarang`)
+  Stamp all 4 places in Semarang — 0% of the dataset.
+  Goal: stamp 4 places in Semarang.
+  Reward: 100 XP.
+
+- **All of Sevilla** (`city-sevilla`)
+  Stamp all 4 places in Sevilla — 0% of the dataset.
+  Goal: stamp 4 places in Sevilla.
+  Reward: 100 XP.
+
+- **All of Shkoder** (`city-shkoder`)
+  Stamp all 4 places in Shkoder — 0% of the dataset.
+  Goal: stamp 4 places in Shkoder.
+  Reward: 100 XP.
+
+- **All of Sibenik** (`city-sibenik`)
+  Stamp all 4 places in Sibenik — 0% of the dataset.
+  Goal: stamp 4 places in Sibenik.
+  Reward: 100 XP.
+
+- **All of Sibiu** (`city-sibiu`)
+  Stamp all 4 places in Sibiu — 0% of the dataset.
+  Goal: stamp 4 places in Sibiu.
+  Reward: 100 XP.
+
+- **All of Sigulda** (`city-sigulda`)
+  Stamp all 4 places in Sigulda — 0% of the dataset.
+  Goal: stamp 4 places in Sigulda.
+  Reward: 100 XP.
+
+- **All of Singapore** (`city-singapore`)
+  Stamp all 4 places in Singapore — 0% of the dataset.
+  Goal: stamp 4 places in Singapore.
+  Reward: 100 XP.
+
+- **All of Skopje** (`city-skopje`)
+  Stamp all 4 places in Skopje — 0% of the dataset.
+  Goal: stamp 4 places in Skopje.
+  Reward: 100 XP.
+
+- **All of Sodankyla** (`city-sodankyla`)
+  Stamp all 4 places in Sodankyla — 0% of the dataset.
+  Goal: stamp 4 places in Sodankyla.
+  Reward: 100 XP.
+
+- **All of Sofia** (`city-sofia`)
+  Stamp all 4 places in Sofia — 0% of the dataset.
+  Goal: stamp 4 places in Sofia.
+  Reward: 100 XP.
+
+- **All of Split** (`city-split`)
+  Stamp all 4 places in Split — 0% of the dataset.
+  Goal: stamp 4 places in Split.
+  Reward: 100 XP.
+
+- **All of Stockholm** (`city-stockholm`)
+  Stamp all 4 places in Stockholm — 0% of the dataset.
+  Goal: stamp 4 places in Stockholm.
+  Reward: 100 XP.
+
+- **All of Sydney** (`city-sydney`)
+  Stamp all 4 places in Sydney — 0% of the dataset.
+  Goal: stamp 4 places in Sydney.
+  Reward: 100 XP.
+
+- **All of Taipei** (`city-taipei`)
+  Stamp all 4 places in Taipei — 0% of the dataset.
+  Goal: stamp 4 places in Taipei.
+  Reward: 100 XP.
+
+- **All of Tallinn** (`city-tallinn`)
+  Stamp all 4 places in Tallinn — 0% of the dataset.
+  Goal: stamp 4 places in Tallinn.
+  Reward: 100 XP.
+
+- **All of Targu Mures** (`city-targu-mures`)
+  Stamp all 4 places in Targu Mures — 0% of the dataset.
+  Goal: stamp 4 places in Targu Mures.
+  Reward: 100 XP.
+
+- **All of Tartu** (`city-tartu`)
+  Stamp all 4 places in Tartu — 0% of the dataset.
+  Goal: stamp 4 places in Tartu.
+  Reward: 100 XP.
+
+- **All of Tbilisi** (`city-tbilisi`)
+  Stamp all 4 places in Tbilisi — 0% of the dataset.
+  Goal: stamp 4 places in Tbilisi.
+  Reward: 100 XP.
+
+- **All of Tehran** (`city-tehran`)
+  Stamp all 4 places in Tehran — 0% of the dataset.
+  Goal: stamp 4 places in Tehran.
+  Reward: 100 XP.
+
+- **All of Thessaloniki** (`city-thessaloniki`)
+  Stamp all 4 places in Thessaloniki — 0% of the dataset.
+  Goal: stamp 4 places in Thessaloniki.
+  Reward: 100 XP.
+
+- **All of Timisoara** (`city-timisoara`)
+  Stamp all 4 places in Timisoara — 0% of the dataset.
+  Goal: stamp 4 places in Timisoara.
+  Reward: 100 XP.
+
+- **All of Tirana** (`city-tirana`)
+  Stamp all 4 places in Tirana — 0% of the dataset.
+  Goal: stamp 4 places in Tirana.
+  Reward: 100 XP.
+
+- **All of Tornio** (`city-tornio`)
+  Stamp all 4 places in Tornio — 0% of the dataset.
+  Goal: stamp 4 places in Tornio.
+  Reward: 100 XP.
+
+- **All of Toronto** (`city-toronto`)
+  Stamp all 4 places in Toronto — 0% of the dataset.
+  Goal: stamp 4 places in Toronto.
+  Reward: 100 XP.
+
+- **All of Trieste** (`city-trieste`)
+  Stamp all 4 places in Trieste — 0% of the dataset.
+  Goal: stamp 4 places in Trieste.
+  Reward: 100 XP.
+
+- **All of Turin** (`city-turin`)
+  Stamp all 4 places in Turin — 0% of the dataset.
+  Goal: stamp 4 places in Turin.
+  Reward: 100 XP.
+
+- **All of Tuzla** (`city-tuzla`)
+  Stamp all 4 places in Tuzla — 0% of the dataset.
+  Goal: stamp 4 places in Tuzla.
+  Reward: 100 XP.
+
+- **All of Uppsala** (`city-uppsala`)
+  Stamp all 4 places in Uppsala — 0% of the dataset.
+  Goal: stamp 4 places in Uppsala.
+  Reward: 100 XP.
+
+- **All of Utrecht** (`city-utrecht`)
+  Stamp all 4 places in Utrecht — 0% of the dataset.
+  Goal: stamp 4 places in Utrecht.
+  Reward: 100 XP.
+
+- **All of Vancouver** (`city-vancouver`)
+  Stamp all 4 places in Vancouver — 0% of the dataset.
+  Goal: stamp 4 places in Vancouver.
+  Reward: 100 XP.
+
+- **All of Vantaa** (`city-vantaa`)
+  Stamp all 4 places in Vantaa — 0% of the dataset.
+  Goal: stamp 4 places in Vantaa.
+  Reward: 100 XP.
+
+- **All of Varna** (`city-varna`)
+  Stamp all 4 places in Varna — 0% of the dataset.
+  Goal: stamp 4 places in Varna.
+  Reward: 100 XP.
+
+- **All of Venice** (`city-venice`)
+  Stamp all 4 places in Venice — 0% of the dataset.
+  Goal: stamp 4 places in Venice.
+  Reward: 100 XP.
+
+- **All of Vilnius** (`city-vilnius`)
+  Stamp all 4 places in Vilnius — 0% of the dataset.
+  Goal: stamp 4 places in Vilnius.
+  Reward: 100 XP.
+
+- **All of Warsaw** (`city-warsaw`)
+  Stamp all 4 places in Warsaw — 0% of the dataset.
+  Goal: stamp 4 places in Warsaw.
+  Reward: 100 XP.
+
+- **All of Washington dc** (`city-washington-dc`)
+  Stamp all 4 places in Washington dc — 0% of the dataset.
+  Goal: stamp 4 places in Washington dc.
+  Reward: 100 XP.
+
+- **All of Wroclaw** (`city-wroclaw`)
+  Stamp all 4 places in Wroclaw — 0% of the dataset.
+  Goal: stamp 4 places in Wroclaw.
+  Reward: 100 XP.
+
+- **All of Yerevan** (`city-yerevan`)
+  Stamp all 4 places in Yerevan — 0% of the dataset.
+  Goal: stamp 4 places in Yerevan.
+  Reward: 100 XP.
+
+- **All of Zagreb** (`city-zagreb`)
+  Stamp all 4 places in Zagreb — 0% of the dataset.
+  Goal: stamp 4 places in Zagreb.
+  Reward: 100 XP.
+
+- **All of Zurich** (`city-zurich`)
+  Stamp all 4 places in Zurich — 0% of the dataset.
+  Goal: stamp 4 places in Zurich.
+  Reward: 100 XP.
+
+- **All of Muscat** (`city-muscat`)
+  Stamp all 3 places in Muscat — 0% of the dataset.
+  Goal: stamp 3 places in Muscat.
+  Reward: 90 XP.
+
+- **All of Parnu** (`city-parnu`)
+  Stamp all 3 places in Parnu — 0% of the dataset.
+  Goal: stamp 3 places in Parnu.
+  Reward: 90 XP.
+
+- **All of Vienna** (`city-vienna`)
+  Stamp all 3 places in Vienna — 0% of the dataset.
+  Goal: stamp 3 places in Vienna.
+  Reward: 90 XP.
+
+- **All of Sintra** (`city-sintra`)
+  Stamp all 2 places in Sintra — 0% of the dataset.
+  Goal: stamp 2 places in Sintra.
+  Reward: 80 XP.
+
+## Category hunts
+
+- **Restaurants Habit** (`category-restaurants`)
+  Stamp 22 restaurants places.
+  Goal: stamp 22 Restaurants places.
+  Reward: 168 XP.
+
+- **Shops & Markets Habit** (`category-shopping`)
+  Stamp 28 shops & markets places.
+  Goal: stamp 28 Shops & Markets places.
+  Reward: 192 XP.
+
+- **Sightseeing Habit** (`category-sightseeing`)
+  Stamp 5 sightseeing places.
+  Goal: stamp 5 Sightseeing places.
+  Reward: 100 XP.
+
+- **Tours Habit** (`category-tours`)
+  Stamp 9 tours places.
+  Goal: stamp 9 Tours places.
+  Reward: 116 XP.
+
+- **Ticketed Attractions Habit** (`category-attractions`)
+  Stamp 8 ticketed attractions places.
+  Goal: stamp 8 Ticketed Attractions places.
+  Reward: 112 XP.
+
+- **Nightlife Habit** (`category-nightlife`)
+  Stamp 3 nightlife places.
+  Goal: stamp 3 Nightlife places.
+  Reward: 92 XP.
+
+- **Hotels Habit** (`category-hotels`)
+  Stamp 7 hotels places.
+  Goal: stamp 7 Hotels places.
+  Reward: 108 XP.
+
+- **Unfiled Habit** (`category-unfiled`)
+  Stamp 144 unfiled places.
+  Goal: stamp 144 Unfiled places.
+  Reward: 656 XP.
+
+## Long game
+
+- **Half a Hundred** (`grand-fifty`)
+  Stamp fifty places.
+  Goal: stamp 50 places in total.
+  Reward: 250 XP.
+
+- **Two Hundred Doors** (`grand-two-hundred`)
+  Stamp two hundred places.
+  Goal: stamp 200 places in total.
+  Reward: 800 XP.
+
+- **Twenty Cities Deep** (`grand-twenty-cities`)
+  Collect in twenty different cities.
+  Goal: stamp places in 20 different cities.
+  Reward: 600 XP.
+
+- **The Full Inventory** (`grand-all-categories`)
+  Collect from all eight categories, unfiled included.
+  Goal: stamp places across 8 different categories.
+  Reward: 400 XP.
+
+- **Five Hundred Stamps** (`grand-five-hundred`)
+  Stamp five hundred of the eight hundred and ninety places.
+  Goal: stamp 500 places in total.
+  Reward: 2500 XP.

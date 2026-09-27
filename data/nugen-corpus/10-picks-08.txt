@@ -1,0 +1,730 @@
+# Local picks — part 8
+
+## Stockholm (`stockholm`) — 4 places
+
+- **Grillska Huset** (Stockholm)
+  id: stockholm/grillska-huset
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A cafe, bakery and lunch restaurant on Gamla Stan’s main square, in a medieval building whose present form dates from […]
+- **Myrorna** (Stockholm)
+  id: stockholm/myrorna
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: One of Sweden's largest second-hand charity chains, selling pre-loved clothes, furniture and books while supporting sustainable consumption and social initiatives.
+- **Slow Fashion Hub** (Stockholm)
+  id: stockholm/slow-fashion-hub
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A curated second-hand and vintage boutique and meeting place gathering sustainable fashion sellers, plus circular services like rental, redesign and alterations.
+- **Stockholms Stadsmission** (Stockholm)
+  id: stockholm/stockholms-stadsmission
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit chain of second-hand stores that funds work training and support for people from disadvantaged backgrounds; its Remake line upcycles old textiles into new pieces.
+
+## Sydney (`sydney`) — 4 places
+
+- **Koskela** (Sydney)
+  id: sydney/koskela
+  neighbourhood: Rosebery
+  category: Unfiled
+  budget: High-end
+  note: Koskela is a homegrown design studio that has built sustainability into its bones, making furniture to last and championing Australian […]
+- **OzHarvest Market** (Sydney)
+  id: sydney/ozharvest-market
+  neighbourhood: Waterloo
+  category: Unfiled
+  budget: Budget
+  note: The OzHarvest Market in inner Sydney runs on a simple, radical idea, take what you need and give what you […]
+- **Reverse Garbage** (Sydney)
+  id: sydney/reverse-garbage
+  neighbourhood: Marrickville
+  category: Unfiled
+  budget: Budget
+  note: Reverse Garbage in Marrickville is a not-for-profit co-operative that has been keeping useful things out of landfill since the 1970s. […]
+- **The Social Outfit** (Sydney)
+  id: sydney/the-social-outfit
+  neighbourhood: Newtown
+  category: Unfiled
+  budget: Mid-range
+  note: The Social Outfit on King Street in Newtown is a fashion label with a purpose, providing training and employment to […]
+
+## Taipei (`taipei`) — 4 places
+
+- **Bagloung Bar & Grill** (Taipei)
+  id: taipei/bagloung-bar-grill
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This Indigenous-owned eatery blends Atayal and Amis home cooking with a warm izakaya vibe. It is a rare chance in the city centre to taste Taiwan's…
+- **Leezen** (Taipei)
+  id: taipei/leezen
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Leezen is a Taiwanese social enterprise selling organic and ethically produced food that supports smallholder and transitioning farmers. Locals shop here to vote with their wallets…
+- **Okogreen** (Taipei)
+  id: taipei/okogreen
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A pioneering fair-trade social enterprise, Okogreen champions ethically sourced coffee and Taiwanese chocolate. Its Dadaocheng cafe is a laid-back spot to back sustainable trade over a…
+- **Unpackaged.U** (Taipei)
+  id: taipei/unpackaged-u
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: One of Taipei's zero-waste trailblazers, Unpackaged.U lets you refill everyday groceries and household goods package-free. It is a hub for the city's growing bring-your-own-container community.
+
+## Tallinn (`tallinn`) — 4 places
+
+- **Humana Vintage** (Tallinn)
+  id: tallinn/humana-vintage
+  neighbourhood: Old Town
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Humana Estonia has run this Old Town vintage shop since the early 2000s as part of a nonprofit reuse chain that has spent…
+- **Kalamaja Flea Market** (Tallinn)
+  id: tallinn/kalamaja-flea-market
+  neighbourhood: Kalamaja
+  category: Unfiled
+  budget: Budget
+  note: The Kalamaja Flea Market is a much-loved community event in Tallinn’s bohemian Kalamaja district, where locals gather to sell second-hand […]
+- **Mondo Crafts** (Tallinn)
+  id: tallinn/mondo-crafts
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Mondo Crafts is the shop of MTU Mondo, an Estonian development and humanitarian organisation working in around a dozen countries […]
+- **Uuskasutuskeskus** (Tallinn)
+  id: tallinn/uuskasutuskeskus
+  neighbourhood: Tõnismäe
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: run by a nonprofit since 2004, Uuskasutuskeskus (Reuse Centre) keeps roughly 250,000 items a month out of landfills and channels support to more…
+
+## Targu Mures (`targu-mures`) — 4 places
+
+- **Fundatia Buckner Romania** (Targu Mures)
+  id: targu-mures/fundatia-buckner-romania
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A well-established charity based in Targu Mures working in child and family welfare – foster care, family support and poverty […]
+- **Fundatia Comunitara Mures** (Targu Mures)
+  id: targu-mures/fundatia-comunitara-mures
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Mures Community Foundation channels local giving into grassroots projects and runs the popular annual Swimathon charity swim, rallying the […]
+- **Fundatia Transilvana Alpha** (Targu Mures)
+  id: targu-mures/fundatia-transilvana-alpha
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A pioneering local foundation with over 25 years supporting people with disabilities, running day centres and sheltered workshops that give […]
+- **Studium HUB** (Targu Mures)
+  id: targu-mures/studium-hub
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit building run by the Studium-Prospero Foundation, combining an NGO incubator, a cultural centre and a café open to […]
+
+## Tartu (`tartu`) — 4 places
+
+- **Aparaaditehas** (Tartu)
+  id: tartu/aparaaditehas
+  neighbourhood: Karlova
+  category: Unfiled
+  budget: Budget
+  note: Aparaaditehas, the Widget Factory, is a former Soviet-era factory in Tartu reborn as a vibrant creative city quarter. Its brick […]
+- **Elektriteater** (Tartu)
+  id: tartu/elektriteater
+  neighbourhood: Kesklinn
+  category: Nightlife
+  budget: Budget
+  note: Why it matters: Tartu is the birthplace of Estonian cinema, and Elektriteater - an independent single-screen art-house that inherited its name from the country's first permanent…
+- **TYPA Printing and Paper Arts Centre** (Tartu)
+  id: tartu/typa-printing-and-paper-arts-centre
+  neighbourhood: Karlova
+  category: Ticketed Attractions
+  budget: Mid-range
+  note: Why it matters: TYPA was founded in 2010 to rescue Estonia's last letterpress machines from destruction, and it keeps the country's printing and papermaking heritage alive…
+- **Uuskasutuskeskus (UK)** (Tartu)
+  id: tartu/uuskasutuskeskus-uk
+  neighbourhood: Kesklinn
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: founded in 2004 as a nonprofit, Uuskasutuskeskus (UK) has grown into Estonia's largest self-sustaining social enterprise, a reuse chain that supports over 50…
+
+## Tbilisi (`tbilisi`) — 4 places
+
+- **Babale** (Tbilisi)
+  id: tbilisi/babale
+  neighbourhood: Old Town
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: Babale is a social enterprise that works with children and adults with Down syndrome, who help create the whimsical clothing, textiles and homewares…
+- **Cafe Mziuri** (Tbilisi)
+  id: tbilisi/cafe-mziuri
+  neighbourhood: Vake
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: this cafe tucked into Vake's beloved Mziuri Park is a social enterprise whose profits go straight back into maintaining the park - and…
+- **Kiwi Vegan Cafe** (Tbilisi)
+  id: tbilisi/kiwi-vegan-cafe
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: A friendly, long-running vegan cafe near the centre serving affordable plant-based comfort food in a colourful, laid-back space that doubles […]
+- **Social Concept Store ESKI** (Tbilisi)
+  id: tbilisi/social-concept-store-eski
+  neighbourhood: Orbeliani Square
+  category: Shops & Markets
+  budget: Price unknown
+  note: Why it matters: this little boutique near Orbeliani Square stocks handmade goods from 25+ Georgian social enterprises under one roof - makers include people with disabilities,…
+
+## Tehran (`tehran`) — 4 places
+
+- **Grand Bazaar Coppersmiths** (Tehran)
+  id: tehran/grand-bazaar-coppersmiths
+  neighbourhood: Bazaar
+  category: Unfiled
+  budget: Budget
+  note: In the coppersmiths’ lanes of Tehran’s Grand Bazaar, artisans have hammered, engraved and tinned copper and brass by hand for […]
+- **Iranian Handicrafts** (Tehran)
+  id: tehran/iranian-handicrafts
+  neighbourhood: Bazaar
+  category: Unfiled
+  budget: Mid-range
+  note: Tehran’s bazaars and craft shops brim with traditional Iranian handicrafts, from khatam marquetry and minakari enamelwork to engraved copper, miniature […]
+- **Persian Carpet Bazaar** (Tehran)
+  id: tehran/persian-carpet-bazaar
+  neighbourhood: Bazaar
+  category: Unfiled
+  budget: Mid-range
+  note: The carpet section of Tehran’s Grand Bazaar is the beating heart of one of the world’s great craft traditions, where […]
+- **Tajrish Local Producers** (Tehran)
+  id: tehran/tajrish-local-producers
+  neighbourhood: Tajrish
+  category: Unfiled
+  budget: Budget
+  note: Around Tajrish Bazaar in northern Tehran, small family stalls and shops sell the fresh, seasonal bounty of Iran, from mountain […]
+
+## Thessaloniki (`thessaloniki`) — 4 places
+
+- **Ergon Agora** (Thessaloniki)
+  id: thessaloniki/ergon-agora
+  neighbourhood: City Centre
+  category: Unfiled
+  budget: Mid-range
+  note: Ergon Agora is a celebrated deli, market and restaurant in Thessaloniki that champions small Greek producers, showcasing artisanal cheeses, cured […]
+- **Jewish Museum of Thessaloniki** (Thessaloniki)
+  id: thessaloniki/jewish-museum-of-thessaloniki
+  neighbourhood: City Center
+  category: Ticketed Attractions
+  budget: Price unknown
+  note: Why it matters: run by the Jewish Community of Thessaloniki since 2001, this museum preserves the memory of a Jewish presence in the city stretching back…
+- **Local Producers Market** (Thessaloniki)
+  id: thessaloniki/local-producers-market
+  neighbourhood: City Centre
+  category: Unfiled
+  budget: Budget
+  note: Thessaloniki’s neighbourhood open-air markets, the laiki agora, bring local farmers and producers directly to the streets on set days, selling […]
+- **Mikri Frida** (Thessaloniki)
+  id: thessaloniki/mikri-frida
+  neighbourhood: Agia Sofia
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: founded in 2016, this five-member social cooperative (KoinSEP) runs its tiny cafe-gallery as a community project - proceeds fund free exhibitions, workshops and…
+
+## Timisoara (`timisoara`) — 4 places
+
+- **Banat Local Producers** (Timisoara)
+  id: timisoara/banat-local-producers
+  neighbourhood: Banat
+  category: Unfiled
+  budget: Budget
+  note: The fertile Banat countryside around Timisoara produces a wealth of local food, from fruit and vegetables to cheese, honey, plum […]
+- **Banat Wine Producers** (Timisoara)
+  id: timisoara/banat-wine-producers
+  neighbourhood: Banat
+  category: Unfiled
+  budget: Mid-range
+  note: The Banat region around Timisoara, including the Recas vineyards, is a notable Romanian wine area producing reds and whites on […]
+- **Romanian Craft Cooperative** (Timisoara)
+  id: timisoara/romanian-craft-cooperative
+  neighbourhood: Cetate
+  category: Unfiled
+  budget: Budget
+  note: Artisans in and around Timisoara keep alive Romanian and Banat folk crafts such as embroidery, weaving, pottery and painted eggs, […]
+- **Timisoara Farmers Market** (Timisoara)
+  id: timisoara/timisoara-farmers-market
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: The markets of Timisoara bring together growers and producers from across the fertile Banat plain selling fresh fruit, vegetables, cheese, […]
+
+## Tirana (`tirana`) — 4 places
+
+- **Destil Creative Hub & Gallery** (Tirana)
+  id: tirana/destil-creative-hub-gallery
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A creative hub blending café, gallery, coworking and events that champions Tirana's independent artists and makers. Regulars love it as a relaxed, community-minded space to work,…
+- **MM Concept Store** (Tirana)
+  id: tirana/mm-concept-store
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A slow-fashion boutique from the A Modo Mio project, which empowers women at risk of economic and social exclusion. Shoppers love its handmade, upcycled pieces and…
+- **Pazari i Ri Artisan Makers** (Tirana)
+  id: tirana/pazari-i-ri-artisan-makers
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Within the New Bazaar, a scattering of stalls sells handmade textiles, embroidery and crafts direct from local makers, many of them women. Buying here puts money…
+- **Second Hand Store (Rruga e Durrësit)** (Tirana)
+  id: tirana/second-hand-store-rruga-e-durresit
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A well-stocked thrift shop feeding Tirana's growing appetite for sustainable, second-hand fashion. Bargain-hunters love digging through the racks for vintage finds and high-street pieces at a…
+
+## Tornio (`tornio`) — 4 places
+
+- **Goodwill** (Tornio)
+  id: tornio/goodwill
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A non-profit second-hand shop run by Tornion Työvoimalasäätiö, where the shop floor doubles as a work-training placement. Donated crockery, textiles, […]
+- **Kumppanuuskeskus Luotsi** (Tornio)
+  id: tornio/kumppanuuskeskus-luotsi
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Tornio's organisation house, an open alcohol-free meeting place run by Tornion Kansantalosäätiö in a hall built in 1962. A lunch […]
+- **Meän Talo** (Tornio)
+  id: tornio/mean-talo
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: An open meeting place and volunteer centre running since 1998, with a laundry, a sauna, workshops and free computer help. […]
+- **PMU Second Hand Haparanda** (Tornio)
+  id: tornio/pmu-second-hand-haparanda
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A charity second-hand shop on Haparanda's Västra Esplanaden, with sales funding the Pentecostal mission's aid work abroad. Donated clothing, household […]
+
+## Toronto (`toronto`) — 4 places
+
+- **Evergreen Brick Works** (Toronto)
+  id: toronto/evergreen-brick-works
+  neighbourhood: Don Valley / Todmorden
+  category: Sightseeing
+  budget: Budget
+  note: Why it matters: Evergreen Brick Works is Canada's first large-scale community environmental centre - a derelict brick factory and quarry reborn by the Evergreen nonprofit into…
+- **Likely General** (Toronto)
+  id: toronto/likely-general
+  neighbourhood: Roncesvalles
+  category: Unfiled
+  budget: Mid-range
+  note: Likely General in Roncesvalles Village is a much-loved shop of handmade, ethically made goods from Canadian and independent makers, from […]
+- **Ten Thousand Villages** (Toronto)
+  id: toronto/ten-thousand-villages
+  neighbourhood: Danforth
+  category: Unfiled
+  budget: Mid-range
+  note: Ten Thousand Villages on the Danforth is a fair-trade shop stocking handcrafted homeware, jewellery and gifts made by artisans in […]
+- **The Stop Community Food Centre** (Toronto)
+  id: toronto/the-stop-community-food-centre
+  neighbourhood: Wychwood / St. Clair West
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: The Stop Community Food Centre has spent more than 30 years fighting hunger and poverty with dignity - running drop-in meals, community kitchens,…
+
+## Trieste (`trieste`) — 4 places
+
+- **Bottega del Mondo Il Mosaico** (Trieste)
+  id: trieste/bottega-del-mondo-il-mosaico
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Trieste’s longest-running fair trade shop, Il Mosaico first opened in 1992 with backing from the Diocese of Trieste and has […]
+- **Bottega Senza Confini Brez Meja** (Trieste)
+  id: trieste/bottega-senza-confini-brez-meja
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Founded in 1993 to promote trade between the Global South and Trieste, this fair trade shop has been run since […]
+- **Il Posto Delle Fragole** (Trieste)
+  id: trieste/il-posto-delle-fragole
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Il Posto Delle Fragole is a bar-restaurant inside Parco di San Giovanni, run since 1979 by La Collina, a social […]
+- **Parco di San Giovanni** (Trieste)
+  id: trieste/parco-di-san-giovanni
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Parco di San Giovanni was once Trieste’s provincial psychiatric hospital and became, from 1971, the base for Franco Basaglia’s reforms […]
+
+## Turin (`turin`) — 4 places
+
+- **Binaria – Centro Commensale** (Turin)
+  id: turin/binaria-centro-commensale
+  neighbourhood: Borgo San Paolo
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: Binaria is the 'centro commensale' of Gruppo Abele, the social organization founded in 1965 by anti-mafia priest don Luigi Ciotti, and it runs…
+- **Cascina Roccafranca** (Turin)
+  id: turin/cascina-roccafranca
+  neighbourhood: Mirafiori
+  category: Unfiled
+  budget: Budget
+  note: A restored farmhouse in the Mirafiori Nord district reborn as one of Turin’s flagship case del quartiere, the neighbourhood community […]
+- **CASO Bistrot Sociale** (Turin)
+  id: turin/caso-bistrot-sociale
+  neighbourhood: San Salvario
+  category: Restaurants
+  budget: Mid-range
+  note: Why it matters: CASO is a social bistro inside the Lombroso 16 cultural hub in San Salvario, created to give real jobs to people who struggle…
+- **Pausa Cafe at the Museo Egizio** (Turin)
+  id: turin/pausa-cafe-at-the-museo-egizio
+  neighbourhood: Centro
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: the cafe inside the Museo Egizio is run by Pausa Cafe, a Turin social cooperative that since 2004 has trained and employed prison…
+
+## Tuzla (`tuzla`) — 4 places
+
+- **Bosnian Craft Cooperative** (Tuzla)
+  id: tuzla/bosnian-craft-cooperative
+  neighbourhood: Old Town
+  category: Unfiled
+  budget: Budget
+  note: Artisans in and around Tuzla keep alive traditional Bosnian crafts such as coppersmithing, weaving, embroidery and woodwork, often working through […]
+- **Local Food Producers** (Tuzla)
+  id: tuzla/local-food-producers
+  neighbourhood: Tuzla
+  category: Unfiled
+  budget: Budget
+  note: The countryside around Tuzla produces a wealth of local food, from fruit and vegetables to cheese, honey, cured meats and […]
+- **Salt & Local Heritage** (Tuzla)
+  id: tuzla/salt-local-heritage
+  neighbourhood: Slana Banja
+  category: Unfiled
+  budget: Budget
+  note: Salt has shaped Tuzla for thousands of years, giving the city its name and its Pannonian Lakes, and local initiatives […]
+- **Tuzla Market Producers** (Tuzla)
+  id: tuzla/tuzla-market-producers
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: The markets of Tuzla bring together growers and producers from the surrounding region selling fresh fruit, vegetables, cheese, honey and […]
+
+## Uppsala (`uppsala`) — 4 places
+
+- **Emmaus Secondhand** (Uppsala)
+  id: uppsala/emmaus-secondhand
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: Uppsala has a strong culture of secondhand and charity shops, led by well-known social enterprises such as Emmaus and the […]
+- **Fair Trade Shop Globalen** (Uppsala)
+  id: uppsala/fair-trade-shop-globalen
+  neighbourhood: Centrum
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: run since 1984 by a non-profit volunteer association, Globalen is Sweden's largest Fair Trade shop - more than 80% of its stock is…
+- **Uppsala Farmers Market** (Uppsala)
+  id: uppsala/uppsala-farmers-market
+  neighbourhood: Centre
+  category: Unfiled
+  budget: Budget
+  note: Uppsala’s market squares, above all the lively Saturday market, bring local farmers and producers from the surrounding fertile countryside into […]
+- **Uppsala Stadsmission Second Hand** (Uppsala)
+  id: uppsala/uppsala-stadsmission-second-hand
+  neighbourhood: Granby
+  category: Shops & Markets
+  budget: Budget
+  note: Why it matters: every krona from Uppsala Stadsmission's second-hand shops funds the charity's work with people facing homelessness and social vulnerability in the city, and the…
+
+## Utrecht (`utrecht`) — 4 places
+
+- **Broei** (Utrecht)
+  id: utrecht/broei
+  neighbourhood: Centrum
+  category: Restaurants
+  budget: Mid-range
+  note: A sustainability-focused restaurant, bakery and cultural space on the Oudegracht that works with local, seasonal produce and provides training and […]
+- **Gys** (Utrecht)
+  id: utrecht/gys
+  neighbourhood: Centrum
+  category: Restaurants
+  budget: Mid-range
+  note: An organic, largely vegetarian restaurant serving wholesome, seasonal dishes with plenty of vegan options, using produce from its own and […]
+- **Kringloop Utrecht** (Utrecht)
+  id: utrecht/kringloop-utrecht
+  neighbourhood: Lombok
+  category: Unfiled
+  budget: Budget
+  note: A large second-hand and reuse store run as a social enterprise, selling donated furniture, clothes, books and household goods while […]
+- **Oxfam Wereldwinkel Utrecht** (Utrecht)
+  id: utrecht/oxfam-wereldwinkel-utrecht
+  neighbourhood: Centrum
+  category: Unfiled
+  budget: Budget
+  note: A fair-trade world shop selling ethically sourced coffee, chocolate, wine and crafts that support producers in developing countries, part of […]
+
+## Vancouver (`vancouver`) — 4 places
+
+- **Front and Company** (Vancouver)
+  id: vancouver/front-and-company
+  neighbourhood: Mount Pleasant
+  category: Unfiled
+  budget: Mid-range
+  note: A Main Street institution, Front and Company is a much-loved consignment and vintage store where carefully curated second-hand clothing sits […]
+- **Massy Books** (Vancouver)
+  id: vancouver/massy-books
+  neighbourhood: Chinatown
+  category: Unfiled
+  budget: Mid-range
+  note: Massy Books is a warm, independent, Indigenous-owned bookshop in Chinatown, championing writers of colour and Indigenous authors and hosting a […]
+- **Skwachays Lodge** (Vancouver)
+  id: vancouver/skwachays-lodge
+  neighbourhood: Downtown
+  category: Unfiled
+  budget: Mid-range
+  note: Skwachays Lodge is the first Indigenous arts hotel in Canada, a downtown social enterprise where beautifully designed rooms, a fair-trade […]
+- **The Soap Dispensary** (Vancouver)
+  id: vancouver/the-soap-dispensary
+  neighbourhood: Mount Pleasant
+  category: Unfiled
+  budget: Budget
+  note: The Soap Dispensary on Main Street was the first refill shop in Vancouver, a zero-waste haven where you bring your […]
+
+## Vantaa (`vantaa`) — 4 places
+
+- **Kansalaistoiminnan keskus Leinikki** (Vantaa)
+  id: vantaa/kansalaistoiminnan-keskus-leinikki
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Vantaa's civic activity centre, run by the Vantaan Järjestörinki association network as an open living room for the whole neighbourhood. […]
+- **Paakaupunkiseudun Kierratyskeskus, Tammisto** (Vantaa)
+  id: vantaa/paakaupunkiseudun-kierratyskeskus-tammisto
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: This non-profit reuse centre gives second-hand goods a new life while employing long-term jobseekers and promoting the circular economy. Bargain-hunters […]
+- **SPR Kontti Vantaa** (Vantaa)
+  id: vantaa/spr-kontti-vantaa
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Finnish Red Cross's Kontti second-hand department store funds humanitarian aid and offers work-training placements. Shoppers feel good knowing proceeds […]
+- **UFF Tikkurila** (Vantaa)
+  id: vantaa/uff-tikkurila
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A second-hand clothing shop whose sales fund development cooperation in Africa and textile reuse. A favourite Tikkurila stop for affordable, […]
+
+## Varna (`varna`) — 4 places
+
+- **Humana People to People** (Varna)
+  id: varna/humana-people-to-people
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Second-hand clothing shops run by the Humana People to People federation, where your bargain-hunting helps fund development projects. It's Varna's […]
+- **Living Food** (Varna)
+  id: varna/living-food
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A genuinely independent, fully raw-vegan café on a quiet central street, serving raw breads, pizza and desserts. It's a small, […]
+- **Nutrio Bar** (Varna)
+  id: varna/nutrio-bar
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A plant-based, health-focused bar on Knyaz Boris serving nourishing bowls, smoothies and wholesome bites. It's a good-value local choice for […]
+- **So Fresh** (Varna)
+  id: varna/so-fresh
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A local healthy-food spot on Boulevard Slivnitsa serving salads, juices and smoothies with plenty of plant-based options. It's a handy […]
+
+## Venice (`venice`) — 4 places
+
+- **Banco Lotto N.10** (Venice)
+  id: venice/banco-lotto-n-10
+  neighbourhood: San Polo (near Rialto)
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: founded in 2003 by the Il Cerchio social cooperative, Banco Lotto N.10 is a working tailoring atelier inside the Giudecca Women's Prison, where…
+- **Process Collettivo** (Venice)
+  id: venice/process-collettivo
+  neighbourhood: San Polo (Frari)
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: Process Collettivo is the retail storefront of Rio Terà dei Pensieri, a social cooperative that has run workshops inside Venice's prisons since the…
+- **Serra dei Giardini** (Venice)
+  id: venice/serra-dei-giardini
+  neighbourhood: Castello
+  category: Unfiled
+  budget: Budget
+  note: The Serra dei Giardini is a historic glasshouse in the Castello district’s public gardens, restored and run as a community […]
+- **Sfuso** (Venice)
+  id: venice/sfuso
+  neighbourhood: Dorsoduro
+  category: Unfiled
+  budget: Budget
+  note: Sfuso is a package-free shop in Dorsoduro dedicated to reducing waste in a city acutely aware of its fragile environment. […]
+
+## Vilnius (`vilnius`) — 4 places
+
+- **Beigelių Krautuvėlė (Bagel Shop)** (Vilnius)
+  id: vilnius/beigeliu-krautuvele-bagel-shop
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: run by the Lithuanian Jewish Community on the first floor of its Pylimo street headquarters, this little bakery-cafe brought the bagel back to…
+- **Mano Guru** (Vilnius)
+  id: vilnius/mano-guru
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: running since 2004 as one of Lithuania's first social businesses, this cheerful salad bar trains and employs people rebuilding their lives after prison…
+- **Miesto laboratorija** (Vilnius)
+  id: vilnius/miesto-laboratorija
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Miesto laboratorija, or City Laboratory, is a community and sustainability centre in the former Sapieha hospital complex in Antakalnis, beside […]
+- **Pirmas Blynas** (Vilnius)
+  id: vilnius/pirmas-blynas
+  neighbourhood: Old Town
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: at this social-enterprise pancake restaurant most of the team - seven of eleven staff - are people with intellectual disabilities, working the floor…
+
+## Warsaw (`warsaw`) — 4 places
+
+- **BioBazar** (Warsaw)
+  id: warsaw/biobazar
+  neighbourhood: Wola
+  category: Unfiled
+  budget: Budget
+  note: BioBazar was Poland’s first certified organic market and remains a cornerstone of Warsaw’s sustainable food scene, now held at the […]
+- **Kuchnia Konfliktu** (Warsaw)
+  id: warsaw/kuchnia-konfliktu
+  neighbourhood: Srodmiescie
+  category: Unfiled
+  budget: Mid-range
+  note: Kuchnia Konfliktu, or Conflict Kitchen, is a social-enterprise restaurant that employs refugees and immigrants, serving home-style dishes from regions affected […]
+- **Spektakulinarna** (Warsaw)
+  id: warsaw/spektakulinarna
+  neighbourhood: Praga-Północ
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in March 2025 on Praga-Północ by Fundacja Idylla, Spektakulinarna gives people on the autism spectrum and with intellectual disabilities real paying jobs…
+- **toMy Kawiarnia** (Warsaw)
+  id: warsaw/tomy-kawiarnia
+  neighbourhood: City Center (Śródmieście)
+  category: Restaurants
+  budget: Budget
+  note: Why it matters: opened in 2023 by the Fundacja Leny Grochowskiej, toMy is a working cafe where people with intellectual disabilities are employed as baristas, servers,…
+
+## Washington dc (`washington-dc`) — 4 places
+
+- **Anacostia Arts Center** (Washington dc)
+  id: washington-dc/anacostia-arts-center
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A converted commercial building on Good Hope Road run by ARCH Development Corporation, a non-profit set up to support small […]
+- **Busboys and Poets Anacostia** (Washington dc)
+  id: washington-dc/busboys-and-poets-anacostia
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: The Anacostia branch of a local group of restaurant-bookshops named after Langston Hughes, who worked as a busboy in a […]
+- **Christ Child Opportunity Shop** (Washington dc)
+  id: washington-dc/christ-child-opportunity-shop
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A charity shop on Wisconsin Avenue run entirely by volunteers since 1955, with proceeds funding the Christ Child Society of […]
+- **Sankofa Video Books & Cafe** (Washington dc)
+  id: washington-dc/sankofa-video-books-cafe
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: A bookshop, cafe and small screening room opposite Howard University, founded in 1998 by the Ethiopian-born film-maker Haile Gerima and […]
+
+## Wroclaw (`wroclaw`) — 4 places
+
+- **Cafe Rownik** (Wroclaw)
+  id: wroclaw/cafe-rownik
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Operating since 2018, Cafe Rownik was the first cafe in Poland staffed by baristas, waiters and kitchen assistants who have intellectual disabilities, including Down syndrome, Asperger's…
+- **Fundacja Ukraina** (Wroclaw)
+  id: wroclaw/fundacja-ukraina
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Based inside the Ruska 46 creative hub, Fundacja Ukraina runs community and cultural programming supporting Wroclaw's large Ukrainian population, from language help to cultural events that…
+- **Pomagacz.org Charity Shop** (Wroclaw)
+  id: wroclaw/pomagacz-org-charity-shop
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Running since 2009 and modelled on the English charity shop, Pomagacz sells donated clothing, books, porcelain and handicrafts made by people experiencing homelessness, with every zloty…
+- **Stara Piekarnia** (Wroclaw)
+  id: wroclaw/stara-piekarnia
+  neighbourhood: not recorded
+  category: Unfiled
+  budget: Price unknown
+  note: Run by the Fundacja Znacznie Wiecej social enterprise, this bakery and catering operation employs people who have experienced a psychological crisis, giving them structured paid work…
+
+## Yerevan (`yerevan`) — 4 places
+
+- **Dalan Art Gallery & Cafe** (Yerevan)
+  id: yerevan/dalan-art-gallery-cafe
+  neighbourhood: Kentron
+  category: Unfiled
+  budget: Budget
+  note: A gallery, cafe and craft shop in a courtyard off Abovyan Street, showing work by Armenian artists and selling ceramics, […]
+- **Envoy Hostel & Tours** (Yerevan)
+  id: yerevan/envoy-hostel-tours
+  neighbourhood: Kentron
+  category: Hotels
+  budget: Budget
+  note: Why it matters: Envoy has run Yerevan's best-known hostel since 2005, and giving back is built into the business - it employs and trains locals, creates…
+- **Homeland Fair Trade Shop** (Yerevan)
+  id: yerevan/homeland-fair-trade-shop
+  neighbourhood: Kentron
+  category: Shops & Markets
+  budget: Mid-range
+  note: Why it matters: founded in 2013, Homeland (HDIF) is the first fully guaranteed member of the World Fair Trade Organization in the former Soviet Union, and…
+- **Megerian Carpet** (Yerevan)
+  id: yerevan/megerian-carpet
+  neighbourhood: Kentron
+  category: Shops & Markets
+  budget: Mid-range
+  note: A working carpet workshop and showroom keeping alive the centuries-old Armenian tradition of hand-knotting and natural dyeing. Visitors can watch […]

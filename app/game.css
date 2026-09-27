@@ -1186,3 +1186,25 @@
 body:has(.lq-ground) .lal-footer {
   padding-bottom: calc(var(--lq-nav-height) + var(--lq-safe-bottom) + 28px);
 }
+
+/* An answer the game engine produced because the model did not respond.
+   Deliberately a different colour from both confidence states, and never paired
+   with a confidence number: no model generated it, so there is no uncertainty to
+   report and inventing one would be the exact failure this project exists to
+   avoid. */
+.lq-oracle__conf--engine {
+  background: var(--lq-silver-soft);
+  color: #4a5560;
+  border: 1px dashed var(--lq-silver);
+}
+
+/* The technical reason belongs underneath the human sentence, not as the
+   headline. Small, and quiet, but still present: this build is a HackCelestial
+   submission and a reviewer should be able to see why the badge is what it is. */
+.lq-oracle__notice-detail {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.72;
+}

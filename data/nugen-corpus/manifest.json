@@ -1,0 +1,134 @@
+{
+  "generatedFrom": "lib/game/*, lib/places.ts, data/*.json",
+  "counts": {
+    "places": 890,
+    "cities": 202,
+    "categories": 8,
+    "quests": 222,
+    "achievements": 15,
+    "levels": 10,
+    "destinations": 100,
+    "blogPosts": 160,
+    "highlights": 42
+  },
+  "gaps": {
+    "untagged": 576,
+    "noHood": 202,
+    "noBudget": 282,
+    "collisions": 2
+  },
+  "xp": {
+    "perStamp": 10,
+    "perCity": 50,
+    "dailyBonus": 15
+  },
+  "documents": [
+    {
+      "file": "01-contract.txt",
+      "bytes": 3503,
+      "chars": 3492,
+      "sha256": "f05f9c23e3d528f36a357128fda3dd573f715573da2e9700175de69bff375c85"
+    },
+    {
+      "file": "02-taxonomy.txt",
+      "bytes": 1077,
+      "chars": 1053,
+      "sha256": "6af0480f60ad0c3281908507864b9c71e6b82279701320febd5d18a96b113ebd"
+    },
+    {
+      "file": "03-cities.txt",
+      "bytes": 26398,
+      "chars": 26398,
+      "sha256": "029f11d8f84347cc69d13c77c8d069a68dd3d237fa764b9d8360e11c3840fe39"
+    },
+    {
+      "file": "10-picks-01.txt",
+      "bytes": 33657,
+      "chars": 33441,
+      "sha256": "53f2efebc57ec9a547ee8ce0432fd24decf017a7ac22c84c87ba1e15a131c3f6"
+    },
+    {
+      "file": "10-picks-02.txt",
+      "bytes": 34124,
+      "chars": 33831,
+      "sha256": "d456a0137d71fd449891905d2295e31b6ea97cc449763e5afa5436fa9260738b"
+    },
+    {
+      "file": "10-picks-03.txt",
+      "bytes": 33349,
+      "chars": 33047,
+      "sha256": "265ad23871991de90161fbe64fd981cf37ece855ee9f4c8228656e26ecfb5499"
+    },
+    {
+      "file": "10-picks-04.txt",
+      "bytes": 33531,
+      "chars": 33233,
+      "sha256": "ca50c491767c82b771cf9c0e5395206735b6548535df13536083254a96ab6169"
+    },
+    {
+      "file": "10-picks-05.txt",
+      "bytes": 33453,
+      "chars": 33109,
+      "sha256": "a17da990c64a61e3cd608333f5825db38fd10b91c7502091212df06ea99f3532"
+    },
+    {
+      "file": "10-picks-06.txt",
+      "bytes": 34009,
+      "chars": 33698,
+      "sha256": "068d6fcef6dabca68a138e51bbef485c49b23b8000dabe386e24a9cb14979594"
+    },
+    {
+      "file": "10-picks-07.txt",
+      "bytes": 34384,
+      "chars": 34010,
+      "sha256": "6fa9f455c27be398c3ea46cb3c0102d8e873c15553f3c57caa018b0c9ef770fa"
+    },
+    {
+      "file": "10-picks-08.txt",
+      "bytes": 33474,
+      "chars": 33146,
+      "sha256": "e1639ef1eb3c5f57db7e3fe87566feba67911fee65f5370a669e549f0fbb878d"
+    },
+    {
+      "file": "10-picks-09.txt",
+      "bytes": 6823,
+      "chars": 6737,
+      "sha256": "1eda570375bfaa13a399e48d7aaf068184f271aa24ac0498696bb3cfedd62d57"
+    },
+    {
+      "file": "90-quests.txt",
+      "bytes": 33266,
+      "chars": 32856,
+      "sha256": "cbfdeb857d10ba0c202fd8af23e32681e8bbb7465866f152ededbdca6f92559f"
+    },
+    {
+      "file": "91-progression.txt",
+      "bytes": 2541,
+      "chars": 2511,
+      "sha256": "0001abdbb109cef3ec129df05fc7cbf6e4781d07faf2376ac5733aabf682fa29"
+    },
+    {
+      "file": "92-destinations.txt",
+      "bytes": 55952,
+      "chars": 55897,
+      "sha256": "7f7460b9fa429fa48b27c70a5d43047cb92f948413008ca3851b37c6a49bc44f"
+    },
+    {
+      "file": "93-editorial.txt",
+      "bytes": 40906,
+      "chars": 40234,
+      "sha256": "0e13eb3b0c134005fa9f7cd6c0171c808d6c33567e6e1591e559d045f08e6a75"
+    },
+    {
+      "file": "94-highlights.txt",
+      "bytes": 5491,
+      "chars": 5309,
+      "sha256": "42924f4b164111fbdb73babae6c4e60c7a6ce1cdec423ee990fbf052b19cca56"
+    }
+  ],
+  "totals": {
+    "documents": 17,
+    "chars": 442002,
+    "bytes": 445938
+  }
+}

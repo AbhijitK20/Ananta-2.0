@@ -37,6 +37,10 @@ export function Footer() {
             the separators as inline entities rather than a flex list, which is
             what makes it 22px narrower as a list. */}
         <p className="lal-footer__legal">
+          {/* The assistant is reachable from the header, but the footer is where
+              someone who has finished reading a privacy policy actually looks
+              for it, so the survey keeps its own entry point. */}
+          <Link href="/oracle">Ask the AI</Link> &nbsp;&middot;&nbsp;{" "}
           <Link href="/privacy">Privacy Policy</Link> &nbsp;&middot;&nbsp;{" "}
           <Link href="/terms">Terms &amp; Conditions</Link> &nbsp;&middot;&nbsp;{" "}
           <Link href="/contact">Contact</Link> &nbsp;&middot;&nbsp;{" "}
