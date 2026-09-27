@@ -39,6 +39,11 @@ export function Header() {
                   <Link href={item.href}>{item.label}</Link>
                 </li>
               ))}
+              {/* GAME_LINK used to sit here, absolutely positioned so it could not
+                  move the measured list. It is gone because NAV now ends in
+                  "Local Legends", and two links with the same label a few pixels
+                  apart read as a rendering bug. NAV carries 5 items in flow,
+                  the same count GAME_LINK was added to keep it at. */}
             </ul>
           </nav>
 

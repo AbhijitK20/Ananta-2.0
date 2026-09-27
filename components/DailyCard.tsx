@@ -15,6 +15,7 @@
 import Link from "next/link";
 
 import { formatDayLabel, type StreakState } from "../lib/game/daily";
+import { placeHref } from "../lib/game/content";
 import { useProgress } from "../lib/game/store";
 import { XP_DAILY_BONUS } from "../lib/game/xp";
 import { StampButton, TagRow } from "./primitives";
@@ -34,7 +35,7 @@ export function DailyCard() {
       </p>
 
       <h2 className="lq-daily__name">
-        <Link href={`/place/${place.city}/${place.slug}`}>{place.name}</Link>
+        <Link href={placeHref(place)}>{place.name}</Link>
       </h2>
       <p className="lq-daily__where">
         {place.cityLabel}

@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { GameShell } from "../../components/GameShell";
 import { ProgressProvider } from "../../lib/game/store";
 
+import "../game.css";
+
 /**
  * The gamified layer, scoped to its own routes.
  *
@@ -21,11 +23,26 @@ import { ProgressProvider } from "../../lib/game/store";
  * route so the rail survives navigation between them, but it reads and writes
  * localStorage, and there is no reason for a visitor who only ever reads the
  * brochure to pay for that.
+ *
+ * `game.css` is imported here rather than in the root layout for the same
+ * reason. It is 1161 lines of `lq-` rules and none of them apply to a
+ * brochure page, and it was not imported at all until this line existed -- the
+ * game rendered as unstyled HTML inside the site chrome, which compiles
+ * cleanly and typechecks, so nothing caught it.
+ *
+ * `lq-ground` is the other half of living inside someone else's layout. The
+ * clone paints a fixed WebGL mesh at z-index -1, which deliberately paints over
+ * the body background, so there is no body colour to set and the game was
+ * reading as moving grey texture behind its own text. An opaque wrapper above
+ * it gives the game back the plain light ground it was designed against. The
+ * footer clearance it also sets lives in game.css, under `body:has()`.
  */
 export default function GameLayout({ children }: { children: ReactNode }) {
   return (
     <ProgressProvider>
-      <GameShell>{children}</GameShell>
+      <GameShell>
+        <div className="lq-ground">{children}</div>
+      </GameShell>
     </ProgressProvider>
   );
 }

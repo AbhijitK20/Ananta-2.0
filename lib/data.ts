@@ -168,11 +168,7 @@ export const PLACES: Record<string, Place[]> = {
 };
 
 export const NAV = [
-  // The href is still /social-impact because that is the route this planner
-  // inherited; the label follows what the page now is. Renaming the route would
-  // break any link already pointing at it for no gain, since nothing outside this
-  // app links here.
-  { href: "/social-impact", label: "Plan a trip" },
+  { href: "/plan", label: "Plan a Trip" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
   // Replaces the Contact entry. The assistant is the one part of this site that
@@ -191,6 +187,24 @@ export const NAV = [
   // slot than the thing visitors actually came for. /partners still routes.
   { href: "/stamps", label: "Local Legends" },
 ];
+
+/**
+ * Local Legends is ours, not the live site's, so it is kept out of NAV on
+ * purpose. The row has about 18px of slack at the 1440px width
+ * tools/verify.mjs measures, so a sixth <li> wraps the header, grows it from
+ * 124px to 187px and pushes 50 of the 56 measured elements down by 63px.
+ *
+ * It is rendered separately as an absolutely positioned child of the same list,
+ * so it is out of flow: the list's box and every measured link keep their
+ * geometry, and it sits in the free gap between the logo and the nav.
+ */
+/**
+ * Was the header's absolutely positioned "Local Legends" link, pointing at the
+ * marketing page for the game. It is no longer rendered: NAV ends in a
+ * "Local Legends" item and two identical labels in one header look broken.
+ * /local-legends still routes.
+ */
+export const GAME_LINK = { href: "/local-legends", label: "Local Legends" };
 
 export const PROMISES = [
   {
