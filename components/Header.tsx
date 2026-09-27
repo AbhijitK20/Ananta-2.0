@@ -14,9 +14,10 @@ export function Header() {
       <div className="lal-box">
         <div className="lal-header__inner lal-container">
         <Link href="/" className="lal-header__logo" aria-label="Ananta home">
-          {/* Mark only: the full 394x462 lockup is too tall for the header bar.
+          {/* Horizontal lockup (mark + ANANTA + SINCE 2026). The stacked source
+              is portrait 394x462 and would render 223px tall at this width.
               eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ananta-logo-mark.png" width={332} height={287} alt="Ananta" />
+          <img src="/ananta-logo-horizontal.png" width={725} height={262} alt="Ananta" />
         </Link>
 
         <div className="lal-header__right">
