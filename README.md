@@ -203,7 +203,11 @@ sourced. Two things to know before wiring a provider in:
 ## Layout
 
 Routes: `/`, `/cities`, `/[slug]`, `/blog`, `/blog/[slug]`, `/about`,
-`/contact`, `/partners`, `/social-impact`.
+`/contact`, `/partners`, `/plan`.
+
+`/plan` replaced `/social-impact`. The trip planner is a different product from
+the rest of this one and is not measured against the live site — see
+[The trip planner](#the-trip-planner) below.
 
 - `app/globals.css` — the whole design system: tokens, primitives, the
   responsive layer, and the font-mode switch. One file, because a design system
@@ -212,6 +216,8 @@ Routes: `/`, `/cities`, `/[slug]`, `/blog`, `/blog/[slug]`, `/about`,
 - `app/filmstrip.css` — the world filmstrip, isolated because it is the only
   band that is genuinely full-bleed and the only one not built from
   `.lal-box`.
+- `app/plan.css` — the trip planner, in its own `--lp-*` / `.lp-*` namespace so
+  it cannot move anything `tools/verify.mjs` measures.
 - `components/` — `Header`, `Footer`, `Hero`, `CityPicker`, `Sections`,
   `CountryFilmstrip`, `Interior`.
 - `lib/data.ts` — cities, tips and copy.
@@ -220,6 +226,101 @@ Routes: `/`, `/cities`, `/[slug]`, `/blog`, `/blog/[slug]`, `/about`,
 No Tailwind. The values came from `getComputedStyle`, and reproducing them in
 arbitrary-value utilities would have been more typing and less legible than the
 declarations they came from.
+
+## The trip planner
+
+`/plan` is a route planner in the shape Furkot uses: a plan drawer on the left,
+a map in the middle, and the directory's `Find` / `Sleep` / `Eat` drawers on the
+right. Add places, drop pins, set a daily driving limit, and the itinerary splits
+itself into days.
+
+```bash
+npm run check:plan   # 49 rule assertions, no browser
+npm run smoke:plan   # 57 browser assertions, needs a dev or start server
+```
+
+### Three decisions that shape everything else
+
+**Every distance is either routed or labelled.** Road geometry comes from the
+OSRM demo server. When it cannot be reached — it is a shared free service and it
+rate-limits — the leg falls back to a straight-line estimate and says so, on the
+leg, in the totals, and on the map, where estimated legs are drawn dashed rather
+than solid. A planner that showed a straight line as though it were a road would
+be lying about the one number a traveller plans around, so the distinction is part
+of the `Leg` type rather than a log line.
+
+**Only the car profile is routed.** The demo server answers `/route/v1/bike/…`
+and `/route/v1/foot/…` with HTTP 200 and a *car* route — same geometry, same
+duration to the metre. Asking all three profiles for Vienna → Rome returns three
+identical objects. It does not reject the profile, it ignores it. So bicycle and
+walking itineraries use the estimate path and say why.
+
+**Pins sit at city centroids, and the page says so.** The directory holds 892
+places and no coordinates for any of them.
+`data/city-coords.json` is 202 city centroids from the GeoNames `cities15000`
+dump — 186 resolved by name with population as the tiebreak, 16 hand-entered and
+marked `"source": "manual"`. `tools/gen-city-coords.mjs` regenerates the file and
+reproduces the committed copy byte for byte. Upgrading to real per-venue points
+is a geocoding run over the 892 slugs, and nothing else would change: every
+consumer reads `coordsFor` or a `Stop.at`.
+
+### What the dataset does not support, shown rather than smoothed over
+
+The directory is 892 entries across 202 cities, and the drawers partition it
+exactly once each:
+
+| drawer | count | from |
+|---|---:|---|
+| Find | 780 | tours, sightseeing, attractions, shopping, nightlife, **and everything untagged** |
+| Sleep | **26** | hotels — in **12** of the 202 cities |
+| Eat | 86 | restaurants — in 57 cities |
+
+Two of those numbers shape the whole design.
+
+**There are 26 hotels in the entire directory, in 12 cities.** So 190 cities have
+an empty Sleep tab and the overnight suggestion has nothing to point at. Both
+states are printed in the UI; the planner does not invent lodging, and the
+overnight line distinguishes "the directory has 3 hotels here" from "the
+directory has none for this city".
+
+**578 of the 892 entries carry no category**, because the extractor reads a tag
+from a node the source only renders on some cards. They are filed under Find and
+marked, because a place with no category cannot be known to be a hotel or a
+restaurant — filing it under either would invent the one fact a traveller would
+act on.
+
+### Two bugs the tests caught
+
+Both compiled cleanly and looked right:
+
+- **The estimate path returned legs with empty `fromId`/`toId`.** Everything
+  downstream matches a leg to its stops by id, so every non-car leg matched
+  nothing: no row in the drawer and no line on the map. The itinerary silently
+  emptied the moment you switched to bicycle.
+- **Adding the same place twice produced two stops with the same id.** A React
+  key collision, an ambiguous lookup, a leg whose two ends were the same stop,
+  and a remove that took out both. `Stop.id` is now unique per stop and the
+  directory entry it came from lives in a separate `placeId`; the drawer shows
+  *Added* rather than letting you duplicate it.
+
+`tools/smoke-plan.mjs` stubs the OSRM response for the routed-path assertions.
+Without that, a green run in a sandbox with a flaky network would only ever have
+proved the fallback works.
+
+### What is not built
+
+- **No routing through a real venue geocoder**, so the map answers "which city",
+  not "which door". See above.
+- **Reordering is up/down buttons, not drag-and-drop.** Furkot drags stops around
+  the map; a pointer-driven drag needs capture, a threshold so a click is not a
+  drag, and keyboard equivalents. The buttons work for everyone now, and the
+  accessibility cost of drag is the part that cannot be patched in later.
+- **No live hotel prices or booking links.** The directory has hotel *names* and
+  nothing else — no rates, no availability, no provider — so "Sleep" can only
+  point at an entry.
+- **`/plan` is not pixel-verified against Furkot.** The live planner is behind a
+  login, so there was no reference to measure against. The panel layout and
+  behaviour are taken from Furkot's help centre, which documents all of it.
 
 ## Known gaps
 
@@ -237,7 +338,7 @@ declarations they came from.
   screenshots, not measured element-by-element. The home page is the one that
   was verified to zero. `/cities` is now also exact at 1440; `/about`,
   `/contact`, `/partners` and `/lisbon` have exact h1s but unfinished lede and
-  section spacing, and `/blog` and `/social-impact` are unmeasured.
+  section spacing, and `/blog` is unmeasured.
 - `/social-impact`'s category and country inputs render but are not wired to
   anything — the `DirectoryFilter` has no `useState`, so they do not filter yet.
 - **A concurrent agent is working in this repo** (it also runs a dev server on

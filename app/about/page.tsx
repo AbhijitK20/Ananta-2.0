@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const PROMISES = [
   "Every pick is filtered through real, on-the-ground knowledge of the neighbourhood.",
   "We only feature places we’d happily recommend to a friend — no pay-to-play listings.",
-  "We spotlight sustainable and social-impact options so good trips can do good, too.",
+  "We spotlight places with a social mission, and a planner that turns them into an itinerary.",
 ];
 
 export default function AboutPage() {
@@ -77,9 +77,9 @@ export default function AboutPage() {
 
         <h2>What you’ll find here</h2>
         <p>
-          Honest, local, free guides for the places we know best — plus a
-          social-impact filter that shows which businesses are worker-owned or
-          community-run.
+          Honest, local, free guides for the places we know best — and a{" "}
+          <Link href="/plan">trip planner</Link> that turns them into an itinerary,
+          with every distance either routed or labelled an estimate.
         </p>
 
         <h2>Local, honest and free</h2>
