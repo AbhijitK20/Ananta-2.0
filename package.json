@@ -8,11 +8,9 @@
     "build": "next build",
     "start": "next start --port 4310",
     "typecheck": "tsc --noEmit",
-    "check:consent": "tsx --test tools/check-consent.test.mjs",
     "capture": "node tools/capture.mjs",
-    "capture:planner": "node tools/capture-click.mjs",
-    "check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/check-trip.mjs",
-    "shoot": "node tools/shoot-planner.mjs",
+    "check:plan": "tsx tools/check-plan.mjs",
+    "smoke:plan": "node tools/smoke-plan.mjs",
     "verify": "node tools/verify.mjs",
     "verify:places": "node tools/verify-places.mjs",
     "predev": "node tools/copy-cesium-assets.mjs",
@@ -26,8 +24,7 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-globe.gl": "^2.38.0",
-    "three": "^0.186.1",
-    "zod": "^4.6.5"
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -36,7 +33,6 @@
     "esbuild": "^0.28.2",
     "playwright": "^1.49.1",
     "tsx": "^4.23.15",
-    "typescript": "~5.9.3",
-    "vitest": "^4.1.11"
+    "typescript": "~5.9.3"
   }
 }
