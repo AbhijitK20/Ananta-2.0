@@ -1,0 +1,1166 @@
+/* ==========================================================================
+   LOCAL LEGENDS — the gamified layer
+
+   Built in the visual language of the Like a Local Guide clone it sits beside:
+   the same two families, the same magenta accent, the same light-only ground.
+   The clone is a brochure, this is a game, so two things are new — a
+   persistent shell (an XP rail and a nav that never scroll away) and a
+   perforated stamp edge used wherever a place is collectable.
+
+   Nothing here is a framework. The clone uses plain CSS with `lal-` prefixed
+   classes and so does this, under an `lq-` prefix. Two independent stylesheets
+   in two independent apps is cheaper than a shared design system neither of
+   them was built for.
+   ========================================================================== */
+
+:root {
+  /* palette ------------------------------------------------------------ */
+  --lq-ink: #251e20;
+  --lq-ink-2: #52474a;
+  --lq-ink-3: #7a6e71;
+  --lq-ink-4: #a89ea1;
+  --lq-accent: #b833ab;
+  --lq-accent-deep: #8e2684;
+  --lq-accent-soft: #f5e6f2;
+  --lq-amber: #ffa800;
+  --lq-amber-soft: #fff3dc;
+  --lq-line: #e2e8ef;
+  --lq-shell: #f1f2f3;
+  --lq-blush: #fbf4fa;
+  --lq-good: #1f8a5b;
+  --lq-good-soft: #e4f4ec;
+  --lq-ink-inverse: #ffffff;
+
+  /* Achievement tiers. Bronze/silver/gold are three distinct steps in
+     lightness AND saturation, so they stay distinguishable in greyscale and
+     for a red-green colour-blind reader — a gold and a bronze that differ only
+     in hue would not. */
+  --lq-bronze: #b0703c;
+  --lq-bronze-soft: #f6ece2;
+  --lq-silver: #6f7b85;
+  --lq-silver-soft: #eef1f4;
+  --lq-gold: #c79000;
+  --lq-gold-soft: #fdf3d8;
+
+  /* type --------------------------------------------------------------- */
+  --lq-display: var(--font-fraunces), Georgia, serif;
+  --lq-ui: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  /* The safe-area tokens the clone also declares. This app is not in a
+     Capacitor shell yet, but the bottom nav is a fixed element, and a fixed
+     element is the one thing that genuinely has to clear a home indicator. In
+     a browser these resolve to 0. */
+  --lq-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --lq-safe-left: env(safe-area-inset-left, 0px);
+  --lq-safe-right: env(safe-area-inset-right, 0px);
+  --lq-nav-height: 62px;
+
+  --lq-shadow-card: 0 4px 18px rgb(37 30 32 / 0.08);
+  --lq-shadow-raised: 0 12px 30px rgb(37 30 32 / 0.15);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding-left: var(--lq-safe-left);
+  padding-right: var(--lq-safe-right);
+  background: #fff;
+  color: var(--lq-ink);
+  font-family: var(--lq-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--lq-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--lq-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.lq-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.lq-skip {
+  position: absolute;
+  left: 8px;
+  top: -60px;
+  z-index: 60;
+  padding: 10px 16px;
+  background: var(--lq-ink);
+  color: #fff;
+  border-radius: 0 0 8px 8px;
+  transition: top 0.15s;
+}
+
+.lq-skip:focus {
+  top: 0;
+}
+
+/* ==========================================================================
+   Shell — the persistent chrome
+   ========================================================================== */
+
+.lq-shell {
+  /* Clears the fixed nav. Applied to the page flow, not to <main>, so a short
+     page still cannot put content under the bar. */
+  padding-bottom: calc(var(--lq-nav-height) + var(--lq-safe-bottom) + 28px);
+}
+
+.lq-rail {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgb(255 255 255 / 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--lq-line);
+}
+
+.lq-rail__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.lq-rail__brand {
+  font-family: var(--lq-display);
+  font-size: 19px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lq-rail__brand span {
+  color: var(--lq-accent);
+}
+
+.lq-rail__spacer {
+  flex: 1;
+}
+
+/* --- level + XP ---------------------------------------------------------- */
+
+.lq-xp {
+  flex: 1 1 320px;
+  max-width: 420px;
+  min-width: 0;
+}
+
+.lq-xp__top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: var(--lq-ink-2);
+}
+
+.lq-xp__title {
+  font-family: var(--lq-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lq-ink);
+}
+
+.lq-xp__num {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--lq-ink-3);
+}
+
+/* The rail itself. A 6px track is the smallest that still reads as a progress
+   bar on a phone; below about 4px the fill becomes hard to see against the
+   track's own edge. */
+.lq-xp__track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--lq-shell);
+  overflow: hidden;
+}
+
+.lq-xp__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--lq-accent), #d959c9);
+  /* Width is driven by an inline custom property rather than a transition on
+     `width`, because a transition on width cannot be interpolated from a value
+     the server did not render. `scaleX` is compositor-friendly. */
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lq-xp__note {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--lq-ink-4);
+}
+
+/* --- streak chip --------------------------------------------------------- */
+
+.lq-streak {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--lq-line);
+  border-radius: 999px;
+  background: #fff;
+  white-space: nowrap;
+}
+
+.lq-streak--hot {
+  border-color: var(--lq-amber);
+  background: var(--lq-amber-soft);
+}
+
+.lq-streak--risk {
+  border-color: var(--lq-accent-tint, #f3b9e9);
+  background: var(--lq-accent-soft);
+}
+
+.lq-streak__flame {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.lq-streak__n {
+  font-family: var(--lq-display);
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.lq-streak__label {
+  font-size: 11px;
+  color: var(--lq-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* --- bottom nav ---------------------------------------------------------- */
+
+.lq-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background: rgb(255 255 255 / 0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--lq-line);
+  padding-bottom: var(--lq-safe-bottom);
+}
+
+.lq-nav__inner {
+  max-width: 520px;
+  margin: 0 auto;
+  height: var(--lq-nav-height);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.lq-nav__item {
+  /* Owns a positioning context. Without this the absolutely-positioned badge
+     below resolves against `.lq-nav`, which is `position: fixed`, and lands in
+     the bottom-left corner of the bar instead of on top of the Quests glyph. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--lq-ink-4);
+  /* The tap target is the full grid cell, which on a 390px phone is about
+     97x62 — above the 44px minimum in both axes without padding tricks. */
+}
+
+.lq-nav__item[aria-current="page"] {
+  color: var(--lq-accent);
+  font-weight: 600;
+}
+
+.lq-nav__glyph {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.lq-nav__badge {
+  position: absolute;
+  transform: translate(14px, -4px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--lq-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* --- warnings ------------------------------------------------------------ */
+
+.lq-warn {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  font-size: 13px;
+  background: var(--lq-amber-soft);
+  color: #6b4a00;
+  border-bottom: 1px solid #f2ddb4;
+}
+
+.lq-warn strong {
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Page furniture
+   ========================================================================== */
+
+.lq-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 20px 12px;
+}
+
+.lq-page--narrow {
+  max-width: 760px;
+}
+
+.lq-head {
+  margin-bottom: 22px;
+}
+
+.lq-head__eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--lq-accent);
+  font-weight: 600;
+}
+
+.lq-head__title {
+  font-size: 34px;
+  margin-top: 6px;
+}
+
+.lq-head__sub {
+  margin-top: 8px;
+  color: var(--lq-ink-2);
+  font-size: 15px;
+  max-width: 62ch;
+}
+
+.lq-section {
+  margin-top: 34px;
+}
+
+.lq-section__title {
+  font-size: 21px;
+  margin-bottom: 4px;
+}
+
+.lq-section__note {
+  font-size: 13px;
+  color: var(--lq-ink-3);
+  margin-bottom: 14px;
+}
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+
+.lq-card {
+  background: #fff;
+  border: 1px solid var(--lq-line);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.lq-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  /* Reset here rather than per call site. `.lq-grid` is used on both `div` and
+     `ul`, and the two `<ul>`s that had no inline reset were the only two lists
+     in the app rendering visible bullets — which is exactly the kind of default
+     that is invisible in a desktop screenshot and glaring on a phone. */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lq-grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+/* ==========================================================================
+   The stamp
+
+   A perforated postage edge drawn with a radial-gradient mask rather than an
+   image: no asset, scales to any size, and the hole colour follows the
+   background via `mask` so the same class works on a white card and on the
+   blush panel alike.
+   ========================================================================== */
+
+.lq-stamp {
+  position: relative;
+  padding: 14px;
+  border-radius: 10px;
+  border: 2px solid var(--lq-line);
+  background: #fff;
+  transition:
+    border-color 0.18s,
+    transform 0.18s,
+    box-shadow 0.18s;
+}
+
+.lq-stamp--on {
+  border-color: var(--lq-accent);
+  background: var(--lq-accent-soft);
+}
+
+.lq-stamp:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--lq-shadow-card);
+}
+
+.lq-stamp__name {
+  display: block;
+  font-family: var(--lq-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.lq-stamp__hood {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--lq-ink-3);
+}
+
+.lq-stamp__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+}
+
+.lq-stamp__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.lq-stamp__when {
+  font-size: 11px;
+  color: var(--lq-ink-4);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The postmark: a rotated circular badge over the top-right corner of a
+   stamped card. Rotated because a level-right postmark reads as a sticker;
+   rotated reads as ink. */
+.lq-stamp__mark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--lq-accent);
+  border-radius: 50%;
+  color: var(--lq-accent);
+  font-size: 15px;
+  transform: rotate(-11deg);
+  opacity: 0.9;
+}
+
+/* --- tags ---------------------------------------------------------------- */
+
+.lq-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--lq-shell);
+  color: var(--lq-ink-2);
+  white-space: nowrap;
+}
+
+.lq-tag--cat {
+  background: var(--lq-accent-soft);
+  color: var(--lq-accent-deep);
+}
+
+.lq-tag--unfiled {
+  /* Styled differently from every other tag precisely so the 578 unfiled
+     records do not read as tagged. See the note in lib/content.ts. */
+  background: transparent;
+  color: var(--lq-ink-4);
+  border: 1px dashed var(--lq-ink-4);
+}
+
+.lq-tag--budget {
+  background: var(--lq-amber-soft);
+  color: #6b4a00;
+}
+
+.lq-tag--unknown {
+  background: transparent;
+  color: var(--lq-ink-4);
+  border: 1px dashed var(--lq-line);
+}
+
+/* --- buttons ------------------------------------------------------------- */
+
+.lq-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--lq-accent);
+  border-radius: 999px;
+  background: var(--lq-accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.16s,
+    border-color 0.16s,
+    opacity 0.16s;
+}
+
+.lq-btn:hover {
+  background: var(--lq-accent-deep);
+  border-color: var(--lq-accent-deep);
+}
+
+.lq-btn--ghost {
+  background: #fff;
+  color: var(--lq-accent);
+}
+
+.lq-btn--ghost:hover {
+  background: var(--lq-accent-soft);
+  color: var(--lq-accent-deep);
+}
+
+.lq-btn--quiet {
+  background: #fff;
+  color: var(--lq-ink-3);
+  border-color: var(--lq-line);
+}
+
+.lq-btn--quiet:hover {
+  background: var(--lq-shell);
+  color: var(--lq-ink);
+}
+
+.lq-btn--sm {
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.lq-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.lq-btn:disabled:hover {
+  background: var(--lq-accent);
+  border-color: var(--lq-accent);
+}
+
+.lq-btn--ghost:disabled:hover,
+.lq-btn--quiet:disabled:hover {
+  background: #fff;
+}
+
+/* ==========================================================================
+   Progress ring
+   ========================================================================== */
+
+.lq-ring {
+  --pct: 0;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  /* A conic sweep is one element and no SVG. The double-hard-stop keeps the
+     empty track visible at 0% and stops a full ring reading as a solid disc. */
+  background: conic-gradient(
+    var(--lq-accent) calc(var(--pct) * 1%),
+    var(--lq-shell) 0
+  );
+}
+
+.lq-ring::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.lq-ring__n {
+  grid-area: 1 / 1;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Daily card
+   ========================================================================== */
+
+.lq-daily {
+  border: 1px solid var(--lq-amber);
+  border-radius: 14px;
+  background: var(--lq-amber-soft);
+  padding: 18px;
+}
+
+.lq-daily__eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: #8a5c00;
+}
+
+.lq-daily__name {
+  font-family: var(--lq-display);
+  font-size: 24px;
+  margin-top: 6px;
+}
+
+.lq-daily__where {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--lq-ink-2);
+}
+
+.lq-daily__note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--lq-ink-2);
+  max-width: 60ch;
+}
+
+.lq-daily__foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.lq-daily__reward {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a5c00;
+}
+
+.lq-daily--done {
+  border-color: var(--lq-good);
+  background: var(--lq-good-soft);
+}
+
+.lq-daily--done .lq-daily__eyebrow,
+.lq-daily--done .lq-daily__reward {
+  color: var(--lq-good);
+}
+
+/* --- week strip ---------------------------------------------------------- */
+
+.lq-week {
+  display: flex;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.lq-week__day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--lq-ink-4);
+}
+
+.lq-week__pip {
+  width: 100%;
+  height: 26px;
+  border-radius: 7px;
+  background: rgb(255 255 255 / 0.75);
+  border: 1px solid var(--lq-line);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: var(--lq-ink-4);
+}
+
+.lq-week__pip--hit {
+  background: var(--lq-accent);
+  border-color: var(--lq-accent);
+  color: #fff;
+}
+
+.lq-week__pip--today {
+  border-color: var(--lq-ink);
+  border-width: 2px;
+}
+
+.lq-week__pip--missed {
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(255 255 255 / 0.75),
+    rgb(255 255 255 / 0.75) 4px,
+    #f6e2f4 4px,
+    #f6e2f4 8px
+  );
+}
+
+/* ==========================================================================
+   Quests
+   ========================================================================== */
+
+.lq-quest {
+  border: 1px solid var(--lq-line);
+  border-radius: 14px;
+  padding: 15px;
+  background: #fff;
+}
+
+.lq-quest--claimable {
+  border-color: var(--lq-accent);
+  background: var(--lq-accent-soft);
+}
+
+.lq-quest--claimed {
+  background: var(--lq-blush);
+  border-style: dashed;
+}
+
+.lq-quest__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.lq-quest__title {
+  font-family: var(--lq-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.lq-quest__blurb {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--lq-ink-2);
+}
+
+.lq-quest__reward {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--lq-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lq-accent);
+  white-space: nowrap;
+}
+
+.lq-quest--claimed .lq-quest__reward {
+  color: var(--lq-ink-4);
+}
+
+.lq-quest__bar {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--lq-shell);
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.lq-quest__fill {
+  height: 100%;
+  background: var(--lq-accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.lq-quest__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--lq-ink-3);
+}
+
+.lq-quest__count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--lq-ink-2);
+}
+
+.lq-tier {
+  margin-top: 30px;
+}
+
+.lq-tier__title {
+  font-family: var(--lq-display);
+  font-size: 19px;
+  margin-bottom: 3px;
+}
+
+.lq-tier__note {
+  font-size: 13px;
+  color: var(--lq-ink-3);
+  margin-bottom: 13px;
+}
+
+/* ==========================================================================
+   Achievements
+   ========================================================================== */
+
+.lq-ach {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 13px;
+  border: 1px solid var(--lq-line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.lq-ach--off {
+  opacity: 0.55;
+}
+
+.lq-ach__badge {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--lq-line);
+  background: var(--lq-shell);
+  font-size: 19px;
+  color: var(--lq-ink-4);
+}
+
+.lq-ach--bronze.lq-ach--on .lq-ach__badge {
+  border-color: var(--lq-bronze);
+  background: var(--lq-bronze-soft);
+  color: var(--lq-bronze);
+}
+
+.lq-ach--silver.lq-ach--on .lq-ach__badge {
+  border-color: var(--lq-silver);
+  background: var(--lq-silver-soft);
+  color: var(--lq-silver);
+}
+
+.lq-ach--gold.lq-ach--on .lq-ach__badge {
+  border-color: var(--lq-gold);
+  background: var(--lq-gold-soft);
+  color: var(--lq-gold);
+}
+
+.lq-ach__title {
+  font-family: var(--lq-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.lq-ach__blurb {
+  font-size: 13px;
+  color: var(--lq-ink-2);
+  margin-top: 2px;
+}
+
+.lq-ach__date {
+  font-size: 11px;
+  color: var(--lq-ink-4);
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   City rows
+   ========================================================================== */
+
+.lq-city {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 14px;
+  border: 1px solid var(--lq-line);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.16s;
+}
+
+.lq-city:hover {
+  border-color: var(--lq-accent-tint, #f3b9e9);
+}
+
+.lq-city--done {
+  background: var(--lq-good-soft);
+  border-color: #b9dfcb;
+}
+
+.lq-city__name {
+  font-family: var(--lq-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.lq-city__meta {
+  font-size: 12px;
+  color: var(--lq-ink-3);
+  margin-top: 2px;
+}
+
+.lq-city__bar {
+  margin-left: auto;
+  width: 84px;
+  flex: none;
+}
+
+.lq-city__barTrack {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--lq-shell);
+  overflow: hidden;
+}
+
+.lq-city__barFill {
+  height: 100%;
+  background: var(--lq-accent);
+  border-radius: 999px;
+}
+
+.lq-city__count {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--lq-ink-3);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Place detail
+   ========================================================================== */
+
+.lq-place {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 20px;
+}
+
+.lq-place__crumb {
+  font-size: 13px;
+  color: var(--lq-ink-3);
+}
+
+.lq-place__crumb a:hover {
+  color: var(--lq-accent);
+  text-decoration: underline;
+}
+
+.lq-place__name {
+  font-size: 36px;
+  margin-top: 10px;
+  line-height: 1.1;
+}
+
+.lq-place__hood {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--lq-ink-2);
+}
+
+.lq-place__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.lq-place__note {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--lq-ink);
+  max-width: 60ch;
+}
+
+.lq-place__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+  border-top: 1px solid var(--lq-line);
+}
+
+.lq-place__stampDate {
+  font-size: 13px;
+  color: var(--lq-ink-3);
+}
+
+.lq-out {
+  padding: 20px;
+  border: 1px dashed var(--lq-line);
+  border-radius: 12px;
+  color: var(--lq-ink-3);
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   Toast
+   ========================================================================== */
+
+.lq-toast-rail {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--lq-nav-height) + var(--lq-safe-bottom) + 14px);
+  z-index: 55;
+  width: min(420px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.lq-toast {
+  background: var(--lq-ink);
+  color: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: var(--lq-shadow-raised);
+  animation: lq-toast-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes lq-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* The single place this animation runs. Honoured by the shell's own reveal and
+   by nothing else, and the toast is the only thing that animates on a
+   game action — a card that springs every time a quest ticks would make the
+   board unreadable. */
+@media (prefers-reduced-motion: reduce) {
+  .lq-toast {
+    animation: none;
+  }
+  .lq-xp__fill {
+    transition: none;
+  }
+  .lq-stamp,
+  .lq-city {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (min-width: 720px) {
+  .lq-head__title {
+    font-size: 42px;
+  }
+  .lq-rail__inner {
+    padding: 14px 20px;
+  }
+  .lq-place__name {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 560px) {
+  .lq-rail__brand {
+    font-size: 16px;
+  }
+  .lq-streak__label {
+    display: none;
+  }
+  .lq-city__bar {
+    width: 62px;
+  }
+  .lq-head__title {
+    font-size: 28px;
+  }
+}

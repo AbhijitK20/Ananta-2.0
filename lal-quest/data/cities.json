@@ -1,0 +1,86 @@
+[
+ {
+  "name": "Paris",
+  "slug": "paris",
+  "picks": 117,
+  "href": "https://likealocalguide.com/paris/"
+ },
+ {
+  "name": "New York City",
+  "slug": "new-york-city",
+  "picks": 92,
+  "href": "https://likealocalguide.com/new-york-city/"
+ },
+ {
+  "name": "Lisbon",
+  "slug": "lisbon",
+  "picks": 75,
+  "href": "https://likealocalguide.com/lisbon/"
+ },
+ {
+  "name": "Rome",
+  "slug": "rome",
+  "picks": 68,
+  "href": "https://likealocalguide.com/rome/"
+ },
+ {
+  "name": "Prague",
+  "slug": "prague",
+  "picks": 67,
+  "href": "https://likealocalguide.com/prague/"
+ },
+ {
+  "name": "Berlin",
+  "slug": "berlin",
+  "picks": 66,
+  "href": "https://likealocalguide.com/berlin/"
+ },
+ {
+  "name": "London",
+  "slug": "london",
+  "picks": 66,
+  "href": "https://likealocalguide.com/london/"
+ },
+ {
+  "name": "Istanbul",
+  "slug": "istanbul",
+  "picks": 65,
+  "href": "https://likealocalguide.com/istanbul/"
+ },
+ {
+  "name": "Athens",
+  "slug": "athens",
+  "picks": 64,
+  "href": "https://likealocalguide.com/athens/"
+ },
+ {
+  "name": "Amsterdam",
+  "slug": "amsterdam",
+  "picks": 62,
+  "href": "https://likealocalguide.com/amsterdam/"
+ },
+ {
+  "name": "Barcelona",
+  "slug": "barcelona",
+  "picks": 61,
+  "href": "https://likealocalguide.com/barcelona/"
+ },
+ {
+  "name": "Vienna",
+  "slug": "vienna",
+  "picks": 58,
+  "href": "https://likealocalguide.com/vienna/"
+ },
+ {
+  "name": "Kathmandu",
+  "slug": "kathmandu",
+  "picks": 56,
+  "href": "https://likealocalguide.com/kathmandu/"
+ },
+ {
+  "name": "Budapest",
+  "slug": "budapest",
+  "picks": 55,
+  "href": "https://likealocalguide.com/budapest/"
+ }
+]
