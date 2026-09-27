@@ -1,28 +1,45 @@
 {
   "compilerOptions": {
-    "target": "ES2023",
-    "lib": ["dom", "dom.iterable", "ES2023"],
-    "allowJs": false,
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["node"],
-    "paths": { "@/*": ["./src/*"] },
-    "plugins": [{ "name": "next" }]
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts", "tests/**/*.ts", "*.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", ".next", "research", "graphify-out", "graphify-systems-out",
-              "TREK", "AdventureLog", "trip-planner", "makemydrivefun",
-              "ai-travel-planner", "ai-travelassistant",
-              "Tourism-Recommendation", "Tourism-Recommendation-System"]
+  // Scoped to this app's own source roots rather than `**/*.ts`.
+  //
+  // This app used to live at `research/lal-clone/`, where a `**` glob stopped at
+  // the project boundary because nothing else was underneath it. Promoted to the
+  // repository root, the same glob reaches every sibling checkout that happens
+  // to be sitting in the working directory — each with its own `node_modules`,
+  // its own tsconfig and its own opinions about `lib`. Locally that is enough
+  // to exhaust the heap and fail `npm run typecheck` with an out-of-memory crash
+  // that names no file, which is the least legible possible error.
+  //
+  // Naming the roots is also simply correct: these are the directories this app
+  // is made of, and a typecheck that silently covers other people's code is not
+  // a typecheck of this app.
+  "include": [
+    "next-env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "data/**/*.ts",
+    "capacitor.config.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
 }
