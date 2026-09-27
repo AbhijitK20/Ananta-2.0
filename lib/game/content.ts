@@ -322,3 +322,19 @@ export function placeOf(id: string): Place | undefined {
   return PLACE_BY_ID.get(id);
 }
 
+/* -------------------------------------------------------------------------- *
+ * Game routes.
+ *
+ * The place route is `/pick/<city>/<slug>`, not `/place/`. The clone already
+ * serves `/places/[slug]` for its own place pages, and `/pick` was chosen so the
+ * game's version sits beside it without either displacing the other. Two
+ * components still hardcoded `/place` after the rename, which is a 404 on click
+ * and a prefetch failure in the console on every load of the page carrying the
+ * link -- so the path is written down once, here.
+ * -------------------------------------------------------------------------- */
+
+export const cityHref = (slug: string): string => `/cities/${slug}`;
+
+export const placeHref = (place: Place): string =>
+  `/pick/${place.city}/${place.slug}`;
+

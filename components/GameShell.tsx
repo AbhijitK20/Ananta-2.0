@@ -20,12 +20,28 @@ import type { StreakState } from "../lib/game/daily";
 import { useProgress } from "../lib/game/store";
 import type { LevelState } from "../lib/game/types";
 
-type NavItem = { href: string; label: string; glyph: string };
+type NavItem = {
+  href: string;
+  label: string;
+  glyph: string;
+  /** Extra prefixes that also count as being inside this tab. */
+  also?: string[];
+};
 
+/**
+ * None of these is `/` or `/cities`. The clone serves both — `/` is the most
+ * pixel-locked page here (56 measured elements), `/cities` is 8 more — and a
+ * route group cannot take over a path its parent already serves. They used to
+ * point at `/` and `/cities`, which meant tapping Today or Cities walked the
+ * player out of the game and into a brochure page with no way back.
+ *
+ * The city's *views* are unaffected: the clone never had `/cities/<slug>`, so
+ * the game owns it, and `also` keeps this tab lit while you are in one.
+ */
 const NAV: NavItem[] = [
-  { href: "/", label: "Today", glyph: "◉" },
+  { href: "/today", label: "Today", glyph: "◉" },
   { href: "/quests", label: "Quests", glyph: "✦" },
-  { href: "/cities", label: "Cities", glyph: "⌂" },
+  { href: "/atlas", label: "Cities", glyph: "⌂", also: ["/cities"] },
   { href: "/stamps", label: "Stamps", glyph: "❖" },
 ];
 
@@ -42,7 +58,7 @@ export function GameShell({ children }: { children: React.ReactNode }) {
     <>
       <div className="lq-rail">
         <div className="lq-rail__inner">
-          <Link href="/" className="lq-rail__brand">
+          <Link href="/today" className="lq-rail__brand">
             Local<span>Legends</span>
           </Link>
 
@@ -76,12 +92,14 @@ export function GameShell({ children }: { children: React.ReactNode }) {
       <nav className="lq-nav" aria-label="Main">
         <div className="lq-nav__inner">
           {NAV.map((item) => {
-            // Root has to match exactly; every other route matches on prefix, so
-            // /cities/lisbon keeps "Cities" lit.
+            // A tab is lit on its own path, anything nested under it, and any
+            // extra prefix it claims — so /cities/lisbon keeps "Cities" lit.
             const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname === item.href || pathname.startsWith(`${item.href}/`);
+              pathname === item.href ||
+              pathname.startsWith(`${item.href}/`) ||
+              (item.also ?? []).some(
+                (p) => pathname === p || pathname.startsWith(`${p}/`),
+              );
 
             return (
               <Link

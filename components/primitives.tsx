@@ -13,6 +13,7 @@ import Link from "next/link";
 import {
   BUDGET_LABELS,
   CATEGORY_LABELS,
+  placeHref,
   type Place,
 } from "../lib/game/content";
 import { useProgress } from "../lib/game/store";
@@ -134,7 +135,7 @@ export function PlaceCard({ place }: { place: Place }) {
         </span>
       ) : null}
 
-      <Link href={`/place/${place.city}/${place.slug}`} className="lq-stamp__name">
+      <Link href={placeHref(place)} className="lq-stamp__name">
         {place.name}
       </Link>
 
