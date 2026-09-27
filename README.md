@@ -352,12 +352,35 @@ another device. Nothing about the site requires signing in.
    | `NEXT_PUBLIC_APP_URL` | `http://localhost:4310` locally |
    | `BETTER_AUTH_SECRET` | `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
    | `DATABASE_URL` | Supabase → Database → Connection string → **URI, port 5432** |
+   | `AUTH_TRUSTED_ORIGINS` | only if you are not on `localhost` — see below |
 
    `DATABASE_URL` is the one that gets missed: it is the **database password**,
    which is not the publishable key, not the anon key, and not the service-role
    key. It lives in the Database section of the dashboard, not the API section.
    Port 5432, not 6543 — Better Auth opens real transactions and the transaction
    pooler refuses them.
+
+**"Invalid origin".** Better Auth compares the request's `Origin` header against
+`trustedOrigins` and refuses anything else, so a sign-in that looks correctly
+configured can still fail on a config that reads correct. One dev server is
+reachable at several *different* origins, and the browser does not care that they
+are the same server:
+
+| you typed | trusted? |
+|---|---|
+| `http://localhost:4310` | yes — `NEXT_PUBLIC_APP_URL` |
+| `http://127.0.0.1:4310` | yes — added automatically |
+| `http://[::1]:4310` | yes — added automatically |
+| `http://192.168.x.x:4310` | **no** — the "Network" URL Next prints |
+| your deployed host | **no** — set `NEXT_PUBLIC_APP_URL` to it |
+
+The three loopback spellings are added in code because they are this machine by
+definition and cannot be reached from anywhere else. The LAN address is not
+knowable statically, so it goes in `AUTH_TRUSTED_ORIGINS` (comma separated) — a
+narrow list on purpose, since this is a CSRF control and anything loose in it
+lets another site drive a sign-in. Note the check only runs on requests that
+carry a cookie, which is Better Auth's reasoning: a cookieless request cannot be
+a forged authenticated action.
 
 2. Create Better Auth's four tables:
 

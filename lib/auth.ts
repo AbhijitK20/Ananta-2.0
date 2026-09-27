@@ -59,6 +59,58 @@ function secret(): string {
 }
 
 /**
+ * Every origin a browser may legitimately present.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THIS IS NOT JUST `baseURL`
+ * ---------------------------------------------------------------------------
+ *
+ * Better Auth compares the request's `Origin` header against this list and
+ * answers `invalid_origin` when they do not match, so this is the whole reason a
+ * sign-in that looks correctly configured can still fail. `baseURL` is trusted
+ * on its own — but one dev server is reachable at three loopback spellings, plus
+ * whatever LAN address the machine has, and each is a *different* origin to a
+ * browser even though they are the same server:
+ *
+ *   http://localhost:4310      the configured one
+ *   http://127.0.0.1:4310       typed instead of "localhost"
+ *   http://[::1]:4310           the IPv6 loopback
+ *   http://192.168.x.x:4310     the Network URL Next prints, or a phone on the
+ *                               same wifi
+ *
+ * The loopback spellings are added here rather than left to configuration because
+ * they are the same machine by definition — they cannot be reached from anywhere
+ * else, so trusting them grants nothing to an attacker. The LAN address is not
+ * knowable statically and is not added, because a pattern wide enough to cover
+ * it would also cover a network the app has no business trusting. That one is
+ * `AUTH_TRUSTED_ORIGINS`, set to the exact origin.
+ *
+ * No wildcards anywhere. A wildcard here is a CSRF bypass: the whole point of
+ * the check is that only the site's own origins may drive a sign-in.
+ */
+function trustedOrigins(): string[] {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:4310";
+  const origins = new Set<string>([appUrl]);
+
+  try {
+    const { protocol, port } = new URL(appUrl);
+    for (const host of ["localhost", "127.0.0.1", "[::1]"]) {
+      origins.add(`${protocol}//${host}:${port}`);
+    }
+  } catch {
+    // A malformed NEXT_PUBLIC_APP_URL is left to fail loudly at the first request
+    // rather than being silently papered over with a guess.
+  }
+
+  for (const extra of (process.env.AUTH_TRUSTED_ORIGINS ?? "").split(",")) {
+    const trimmed = extra.trim();
+    if (trimmed) origins.add(trimmed);
+  }
+
+  return [...origins];
+}
+
+/**
  * The Google sign-in provider, or nothing.
  *
  * Both halves must be present. A provider with an id and no secret produces an
@@ -94,6 +146,7 @@ export const authOptions = {
   secret: secret(),
 
   baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:4310",
+  trustedOrigins: trustedOrigins(),
 
   socialProviders: google,
 

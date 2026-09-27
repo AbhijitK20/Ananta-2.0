@@ -44,6 +44,33 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { authClient } from "../lib/auth-client";
 
+/**
+ * Turn a failure into something a person can act on.
+ *
+ * Better Auth's own wording is written for whoever wrote Better Auth. "Invalid
+ * origin" in particular is the single most confusing message in the whole flow:
+ * the configuration looks right, the button is right, and the answer is a
+ * two-word refusal. The actual cause is nearly always that the browser reached
+ * the server at a different spelling of the same address, so the message names
+ * the origin the browser used and the variable that would accept it.
+ */
+function describe(failure: { message?: string; code?: string } | null | undefined): string {
+  const message = failure?.message ?? "";
+
+  if (failure?.code === "invalid_origin" || /invalid origin/i.test(message)) {
+    return typeof window === "undefined"
+      ? "This site's address is not trusted by the auth server."
+      : `This site is being reached as ${window.location.origin}, which the auth ` +
+          `server does not trust. Add it to AUTH_TRUSTED_ORIGINS in .env.local.`;
+  }
+
+  if (/provider not found|not configured|invalid_provider/i.test(message)) {
+    return "Google sign-in is not set up on this deploy. Use your email below.";
+  }
+
+  return message || "That did not work.";
+}
+
 type Mode = "signin" | "signup";
 
 type Account = { email: string; name?: string | null } | null;
@@ -136,9 +163,7 @@ export function AccountMenu() {
 
     setBusy(false);
     if (failure) {
-      // Better Auth's messages are written for exactly this case; passing them
-      // through beats inventing a second vocabulary for the same error.
-      setError(failure.message ?? "That did not work.");
+      setError(describe(failure));
       return;
     }
 
@@ -156,14 +181,7 @@ export function AccountMenu() {
     const { error: failure } = await authClient.signIn.social({ provider: "google" });
     if (failure) {
       setBusy(false);
-      // "Provider not found" is Better Auth's own wording for GOOGLE_CLIENT_ID or
-      // GOOGLE_CLIENT_SECRET being absent, and it is accurate but useless to the
-      // person looking at it. Say what is actually wrong.
-      setError(
-        /not found|not configured|invalid_provider/i.test(failure.message ?? "")
-          ? "Google sign-in is not set up on this deploy. Use your email below."
-          : (failure.message ?? "That did not work."),
-      );
+      setError(describe(failure));
     }
   }
 
