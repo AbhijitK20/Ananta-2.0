@@ -1,0 +1,150 @@
+/* ==========================================================================
+   LOCAL LEGENDS — the way in to the game
+
+   The site's own class vocabulary, reused. This exists only because
+   `.lal-tile` is built for a photo tile: it assumes a background image, a
+   `.lal-tile__scrim` over it, and a white label sitting on that scrim. Reusing
+   it for a list of routes produced white-on-white labels, because there is no
+   photograph to be white against.
+
+   So this is a small prefixed sheet instead, in the same visual language as
+   the rest of the site -- Fraunces for headings, Inter for body, the magenta
+   accent, the same card shadow and the same line colour. It is imported by
+   this page only and cannot reach anything else.
+
+   It also re-establishes the plain light ground. The site paints a fixed WebGL
+   mesh at z-index -1, which by design paints over the body background, so
+   there is no body colour to set.
+   ========================================================================== */
+
+.lal-hub {
+  background: var(--lal-bg);
+  padding: 48px 20px 72px;
+}
+
+.lal-hub__inner {
+  max-width: 1120px;
+  margin-inline: auto;
+}
+
+.lal-hub__eyebrow {
+  margin: 0 0 10px;
+  font-family: var(--lal-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lal-accent);
+}
+
+.lal-hub__title {
+  margin: 0 0 18px;
+  font-family: var(--lal-display);
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: 1.06;
+  font-weight: 600;
+  color: var(--lal-ink);
+}
+
+.lal-hub__lede {
+  max-width: 62ch;
+  margin: 0 0 44px;
+  font-family: var(--lal-ui);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--lal-ink-2);
+}
+
+.lal-hub__h2 {
+  width: fit-content;
+  margin: 0 auto 28px;
+  font-family: var(--lal-display);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--lal-ink);
+}
+
+.lal-hub__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  margin: 0 0 40px;
+  padding: 0;
+  list-style: none;
+}
+
+.lal-hub__card {
+  display: block;
+  height: 100%;
+  padding: 20px 22px 22px;
+  border: 1px solid var(--lal-line);
+  border-radius: 14px;
+  background: var(--lal-bg);
+  box-shadow: var(--lal-shadow-card);
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.lal-hub__card:hover {
+  border-color: var(--lal-accent-tint);
+  box-shadow: var(--lal-shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.lal-hub__card:focus-visible {
+  outline: 3px solid var(--lal-accent);
+  outline-offset: 2px;
+}
+
+.lal-hub__name {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--lal-display);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--lal-ink);
+}
+
+.lal-hub__path {
+  display: block;
+  margin-bottom: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  color: var(--lal-accent);
+  word-break: break-all;
+}
+
+.lal-hub__blurb {
+  display: block;
+  font-family: var(--lal-ui);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--lal-ink-2);
+}
+
+.lal-hub__cta {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 26px;
+}
+
+.lal-hub__note {
+  max-width: 68ch;
+  margin: 0 auto;
+  text-align: center;
+  font-family: var(--lal-ui);
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--lal-ink-3);
+}
+
+@media (max-width: 560px) {
+  .lal-hub {
+    padding-top: 32px;
+  }
+  .lal-hub__grid {
+    grid-template-columns: 1fr;
+  }
+}
