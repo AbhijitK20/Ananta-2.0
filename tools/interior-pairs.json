@@ -55,28 +55,6 @@
    ".lal-tip"
   ]
  },
- "social-impact": {
-  "h1": [
-   ".g-h1",
-   "h1"
-  ],
-  "lede": [
-   ".g-lede",
-   "h1 + p"
-  ],
-  "controls": [
-   ".g-controls",
-   ".lalg-controls"
-  ],
-  "grid": [
-   ".g-grid",
-   ".lalg-grid"
-  ],
-  "card": [
-   ".g-card",
-   ".lalg-card"
-  ]
- },
  "about": {
   "h1": [
    ".g-edit__title",
