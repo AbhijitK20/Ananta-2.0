@@ -1405,3 +1405,18 @@
   outline-offset: 1px;
   border-color: var(--lq-accent);
 }
+
+/* The badge row. Two badges because "aligned" and "answering" are different
+   facts: a model can be correctly trained and still not be served, and
+   collapsing them into one green pill would hide precisely that. */
+.lq-oracle__badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.lq-oracle__badge--idle {
+  border-color: var(--lq-line);
+  color: var(--lq-ink-3);
+}

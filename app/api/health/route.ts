@@ -103,6 +103,35 @@ export async function GET(req: Request) {
     }
   }
 
+  /**
+   * Trained is not the same as serving.
+   *
+   * `customized` answers "did the alignment finish", which is a fact about our
+   * pipeline. It says nothing about whether Nugen is currently willing to run the
+   * model — and on this account those have genuinely diverged: training and
+   * deployment both succeed while their inference backend returns nothing, so an
+   * endpoint that reported only `customized: true` would look healthy right up
+   * until somebody typed a question and watched it fail.
+   *
+   * So this is a separate, explicitly-labelled fact with its own note. A model can
+   * be correctly aligned and still not be answering, and the UI needs to be able
+   * to say which of those is happening.
+   */
+  const serving = {
+    state: "unknown" as "unknown" | "answering" | "not-answering",
+    note: "pass ?deep=1 to check whether the provider will actually serve this model",
+  };
+  if (deep && status.customized) {
+    const probe = confidenceProbe as { ok?: boolean; error?: string };
+    if (probe.ok === true) {
+      serving.state = "answering";
+      serving.note = "the provider returned a completion for this model id";
+    } else if (probe.ok === false) {
+      serving.state = "not-answering";
+      serving.note = `the model is aligned but the provider did not answer: ${probe.error ?? "unknown error"}`;
+    }
+  }
+
   let corpus: unknown = null;
   try {
     const p = join(process.cwd(), "data", "nugen-corpus", "manifest.json");
@@ -119,7 +148,10 @@ export async function GET(req: Request) {
       modelIsBaseModel: modelIsBase,
       // Stated flat so it cannot be skimmed past: the claim holds only when the
       // model is aligned, is not a base model, and training actually finished.
+      // Note this is a claim about the PIPELINE, not about current availability --
+      // see `serving` below for that.
       claimHolds: Boolean(status.customized && !modelIsBase && status.alignment?.gpu_training_completed !== false),
+      serving,
       confidenceProbe,
       corpus,
       checkedAt: new Date().toISOString(),

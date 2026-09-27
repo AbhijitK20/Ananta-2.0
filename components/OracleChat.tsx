@@ -57,6 +57,8 @@ type Health = {
   alignment: { customized: boolean; model: string | null; detail?: string; base_model_id?: string | null };
   claimHolds: boolean;
   provider: string;
+  /** Trained is not the same as answering; these can legitimately disagree. */
+  serving: { state: "unknown" | "answering" | "not-answering"; note: string };
 };
 
 const SUGGESTIONS = [
@@ -81,7 +83,7 @@ export function OracleChat() {
   useEffect(() => {
     // Asked once on mount, and again after a 503, because the answer can change
     // the moment an alignment finishes while the tab is open.
-    fetch("/api/health", { cache: "no-store" })
+    fetch("/api/health?deep=1", { cache: "no-store" })
       .then((r) => r.json())
       .then((h: Health) => setHealth(h))
       .catch(() => setHealth(null));
@@ -139,7 +141,7 @@ export function OracleChat() {
             error: `${detail.error ?? "the assistant is unavailable"}${detail.detail ? ` — ${detail.detail}` : ""}`,
           }));
           // A 503 here usually means the alignment has not run yet, so ask again.
-          fetch("/api/health", { cache: "no-store" })
+          fetch("/api/health?deep=1", { cache: "no-store" })
             .then((r) => r.json())
             .then((h: Health) => setHealth(h))
             .catch(() => undefined);
@@ -202,17 +204,51 @@ export function OracleChat() {
           <h2 className="lq-oracle__title">Ask the catalogue</h2>
         </div>
         {health ? (
-          <p className={`lq-oracle__badge ${aligned ? "lq-oracle__badge--on" : "lq-oracle__badge--off"}`}>
+          <div className="lq-oracle__badges">
+            <p className={`lq-oracle__badge ${aligned ? "lq-oracle__badge--on" : "lq-oracle__badge--off"}`}>
+              {aligned ? (
+                <>
+                  aligned · <code>{health.alignment.model}</code>
+                </>
+              ) : (
+                <>no aligned model</>
+              )}
+            </p>
+            {/*
+              The second badge is the honest one. "Aligned" is a fact about the
+              training pipeline; "answering" is a fact about right now. Nugen has
+              trained and deployed this model and still declines to serve it, and
+              a single green badge would hide exactly that.
+            */}
             {aligned ? (
-              <>
-                aligned · <code>{health.alignment.model}</code>
-              </>
-            ) : (
-              <>no aligned model</>
-            )}
-          </p>
+              <p
+                className={`lq-oracle__badge lq-oracle__badge--${
+                  health.serving.state === "answering"
+                    ? "on"
+                    : health.serving.state === "not-answering"
+                      ? "off"
+                      : "idle"
+                }`}
+              >
+                {health.serving.state === "answering"
+                  ? "provider answering"
+                  : health.serving.state === "not-answering"
+                    ? "provider not serving"
+                    : "provider unchecked"}
+              </p>
+            ) : null}
+          </div>
         ) : null}
       </header>
+
+      {aligned && health?.serving.state === "not-answering" ? (
+        <p className="lq-oracle__notice">
+          The model is genuinely aligned and trained, but Nugen is not serving it right now —{" "}
+          {health.serving.note}. Questions will fail until it recovers. This is stated here rather
+          than hidden, because a demo that looks fine until you type into it is worse than one that
+          admits it.
+        </p>
+      ) : null}
 
       {!aligned && health ? (
         <p className="lq-oracle__notice">
