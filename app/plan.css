@@ -1,0 +1,943 @@
+/* ==========================================================================
+   TRIP PLANNER
+
+   Namespaced `--lp-*` and `.lp-*` throughout, on the same reasoning the game
+   stylesheet gives: the brochure's own rules are captured off the live site and
+   verified element-by-element, so a bare `.panel` or a `:root` addition here
+   could move something tools/verify.mjs measures. Nothing in this file can reach
+   outside the `lp-` namespace.
+
+   Colours are read from the `--lal-*` tokens rather than repeated, so the planner
+   follows the site palette instead of drifting toward Furkot's orange — a
+   different product with a different brand, and copying its accent onto this one
+   would make the page look borrowed.
+   ========================================================================== */
+
+.lp-page {
+  --lp-gap: 16px;
+  --lp-radius: 10px;
+  --lp-line: var(--lal-line);
+  --lp-ink: var(--lal-ink);
+  --lp-ink-2: var(--lal-ink-2);
+  --lp-ink-3: var(--lal-ink-3);
+  --lp-accent: var(--lal-accent);
+  --lp-accent-soft: var(--lal-accent-soft);
+  --lp-shell: var(--lal-shell);
+  /* A fixed height rather than a flex fill, because a MapLibre canvas inside a
+     grid track with no intrinsic height collapses to 0 and renders nothing. */
+  --lp-map-h: 460px;
+
+  padding: 28px 20px 64px;
+  color: var(--lp-ink);
+}
+
+.lp-head {
+  max-width: 62ch;
+  margin-bottom: 22px;
+}
+
+.lp-head .g-h1 {
+  margin-bottom: 8px;
+}
+
+.lp-head .g-lede {
+  margin: 0;
+  /* The site's own lede rule centres its text, which reads as a mistake under a
+     left-aligned heading. This page's lede is a left-aligned block. */
+  text-align: left;
+}
+
+/* --------------------------------------------------------------------------
+   Grid — three panels, map in the middle where Furkot puts it.
+   -------------------------------------------------------------------------- */
+
+.lp-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.7fr) minmax(300px, 1.05fr);
+  gap: var(--lp-gap);
+  align-items: start;
+}
+
+.lp-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lp-gap);
+  min-width: 0;
+}
+
+.lp-panel {
+  background: var(--lal-bg);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  padding: 16px;
+  box-shadow: var(--lal-shadow-tile);
+}
+
+.lp-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lp-panel__title {
+  font-family: var(--lal-display);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  margin: 0 0 10px;
+  color: var(--lp-ink);
+}
+
+.lp-panel__head .lp-panel__title {
+  margin-bottom: 0;
+}
+
+.lp-sub {
+  font-family: var(--lal-ui);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lp-ink-3);
+  margin: 18px 0 8px;
+}
+
+/* Two columns below 1180px, where a 300px drawer either side of a map leaves the
+   map too narrow to pan. */
+@media (max-width: 1180px) {
+  .lp-grid {
+    grid-template-columns: minmax(260px, 1fr) minmax(0, 1.4fr);
+  }
+  .lp-col--right {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .lp-page {
+    --lp-map-h: 320px;
+    padding: 20px 14px 48px;
+  }
+  .lp-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* The map first on a phone: it is the one panel that answers "where am I". */
+  .lp-col--map {
+    order: -1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Buttons and fields
+   -------------------------------------------------------------------------- */
+
+.lp-btn {
+  font-family: var(--lal-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 9px 13px;
+  border-radius: 7px;
+  border: 1px solid var(--lp-accent);
+  background: var(--lp-accent);
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.lp-btn:hover {
+  filter: brightness(1.08);
+}
+
+.lp-btn--ghost {
+  background: transparent;
+  color: var(--lp-accent);
+  border-color: var(--lp-line);
+}
+
+.lp-btn--ghost:hover {
+  border-color: var(--lp-accent);
+  filter: none;
+}
+
+.lp-btn--sm {
+  font-size: 0.74rem;
+  padding: 6px 9px;
+}
+
+.lp-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lp-btn:focus-visible,
+.lp-tab:focus-visible,
+.lp-stop__main:focus-visible,
+.lp-map__bar button:focus-visible,
+.lp-pin:focus-visible {
+  outline: 2px solid var(--lp-accent);
+  outline-offset: 2px;
+}
+
+.lp-field {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.lp-field--row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lp-field--row > span {
+  font-size: 0.82rem;
+  color: var(--lp-ink-2);
+  flex: 0 0 auto;
+}
+
+.lp-field input[type="search"],
+.lp-field input[type="text"],
+.lp-field input[type="date"],
+.lp-field select {
+  width: 100%;
+  font-family: var(--lal-ui);
+  font-size: 0.86rem;
+  padding: 8px 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: 7px;
+  background: var(--lal-bg);
+  color: var(--lp-ink);
+}
+
+.lp-field select {
+  width: auto;
+  min-width: 150px;
+}
+
+.lp-filters {
+  border-top: 1px solid var(--lp-line);
+  padding-top: 12px;
+  margin-bottom: 10px;
+}
+
+.lp-chips {
+  border: 0;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lp-chips legend {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lp-ink-3);
+  padding: 0 0 6px;
+}
+
+.lp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  padding: 4px 9px;
+  border: 1px solid var(--lp-line);
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lp-chip:has(input:checked) {
+  background: var(--lp-accent-soft);
+  border-color: var(--lp-accent);
+  color: var(--lp-ink);
+}
+
+.lp-chip input {
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Notes, warnings, empty states
+   -------------------------------------------------------------------------- */
+
+.lp-note {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--lp-ink-2);
+  background: var(--lp-accent-soft);
+  border-left: 3px solid var(--lp-accent);
+  padding: 9px 11px;
+  border-radius: 0 7px 7px 0;
+  margin: 0 0 12px;
+}
+
+.lp-note--quiet {
+  background: transparent;
+  border-left-color: var(--lp-line);
+  color: var(--lp-ink-3);
+}
+
+.lp-warn {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--lal-ink);
+  background: #fff6e6;
+  border-left: 3px solid var(--lal-amber);
+  padding: 9px 11px;
+  border-radius: 0 7px 7px 0;
+  margin: 0 0 12px;
+}
+
+.lp-count {
+  font-size: 0.76rem;
+  color: var(--lp-ink-3);
+  margin: 0 0 8px;
+}
+
+.lp-empty {
+  padding: 18px 14px;
+  border: 1px dashed var(--lp-line);
+  border-radius: var(--lp-radius);
+  text-align: center;
+  color: var(--lp-ink-2);
+  font-size: 0.86rem;
+}
+
+.lp-empty p {
+  margin: 0 0 6px;
+}
+
+.lp-empty__note {
+  font-size: 0.78rem;
+  color: var(--lp-ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   Plan drawer
+   -------------------------------------------------------------------------- */
+
+.lp-plan__tools {
+  display: flex;
+  gap: 6px;
+}
+
+.lp-totals {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 12px 0 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--lp-line);
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.lp-totals dt {
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--lp-ink-3);
+}
+
+.lp-totals dd {
+  margin: 2px 0 0;
+  font-family: var(--lal-display);
+  font-size: 1.02rem;
+  color: var(--lp-ink);
+}
+
+/* The routed/estimated distinction is the load-bearing line on this page, so it
+   gets a colour of its own rather than a footnote. */
+.lp-basis {
+  font-size: 0.72rem;
+  line-height: 1.45;
+  margin: 0 0 12px;
+  padding-left: 18px;
+  position: relative;
+}
+
+.lp-basis::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+}
+
+.lp-basis--routed {
+  color: var(--lp-ink-3);
+}
+
+.lp-basis--routed::before {
+  content: "\2713";
+  color: #0a7c5a;
+}
+
+.lp-basis--estimated {
+  color: #8a5a00;
+}
+
+.lp-basis--estimated::before {
+  content: "\26A0";
+  color: var(--lal-amber);
+}
+
+.lp-days,
+.lp-stops,
+.lp-results,
+.lp-prov__list,
+.lp-links,
+.lp-skipped__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lp-days > .lp-day + .lp-day {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--lp-line);
+}
+
+.lp-day__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.lp-day__title {
+  font-family: var(--lal-display);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.lp-day__meta {
+  font-size: 0.74rem;
+  color: var(--lp-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-day__night {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--lp-ink-2);
+  background: var(--lp-shell);
+  border-radius: 6px;
+  padding: 6px 9px;
+  margin: 0 0 8px;
+}
+
+.lp-leg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px;
+  font-size: 0.72rem;
+  color: var(--lp-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-leg::before {
+  content: "";
+  width: 2px;
+  height: 16px;
+  margin-left: 6px;
+  background: var(--lal-accent-tint);
+}
+
+/* An estimated leg is greyed and labelled, not hidden. */
+.lp-leg--estimated {
+  color: #8a5a00;
+}
+
+.lp-leg--estimated::before {
+  background: repeating-linear-gradient(
+    180deg,
+    var(--lal-amber) 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.lp-leg__basis {
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.lp-stop {
+  border: 1px solid var(--lp-line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: var(--lal-bg);
+}
+
+.lp-stop--selected {
+  border-color: var(--lp-accent);
+  box-shadow: 0 0 0 2px var(--lp-accent-soft);
+}
+
+.lp-stop__main {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.lp-stop__name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--lp-ink);
+}
+
+.lp-stop__where {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--lp-ink-3);
+  margin-top: 2px;
+}
+
+.lp-stop__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.lp-stop__dwell select {
+  font-family: var(--lal-ui);
+  font-size: 0.72rem;
+  padding: 4px 6px;
+  border: 1px solid var(--lp-line);
+  border-radius: 5px;
+  background: var(--lal-bg);
+  color: var(--lp-ink-2);
+}
+
+.lp-stop__btns {
+  display: flex;
+  gap: 4px;
+}
+
+.lp-stop__link {
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 0.72rem;
+  color: var(--lp-accent);
+}
+
+.lp-skipped {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--lp-line);
+}
+
+.lp-skipped__title {
+  font-family: var(--lal-display);
+  font-size: 0.9rem;
+  margin: 0 0 4px;
+}
+
+.lp-skipped__note {
+  font-size: 0.72rem;
+  color: var(--lp-ink-3);
+  margin: 0 0 8px;
+}
+
+.lp-skipped__list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.lp-skipped__list li > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--lp-ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   Map
+   -------------------------------------------------------------------------- */
+
+.lp-map {
+  position: relative;
+  background: var(--lp-shell);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  overflow: hidden;
+}
+
+.lp-map__canvas {
+  height: var(--lp-map-h);
+  width: 100%;
+}
+
+/* The caveat sits over the map rather than under it, so the pin placement is
+   qualified where the pins are. */
+/* Sits under the button bar at the top, not across the bottom.
+   MapLibre's compact attribution is bottom-right and wraps to two lines at
+   narrow widths, so a bottom-anchored caption collides with it — and the
+   attribution is a licence requirement, so the caption is the thing that moves. */
+.lp-map__caveat {
+  position: absolute;
+  top: 48px;
+  left: 10px;
+  right: 56px; /* clear of the zoom control */
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: var(--lp-ink-2);
+  background: rgb(255 255 255 / 0.92);
+  border-radius: 6px;
+  padding: 6px 9px;
+  pointer-events: none;
+}
+
+.lp-map__bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 56px; /* clear of the zoom control */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  /* Without this the two children fight for the same 10px inset and the label
+     lands on top of the button on a narrow screen. */
+  flex-wrap: wrap;
+}
+
+.lp-map__bar button {
+  font-family: var(--lal-ui);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--lp-line);
+  background: rgb(255 255 255 / 0.95);
+  color: var(--lp-ink);
+  cursor: pointer;
+}
+
+.lp-map__bar button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lp-map__count {
+  font-size: 0.72rem;
+  color: var(--lp-ink-2);
+  background: rgb(255 255 255 / 0.9);
+  border-radius: 5px;
+  padding: 3px 7px;
+}
+
+/* The number sits inside a rotated teardrop, so the glyph is counter-rotated by
+   the same amount or every digit reads on its side. */
+.lp-pin {
+  width: 26px;
+  height: 26px;
+  border-radius: 50% 50% 50% 4px;
+  transform: rotate(-45deg);
+  border: 2px solid #fff;
+  background: var(--lal-accent);
+  color: #fff;
+  font-family: var(--lal-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 4px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
+}
+
+/* A "maybe" is grey on the map, which is what Furkot does and what makes the
+   skipped set legible at a glance without reading the drawer. */
+.lp-pin--skipped {
+  background: #9aa0a6;
+  opacity: 0.75;
+}
+
+.lp-pin--selected {
+  background: var(--lal-amber);
+  transform: rotate(-45deg) scale(1.18);
+}
+
+/* --------------------------------------------------------------------------
+   Drawers and settings
+   -------------------------------------------------------------------------- */
+
+.lp-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.lp-tab {
+  flex: 1 1 0;
+  font-family: var(--lal-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 6px;
+  border: 1px solid var(--lp-line);
+  border-radius: 7px 7px 0 0;
+  background: var(--lal-bg);
+  color: var(--lp-ink-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.lp-tab--on {
+  background: var(--lp-accent-soft);
+  border-color: var(--lp-accent);
+  color: var(--lp-ink);
+}
+
+.lp-tab__count {
+  font-size: 0.64rem;
+  font-weight: 400;
+  color: var(--lp-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-poi__blurb {
+  font-size: 0.78rem;
+  color: var(--lp-ink-3);
+  margin: 0 0 12px;
+}
+
+.lp-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 460px;
+  overflow-y: auto;
+  /* Room for the focus ring, which the scroller would otherwise clip. */
+  padding: 2px;
+}
+
+.lp-result {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: 8px;
+}
+
+.lp-result__main {
+  min-width: 0;
+}
+
+.lp-result__name {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--lp-ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lp-result__where {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: var(--lp-ink-3);
+}
+
+.lp-result__snip {
+  margin: 5px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--lp-ink-2);
+}
+
+.lp-tag {
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* Dashed, to match how the stamp album marks an unfiled place: a real state,
+   not a missing one. */
+.lp-tag--unfiled {
+  border: 1px dashed var(--lp-ink-3);
+  color: var(--lp-ink-3);
+}
+
+.lp-radio,
+.lp-limits {
+  border: 0;
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+.lp-radio legend,
+.lp-limits legend {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lp-ink-3);
+  padding: 0 0 6px;
+}
+
+.lp-radio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lp-radio label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+}
+
+.lp-limits__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.lp-limit {
+  position: relative;
+  font-size: 0.76rem;
+  padding: 6px 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.lp-limit input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.lp-limit--on {
+  background: var(--lp-accent-soft);
+  border-color: var(--lp-accent);
+  color: var(--lp-ink);
+  font-weight: 600;
+}
+
+/* Keyboard focus has to survive the input being visually hidden. */
+.lp-limit:has(input:focus-visible) {
+  outline: 2px solid var(--lp-accent);
+  outline-offset: 2px;
+}
+
+.lp-switch {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--lp-ink-2);
+  margin-bottom: 6px;
+}
+
+.lp-switch input {
+  margin-top: 3px;
+  flex: 0 0 auto;
+}
+
+.lp-switch strong {
+  color: var(--lp-ink);
+}
+
+.lp-links {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.lp-links a {
+  font-size: 0.8rem;
+  color: var(--lp-accent);
+}
+
+.lp-prov__list,
+.lp-provenance__list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.lp-prov__list li,
+.lp-provenance__list li {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--lp-ink-2);
+  padding-left: 14px;
+  position: relative;
+}
+
+.lp-prov__list li::before,
+.lp-provenance__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lal-accent-tint);
+}
+
+.lp-provenance {
+  border-top: 1px solid var(--lp-line);
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+/* MapLibre's own attribution would sit under the caveat at the bottom-right, so
+   it is nudged up rather than left to collide. */
+.lp-map .maplibregl-ctrl-bottom-right {
+  bottom: 2px;
+  right: 2px;
+  max-width: calc(100% - 20px);
+}
+
+.lp-map .maplibregl-ctrl-attrib {
+  font-size: 9px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-map .maplibregl-ctrl-attrib-inner {
+  display: block;
+  white-space: nowrap;
+}
