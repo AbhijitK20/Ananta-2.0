@@ -337,7 +337,13 @@
   box-shadow: 0 10px 26px rgb(0 0 0 / 0.09);
 }
 
+/* The children are spans. Without a block-level parent they stay inline, the
+   margin-bottom on each does nothing, and meta/title/hood/snippet run together
+   on one line. Flex column blockifies them and keeps the margin rhythm below -
+   same fix as .lal-tip__body. */
 .g-card__body {
+  display: flex;
+  flex-direction: column;
   padding: 18px 18px 20px;
 }
 

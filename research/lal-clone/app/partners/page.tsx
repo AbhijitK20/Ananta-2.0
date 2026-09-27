@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { CountryFilmstrip } from "../../components/CountryFilmstrip";
+
 import "../globals.css";
 import "../interior.css";
 
@@ -49,6 +51,17 @@ export default function PartnersPage() {
           See it live: the Like A Local Tours module on our New York City page — NYC
           is ours, and it is the single biggest reason this page exists.
         </p>
+
+        {/* 100 famous places on a rotating strip. It lives here, not on the home
+            page: the sub-headline above claims "100+ cities", and this is the
+            proof of it. The reference site has no equivalent block, so putting
+            it on the home page cost 26 of that page's 56 verified elements. */}
+        <section className="lal-world" aria-labelledby="lal-world-title">
+          <h2 className="lal-sr" id="lal-world-title">
+            Around the world
+          </h2>
+          <CountryFilmstrip />
+        </section>
 
         <h2>Own your city’s tour slot</h2>
         <p>
