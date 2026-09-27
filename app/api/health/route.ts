@@ -145,6 +145,20 @@ export async function GET(req: Request) {
       ok: true,
       provider: providerDisabled() ? "disabled (NUGEN_OFF=1)" : apiKey() ? "configured" : "no API key",
       /**
+       * Which build answered. Vercel bakes environment variables in at build
+       * time, so a deployment created before a key was added keeps reporting
+       * "no API key" no matter how the project is configured -- the number below
+       * is what tells you that apart from a genuinely missing variable.
+       */
+      build: {
+        deploymentId: process.env.VERCEL_DEPLOYMENT_ID ?? null,
+        gitCommit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+        target: process.env.VERCEL_ENV ?? "local",
+        // A key that exists in the project but not in this build. The exact
+        // situation that made the panel look broken while the key was fine.
+        keyBakedIn: Boolean(apiKey()),
+      },
+      /**
        * Whether a key is present, on the shallow path as well as the deep one.
        *
        * This is the single most actionable fact the endpoint can give someone
