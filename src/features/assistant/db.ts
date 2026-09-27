@@ -67,9 +67,9 @@ function candidates(): { file: string; kind: "durable" | "ephemeral" | "memory" 
  * Where conversations will actually be stored, opening the handle if needed.
  *
  * Opening as a side effect is deliberate: the health endpoint calls this before
- * any chat has happened, and reporting `"unknown"` there would be a worse answer
- * than the truth. The handle is a memoised singleton the first chat would open
- * anyway, so nothing is paid twice.
+ * any chat has happened, and reporting an unknown state there would be a worse
+ * answer than the truth. The handle is a memoised singleton the first chat would
+ * open anyway, so nothing is paid twice.
  */
 export function storageKind(): "durable" | "ephemeral" | "memory" | "unavailable" {
   try {
@@ -77,8 +77,11 @@ export function storageKind(): "durable" | "ephemeral" | "memory" | "unavailable
   } catch {
     return "unavailable";
   }
-  if (openedAt === null) return "unknown";
-  return candidates().find((candidate) => candidate.file === openedAt)?.kind ?? "unknown";
+  // Unreachable while `db()` succeeded, since it always records the path it
+  // opened. Narrowed to the closed set rather than widened, so a future change
+  // that forgets to set `openedAt` is a type error instead of a silent "unknown".
+  if (openedAt === null) return "unavailable";
+  return candidates().find((candidate) => candidate.file === openedAt)?.kind ?? "unavailable";
 }
 
 /**

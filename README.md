@@ -308,11 +308,54 @@ Chat's blast radius is structural, not conventional: `DialogueDecision` is
 recommendation or a reordering. The model cannot edit a plan even if it tried,
 because there is nowhere to put it.
 
+### Deploying
+
+Next.js on Vercel needs no config file. The only two things that are not
+automatic:
+
+**1. Set the env var.** `NUGEN_API_KEY` in the project's Environment Variables.
+Without it the assistant still works, on the offline path — this is a degraded
+mode, not a failure.
+
+**2. Expect `storage: "ephemeral"`.** A serverless filesystem is read-only apart
+from `/tmp`, and `*.db` is gitignored, so the assistant's SQLite falls back:
+
+| Storage | Where | Conversations survive |
+|---|---|---|
+| `durable` | a server or a laptop, `DB_FILE` writable | yes |
+| `ephemeral` | serverless — per-instance `/tmp` | within a warm instance, not across a cold start |
+| `memory` | nowhere writable | no |
+
+The health endpoint reports which, because a chat that silently forgets is
+indistinguishable from a bug:
+
+```bash
+curl -s <your-domain>/api/assistant/health | jq '{customized, model, storage, status}'
+```
+
+For durable history on a serverless deploy, point `DB_FILE` at a real database and
+swap `src/features/assistant/db.ts` for it — the store is the only module that
+touches SQLite, so nothing else changes.
+
+**After deploying, check the claim:**
+
+```bash
+curl -s <your-domain>/api/assistant/health | jq '.customized'
+```
+
+`true` means a customized model is live. `false` means none exists yet and the
+assistant is on the offline path — which is the current state, because Nugen's
+training backend is returning `502`. See `docs/NUGEN_CUSTOMIZATION.md`.
+
 ---
 
 ## Setup
 
-**Requires Node 22+.**
+**Requires Node 22.13+.** Not 22.0: `node:sqlite` — the whole reason this project
+has no native build step — was flag-gated until 22.13, and a deploy that resolves
+to an earlier 22.x fails at build with a module-not-found rather than anything
+readable. `engines.node` says so, and the AI assistant's routes pin
+`runtime = "nodejs"` because the SQLite driver is not edge-safe.
 
 ```bash
 # The committed package-lock.json currently has 23 entries with no `version`
