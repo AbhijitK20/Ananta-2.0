@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "capture": "node tools/capture.mjs",
     "check:plan": "tsx tools/check-plan.mjs",
+    "check:twin": "node tools/check-twin.mjs",
     "smoke:plan": "node tools/smoke-plan.mjs",
     "verify": "node tools/verify.mjs",
     "verify:places": "node tools/verify-places.mjs",
