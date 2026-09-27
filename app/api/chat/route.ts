@@ -58,6 +58,8 @@ const MAX_ROUNDS = 4;
 const HISTORY_TURNS = 8;
 
 type Frame =
+  /** Emitted before any provider work, so the response headers flush at once. */
+  | { type: "status"; phase: "thinking" }
   | { type: "text"; delta: string }
   | { type: "confidence"; score: number; spans: number }
   | { type: "tool"; name: string; summary: string }
@@ -151,7 +153,24 @@ export async function POST(req: Request) {
     async start(controller: ReadableStreamDefaultController<Uint8Array>) {
       const send = (f: Frame) => controller.enqueue(sse(f));
 
-      // Highest confidence seen and how many spans reported it. Nugene sends one
+      /**
+       * Flush the response before doing anything slow.
+       *
+       * This frame exists purely to make the browser receive response headers
+       * immediately. Without it the first `enqueue` happens only after the
+       * provider call has either produced a token or timed out — up to
+       * NUGEN_TIMEOUT_MS of silence — and two things go wrong in that window:
+       * the page shows a dead spinner with no error, and any host with a
+       * function timeout (Vercel's is 10s on Hobby) kills the connection, which
+       * the browser reports as `Failed to fetch` with nothing in any log to
+       * explain it.
+       *
+       * Enqueueing a status frame first opens the stream, so the slow part
+       * happens inside an already-established response where it belongs.
+       */
+      send({ type: "status", phase: "thinking" });
+
+      // Highest confidence seen and how many spans reported it. Nugen sends one
       // per generated span in streaming mode, so the number the player sees is
       // the worst-case of those, not the last one.
       let bestConfidence: number | null = null;

@@ -59,6 +59,7 @@ type Health = {
   provider: string;
   /** Trained is not the same as answering; these can legitimately disagree. */
   serving: { state: "unknown" | "answering" | "not-answering"; note: string };
+  providerConfigured: boolean;
 };
 
 const SUGGESTIONS = [
@@ -83,7 +84,7 @@ export function OracleChat() {
   useEffect(() => {
     // Asked once on mount, and again after a 503, because the answer can change
     // the moment an alignment finishes while the tab is open.
-    fetch("/api/health?deep=1", { cache: "no-store" })
+    fetch("/api/health", { cache: "no-store" })
       .then((r) => r.json())
       .then((h: Health) => setHealth(h))
       .catch(() => setHealth(null));
@@ -141,7 +142,7 @@ export function OracleChat() {
             error: `${detail.error ?? "the assistant is unavailable"}${detail.detail ? ` — ${detail.detail}` : ""}`,
           }));
           // A 503 here usually means the alignment has not run yet, so ask again.
-          fetch("/api/health?deep=1", { cache: "no-store" })
+          fetch("/api/health", { cache: "no-store" })
             .then((r) => r.json())
             .then((h: Health) => setHealth(h))
             .catch(() => undefined);
@@ -167,7 +168,10 @@ export function OracleChat() {
             if (!payload || payload === "[DONE]") continue;
 
             const f = JSON.parse(payload) as Record<string, unknown>;
-            if (f.type === "text") {
+            if (f.type === "status") {
+              // Headers are open; the provider is now working. Nothing to render
+              // -- `busy` already drives the typing indicator.
+            } else if (f.type === "text") {
               patch((t) => ({ ...t, text: t.text + String(f.delta) }));
             } else if (f.type === "confidence") {
               // Keep the lowest reading: the worst span is the honest headline.
@@ -230,16 +234,26 @@ export function OracleChat() {
                       : "idle"
                 }`}
               >
-                {health.serving.state === "answering"
-                  ? "provider answering"
-                  : health.serving.state === "not-answering"
-                    ? "provider not serving"
-                    : "provider unchecked"}
+                {!health.providerConfigured
+                  ? "no API key"
+                  : health.serving.state === "answering"
+                    ? "provider answering"
+                    : health.serving.state === "not-answering"
+                      ? "provider not serving"
+                      : "provider unchecked"}
               </p>
             ) : null}
           </div>
         ) : null}
       </header>
+
+      {aligned && health && !health.providerConfigured ? (
+        <p className="lq-oracle__notice">
+          No <code>NUGEN_API_KEY</code> on this server, so the provider was never called. The model is
+          aligned and ready; add the key to <code>.env.local</code> (or the host&rsquo;s environment) and
+          reload.
+        </p>
+      ) : null}
 
       {aligned && health?.serving.state === "not-answering" ? (
         <p className="lq-oracle__notice">

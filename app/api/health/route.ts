@@ -144,6 +144,16 @@ export async function GET(req: Request) {
     {
       ok: true,
       provider: providerDisabled() ? "disabled (NUGEN_OFF=1)" : apiKey() ? "configured" : "no API key",
+      /**
+       * Whether a key is present, on the shallow path as well as the deep one.
+       *
+       * This is the single most actionable fact the endpoint can give someone
+       * looking at a broken panel, and it costs nothing to compute. Without it,
+       * "the provider is not answering" and "there is no API key here" are
+       * indistinguishable until you read `provider`, and the second one is fixed
+       * by adding a line to an env file rather than by waiting for a vendor.
+       */
+      providerConfigured: Boolean(apiKey()) && !providerDisabled(),
       alignment,
       modelIsBaseModel: modelIsBase,
       // Stated flat so it cannot be skimmed past: the claim holds only when the
