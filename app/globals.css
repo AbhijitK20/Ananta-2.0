@@ -142,8 +142,8 @@ a {
 
 .lal-header__logo img {
   display: block;
-  width: 190px;
-  height: auto;
+  height: 40px;
+  width: auto;
 }
 
 .lal-header__right {
