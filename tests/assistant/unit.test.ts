@@ -30,7 +30,7 @@ import {
 } from "@/features/assistant/provider/deterministic";
 import { NugenError, readSseDeltas } from "@/features/assistant/provider/nugen";
 import { GROUNDING_CLOSE, GROUNDING_OPEN, PROMPT_VERSION, SYSTEM_PROMPT } from "@/features/assistant/prompt";
-import { nextVoiceState } from "@/features/assistant/voice";
+import { browserSpeechToText, browserTextToSpeech, nextVoiceState } from "@/features/assistant/voice";
 import { titleFromMessage } from "@/features/assistant/titles";
 import { ownerIdFor, readCookie, resolveOwner } from "@/features/assistant/owner";
 import type { Message } from "@/features/assistant/types";
@@ -432,6 +432,52 @@ describe("voice state machine", () => {
   it("recovers from error and from a deliberate stop", () => {
     expect(nextVoiceState("error", "stop")).toBe("idle");
     expect(nextVoiceState("speaking", "stop")).toBe("idle");
+  });
+});
+
+describe("voice providers survive a server render", () => {
+  // The regression. `AssistantView` is `"use client"`, but Next still renders it
+  // on the server for the initial HTML, so `useMemo(() => browserSpeechToText())`
+  // runs where `window` does not exist. That was a 500 on `/assistant` with
+  // `ReferenceError: window is not defined` — invisible to the API routes, the
+  // health endpoint, the test suite and `next build`, because none of those render
+  // the page. Only loading the URL found it.
+  //
+  // The Vitest environment here is node, so `window` is genuinely undefined and
+  // this test reproduces the server render exactly.
+  it("constructs without touching window", () => {
+    expect(typeof window).toBe("undefined");
+    expect(() => browserSpeechToText()).not.toThrow();
+    expect(() => browserTextToSpeech()).not.toThrow();
+  });
+
+  it("reports unsupported rather than pretending", () => {
+    const stt = browserSpeechToText();
+    expect(stt.supported).toBe(false);
+    // No reason text during SSR: the browser re-runs this on hydration and gets
+    // the real answer, so a "no browser" message must never reach a user who is
+    // standing in one.
+    expect(stt.reason).toBe("");
+
+    const tts = browserTextToSpeech();
+    expect(tts.supported).toBe(false);
+  });
+
+  it("is inert when there is no speech engine", async () => {
+    const stt = browserSpeechToText();
+    // Must not throw when called with no implementation, because the mic button
+    // is disabled rather than hidden and a stray call should be harmless.
+    expect(() => stt.start(() => {}, () => {})).not.toThrow();
+    expect(() => stt.stop()).not.toThrow();
+    expect(() => stt.abort()).not.toThrow();
+  });
+
+  it("ends TTS immediately when there is no engine", () => {
+    let ended = false;
+    browserTextToSpeech().speak("hello", () => {
+      ended = true;
+    });
+    expect(ended).toBe(true);
   });
 });
 

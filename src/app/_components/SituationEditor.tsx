@@ -25,8 +25,21 @@ import { useState } from "react";
 import { cn } from "@/components/cn";
 import { Button } from "@/components/ui/Button";
 import { SegmentedControl, Slider, Toggle } from "@/components/ui/Controls";
+import { formatMinutes, toggleNeed } from "./situation";
 import type { AccessNeed, DiscoveryContext, PartyType } from "@/contracts";
 import type { PlaceOption } from "../_lib/place";
+
+/**
+ * `formatMinutes` and `toggleNeed` live in `./situation`, not in this file.
+ *
+ * This component is a Client Component because it uses `useState`, and
+ * `ContextBar` is a *server* component that calls `formatMinutes`. Keeping the
+ * helper here made that call "Attempted to call formatMinutes() from the server
+ * but formatMinutes is on the client", and the home page 500'd.
+ *
+ * Re-exported so this component's own importers keep a single import path.
+ */
+export { formatMinutes, toggleNeed } from "./situation";
 
 /**
  * The free-text vocabularies, offered as chips.
@@ -318,19 +331,4 @@ function Stepper({
       </Button>
     </div>
   );
-}
-
-export function toggleNeed<T extends string>(
-  current: ReadonlyArray<T>,
-  need: T,
-  on: boolean,
-): T[] {
-  return on ? [...new Set([...current, need])] : current.filter((item) => item !== need);
-}
-
-export function formatMinutes(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours === 0) return `${mins} min`;
-  return mins === 0 ? `${hours} h` : `${hours} h ${String(mins).padStart(2, "0")} m`;
 }

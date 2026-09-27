@@ -80,7 +80,26 @@ interface SpeechRecognitionLike extends EventTarget {
 }
 type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
 
+/**
+ * The vendor-prefixed `SpeechRecognition` constructor, or null.
+ *
+ * Guarded on `window` because this module is imported by a `"use client"`
+ * component, and Next still *renders* client components on the server to produce
+ * the initial HTML. So `useMemo(() => browserSpeechToText(), [])` runs on the
+ * server during SSR, where `window` does not exist.
+ *
+ * That was a 500 on `/assistant` with `ReferenceError: window is not defined` —
+ * the API routes all worked, the health endpoint answered, every test passed, and
+ * the build was green, because none of those render the page. The only thing that
+ * found it was loading the URL.
+ *
+ * Returning null is the correct answer rather than a guard at the call site: the
+ * provider is already specified to report `supported: false` and explain why, and
+ * `browserTextToSpeech` does the same with a `typeof window` check. Both paths
+ * mean the component renders on the server and hydrates into a working mic.
+ */
 function recognitionCtor(): SpeechRecognitionCtor | null {
+  if (typeof window === "undefined") return null;
   const scope = window as unknown as {
     SpeechRecognition?: SpeechRecognitionCtor;
     webkitSpeechRecognition?: SpeechRecognitionCtor;
@@ -104,7 +123,13 @@ export function browserSpeechToText(lang = "en-IN"): SpeechToTextProvider {
     supported: Ctor !== null,
     reason:
       Ctor === null
-        ? "This browser has no speech recognition. Firefox does not implement it; Chrome, Edge and Safari do. Typing works everywhere."
+        ? typeof window === "undefined"
+          ? // Server render. The browser re-runs this on hydration and gets the
+            // real answer, so the message is never seen — it is here so that a
+            // future caller that renders it cannot show "no browser" to a user
+            // who is standing in one.
+            ""
+          : "This browser has no speech recognition. Firefox does not implement it; Chrome, Edge and Safari do. Typing works everywhere."
         : "",
     start(onPartial, onFinal) {
       if (!Ctor) return;
