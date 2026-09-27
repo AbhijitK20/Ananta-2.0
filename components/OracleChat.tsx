@@ -246,12 +246,12 @@ export function OracleChat() {
                 }`}
               >
                 {!health.providerConfigured
-                  ? "no API key"
+                  ? "assistant offline"
                   : health.serving.state === "answering"
-                    ? "provider answering"
+                    ? "assistant online"
                     : health.serving.state === "not-answering"
                       ? "provider not serving"
-                      : "provider unchecked"}
+                      : "checking assistant"}
               </p>
             ) : null}
           </div>
@@ -260,9 +260,13 @@ export function OracleChat() {
 
       {aligned && health && !health.providerConfigured ? (
         <p className="lq-oracle__notice">
-          No <code>NUGEN_API_KEY</code> on this server, so the provider was never called. The model is
-          aligned and ready; add the key to <code>.env.local</code> (or the host&rsquo;s environment) and
-          reload.
+          The assistant is answering from the game&rsquo;s own data only &mdash; your stamps, XP,
+          level, streak and quests are all exact, and the chat says so rather than inventing a
+          confidence. Its AI provider is not reachable from this server yet.
+          <span className="lq-oracle__notice-detail">
+            The model is aligned and trained; the server is missing the Nugen key, so no provider call
+            was made.
+          </span>
         </p>
       ) : null}
 
