@@ -32,3 +32,14 @@ public/cesium
 /trip-planner/
 /research/
 /.twin/
+
+# Secrets. `.env.local` holds the Nugen API key, which is a bearer token for a
+# paid third-party account — anyone who reads it can spend the quota and read the
+# conversation logs their alignment runs generate. It is read at runtime by
+# `next start` and by `tools/nugen-align.mjs`, never committed, and never
+# inlined into a client bundle.
+#
+# `.env.example` IS committed and documents the shape without the values.
+.env*.local
+.env
+!.env.example

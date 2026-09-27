@@ -160,6 +160,33 @@ export async function* stream(args: {
   sessionId?: string;
   signal?: AbortSignal;
 }): AsyncGenerator<StreamEvent> {
+  const timeout = AbortSignal.timeout(timeoutMs());
+  const composite = args.signal ? AbortSignal.any([args.signal, timeout]) : timeout;
+
+  /**
+   * Turn an abort into the same error a connect failure would produce.
+   *
+   * This matters more than it looks. Nugen returns response headers promptly and
+   * then stalls part-way through a streamed generation, so the timeout fires
+   * while the *body* is being read rather than while the request is being made.
+   * An unclassified `TypeError: terminated` from the reader propagates out of this
+   * generator, reaches the route as an unknown error, and is shown to the player
+   * verbatim -- which is both useless to them and misleading about the cause.
+   */
+  const asProviderError = (err: unknown): NugenError => {
+    if (err instanceof NugenError) return err;
+    if (composite.aborted) {
+      return new NugenError(
+        args.signal?.aborted
+          ? "the request was cancelled"
+          : `the provider did not finish within ${timeoutMs()}ms`,
+        408,
+        true,
+      );
+    }
+    return new NugenError(`transport failure: ${String(err)}`, 0, true);
+  };
+
   const res = await fetch(`${BASE}/inference/chat/completions`, {
     method: "POST",
     headers: {
@@ -175,9 +202,9 @@ export async function* stream(args: {
       stream: true,
       ...(args.tools?.length ? { tools: args.tools, tool_choice: "auto" } : {}),
     }),
-    signal: args.signal,
+    signal: composite,
   }).catch((err: unknown) => {
-    throw new NugenError(`transport failure: ${String(err)}`, 0, true);
+    throw asProviderError(err);
   });
 
   if (!res.ok || !res.body) {
@@ -199,7 +226,9 @@ export async function* stream(args: {
 
   try {
     for (;;) {
-      const { done, value } = await reader.read();
+      const { done, value } = await reader.read().catch((err: unknown) => {
+        throw asProviderError(err);
+      });
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 

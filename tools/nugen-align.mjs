@@ -59,6 +59,46 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
+/**
+ * Load `.env.local` into `process.env` without overwriting anything already set.
+ *
+ * Next.js does this for the app itself, so `/api/chat` finds the key with no
+ * help. This script is plain Node and gets no such treatment, which is a trap
+ * worth removing: `npm run nugen:align` would fail with "NUGEN_API_KEY is not
+ * set" while the app sitting next to it worked fine, and the obvious conclusion
+ * would be that the key was missing rather than that the script had not looked.
+ *
+ * Deliberately a fifteen-line parser and not a dependency. It handles the subset
+ * this file uses — `KEY=value`, `#` comments, optional `export`, optional
+ * surrounding quotes — and nothing else. A real dotenv would be a package in
+ * `devDependencies` for one call site.
+ */
+function loadEnvFile() {
+  const path = join(process.cwd(), ".env.local");
+  if (!existsSync(path)) return false;
+  for (const raw of readFileSync(path, "utf8").split("\n")) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq === -1) continue;
+    const key = line.slice(0, eq).replace(/^export\s+/, "").trim();
+    if (!key) continue;
+    let value = line.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    // Real environment wins, so `NUGEN_API_KEY=... npm run nugen:align` still
+    // overrides the file rather than being silently ignored.
+    if (process.env[key] === undefined) process.env[key] = value;
+  }
+  return true;
+}
+
+loadEnvFile();
+
 const BASE = process.env.NUGEN_BASE_URL ?? "https://api.nugen.in/api/v3";
 const API_KEY = process.env.NUGEN_API_KEY;
 const BASE_MODEL = process.env.NUGEN_BASE_MODEL ?? "llama-v3p2-3b-reasoning";
