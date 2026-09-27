@@ -4,14 +4,10 @@ import type { ReactNode } from "react";
 
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
-import { MeshDriftBackground } from "../components/MeshDriftBackground";
 
 import "./globals.css";
 import "./interior.css";
 import "./filmstrip.css";
-import "./globe.css";
-import "./parallax.css";
-import "./crowd.css";
 
 /* The two families the live design actually uses, self-hosted by next/font so
    the clone makes no third-party request at runtime. */
@@ -56,14 +52,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a href="#main" className="lal-skip">
           Skip to content
         </a>
-        {/*
-          One canvas for the whole replica, mounted here rather than per page so
-          the backdrop cannot drift between routes: a new page gets it for free
-          and there is no way to forget it. It is position:fixed, takes no
-          layout space and ignores pointer events, so it does not disturb any
-          page's own stacking or hit-testing.
-        */}
-        <MeshDriftBackground />
         <Header />
         <main id="main">{children}</main>
         <Footer />
