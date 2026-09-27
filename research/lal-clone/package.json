@@ -9,14 +9,9 @@
     "start": "next start --port 4310",
     "typecheck": "tsc --noEmit",
     "capture": "node tools/capture.mjs",
-    "verify": "node tools/verify.mjs",
-    "verify:places": "node tools/verify-places.mjs",
-    "predev": "node tools/copy-cesium-assets.mjs && node tools/generate-crowd-sheet.mjs",
-    "prebuild": "node tools/copy-cesium-assets.mjs && node tools/generate-crowd-sheet.mjs"
+    "verify": "node tools/verify.mjs"
   },
   "dependencies": {
-    "cesium": "^1.145.0",
-    "gsap": "^3.15.0",
     "next": "15.5.26",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -27,7 +22,6 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "esbuild": "^0.28.2",
     "playwright": "^1.49.1",
     "typescript": "~5.9.3"
   }

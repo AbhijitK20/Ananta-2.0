@@ -24,13 +24,11 @@
  * ~800 writes per frame into ~140.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 
 import type { Place } from "../data/places";
 import { PLACES, REGION_ORDER } from "../data/places";
 import imageMeta from "../data/place-images.json";
 import videoMeta from "../data/place-videos.json";
-import { placeSlug, PLACES_DETAILED } from "../lib/places";
 
 type Meta = {
   id: string;
@@ -56,7 +54,13 @@ const VIDEOS = videoMeta as unknown as Record<string, VideoMeta>;
 
 /** The id both fetched data files are keyed by. Kept in one place so a new
     fetcher cannot silently disagree with this component. */
-const placeId = placeSlug;
+const placeId = (name: string) =>
+  name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
 /** Resolve a place to its image and, when one has been fetched, its video.
     Video is optional by design: posters exist for all 100 places, footage for
@@ -103,22 +107,6 @@ export function CountryFilmstrip({
   const [active, setActive] = useState(0);
   const [region, setRegion] = useState<string | null>(null);
   const [playing, setPlaying] = useState<Set<number>>(() => new Set());
-  /* Whether the tap-to-inspect panel is open. It reads the focused card rather
-     than holding its own copy of the place, so the panel can never describe
-     card 12 while card 40 is centred. */
-  const [panelOpen, setPanelOpen] = useState(false);
-
-  /* The animation loop needs to know whether the panel is open -- to stop the
-     idle drift underneath it -- but must not re-subscribe to requestAnimationFrame
-     when it changes, or the drift would restart mid-glide. A ref, mirrored
-     from the state, is the only way to hand it to the loop for free. */
-  const panelOpenRef = useRef(false);
-  const setPanel = useCallback((open: boolean) => {
-    panelOpenRef.current = open;
-    setPanelOpen(open);
-  }, []);
-
-  const detail = PLACES_DETAILED[active];
 
   // Everything the animation loop mutates lives in a ref. Putting the phase in
   // React state would re-render the whole tree on every frame.
@@ -226,17 +214,6 @@ export function CountryFilmstrip({
     [moveTo, places],
   );
 
-  /* A tap centres the card and opens the panel. Deliberately separate from
-     `onFocus`, which only centres: arrowing through the strip should browse,
-     not fire a panel open on every keypress. */
-  const inspect = useCallback(
-    (index: number) => {
-      moveTo(index);
-      setPanel(true);
-    },
-    [moveTo, setPanel],
-  );
-
   /* ------------------------------------------------------------- lifecycle -- */
 
   useEffect(() => {
@@ -294,13 +271,6 @@ export function CountryFilmstrip({
     };
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        if (panelOpenRef.current) {
-          event.preventDefault();
-          setPanel(false);
-        }
-        return;
-      }
       const forward = event.key === "ArrowRight" || event.key === "ArrowDown";
       const backward = event.key === "ArrowLeft" || event.key === "ArrowUp";
       if (!forward && !backward) return;
@@ -319,7 +289,7 @@ export function CountryFilmstrip({
       s.previous = time;
       const ease = s.reduced ? 1 : 1 - Math.pow(0.001, deltaTime / 1000);
 
-      if (!s.active && !panelOpenRef.current && time - s.lastInput > IDLE_DELAY) {
+      if (!s.active && time - s.lastInput > IDLE_DELAY) {
         const idle = time - s.lastInput - IDLE_DELAY;
         s.target = s.base + Math.sin(idle * 0.00042) * IDLE_AMPLITUDE;
       }
@@ -418,7 +388,7 @@ export function CountryFilmstrip({
       window.removeEventListener("keydown", onKey);
       onScroll?.disconnect();
     };
-  }, [count, setPanel, step]);
+  }, [count, step]);
 
   /* ----------------------------------------------------------------- view -- */
 
@@ -444,7 +414,7 @@ export function CountryFilmstrip({
             ref={(node) => {
               cardRefs.current[index] = node;
             }}
-            onClick={() => inspect(index)}
+            onClick={() => moveTo(index)}
             onFocus={() => moveTo(index)}
             aria-label={`${place.name}, ${place.country}. ${place.fromLonelyPlanet ? "Lonely Planet 2027 pick." : ""}`}
           >
@@ -519,56 +489,7 @@ export function CountryFilmstrip({
         })}
       </div>
 
-      {/*
-        Tap-to-inspect. Reads the focused card rather than holding a copy, so it
-        is impossible for it to describe a place other than the centred one.
-
-        `aria-live` because the focused card changing is otherwise only
-        visible: the strip is a spatial animation and a screen reader gets
-        nothing from it. The .fs__sr line below is the belt-and-braces version
-        for when the panel is closed.
-      */}
-      {panelOpen && detail && (
-        <div className="fs__panel" role="group" aria-live="polite" aria-label={`About ${detail.name}`}>
-          <button
-            type="button"
-            className="fs__panelclose"
-            onClick={() => setPanel(false)}
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-
-          <p className="fs__paneltop">
-            <span className="fs__paneltitle">{detail.name}</span>
-            <span className="fs__panelsub">
-              {detail.country} &middot; {detail.region}
-              {detail.fromLonelyPlanet ? " · LP 2027" : ""}
-            </span>
-          </p>
-
-          <p className="fs__panelblurb">{detail.blurb}</p>
-
-          {detail.bestFor.length > 0 && (
-            <ul className="fs__paneltags">
-              {detail.bestFor.map((tag) => (
-                <li key={tag}>{tag}</li>
-              ))}
-            </ul>
-          )}
-
-          <p className="fs__panelcta">
-            <Link href={`/places/${detail.id}`} className="fs__panellink">
-              Read more about {detail.name} &rarr;
-            </Link>
-            <Link href={`/globe?place=${detail.id}`} className="fs__panelghost">
-              On the globe
-            </Link>
-          </p>
-        </div>
-      )}
-
-      <p className="fs__hint">drag · scroll · arrow keys · tap a card to read it</p>
+      <p className="fs__hint">drag · scroll · arrow keys</p>
       <p className="fs__sr">
         Currently showing {places[active]?.name}, {places[active]?.country}, card{" "}
         {active + 1} of {count}.

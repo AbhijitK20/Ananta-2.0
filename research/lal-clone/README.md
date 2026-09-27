@@ -124,78 +124,6 @@ the point it appears in `app/globals.css`:
 
 ---
 
-## The world filmstrip
-
-`components/CountryFilmstrip.tsx` is a band of 100 famous places on a
-continuously rotating 3D strip, mounted full-bleed on the home page between the
-city picker and the promise row. It is a React port of a `character-filmstrip`
-shader bundle; the projection maths is carried over unchanged because it is what
-produces the depth, and three things around it are not.
-
-**It is not an iframe.** The source bundle renders into a sandboxed `srcdoc`
-iframe, which is right for a third-party preview and wrong here — it would put
-100 images behind an opaque origin and make focus-driven loading harder for no
-benefit.
-
-**Transform writes are culled.** Writing eight style properties on 100 nodes
-every frame is ~800 layout-affecting writes per frame and it drops frames on a
-mid-range laptop. Cards beyond `DRAW_WINDOW` keep their last transform and are
-skipped, turning ~800 writes per frame into ~140. Measured on the real page:
-15 of 100 cards are being written at any moment.
-
-**Only focused cards mount video.** 100 autoplaying drone clips is 7–11 MB
-each, so ~900 MB decoding at once, and it is unusable on a phone. Every card
-renders a compressed still; a `<video>` is mounted only inside `FOCUS_WINDOW`
-of centre and unmounted on exit. The focused card is always the one playing, so
-the rotating-footage look survives.
-
-### The data
-
-- `data/places.ts` — 100 places, 59 countries, 8 of them in India. The
-  ordering is a deliberate world tour that closes on itself: it ends in the
-  Polar region and restarts in Europe, so the wrap does not jump the Pacific
-  backwards. `query` is a Wikimedia search term, not a filename.
-- `data/place-images.json` — one record per place: downloaded path, author,
-  licence, Commons page. **Most of this imagery is CC BY-SA, which requires
-  naming the author.** The card credit is not decorative and must not be
-  removed for a cleaner card.
-- `public/places/` — the 100 images, ~8.7 MB total, ~88 KB average.
-- `data/place-videos.json` — currently `{}`. See below.
-
-### Adding video
-
-`place-videos.json` is keyed by the same id as the image file — a slug of the
-place name — and the component reads `VIDEOS[id]?.src`. Populate it and the
-focus window mounts the clip; leave it empty and the card falls back to the
-still with a slow drift so it never looks broken. The intended shape:
-
-```json
-{
-  "lisbon": {
-    "src": "/places/lisbon.mp4",
-    "provider": "pexels",
-    "licence": "Pexels licence",
-    "title": "Aerial view of the Tagus"
-  }
-}
-```
-
-No clips are committed. The only footage measured for this set was the source
-site's own video, which is not ours to license, so every clip still has to be
-sourced. Two things to know before wiring a provider in:
-
-- Ship **H.264/MP4**. That is the format Safari and iOS require, and it is the
-  only sane production choice. It cannot be verified in Playwright's bundled
-  Chromium, which ships without proprietary codecs and fails such a file with
-  `error 4` / `networkState 3` — a harness limitation, not a bug in the
-  component. Verify codec playback in a real browser, or add a VP9/WebM
-  `<source>` alongside the MP4.
-- Whatever provider is used must be free-to-use and must be recorded per clip.
-  The image pipeline is a model for this: fetch with a tool, store the licence
-  with the asset, never hotlink.
-
----
-
 ## Layout
 
 Routes: `/`, `/cities`, `/[slug]`, `/blog`, `/blog/[slug]`, `/about`,
@@ -204,12 +132,7 @@ Routes: `/`, `/cities`, `/[slug]`, `/blog`, `/blog/[slug]`, `/about`,
 - `app/globals.css` — the whole design system: tokens, primitives, the
   responsive layer, and the font-mode switch. One file, because a design system
   split across files is a design system nobody can hold in their head.
-- `app/interior.css` — the directory and editorial interior system.
-- `app/filmstrip.css` — the world filmstrip, isolated because it is the only
-  band that is genuinely full-bleed and the only one not built from
-  `.lal-box`.
-- `components/` — `Header`, `Footer`, `Hero`, `CityPicker`, `Sections`,
-  `CountryFilmstrip`, `Interior`.
+- `components/` — `Header`, `Footer`, `Hero`, `CityPicker`, `Sections`.
 - `lib/data.ts` — cities, tips and copy.
 - `public/` — the site's images, downloaded rather than hotlinked.
 
@@ -219,29 +142,11 @@ declarations they came from.
 
 ## Known gaps
 
-- **No filmstrip footage yet.** The architecture and the mount/unmount window
-  are done and verified; `data/place-videos.json` is empty because no
-  free-licensed clip has been sourced. See "Adding video" above.
-- **The three container-box edges at 1440** (see above). The filmstrip does not
-  change this — it is an insertion between two existing bands, so it shifts
-  everything below it down without altering their internal geometry.
+- The three container-box edges at 1440 (see above).
 - The mobile nav is `display: none` behind its toggle; the original keeps the
   panel off-canvas at `x: 420`. Same result, different mechanism, so the
   off-canvas panel measures as 0×0 here.
 - The 1px header rounding at ≤1024, inherited by everything below it.
 - Interior pages were built from the same design system and the captured
   screenshots, not measured element-by-element. The home page is the one that
-  was verified to zero. `/cities` is now also exact at 1440; `/about`,
-  `/contact`, `/partners` and `/lisbon` have exact h1s but unfinished lede and
-  section spacing, and `/blog` and `/social-impact` are unmeasured.
-- `/social-impact`'s category and country inputs render but are not wired to
-  anything — the `DirectoryFilter` has no `useState`, so they do not filter yet.
-- **A concurrent agent is working in this repo** (it also runs a dev server on
-  port 4330) and has been committing shared files. `components/WorldGlobe.tsx`
-  is its work, not this task's: it is untracked, imported by nothing, and its
-  two react-globe typing errors at line 177 **fail `next build` for the whole
-  clone**. They need fixing before the build is green again.
-- **Do not run `next build` while `next dev` is up.** They share `.next/`, and
-  the build clobbers the dev server's chunks, which fails at runtime with
-  `Cannot find module './vendor-chunks/@swc.js'`. Stop the dev server first, or
-  the corruption has to be cleared with `rm -rf .next`.
+  was verified to zero.

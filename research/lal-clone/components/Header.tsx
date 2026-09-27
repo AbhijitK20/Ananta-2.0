@@ -43,7 +43,7 @@ export function Header() {
 
           <span className="lal-cta-wrap">
             <Link href="/cities" className="lal-cta">
-              Explore Places
+              Explore Guides
             </Link>
           </span>
         </div>
