@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+import { NativeShell } from "../components/NativeShell";
 
 import "./globals.css";
 import "./interior.css";
@@ -35,6 +36,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Lets the page extend into the display cutout and the home-indicator area,
+  // which is the only way `env(safe-area-inset-*)` reports anything but 0. The
+  // --lal-safe-* tokens in globals.css feed back into body, .lal-header and
+  // .lal-footer so they grow to clear those regions. In a browser this resolves
+  // to 0 and changes nothing, so it needs no desktop counterpart.
+  viewportFit: "cover",
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#ffffff" }],
 };
 
 /** Set LAL_FONTS=system to reproduce the live site's own rendering. See the
@@ -52,6 +60,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a href="#main" className="lal-skip">
           Skip to content
         </a>
+        {/*
+          Native shell wiring: launch-screen dismissal, status-bar theming,
+          hardware back, push registration. Renders nothing and is inert in a
+          browser, but it lives here rather than in a page so a new route cannot
+          forget it.
+        */}
+        <NativeShell />
         <Header />
         <main id="main">{children}</main>
         <Footer />

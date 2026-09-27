@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext (plain HTTP) is denied by default. Only the hosts listed in
+  <domain-config> may be reached over HTTP.
+
+  Why not `android:usesCleartextTraffic="true"`: that is a blanket permission for
+  every request the app makes. A development server on the LAN is the only thing
+  that legitimately needs plain HTTP here, and scoping it to that host means a
+  misconfigured release build fails closed instead of silently sending traffic in
+  the clear.
+
+  The LAN entry is rewritten by tools/cap-sync.mjs on every sync, because the
+  address comes from DHCP and a stale one here shows up as a blank app with no
+  error. `npm run cap:sync` regenerates it.
+
+  `10.0.2.2` is the host machine as seen from the Android emulator. `localhost`
+  and `127.0.0.1` cover Capacitor's own local scheme.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

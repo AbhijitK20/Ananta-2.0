@@ -1,0 +1,150 @@
+# Push a web update to installed apps when the Vercel production deploy finishes.
+#
+# THE PIPELINE
+# ------------
+#   git push  ->  Vercel builds and deploys  ->  deploy hook fires this workflow
+#              ->  static export + zip       ->  Capgo
+#              ->  the app checks on its next foreground and downloads it
+#
+# So a change to copy, an image, a city guide or a style lands in the app without
+# an app store submission. That is the difference this file buys: store review
+# takes hours to days, this takes about a minute.
+#
+# WHAT DOES *NOT* GO THROUGH HERE
+# -------------------------------
+# Anything native — adding a Capacitor plugin, changing permissions, editing
+# Kotlin/Java, changing the app icon — lives in the APK and still needs a store
+# release. An over-the-air bundle only carries HTML, CSS and JavaScript. Shipping
+# a native change through this workflow would produce an app whose binary and
+# whose bundle disagree, which is the failure mode this file is not for.
+#
+# PREREQUISITES (both are one-time, manual, and outside this file)
+#   1. A Capgo Cloud account and an API key.
+#   2. The app registered on Capgo, and a `production` channel:
+#        npx @capgo/cli@latest login <API_KEY>
+#        npx @capgo/cli@latest add
+#        npx @capgo/cli@latest channel set production public
+#      which writes CAPGO_APP_ID and CAPGO_APP_KEY into package.json.
+#   3. A Vercel deploy hook on the Production branch:
+#        Vercel dashboard -> Project -> Settings -> Git -> Deploy Hooks
+#      pointed at this workflow's `repository_dispatch`, below.
+name: Ship web update to apps
+
+on:
+  # Fired by the Vercel deploy hook. `deploy_status: SUCCESS` means the build
+  # actually produced a deployment, so a failed Vercel build does not push a
+  # bundle of half-broken assets to every device.
+  repository_dispatch:
+    types: [vercel-production-deploy]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build and upload nothing, just prove the pipeline works'
+        type: boolean
+        default: false
+
+concurrency:
+  group: web-update
+  # Serialise rather than cancel: two deploys close together must not interleave,
+  # or a device can end up on the older of the two bundles.
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: research/lal-clone
+
+jobs:
+  ship:
+    # Skipped on a dry run so the expensive build still proves itself.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: research/lal-clone/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Check the Capgo credentials are present
+        id: creds
+        run: |
+          set -euo pipefail
+          # Read from package.json, which is where `capgo add` writes them.
+          APP_ID=$(node -p "require('./package.json').capacitor?.appId ?? ''")
+          APP_KEY=$(node -p "require('./package.json').capacitor?.appKey ?? ''")
+          if [ -z "$APP_ID" ] || [ -z "$APP_KEY" ]; then
+            echo "::error::capacitor.appId / appKey are not set in package.json."
+            echo "Run: npx @capgo/cli@latest login <API_KEY> && npx @capgo/cli@latest add"
+            exit 1
+          fi
+          echo "Found Capgo credentials for $APP_ID"
+          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Install
+        run: npm ci
+
+      - name: Static export
+        # The export is what becomes the update bundle. `LAL_STATIC_EXPORT` makes
+        # next.config.mjs emit `out/` instead of a server build; the site is
+        # fully static today, which is the only reason this is possible at all.
+        run: npm run build:mobile
+        env:
+          LAL_STATIC_EXPORT: '1'
+
+      - name: Sync the native project
+        run: npx cap sync android
+        env:
+          CAP_SERVER_URL: ''
+
+      - name: Build the update bundle
+        # `--delta` uploads only the files that changed since the last bundle,
+        # which is the difference between a 36MB download and a few hundred KB.
+        if: ${{ !inputs.dry_run }}
+        run: npx @capgo/cli@latest bundle upload --delta --channel production --auto-min-update
+        env:
+          CAPGO_TOKEN: ${{ secrets.CAPGO_API_KEY }}
+
+      - name: Report
+        if: always()
+        run: |
+          {
+            echo "### Web update"
+            echo
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "Dry run: the static export and native sync both succeeded. No bundle was uploaded."
+            else
+              echo "Bundle uploaded to the \`production\` channel. Installed apps pick it up"
+              echo 'on their next foreground — no store submission needed.'
+              echo
+              echo "If an app misbehaves after this, Capgo rolls the bundle back"
+              echo 'automatically; the native binary is never touched.'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+# ---------------------------------------------------------------------------
+# HOW TO WIRE THE VERCEL HOOK
+# ---------------------------
+# In Vercel: Project -> Settings -> Git -> Deploy Hooks -> Add
+#
+#   Name:      ship-web-update-to-apps
+#   Branch:    main            (production only)
+#   Payload:   {"repository_dispatch": {"types": ["vercel-production-deploy"]}}
+#
+# The payload field is what turns a plain POST into a `repository_dispatch` event,
+# which is what the trigger above listens for. A bare webhook would not match.
+#
+# Use the Vercel CLI if you would rather not paste JSON:
+#   vercel deploy-hook add main \
+#     --name ship-web-update-to-apps \
+#     --payload '{"repository_dispatch":{"types":["vercel-production-deploy"]}}'
+#
+# Verify the whole loop from a cold start: launch the app once, push a copy
+# change, wait for this workflow to go green, background the app and bring it
+# back. The change should be there.
+# ---------------------------------------------------------------------------

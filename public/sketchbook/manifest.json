@@ -1,0 +1,1006 @@
+{
+ "generated": "from research/lal-clone/data/place-images.json (Wikimedia Commons)",
+ "note": "Every plate is a Creative Commons or public-domain photograph. Attribution travels with each entry and is rendered on the plate's own page.",
+ "pages": [
+  {
+   "id": "cairo",
+   "title": "Cairo",
+   "place": "Africa",
+   "country": "Egypt",
+   "licence": "CC BY-SA 2.0",
+   "author": "Ricardo Liberato",
+   "source": "https://commons.wikimedia.org/wiki/File:All_Gizah_Pyramids.jpg",
+   "file": "plates/cairo.jpg"
+  },
+  {
+   "id": "cape-town",
+   "title": "Cape Town",
+   "place": "Africa",
+   "country": "South Africa",
+   "licence": "CC BY-SA 4.0",
+   "author": "Dietmar Rabich",
+   "source": "https://commons.wikimedia.org/wiki/File:Cape_Town_(ZA),_Table_Mountain_--_2024_--_2825.jpg",
+   "file": "plates/cape-town.jpg"
+  },
+  {
+   "id": "gombe-national-park",
+   "title": "Gombe National Park",
+   "place": "Africa",
+   "country": "Tanzania",
+   "licence": "CC BY-SA 2.0",
+   "author": "Roland",
+   "source": "https://commons.wikimedia.org/wiki/File:Eastern_chimpanzee.jpg",
+   "file": "plates/gombe-national-park.jpg"
+  },
+  {
+   "id": "marrakech",
+   "title": "Marrakech",
+   "place": "Africa",
+   "country": "Morocco",
+   "licence": "CC BY 4.0",
+   "author": "Jakub Hałun",
+   "source": "https://commons.wikimedia.org/wiki/File:Kutubiyya_Mosque,_Marrakesh,_Morocco,_20250124_1834_7027.jpg",
+   "file": "plates/marrakech.jpg"
+  },
+  {
+   "id": "rabat",
+   "title": "Rabat",
+   "place": "Africa",
+   "country": "Morocco",
+   "licence": "CC BY-SA 4.0",
+   "author": "Petar Milošević",
+   "source": "https://commons.wikimedia.org/wiki/File:Bab_al_Soufara,_Remparts_of_Almohad,_Rabat_(%D8%A8%D8%A7%D8%A8_%D8%A7%D9%84%D8%B3%D9%81%D8%B1%D8%A7%D8%A1%D8%8C_%D8%A8%D8%A7%D8%A8_%D8%A7%D9%84%D8%B3%D9%81%D8%A7%D8%B1%D8%A9_-_%D8%A7%D9%84%D8%B1%D8%A8%D8%A7%D8%B7).jpg",
+   "file": "plates/rabat.jpg"
+  },
+  {
+   "id": "sao-tome",
+   "title": "São Tomé",
+   "place": "Africa",
+   "country": "São Tomé & Príncipe",
+   "licence": "CC BY-SA 3.0",
+   "author": "Bdickerson",
+   "source": "https://commons.wikimedia.org/wiki/File:Sao_Tome_%26_Principe,_fishermen%27s_beach_launch_area.jpg",
+   "file": "plates/sao-tome.jpg"
+  },
+  {
+   "id": "tsavo-national-parks",
+   "title": "Tsavo National Parks",
+   "place": "Africa",
+   "country": "Kenya",
+   "licence": "CC BY-SA 4.0",
+   "author": "Byrdyak",
+   "source": "https://commons.wikimedia.org/wiki/File:Leopard_on_mount_in_Tsavo_East_National_Park.jpg",
+   "file": "plates/tsavo-national-parks.jpg"
+  },
+  {
+   "id": "victoria-falls",
+   "title": "Victoria Falls",
+   "place": "Africa",
+   "country": "Zimbabwe",
+   "licence": "CC BY-SA 4.0",
+   "author": "Matti Blume",
+   "source": "https://commons.wikimedia.org/wiki/File:Mosi-oa-Tunya,_Livingstone_(20260519-P1075699).jpg",
+   "file": "plates/victoria-falls.jpg"
+  },
+  {
+   "id": "alaska",
+   "title": "Alaska",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC BY 4.0",
+   "author": "OKJaguar",
+   "source": "https://commons.wikimedia.org/wiki/File:Holgate_Glacier,_Kenai_Fjords_NP,_Alaska.jpg",
+   "file": "plates/alaska.jpg"
+  },
+  {
+   "id": "amazon-rainforest",
+   "title": "Amazon Rainforest",
+   "place": "Americas",
+   "country": "Brazil",
+   "licence": "CC BY-SA 2.0",
+   "author": "lubasi",
+   "source": "https://commons.wikimedia.org/wiki/File:Aerial_view_of_the_Amazon_Rainforest.jpg",
+   "file": "plates/amazon-rainforest.jpg"
+  },
+  {
+   "id": "bariloche",
+   "title": "Bariloche",
+   "place": "Americas",
+   "country": "Argentina",
+   "licence": "CC BY-SA 4.0",
+   "author": "Kinkojim",
+   "source": "https://commons.wikimedia.org/wiki/File:San_Carlos_de_Bariloche_February_2022.jpg",
+   "file": "plates/bariloche.jpg"
+  },
+  {
+   "id": "bocas-del-toro",
+   "title": "Bocas del Toro",
+   "place": "Americas",
+   "country": "Panama",
+   "licence": "CC BY 3.0",
+   "author": "Dronepicr",
+   "source": "https://commons.wikimedia.org/wiki/File:Bocas_del_Toro_Panama.jpg",
+   "file": "plates/bocas-del-toro.jpg"
+  },
+  {
+   "id": "buenos-aires",
+   "title": "Buenos Aires",
+   "place": "Americas",
+   "country": "Argentina",
+   "licence": "CC BY 2.0",
+   "author": "David Berkowitz from New York, NY, USA",
+   "source": "https://commons.wikimedia.org/wiki/File:Obelisk_of_Buenos_Aires_(Obelisco_de_Buenos_Aires_-_Buenos_Aires_Argentina_(5269820034).jpg",
+   "file": "plates/buenos-aires.jpg"
+  },
+  {
+   "id": "cartagena",
+   "title": "Cartagena",
+   "place": "Americas",
+   "country": "Colombia",
+   "licence": "CC BY-SA 2.0",
+   "author": "Igvir Ramirez",
+   "source": "https://commons.wikimedia.org/wiki/File:Sunset-cartagena-tower-dewired.jpg",
+   "file": "plates/cartagena.jpg"
+  },
+  {
+   "id": "galapagos-islands",
+   "title": "Galápagos Islands",
+   "place": "Americas",
+   "country": "Ecuador",
+   "licence": "CC BY-SA 4.0",
+   "author": "Diego Delso",
+   "source": "https://commons.wikimedia.org/wiki/File:Paisaje_de_isla_Santa_Cruz,_islas_Gal%C3%A1pagos,_Ecuador,_2015-07-26,_DD_71.JPG",
+   "file": "plates/galapagos-islands.jpg"
+  },
+  {
+   "id": "havana",
+   "title": "Havana",
+   "place": "Americas",
+   "country": "Cuba",
+   "licence": "CC BY-SA 4.0",
+   "author": "Ezarate This is a retouched picture, which means that it has been digitally altered from its original version. Modifications: rebuild from raw fixing light compensation in shadows and lights, White balance, tonemaping balance, fix lens distortion, fix vertical distortions, remove dust spots, noise reduction and chromatic aberration fix, cut element distracting and remove oil spot and finally export in full jpeg quality by The Photographer 13:39, 12 February 2017 (UTC).",
+   "source": "https://commons.wikimedia.org/wiki/File:AvMalecon-LaHabanaCuba-04735.jpg",
+   "file": "plates/havana.jpg"
+  },
+  {
+   "id": "leon",
+   "title": "León",
+   "place": "Americas",
+   "country": "Nicaragua",
+   "licence": "CC BY-SA 4.0",
+   "author": "Byralaal",
+   "source": "https://commons.wikimedia.org/wiki/File:Leon_Cathedral_2018.jpg",
+   "file": "plates/leon.jpg"
+  },
+  {
+   "id": "machu-picchu",
+   "title": "Machu Picchu",
+   "place": "Americas",
+   "country": "Peru",
+   "licence": "CC BY-SA 4.0",
+   "author": "Diego Delso",
+   "source": "https://commons.wikimedia.org/wiki/File:Machu_Picchu,_Per%C3%BA,_2015-07-30,_DD_47.JPG",
+   "file": "plates/machu-picchu.jpg"
+  },
+  {
+   "id": "maryland",
+   "title": "Maryland",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC BY-SA 3.0",
+   "author": "Martin Falbisoner",
+   "source": "https://commons.wikimedia.org/wiki/File:Maryland_State_House_from_College_Ave.JPG",
+   "file": "plates/maryland.jpg"
+  },
+  {
+   "id": "miami",
+   "title": "Miami",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "Public domain",
+   "author": "Daniel Christensen",
+   "source": "https://commons.wikimedia.org/wiki/File:Brickell_skyline_2012.jpg",
+   "file": "plates/miami.jpg"
+  },
+  {
+   "id": "monteverde",
+   "title": "Monteverde",
+   "place": "Americas",
+   "country": "Costa Rica",
+   "licence": "CC BY-SA 4.0",
+   "author": "Cephas",
+   "source": "https://commons.wikimedia.org/wiki/File:Monteverde_Reserve_Costa_Rica_02.jpg",
+   "file": "plates/monteverde.jpg"
+  },
+  {
+   "id": "montserrat",
+   "title": "Montserrat",
+   "place": "Americas",
+   "country": "United Kingdom",
+   "licence": "CC BY-SA 4.0",
+   "author": "Txllxt TxllxT",
+   "source": "https://commons.wikimedia.org/wiki/File:Montserrat_-_Santa_Maria_de_Montserrat_-_Monestir_de_Montserrat_-_View_SSE.jpg",
+   "file": "plates/montserrat.jpg"
+  },
+  {
+   "id": "new-mexico",
+   "title": "New Mexico",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC0",
+   "author": "Marsden Hartley",
+   "source": "https://commons.wikimedia.org/wiki/File:Landscape,_New_Mexico_MET_DP236115.jpg",
+   "file": "plates/new-mexico.jpg"
+  },
+  {
+   "id": "new-york",
+   "title": "New York",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC BY-SA 4.0",
+   "author": "King of Hearts",
+   "source": "https://commons.wikimedia.org/wiki/File:Lower_Manhattan_from_Jersey_City_September_2020_panorama.jpg",
+   "file": "plates/new-york.jpg"
+  },
+  {
+   "id": "northeastern-minnesota",
+   "title": "Northeastern Minnesota",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC0",
+   "author": "dan carlson dan_carl5on",
+   "source": "https://commons.wikimedia.org/wiki/File:Dark_sunset_over_Boundary_Waters_(Unsplash).jpg",
+   "file": "plates/northeastern-minnesota.jpg"
+  },
+  {
+   "id": "prince-edward-island",
+   "title": "Prince Edward Island",
+   "place": "Americas",
+   "country": "Canada",
+   "licence": "CC BY-SA 4.0",
+   "author": "Gordon Leggett",
+   "source": "https://commons.wikimedia.org/wiki/File:2021-08-23_Montague_Harbor,_Prince_Edwards_Island,_Canada.jpg",
+   "file": "plates/prince-edward-island.jpg"
+  },
+  {
+   "id": "quebec",
+   "title": "Québec",
+   "place": "Americas",
+   "country": "Canada",
+   "licence": "CC BY-SA 4.0",
+   "author": "Pierre André",
+   "source": "https://commons.wikimedia.org/wiki/File:Quebec-City_Corridor_du_Littoral_(1).JPG",
+   "file": "plates/quebec.jpg"
+  },
+  {
+   "id": "redwoods-parks",
+   "title": "Redwoods Parks",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC BY-SA 4.0",
+   "author": "W. Bulach",
+   "source": "https://commons.wikimedia.org/wiki/File:Hidden_Beach,_a_beach_in_Redwood_National_Park.jpg",
+   "file": "plates/redwoods-parks.jpg"
+  },
+  {
+   "id": "rio-de-janeiro",
+   "title": "Rio de Janeiro",
+   "place": "Americas",
+   "country": "Brazil",
+   "licence": "CC BY-SA 4.0",
+   "author": "Donatas Dabravolskas",
+   "source": "https://commons.wikimedia.org/wiki/File:Unique_Moment_with_the_Moon_and_Christ_the_Redeemer_3.jpg",
+   "file": "plates/rio-de-janeiro.jpg"
+  },
+  {
+   "id": "rose-island",
+   "title": "Rose Island",
+   "place": "Americas",
+   "country": "United States",
+   "licence": "CC BY-SA 3.0",
+   "author": "Kenneth C. Zirkel",
+   "source": "https://commons.wikimedia.org/wiki/File:Rose_Island_Lighthouse_viewed_from_Rose_Island_2006.jpg",
+   "file": "plates/rose-island.jpg"
+  },
+  {
+   "id": "salar-de-uyuni",
+   "title": "Salar de Uyuni",
+   "place": "Americas",
+   "country": "Bolivia",
+   "licence": "CC BY-SA 2.5",
+   "author": "Luca Galuzzi (Lucag), edit by Trialsanderrors",
+   "source": "https://commons.wikimedia.org/wiki/File:Piles_of_Salt_Salar_de_Uyuni_Bolivia_Luca_Galuzzi_2006_a.jpg",
+   "file": "plates/salar-de-uyuni.jpg"
+  },
+  {
+   "id": "torres-del-paine",
+   "title": "Torres del Paine",
+   "place": "Americas",
+   "country": "Chile",
+   "licence": "CC BY-SA 2.0",
+   "author": "Pedro Szekely from Los Angeles, USA",
+   "source": "https://commons.wikimedia.org/wiki/File:Cuernos_del_Paine_in_Torres_del_Paine_National_Park.jpg",
+   "file": "plates/torres-del-paine.jpg"
+  },
+  {
+   "id": "valle-de-guadalupe",
+   "title": "Valle de Guadalupe",
+   "place": "Americas",
+   "country": "Mexico",
+   "licence": "CC BY-SA 2.0",
+   "author": "Adam Jones from Kelowna, BC, Canada",
+   "source": "https://commons.wikimedia.org/wiki/File:Valle_de_Guadalupe_-_Wine_Country_-_Outside_Ensenada,_BC_-_Mexico_-_01_(6778873634).jpg",
+   "file": "plates/valle-de-guadalupe.jpg"
+  },
+  {
+   "id": "astana",
+   "title": "Astana",
+   "place": "Asia",
+   "country": "Kazakhstan",
+   "licence": "CC BY 3.0",
+   "author": "советник советник",
+   "source": "https://commons.wikimedia.org/wiki/File:Astana_020000,_Kazakhstan_-_panoramio_(13).jpg",
+   "file": "plates/astana.jpg"
+  },
+  {
+   "id": "bali",
+   "title": "Bali",
+   "place": "Asia",
+   "country": "Indonesia",
+   "licence": "CC BY 4.0",
+   "author": "Vyacheslav Argenberg",
+   "source": "https://commons.wikimedia.org/wiki/File:Rice_terraces,_Bali.jpg",
+   "file": "plates/bali.jpg"
+  },
+  {
+   "id": "bangkok",
+   "title": "Bangkok",
+   "place": "Asia",
+   "country": "Thailand",
+   "licence": "CC BY-SA 3.0",
+   "author": "Diego Delso",
+   "source": "https://commons.wikimedia.org/wiki/File:Wat_Pho,_Bangkok,_Tailandia,_2013-08-22,_DD_37.jpg",
+   "file": "plates/bangkok.jpg"
+  },
+  {
+   "id": "batang-ai-national-park",
+   "title": "Batang Ai National Park",
+   "place": "Asia",
+   "country": "Malaysia",
+   "licence": "CC BY 4.0",
+   "author": "Song GK",
+   "source": "https://commons.wikimedia.org/wiki/File:Batang_Ai_National_Park_Lake.jpg",
+   "file": "plates/batang-ai-national-park.jpg"
+  },
+  {
+   "id": "chengdu",
+   "title": "Chengdu",
+   "place": "Asia",
+   "country": "China",
+   "licence": "CC0",
+   "author": "Daderot",
+   "source": "https://commons.wikimedia.org/wiki/File:Jinli_Street_-_Chengdu,_China_-_DSC05404.jpg",
+   "file": "plates/chengdu.jpg"
+  },
+  {
+   "id": "danang",
+   "title": "Danang",
+   "place": "Asia",
+   "country": "Vietnam",
+   "licence": "CC BY-SA 3.0",
+   "author": "CEphoto, Uwe Aranas",
+   "source": "https://commons.wikimedia.org/wiki/File:Da-Nang_Vietnam_Coracles-01.jpg",
+   "file": "plates/danang.jpg"
+  },
+  {
+   "id": "darjeeling",
+   "title": "Darjeeling",
+   "place": "Asia",
+   "country": "India",
+   "licence": "CC BY-SA 4.0",
+   "author": "Syed Sajidul Islam",
+   "source": "https://commons.wikimedia.org/wiki/File:Darjeeling_Himalayan_Railway,toy_train_(2).jpg",
+   "file": "plates/darjeeling.jpg"
+  },
+  {
+   "id": "fulidhoo",
+   "title": "Fulidhoo",
+   "place": "Asia",
+   "country": "Maldives",
+   "licence": "CC BY-SA 4.0",
+   "author": "Dr. Ondřej Havelka (cestovatel)",
+   "source": "https://commons.wikimedia.org/wiki/File:Aerial_shot_of_a_small_island_on_a_coral_reef_in_the_Maldives.jpg",
+   "file": "plates/fulidhoo.jpg"
+  },
+  {
+   "id": "goa",
+   "title": "Goa",
+   "place": "Asia",
+   "country": "India",
+   "licence": "CC BY 4.0",
+   "author": "Original: Vyacheslav Argenberg Derivative work: UnpetitproleX",
+   "source": "https://commons.wikimedia.org/wiki/File:Mandrem_Beach_and_Mandrem_River,_Mandrem,_Goa,_India_(edit).jpg",
+   "file": "plates/goa.jpg"
+  },
+  {
+   "id": "great-wall",
+   "title": "Great Wall",
+   "place": "Asia",
+   "country": "China",
+   "licence": "CC0",
+   "author": "Velatrix",
+   "source": "https://commons.wikimedia.org/wiki/File:Great_Wall_of_China_July_2006.JPG",
+   "file": "plates/great-wall.jpg"
+  },
+  {
+   "id": "gujarat",
+   "title": "Gujarat",
+   "place": "Asia",
+   "country": "India",
+   "licence": "GODL-India",
+   "author": "Prime Minister's Office",
+   "source": "https://commons.wikimedia.org/wiki/File:Shree_Somnath_Temple.jpg",
+   "file": "plates/gujarat.jpg"
+  },
+  {
+   "id": "hanoi",
+   "title": "Hanoi",
+   "place": "Asia",
+   "country": "Vietnam",
+   "licence": "CC BY 2.0",
+   "author": "Richard Mortel from Riyadh, Saudi Arabia",
+   "source": "https://commons.wikimedia.org/wiki/File:Old_Quarter_street_scene,_Hanoi_(1)_(38464672752).jpg",
+   "file": "plates/hanoi.jpg"
+  },
+  {
+   "id": "jaipur",
+   "title": "Jaipur",
+   "place": "Asia",
+   "country": "India",
+   "licence": "FAL",
+   "author": "A.Savin",
+   "source": "https://commons.wikimedia.org/wiki/File:Jaipur_03-2016_02_Amber_Fort.jpg",
+   "file": "plates/jaipur.jpg"
+  },
+  {
+   "id": "kerala-backwaters",
+   "title": "Kerala Backwaters",
+   "place": "Asia",
+   "country": "India",
+   "licence": "CC BY 4.0",
+   "author": "Vyacheslav Argenberg",
+   "source": "https://commons.wikimedia.org/wiki/File:Kerala_backwaters,_Houseboats,_India.jpg",
+   "file": "plates/kerala-backwaters.jpg"
+  },
+  {
+   "id": "kyoto",
+   "title": "Kyoto",
+   "place": "Asia",
+   "country": "Japan",
+   "licence": "CC BY-SA 4.0",
+   "author": "Martin Falbisoner",
+   "source": "https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-01.jpg",
+   "file": "plates/kyoto.jpg"
+  },
+  {
+   "id": "okinawa",
+   "title": "Okinawa",
+   "place": "Asia",
+   "country": "Japan",
+   "licence": "CC BY-SA 4.0",
+   "author": "Kugel~commonswiki",
+   "source": "https://commons.wikimedia.org/wiki/File:Yonezaki_Coast_at_Iheya_Island_202603.jpg",
+   "file": "plates/okinawa.jpg"
+  },
+  {
+   "id": "ranthambore",
+   "title": "Ranthambore",
+   "place": "Asia",
+   "country": "India",
+   "licence": "Public domain",
+   "author": "Anishshah19",
+   "source": "https://commons.wikimedia.org/wiki/File:Ranthambore_Fort_Jain_Temple_Entrance.jpg",
+   "file": "plates/ranthambore.jpg"
+  },
+  {
+   "id": "seoul",
+   "title": "Seoul",
+   "place": "Asia",
+   "country": "South Korea",
+   "licence": "CC BY-SA 4.0",
+   "author": "Frank Schulenburg",
+   "source": "https://commons.wikimedia.org/wiki/File:Gyeonghoeru_(Royal_Banquet_Hall)_at_Gyeongbokgung_Palace,_Seoul.jpg",
+   "file": "plates/seoul.jpg"
+  },
+  {
+   "id": "singapore",
+   "title": "Singapore",
+   "place": "Asia",
+   "country": "Singapore",
+   "licence": "CC BY-SA 4.0",
+   "author": "chensiyuan",
+   "source": "https://commons.wikimedia.org/wiki/File:1_singapore_national_day_parade_2011_fireworks.jpg",
+   "file": "plates/singapore.jpg"
+  },
+  {
+   "id": "taiwan",
+   "title": "Taiwan",
+   "place": "Asia",
+   "country": "Taiwan",
+   "licence": "CC BY-SA 3.0",
+   "author": "AngMoKio",
+   "source": "https://commons.wikimedia.org/wiki/File:Taichung_2013_nightmarket_2_amk.jpg",
+   "file": "plates/taiwan.jpg"
+  },
+  {
+   "id": "taj-mahal",
+   "title": "Taj Mahal",
+   "place": "Asia",
+   "country": "India",
+   "licence": "CC BY-SA 4.0",
+   "author": "Yann; edited by King of Hearts",
+   "source": "https://commons.wikimedia.org/wiki/File:Taj_Mahal,_Agra,_India_edit2.jpg",
+   "file": "plates/taj-mahal.jpg"
+  },
+  {
+   "id": "tokyo",
+   "title": "Tokyo",
+   "place": "Asia",
+   "country": "Japan",
+   "licence": "CC BY-SA 2.0",
+   "author": "Benh LIEU SONG (Flickr)",
+   "source": "https://commons.wikimedia.org/wiki/File:Tokyo_Shibuya_Scramble_Crossing_2018-10-09.jpg",
+   "file": "plates/tokyo.jpg"
+  },
+  {
+   "id": "tohoku",
+   "title": "Tōhoku",
+   "place": "Asia",
+   "country": "Japan",
+   "licence": "CC BY-SA 3.0",
+   "author": "Cp9asngf",
+   "source": "https://commons.wikimedia.org/wiki/File:2011_T%C5%8Dhoku_earthquake_and_tsunami_damage_Iwaki,_Fukushima_2.JPG",
+   "file": "plates/tohoku.jpg"
+  },
+  {
+   "id": "varanasi",
+   "title": "Varanasi",
+   "place": "Asia",
+   "country": "India",
+   "licence": "CC BY-SA 3.0",
+   "author": "Marcin Białek",
+   "source": "https://commons.wikimedia.org/wiki/File:Varanasi_Munshi_Ghat3.jpg",
+   "file": "plates/varanasi.jpg"
+  },
+  {
+   "id": "aegean-sea",
+   "title": "Aegean Sea",
+   "place": "Europe",
+   "country": "Greece",
+   "licence": "CC BY-SA 4.0",
+   "author": "Dietmar Rabich",
+   "source": "https://commons.wikimedia.org/wiki/File:Santorin_(GR),_Exomytis,_Vlychada_Beach_--_2017_--_2999_(bw).jpg",
+   "file": "plates/aegean-sea.jpg"
+  },
+  {
+   "id": "aeolian-islands",
+   "title": "Aeolian Islands",
+   "place": "Europe",
+   "country": "Italy",
+   "licence": "CC BY-SA 4.0",
+   "author": "Tartaruga86",
+   "source": "https://commons.wikimedia.org/wiki/File:Sunset_in_Aeolian_Islands.jpg",
+   "file": "plates/aeolian-islands.jpg"
+  },
+  {
+   "id": "amsterdam",
+   "title": "Amsterdam",
+   "place": "Europe",
+   "country": "Netherlands",
+   "licence": "CC BY 2.5",
+   "author": "Diliff",
+   "source": "https://commons.wikimedia.org/wiki/File:Amsterdam_Canals_-_July_2006.jpg",
+   "file": "plates/amsterdam.jpg"
+  },
+  {
+   "id": "athens",
+   "title": "Athens",
+   "place": "Europe",
+   "country": "Greece",
+   "licence": "CC BY-SA 3.0",
+   "author": "A.Savin",
+   "source": "https://commons.wikimedia.org/wiki/File:Attica_06-13_Athens_50_View_from_Philopappos_-_Acropolis_Hill.jpg",
+   "file": "plates/athens.jpg"
+  },
+  {
+   "id": "barcelona",
+   "title": "Barcelona",
+   "place": "Europe",
+   "country": "Spain",
+   "licence": "CC BY-SA 4.0",
+   "author": "Alvesgaspar",
+   "source": "https://commons.wikimedia.org/wiki/File:Sagrada_Familia_March_2015-10a.jpg",
+   "file": "plates/barcelona.jpg"
+  },
+  {
+   "id": "berlin",
+   "title": "Berlin",
+   "place": "Europe",
+   "country": "Germany",
+   "licence": "CC BY-SA 2.5",
+   "author": "א (Aleph) Creator: Johann Gottfried Schadow",
+   "source": "https://commons.wikimedia.org/wiki/File:Brandenburg_Gate_Quadriga_at_Night.jpg",
+   "file": "plates/berlin.jpg"
+  },
+  {
+   "id": "bruges",
+   "title": "Bruges",
+   "place": "Europe",
+   "country": "Belgium",
+   "licence": "CC BY-SA 4.0",
+   "author": "Dietmar Rabich",
+   "source": "https://commons.wikimedia.org/wiki/File:Br%C3%BCgge_(B),_Groenerei_--_2018_--_8493-7.jpg",
+   "file": "plates/bruges.jpg"
+  },
+  {
+   "id": "budapest",
+   "title": "Budapest",
+   "place": "Europe",
+   "country": "Hungary",
+   "licence": "CC BY-SA 3.0",
+   "author": "Dirk Beyer",
+   "source": "https://commons.wikimedia.org/wiki/File:Budapest_Parliament_4604.JPG",
+   "file": "plates/budapest.jpg"
+  },
+  {
+   "id": "dessau",
+   "title": "Dessau",
+   "place": "Europe",
+   "country": "Germany",
+   "licence": "FAL",
+   "author": "A.Savin",
+   "source": "https://commons.wikimedia.org/wiki/File:Dessau_Bauhaus-Geb%C3%A4ude_asv2024-06_img1.jpg",
+   "file": "plates/dessau.jpg"
+  },
+  {
+   "id": "dublin",
+   "title": "Dublin",
+   "place": "Europe",
+   "country": "Ireland",
+   "licence": "CC BY-SA 4.0",
+   "author": "Diliff",
+   "source": "https://commons.wikimedia.org/wiki/File:Long_Room_Interior,_Trinity_College_Dublin,_Ireland_-_Diliff.jpg",
+   "file": "plates/dublin.jpg"
+  },
+  {
+   "id": "dubrovnik",
+   "title": "Dubrovnik",
+   "place": "Europe",
+   "country": "Croatia",
+   "licence": "CC BY-SA 4.0",
+   "author": "kallerna",
+   "source": "https://commons.wikimedia.org/wiki/File:Dubrovnik_Old_Town_1.jpg",
+   "file": "plates/dubrovnik.jpg"
+  },
+  {
+   "id": "edinburgh",
+   "title": "Edinburgh",
+   "place": "Europe",
+   "country": "Scotland",
+   "licence": "Public domain",
+   "author": "George Washington Wilson / Adam Cuerden",
+   "source": "https://commons.wikimedia.org/wiki/File:Edinburgh_Castle_from_Grass_Market.jpg",
+   "file": "plates/edinburgh.jpg"
+  },
+  {
+   "id": "granada",
+   "title": "Granada",
+   "place": "Europe",
+   "country": "Spain",
+   "licence": "Public domain",
+   "author": "Jebulon",
+   "source": "https://commons.wikimedia.org/wiki/File:Alhambra_in_the_evening.jpg",
+   "file": "plates/granada.jpg"
+  },
+  {
+   "id": "killary-fjord",
+   "title": "Killary Fjord",
+   "place": "Europe",
+   "country": "Ireland",
+   "licence": "CC BY-SA 4.0",
+   "author": "JoachimKohler-HB",
+   "source": "https://commons.wikimedia.org/wiki/File:Killary_Harbour_(2014).jpg",
+   "file": "plates/killary-fjord.jpg"
+  },
+  {
+   "id": "krakow",
+   "title": "Kraków",
+   "place": "Europe",
+   "country": "Poland",
+   "licence": "CC BY 4.0",
+   "author": "Igor123121",
+   "source": "https://commons.wikimedia.org/wiki/File:Old_Town,_southern_part_near_Wawel_Castle,_2025,_bird%27s_eye_view,_Krak%C3%B3w,_Poland.jpg",
+   "file": "plates/krakow.jpg"
+  },
+  {
+   "id": "lisbon",
+   "title": "Lisbon",
+   "place": "Europe",
+   "country": "Portugal",
+   "licence": "CC BY-SA 4.0",
+   "author": "Ввласенко",
+   "source": "https://commons.wikimedia.org/wiki/File:Tram_28_Lisbon_Portuguese.jpg",
+   "file": "plates/lisbon.jpg"
+  },
+  {
+   "id": "london",
+   "title": "London",
+   "place": "Europe",
+   "country": "United Kingdom",
+   "licence": "CC BY-SA 3.0",
+   "author": "Diliff",
+   "source": "https://commons.wikimedia.org/wiki/File:Tower_Bridge_London_Dusk_Feb_2006.jpg",
+   "file": "plates/london.jpg"
+  },
+  {
+   "id": "paris",
+   "title": "Paris",
+   "place": "Europe",
+   "country": "France",
+   "licence": "CC BY-SA 3.0",
+   "author": "Jorge Royan",
+   "source": "https://commons.wikimedia.org/wiki/File:Paris_-_The_Eiffel_Tower_in_spring_-_2307.jpg",
+   "file": "plates/paris.jpg"
+  },
+  {
+   "id": "porto",
+   "title": "Porto",
+   "place": "Europe",
+   "country": "Portugal",
+   "licence": "CC BY-SA 4.0",
+   "author": "Diego Delso",
+   "source": "https://commons.wikimedia.org/wiki/File:Puente_de_Don_Luis_I,_Oporto,_Portugal,_2019-06-02,_DD_29-31_HDR.jpg",
+   "file": "plates/porto.jpg"
+  },
+  {
+   "id": "prague",
+   "title": "Prague",
+   "place": "Europe",
+   "country": "Czechia",
+   "licence": "CC BY-SA 4.0",
+   "author": "Václav Jiroušek",
+   "source": "https://commons.wikimedia.org/wiki/File:Solar_eclipse_of_2026_August_12_in_Prague_(Prague_Castle_from_Riegrovy_sady).jpg",
+   "file": "plates/prague.jpg"
+  },
+  {
+   "id": "reykjavik",
+   "title": "Reykjavík",
+   "place": "Europe",
+   "country": "Iceland",
+   "licence": "CC BY-SA 4.0",
+   "author": "Martin Falbisoner",
+   "source": "https://commons.wikimedia.org/wiki/File:Sk%C3%B3gafoss_July_2014.JPG",
+   "file": "plates/reykjavik.jpg"
+  },
+  {
+   "id": "rome",
+   "title": "Rome",
+   "place": "Europe",
+   "country": "Italy",
+   "licence": "CC BY-SA 2.5",
+   "author": "Diliff",
+   "source": "https://commons.wikimedia.org/wiki/File:Colosseum_in_Rome-April_2007-1-_copie_2B.jpg",
+   "file": "plates/rome.jpg"
+  },
+  {
+   "id": "route-de-napoleon",
+   "title": "Route de Napoléon",
+   "place": "Europe",
+   "country": "France",
+   "licence": "CC BY-SA 4.0",
+   "author": "Florian Pépellin",
+   "source": "https://commons.wikimedia.org/wiki/File:RD_1006_au_col_du_Mont-Cenis_c%C3%B4t%C3%A9_Maurienne_(septembre_2024).JPG",
+   "file": "plates/route-de-napoleon.jpg"
+  },
+  {
+   "id": "saint-cuthbert-s-way",
+   "title": "Saint Cuthbert's Way",
+   "place": "Europe",
+   "country": "England",
+   "licence": "CC0",
+   "author": "Michael D Beckwith",
+   "source": "https://commons.wikimedia.org/wiki/File:Holy_Island_Lindisfarne_Castle.jpg",
+   "file": "plates/saint-cuthbert-s-way.jpg"
+  },
+  {
+   "id": "skanor-falsterbo",
+   "title": "Skanör-Falsterbo",
+   "place": "Europe",
+   "country": "Sweden",
+   "licence": "CC BY-SA 4.0",
+   "author": "HaSe",
+   "source": "https://commons.wikimedia.org/wiki/File:Falsterbo_Flommen_Luftaufnahme_(2021).jpg",
+   "file": "plates/skanor-falsterbo.jpg"
+  },
+  {
+   "id": "the-tweed",
+   "title": "The Tweed",
+   "place": "Europe",
+   "country": "Scotland",
+   "licence": "CC BY-SA 2.0",
+   "author": "Bill Henderson",
+   "source": "https://commons.wikimedia.org/wiki/File:The_River_Tweed_-_geograph.org.uk_-_2934679.jpg",
+   "file": "plates/the-tweed.jpg"
+  },
+  {
+   "id": "the-veneto",
+   "title": "The Veneto",
+   "place": "Europe",
+   "country": "Italy",
+   "licence": "CC BY-SA 4.0",
+   "author": "Ximonic (Simo Räsänen)",
+   "source": "https://commons.wikimedia.org/wiki/File:Landscape_under_Torre_di_Caleda,_La_Valle_Agordina,_Veneto,_Italy,_2025_September.jpg",
+   "file": "plates/the-veneto.jpg"
+  },
+  {
+   "id": "vienna",
+   "title": "Vienna",
+   "place": "Europe",
+   "country": "Austria",
+   "licence": "CC BY-SA 3.0 de",
+   "author": "Thomas Wolf, www.foto-tw.de",
+   "source": "https://commons.wikimedia.org/wiki/File:Schloss_Sch%C3%B6nbrunn_Wien_2014_(Zuschnitt_1).jpg",
+   "file": "plates/vienna.jpg"
+  },
+  {
+   "id": "zermatt",
+   "title": "Zermatt",
+   "place": "Europe",
+   "country": "Switzerland",
+   "licence": "CC BY-SA 4.0",
+   "author": "Roy Egloff",
+   "source": "https://commons.wikimedia.org/wiki/File:CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg",
+   "file": "plates/zermatt.jpg"
+  },
+  {
+   "id": "sibenik",
+   "title": "Šibenik",
+   "place": "Europe",
+   "country": "Croatia",
+   "licence": "CC BY-SA 4.0",
+   "author": "SchiDD",
+   "source": "https://commons.wikimedia.org/wiki/File:HR-Sibenik-Theater.jpg",
+   "file": "plates/sibenik.jpg"
+  },
+  {
+   "id": "abu-dhabi",
+   "title": "Abu Dhabi",
+   "place": "Middle East",
+   "country": "United Arab Emirates",
+   "licence": "CC BY-SA 4.0",
+   "author": "Sabithnav",
+   "source": "https://commons.wikimedia.org/wiki/File:Abu_Dhabi_skyline_-_corniche_2.jpg",
+   "file": "plates/abu-dhabi.jpg"
+  },
+  {
+   "id": "istanbul",
+   "title": "Istanbul",
+   "place": "Middle East",
+   "country": "Türkiye",
+   "licence": "CC BY-SA 3.0",
+   "author": "Arild Vågen",
+   "source": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_Mars_2013.jpg",
+   "file": "plates/istanbul.jpg"
+  },
+  {
+   "id": "oman",
+   "title": "Oman",
+   "place": "Middle East",
+   "country": "Oman",
+   "licence": "CC BY-SA 4.0",
+   "author": "Diego Delso",
+   "source": "https://commons.wikimedia.org/wiki/File:Desierto_de_Wahiba,_Om%C3%A1n,_2024-08-17,_DD_17.jpg",
+   "file": "plates/oman.jpg"
+  },
+  {
+   "id": "petra",
+   "title": "Petra",
+   "place": "Middle East",
+   "country": "Jordan",
+   "licence": "CC BY 4.0",
+   "author": "Vyacheslav Argenberg",
+   "source": "https://commons.wikimedia.org/wiki/File:Al-Khazneh_(The_Treasury)_2,_Petra,_Jordan.jpg",
+   "file": "plates/petra.jpg"
+  },
+  {
+   "id": "wadi-rum",
+   "title": "Wadi Rum",
+   "place": "Middle East",
+   "country": "Jordan",
+   "licence": "CC0",
+   "author": "Peter Chisholm",
+   "source": "https://commons.wikimedia.org/wiki/File:Wadi_rum_desert.jpg",
+   "file": "plates/wadi-rum.jpg"
+  },
+  {
+   "id": "dunedin",
+   "title": "Dunedin",
+   "place": "Oceania",
+   "country": "New Zealand",
+   "licence": "CC BY-SA 3.0",
+   "author": "Diego Delso",
+   "source": "https://commons.wikimedia.org/wiki/File:Larnach_Castle,_Dunedin,_New_Zealand.jpg",
+   "file": "plates/dunedin.jpg"
+  },
+  {
+   "id": "french-polynesia",
+   "title": "French Polynesia",
+   "place": "Oceania",
+   "country": "France",
+   "licence": "Public domain",
+   "author": "Borabora.jpg: User:Taka-0905 derivative work: Marsilio (talk)",
+   "source": "https://commons.wikimedia.org/wiki/File:Borabora3.jpg",
+   "file": "plates/french-polynesia.jpg"
+  },
+  {
+   "id": "new-caledonia",
+   "title": "New Caledonia",
+   "place": "Oceania",
+   "country": "France",
+   "licence": "CC BY-SA 4.0",
+   "author": "Frenchytahiti",
+   "source": "https://commons.wikimedia.org/wiki/File:New_Caledonia_lagoon.jpg",
+   "file": "plates/new-caledonia.jpg"
+  },
+  {
+   "id": "queenstown",
+   "title": "Queenstown",
+   "place": "Oceania",
+   "country": "New Zealand",
+   "licence": "CC BY-SA 4.0",
+   "author": "AnnWoolliams",
+   "source": "https://commons.wikimedia.org/wiki/File:Arrow_Junction,_Crown_Ranges,_Queenstown_District,_New_Zealand.jpg",
+   "file": "plates/queenstown.jpg"
+  },
+  {
+   "id": "red-centre",
+   "title": "Red Centre",
+   "place": "Oceania",
+   "country": "Australia",
+   "licence": "CC BY-SA 4.0",
+   "author": "Dietmar Rabich",
+   "source": "https://commons.wikimedia.org/wiki/File:Petermann_Ranges_(AU),_Uluru-Kata_Tjuta_National_Park,_Uluru,_Kuniya_Walk_--_2019_--_3674.jpg",
+   "file": "plates/red-centre.jpg"
+  },
+  {
+   "id": "samoa",
+   "title": "Samoa",
+   "place": "Oceania",
+   "country": "Samoa",
+   "licence": "CC BY 2.0",
+   "author": "amanderson2",
+   "source": "https://commons.wikimedia.org/wiki/File:West_on_Lalomanu_beach_Taufua_Beach_Fales_Samoa.jpg",
+   "file": "plates/samoa.jpg"
+  },
+  {
+   "id": "sydney",
+   "title": "Sydney",
+   "place": "Oceania",
+   "country": "Australia",
+   "licence": "CC BY-SA 3.0",
+   "author": "Diliff",
+   "source": "https://commons.wikimedia.org/wiki/File:Sydney_Opera_House_-_Dec_2008.jpg",
+   "file": "plates/sydney.jpg"
+  },
+  {
+   "id": "antarctic-peninsula",
+   "title": "Antarctic Peninsula",
+   "place": "Polar",
+   "country": "Antarctica",
+   "licence": "CC BY-SA 4.0",
+   "author": "Virtual-Pano",
+   "source": "https://commons.wikimedia.org/wiki/File:2302_Ronge_Island_seen_from_E_V_P.jpg",
+   "file": "plates/antarctic-peninsula.jpg"
+  }
+ ]
+}

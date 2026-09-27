@@ -28,6 +28,24 @@
   --lal-shell: #f1f2f3;
   --lal-blush: #fbf4fa;
   --lal-media: #efe9ec;
+
+  /* Safe-area insets, fed in by the OS through env().
+     Read by `body` (left/right), `.lal-header` (top) and `.lal-footer`
+     (bottom) so content clears a display cutout or a home indicator instead
+     of sitting underneath it once this site runs inside the native shell.
+
+     `env()` only reports non-zero where the webview is told to extend edge to
+     edge, which is why app/layout.tsx sets `viewportFit: "cover"`. In a browser
+     these resolve to 0, so every use site below is written as
+     `max(<the design's own spacing>, var(--lal-safe-*))` -- the token can only
+     ever *add* to the design's spacing, never shrink it.
+
+     The site has no fixed or sticky chrome at all, so these land on the scroll
+     container and the two edges rather than on individual components. */
+  --lal-safe-top: env(safe-area-inset-top, 0px);
+  --lal-safe-right: env(safe-area-inset-right, 0px);
+  --lal-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --lal-safe-left: env(safe-area-inset-left, 0px);
   --lal-hero-from: #2a1c27;
   --lal-hero-to: #5a1e52;
 
@@ -64,6 +82,12 @@ html {
 
 body {
   margin: 0;
+  /* Landscape on a notched phone puts the camera housing over the left or right
+     edge of the document. Inset the scroll container so no text or media lands
+     under it. Zero in portrait and in every browser, so this is inert until the
+     site runs in the native shell. */
+  padding-left: var(--lal-safe-left);
+  padding-right: var(--lal-safe-right);
   background: #fff;
   color: var(--lal-ink);
   font-family: var(--lal-ui);
@@ -119,7 +143,10 @@ a {
 .lal-header {
   background: #fff;
   border-bottom: 1px solid var(--lal-line);
-  padding-block: 10px;
+  /* The header is `position: static`, so it scrolls away -- but at scroll-top it
+     sits directly under the status bar and any display cutout. The `max()` lets
+     the inset grow the existing 10px without ever shrinking it below that. */
+  padding-block: max(10px, var(--lal-safe-top)) 10px;
 }
 
 .lal-header .lal-box {
@@ -700,7 +727,10 @@ a {
 
 .lal-footer {
   background: var(--lal-ink);
-  padding-block: 46px 30px;
+  /* The footer's last line is the end of the document, so it is what a
+     gesture-navigation home indicator sits on top of. Same `max()` contract as
+     the header: the 30px the design asks for is the floor, never the ceiling. */
+  padding-block: 46px max(30px, var(--lal-safe-bottom));
   text-align: center;
 }
 

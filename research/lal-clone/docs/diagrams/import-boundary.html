@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The import boundary</title>
+<style>
+  :root { color-scheme: light; }
+  body {
+    margin: 0; background: #fbf4fa; color: #251e20;
+    font: 400 15px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+    padding: 40px 28px 72px;
+  }
+  main { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: #6f6467; margin: 0 0 32px; }
+  svg { width: 100%; height: auto; display: block; }
+  .node rect { fill: #ffffff; stroke: #e2e8ef; stroke-width: 1.5; rx: 10; }
+  .node.native rect { fill: #fff5f4; stroke: #e6433c; stroke-width: 2; }
+  .node.web rect { fill: #ffffff; stroke: #e2e8ef; }
+  .node .title { font: 600 14px/1.3 -apple-system, system-ui, sans-serif; fill: #251e20; }
+  .node .body { font: 400 12px/1.45 -apple-system, system-ui, sans-serif; fill: #6f6467; }
+  .node .chip { font: 700 10px/1 ui-monospace, monospace; fill: #e6433c; letter-spacing: 0.08em; }
+  .band { fill: none; stroke: #e2e8ef; stroke-width: 1.5; stroke-dasharray: 5 4; rx: 14; }
+  .band-label { font: 600 11px/1 ui-monospace, monospace; fill: #6f6467; letter-spacing: 0.1em; }
+  .edge { stroke: #6f6467; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+  .edge.hot { stroke: #e6433c; stroke-width: 2.2; }
+  .edge-label { font: 400 11px/1 ui-monospace, monospace; fill: #6f6467; }
+  footer { margin-top: 36px; color: #6f6467; font-size: 13px; }
+  code { font-family: ui-monospace, SFMono-Regular, monospace; color: #e6433c; }
+</style>
+</head>
+<body>
+<main>
+  <h1>The import boundary</h1>
+  <p class="sub">Why component code never imports <code>@capacitor/*</code> directly — and what it would cost if it did.</p>
+  <svg viewBox="0 0 1040 420" role="img" aria-label="Diagram of the native import boundary">
+  <defs>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#6f6467" />
+  </marker>
+</defs>
+
+  <rect class="band" x="20" y="20" width="480" height="380" />
+  <text class="band-label" x="34" y="42">COMPONENT CODE — browser-safe, no @capacitor import</text>
+  
+  <g class="node web">
+    <rect x="44" y="58" width="200" height="51" />
+    
+    <text class="title" x="58" y="82">Header</text>
+    <text class="body" x="58" y="100">burger menu, nav</text>
+  </g>
+  
+  <g class="node web">
+    <rect x="268" y="58" width="208" height="51" />
+    
+    <text class="title" x="282" y="82">CityPicker</text>
+    <text class="body" x="282" y="100">search, results</text>
+  </g>
+  
+  <g class="node web">
+    <rect x="44" y="168" width="200" height="51" />
+    
+    <text class="title" x="58" y="192">WorldGlobe</text>
+    <text class="body" x="58" y="210">three.js / react-globe</text>
+  </g>
+  
+  <g class="node web">
+    <rect x="268" y="168" width="208" height="51" />
+    
+    <text class="title" x="282" y="192">Footer</text>
+    <text class="body" x="282" y="210">links</text>
+  </g>
+
+  <text class="body" x="44" y="250">No component may call a Capacitor plugin.</text>
+  <text class="body" x="44" y="272">That is what keeps SSR working, keeps the</text>
+  <text class="body" x="44" y="290">web bundle free of native code, and turns</text>
+  <text class="body" x="44" y="308">"permission denied" into a value instead of</text>
+  <text class="body" x="44" y="326">a crash.</text>
+
+  <path class="edge hot" d="M 500 200 L 560 200" />
+
+  <rect class="band" x="560" y="20" width="460" height="380" />
+  <text class="band-label" x="574" y="42">THE SEAM — lib/native/bridge.ts</text>
+  
+  <g class="node web">
+    <rect x="584" y="58" width="412" height="84" />
+    <text class="chip" x="598" y="78">GATE</text>
+    <text class="title" x="598" y="98">isNative()</text>
+    <text class="body" x="598" y="118">Capacitor.getPlatform()</text><text class="body" x="598" y="133">web | ios | android</text>
+  </g>
+
+  
+  <g class="node native">
+    <rect x="584" y="150" width="200" height="66" />
+    
+    <text class="title" x="598" y="174">Native path</text>
+    <text class="body" x="598" y="192">dynamic import() of the</text><text class="body" x="598" y="207">plugin module, then call</text>
+  </g>
+  
+  <g class="node web">
+    <rect x="796" y="150" width="200" height="66" />
+    
+    <text class="title" x="810" y="174">Web path</text>
+    <text class="body" x="810" y="192">navigator.geolocation</text><text class="body" x="810" y="207">navigator.share, no-op</text>
+  </g>
+
+  
+  <g class="node web">
+    <rect x="584" y="250" width="200" height="66" />
+    
+    <text class="title" x="598" y="274">Returns a value</text>
+    <text class="body" x="598" y="292">null, or unavailable</text><text class="body" x="598" y="307">Coords, ShareResult</text>
+  </g>
+  
+  <g class="node web">
+    <rect x="796" y="250" width="200" height="66" />
+    
+    <text class="title" x="810" y="274">Never throws</text>
+    <text class="body" x="810" y="292">a denied permission is</text><text class="body" x="810" y="307">an ordinary condition</text>
+  </g>
+
+  <path class="edge" d="M 684 208 L 684 250" />
+  <path class="edge" d="M 896 208 L 896 250" />
+</svg>
+  <footer>Generated by <code>tools/make-diagrams.mjs</code> — standalone, no dependencies.</footer>
+</main>
+</body>
+</html>

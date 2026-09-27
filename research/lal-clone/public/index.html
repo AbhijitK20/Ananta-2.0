@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Like a Local Guide</title>
+    <style>
+      /* The tokens are restated from app/globals.css. This file is only ever
+         shown when the app cannot reach its server, so there is no stylesheet to
+         inherit from and no build step to keep in step. */
+      :root { --lal-bg: #fff; --lal-ink: #251e20; --lal-ink-2: #52474a; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        display: grid; place-items: center;
+        background: var(--lal-bg); color: var(--lal-ink);
+        font: 400 0.9375rem/1.65 system-ui, -apple-system, sans-serif;
+        /* Respect a notch on both sides so the message is never clipped. */
+        padding: max(1.5rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-right));
+        text-align: center;
+      }
+      main { max-width: 26rem; }
+      h1 { font-size: 1.125rem; font-weight: 600; margin: 0 0 0.5rem; }
+      p { margin: 0 0 0.75rem; color: var(--lal-ink-2); }
+      code { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.8125rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>This app needs its server</h1>
+      <p>
+        The site is server-rendered, so there is nothing to run inside the app
+        itself. Start the server and point the app at it with
+        <code>CAP_SERVER_URL</code>, then reopen.
+      </p>
+      <p><code>npm run cap:sync</code> &rarr; <code>npm run cap:run:android</code></p>
+    </main>
+  </body>
+</html>

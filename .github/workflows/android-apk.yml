@@ -1,0 +1,121 @@
+# Build a sideloadable Android APK from every push.
+#
+# WHY CI BUILDS THIS AND NOT YOUR MACHINE
+# ----------------------------------------
+# A local build needs the Android SDK and a JDK the Gradle version accepts (17-23;
+# the JDK 25 that ships on this machine is rejected as "Unsupported class file
+# major version 69"). GitHub's runners already have both, so the APK is a
+# build artifact you download rather than a local toolchain you install.
+#
+# The artifact is a DEBUG apk, which is what you sideload for testing. For a
+# store release see the note at the bottom of this file.
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'research/lal-clone/**'
+      - '.github/workflows/android-apk.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: research/lal-clone
+
+jobs:
+  apk:
+    # 22.x is the first runner line with JDK 17 available alongside the
+    # Android SDK, and Capacitor 8 requires a recent AGP.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: research/lal-clone/package-lock.json
+
+      # JDK 21: Capacitor 8's AGP 8.13 supports up to 23, and 21 is the safest
+      # choice inside that range.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('research/lal-clone/android/**/*.gradle*') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - run: npm ci
+
+      # The static export is what the shell ships. Only the export build needs
+      # it; the type check and the web deploy do not.
+      - name: Build the static web bundle
+        run: npm run build:mobile
+        env:
+          LAL_STATIC_EXPORT: '1'
+
+      - name: Sync the native project
+        run: npx cap sync android
+        env:
+          # No CAP_SERVER_URL on purpose. Without it the shell uses its bundled
+          # copy of the site, which is the whole point of shipping a bundle —
+          # the app has to work when the LAN is not there.
+          CAP_SERVER_URL: ''
+
+      - name: Assemble the debug APK
+        working-directory: research/lal-clone/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-guide-apk
+          path: research/lal-clone/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Summarise
+        run: |
+          {
+            echo "### APK built"
+            echo
+            echo 'Download **local-guide-apk** from this run'"'"'s Artifacts, unzip it,'
+            echo 'and sideload `app-debug.apk` onto a device with USB debugging on:'
+            echo
+            echo '```'
+            echo 'adb install -r app-debug.apk'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+# ---------------------------------------------------------------------------
+# For a store release you need a RELEASE build instead, signed with a keystore
+# whose credentials live in repository secrets — never in the repo:
+#
+#   - uses: actions/setup-java@v4
+#     with: { distribution: temurin, java-version: 21 }
+#   - name: Decode the keystore
+#     run: |
+#       echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > app/release.keystore
+#   - name: Bundle for Play
+#     working-directory: research/lal-clone/android
+#     env:
+#       KEYSTORE_PATH: app/release.keystore
+#       KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+#       KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+#       KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+#     run: ./gradlew bundleRelease --no-daemon
+#
+# `signingConfigs` has to be wired into `android/app/build.gradle` for those
+# variables to be read. Do not commit the keystore.
+# ---------------------------------------------------------------------------
