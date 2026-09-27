@@ -21,6 +21,15 @@ const config = {
    *  `import.meta.dirname` rather than __dirname: this is an ESM module.
    */
   outputFileTracingRoot: import.meta.dirname,
+
+  /** Keep the auth server's dependencies out of the bundle.
+   *
+   *  `better-auth` and `pg` run only in route handlers, and `pg` reaches for
+   *  optional native and CJS-only modules that the server bundler cannot follow.
+   *  Listed here they stay external and are `require`d from node_modules at
+   *  runtime, which is both correct and one fewer thing to break on upgrade.
+   */
+  serverExternalPackages: ["better-auth", "pg"],
 };
 
 export default config;

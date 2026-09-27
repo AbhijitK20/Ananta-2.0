@@ -322,6 +322,163 @@ proved the fallback works.
   login, so there was no reference to measure against. The panel layout and
   behaviour are taken from Furkot's help centre, which documents all of it.
 
+---
+
+## Accounts and cloud saves
+
+Optional, and off until it is configured. The quest book and the trip planner
+both keep their state in `localStorage` and have always worked that way; an
+account only adds a copy of that same state to Postgres so it follows you to
+another device. Nothing about the site requires signing in.
+
+**What is here**
+
+| | |
+|---|---|
+| `lib/auth.ts` | the Better Auth instance and its config |
+| `lib/auth-client.ts` | the only auth module a client component may import |
+| `app/api/auth/[...all]/route.ts` | sign-up, sign-in, sign-out, session |
+| `app/api/saves/route.ts` | the caller's own save, session-checked |
+| `supabase/schema.sql` | the `saves` table, RLS locked |
+| `lib/auth/sync.ts` | push on change, pull on load, debounced |
+| `lib/auth/reconcile.ts` | which copy wins — pure, and checked |
+
+**Setting it up**
+
+1. Three values, in `.env.local` (copy `.env.example`; it is gitignored):
+
+   | variable | where |
+   |---|---|
+   | `NEXT_PUBLIC_APP_URL` | `http://localhost:4310` locally |
+   | `BETTER_AUTH_SECRET` | `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
+   | `DATABASE_URL` | Supabase → Database → Connection string → **URI, port 5432** |
+   | `AUTH_TRUSTED_ORIGINS` | only if you are not on `localhost` — see below |
+
+   `DATABASE_URL` is the one that gets missed: it is the **database password**,
+   which is not the publishable key, not the anon key, and not the service-role
+   key. It lives in the Database section of the dashboard, not the API section.
+   Port 5432, not 6543 — Better Auth opens real transactions and the transaction
+   pooler refuses them.
+
+**Deploying to Vercel.** `.env.local` is a Next convention and **Vercel never
+reads it** — the values there exist only on this machine. Set the same values in
+the dashboard (Project → Settings → Environment Variables), or:
+
+```bash
+npx vercel env add NEXT_PUBLIC_APP_URL production
+npx vercel env add BETTER_AUTH_SECRET   production
+npx vercel env add DATABASE_URL         production
+npx vercel env add GOOGLE_CLIENT_ID       production
+npx vercel env add GOOGLE_CLIENT_SECRET   production
+```
+
+Scope matters: set them for **Production** and **Preview**, or a preview build
+fails sign-in while production works, which reads as a flaky bug rather than a
+missing variable.
+
+`NEXT_PUBLIC_APP_URL` should be the deployed origin. If it is left unset the app
+now derives it from Vercel's own `VERCEL_URL`, and trusts the deployment's
+production and branch URLs automatically, so a fresh deploy signs in without
+configuration — but setting it explicitly is still better, because
+`NEXT_PUBLIC_*` is inlined at build time and an explicit value is what you can
+read.
+
+The one thing the code cannot do is guess: **add the deployed callback URI** to
+the Google credential, alongside the local one.
+
+```
+http://localhost:4310/api/auth/callback/google
+https://<your-app>.vercel.app/api/auth/callback/google
+```
+
+Without it Google answers `redirect_uri_mismatch` and sign-in fails at the last
+step, after the consent screen.
+
+**"Invalid origin".** Better Auth compares the request's `Origin` header against
+`trustedOrigins` and refuses anything else, so a sign-in that looks correctly
+configured can still fail on a config that reads correct. One server is reachable
+at several *different* origins, and the browser does not care that they are the
+same server:
+
+| you typed | trusted? |
+|---|---|
+| `http://localhost:4310` | yes — `NEXT_PUBLIC_APP_URL` |
+| `http://127.0.0.1:4310` | yes — added automatically |
+| `http://[::1]:4310` | yes — added automatically |
+| `http://192.168.x.x:4310` | **no** — the "Network" URL Next prints |
+| your deployed host | yes — from Vercel's own env, or `NEXT_PUBLIC_APP_URL` |
+
+The three loopback spellings are added in code because they are this machine by
+definition and cannot be reached from anywhere else. The LAN address is not
+knowable statically, so it goes in `AUTH_TRUSTED_ORIGINS` (comma separated) — a
+narrow list on purpose, since this is a CSRF control and anything loose in it
+lets another site drive a sign-in. Note the check only runs on requests that
+carry a cookie, which is Better Auth's reasoning: a cookieless request cannot be
+a forged authenticated action.
+
+2. Create Better Auth's four tables:
+
+   ```bash
+   npm run auth:migrate              # or -- --print to see the SQL first
+   ```
+
+   Not `npx @better-auth/cli migrate`: that package's `latest` is 1.4.21 and its
+   newest release of any tag is a 1.5 beta, both behind the 1.7 library installed
+   here. `tools/migrate.mjs` calls the same `getMigrations` the CLI does, from the
+   installed package, so the schema always matches the code.
+
+3. Create the saves table — paste `supabase/schema.sql` into Supabase → SQL
+   Editor. It has to run second, because it references the `"user"` table from
+   step 2.
+
+4. `npm run dev`, then "Sign in" in the header.
+
+**Signing in.** A centred `<dialog>` with two peers, not a fallback chain:
+"Continue with Google" first, because on a phone it is one tap, then the email
+form for people who would rather not hand a Google account to a travel site.
+Native `<dialog>` rather than a div overlay, because `showModal()` gives the
+focus trap, the inert background, Escape, and focus-return for free — the four
+things a hand-rolled overlay gets subtly wrong.
+
+Google needs two more optional values:
+
+| variable | where |
+|---|---|
+| `GOOGLE_CLIENT_ID` | Google Cloud Console → Credentials → OAuth client ID → Web application |
+| `GOOGLE_CLIENT_SECRET` | on the same credential |
+
+with the redirect URI `{NEXT_PUBLIC_APP_URL}/api/auth/callback/google` and the
+origin `{NEXT_PUBLIC_APP_URL}`, and the People API enabled for the project. With
+either value missing the provider is **not registered at all** rather than
+registered broken — a provider with an id and no secret produces an OAuth
+redirect Google answers with an error the player cannot act on. The button still
+renders, because the request it makes exists either way, and says so in words
+when it fails. The email form is unaffected.
+
+**On the keys.** No Supabase anon, publishable or service-role key is used, and
+none is needed. This is not an oversight: the server already holds a SQL
+connection for Better Auth's tables, so reaching for the service-role key — which
+bypasses RLS — to read four columns would add a secret to the attack surface for
+nothing. The `saves` table is protected by RLS instead, and with no PostgREST
+client there is no reason for a publishable key to reach a browser bundle at all.
+
+**How a conflict is settled.** `saves` has one timestamp per payload rather than
+one per row, so a phone that only played the quest game and a laptop that only
+planned a trip do not overwrite each other. Where a genuine conflict remains it
+is last-writer-wins per column, with the timestamp set by the database rather
+than the client, so a device with a wrong clock cannot win forever. The one case
+that is *not* last-writer-wins is a local save with unsynced work: it is never
+overwritten by a cloud copy, because there is no timestamp on a `localStorage`
+save to compare and losing a player's progress is the one failure this must not
+have. `npm run check:sync` covers that decision.
+
+**Not built:** email verification, password reset, and Google sign-in. All three
+need an SMTP provider and a redirect allowlist. `requireEmailVerification` is
+`false` in `lib/auth.ts`, which is fine for a demo and **not** fine for a public
+deploy — anyone can sign up as anyone.
+
+---
+
 ## The weather twin
 
 `/plan` carries a weather-driven digital twin in the top of its left column, above
@@ -441,6 +598,11 @@ components/twin/           the panel, the controls, the impacts, the feed
 
 ## Known gaps
 
+- **Accounts are wired but unconfigured.** Auth and cloud saves are complete and
+  committed, with no Supabase project attached yet, so `npm run auth:migrate` and
+  the sync round trip have never run against a real database. The migration
+  script's path to Postgres is verified; the happy path is not. See "Accounts and
+  cloud saves" above.
 - **The weather twin needs a server, so it cannot be statically exported.**
   `app/api/twin/observe` is a `force-dynamic` POST that pulls live weather, and a
   route handler cannot be emitted as a static file at all. Any future static

@@ -33,6 +33,7 @@ import {
 import { pointForStop } from "./geo";
 import { moveStop, reverseStops, splitIntoDays, totalsFor, type TripTotals } from "./schedule";
 import { routeTrip } from "./route";
+import { queuePush, syncOnLoad } from "../auth/sync";
 import { clear, isStorageAvailable, load, persist } from "./storage";
 import { emptyFilters, emptyTrip } from "./types";
 import type { Day, Drawer, Filters, Leg, Stop, Trip } from "./types";
@@ -122,13 +123,16 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     setTrip(result.trip);
     setDiscarded(result.discarded);
     setHydrated(true);
+    void syncOnLoad("trip", result.trip, (data) => setTrip(data as Trip));
   }, []);
 
   // Persist on every change, but never before the save has been read — writing
   // the empty trip over a stored one on first mount would wipe the itinerary.
+  // The same effect feeds the cloud, and is inert while signed out.
   useEffect(() => {
     if (!hydrated) return;
     persist(trip);
+    queuePush("trip", trip);
   }, [trip, hydrated]);
 
   const routed = useMemo(() => trip.stops.filter((s) => !s.skipped), [trip.stops]);

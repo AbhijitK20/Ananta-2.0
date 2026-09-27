@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "capture": "node tools/capture.mjs",
     "check:plan": "tsx tools/check-plan.mjs",
+    "check:sync": "tsx tools/check-sync.mjs",
     "check:twin": "node tools/check-twin.mjs",
+    "auth:migrate": "tsx --env-file-if-exists=.env.local tools/migrate.mjs",
     "smoke:plan": "node tools/smoke-plan.mjs",
     "verify": "node tools/verify.mjs",
     "verify:places": "node tools/verify-places.mjs",
@@ -18,10 +20,12 @@
     "prebuild": "node tools/copy-cesium-assets.mjs"
   },
   "dependencies": {
+    "better-auth": "^1.7.6",
     "cesium": "^1.145.0",
     "gsap": "^3.15.0",
     "maplibre-gl": "^5.24.0",
     "next": "15.5.26",
+    "pg": "^8.23.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-globe.gl": "^2.38.0",
@@ -29,6 +33,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "esbuild": "^0.28.2",
