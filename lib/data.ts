@@ -180,7 +180,16 @@ export const NAV = [
   // browsing if the only route to it is /oracle. /contact still exists and still
   // routes; it just is not what the nav advertises.
   { href: "/oracle", label: "Ask the AI" },
-  { href: "/partners", label: "Partner With Us" },
+  // Local Legends is the gamified layer -- the stamp album over the 890 picks,
+  // with quests, XP and streaks. /stamps is the collection itself, which is what
+  // the product is, and it is the one game route that shows the whole shape of a
+  // player's progress at a glance.
+  //
+  // This replaces "Partner With Us". Two reasons, one of them practical: the nav
+  // has a finite width and a sixth item is the point at which it starts wrapping
+  // on a laptop, and a marketing page for partners is a worse use of the last
+  // slot than the thing visitors actually came for. /partners still routes.
+  { href: "/stamps", label: "Local Legends" },
 ];
 
 export const PROMISES = [
