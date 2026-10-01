@@ -13,7 +13,7 @@ export const CITIES: City[] = [
     image: "/nyc.jpg",
     featured: true,
     blurb:
-      "90+ picks from the team behind Like A Local Tours - we live here, we eat here, and we run the tours. Explore NYC like a real local.",
+      "90+ picks from people who live here — we eat here, and we send our friends here. Explore NYC like a real local.",
   },
   { slug: "paris", name: "Paris", image: "/paris.jpg" },
   { slug: "rome", name: "Rome", image: "/rome.jpg" },

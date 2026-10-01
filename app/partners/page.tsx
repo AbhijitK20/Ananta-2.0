@@ -35,7 +35,7 @@ export default function PartnersPage() {
           Put your tours in front of travelers already planning their trip
         </h1>
         <p className="g-edit__sub" style={{ maxWidth: 760 }}>
-          Like A Local Guide reaches trip-planners searching for the best things to do
+          Ananta reaches trip-planners searching for the best things to do
           in 100+ cities every month, and we are the layer between “I might go” and
           “I booked it” — the one page a traveller lands on before they decide who to
           book with.
@@ -46,13 +46,13 @@ export default function PartnersPage() {
           you are the tour company they see first.
         </p>
         <p className="g-edit__note">
-          See it live: the Like A Local Tours module on our New York City page — NYC
-          is ours, and it is the single biggest reason this page exists.
+          Every city carries one tours module on its guide, and that single slot is
+          the biggest reason this page exists.
         </p>
 
         <h2>Own your city’s tour slot</h2>
         <p>
-          Every city has exactly one Like A Local partner for tours. That is the
+          Every city has exactly one Ananta partner for tours. That is the
           whole proposition: no auction, no rotating ad slots, no race to the bottom
           on commission.
         </p>
